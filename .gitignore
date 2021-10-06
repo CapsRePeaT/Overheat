@@ -37,3 +37,6 @@ build/*
 # IDE config directories
 .idea/
 .vs/
+
+# Compile commands link in root
+compile_commands.json

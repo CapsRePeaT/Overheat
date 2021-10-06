@@ -3,7 +3,21 @@ add_subdirectory(core)
 add_subdirectory(readers)
 add_subdirectory(renderer)
 add_subdirectory(ui)
-target_link_libraries(ui renderer core common)
-target_link_libraries(core readers common)
-target_link_libraries(renderer core common)
-target_link_libraries(readers common)
+
+#  Now dependency tree looks like this ((*) is executable)
+#
+#       readers
+#          ^
+#          |
+#        core
+#        ^  ^
+#       /    \   
+#    *ui ---> renderer
+#
+# And all targets dependent to common
+#
+
+target_link_libraries(ui PRIVATE renderer core common)
+target_link_libraries(core PRIVATE readers common)
+target_link_libraries(renderer PRIVATE core common)
+target_link_libraries(readers PRIVATE common)

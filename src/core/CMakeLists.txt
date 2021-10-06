@@ -1,7 +1,8 @@
 set(MODULE_NAME core)
-set(SOURCES 
+set(SOURCES
     
 )
-add_library(${MODULE_NAME} ${SOURCES})
-target_include_directories(${MODULE_NAME} PUBLIC include)
 
+add_library(${MODULE_NAME} STATIC ${SOURCES})
+
+target_include_directories(${MODULE_NAME} PUBLIC include)
