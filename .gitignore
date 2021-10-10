@@ -40,3 +40,6 @@ build/*
 
 # Compile commands link in root
 compile_commands.json
+
+# Cache
+.cache/
