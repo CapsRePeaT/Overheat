@@ -12,7 +12,7 @@ class BasicShape
  private:
   size_t id_;
   ShapeType shape_type_ = ShapeType::Undefined;
-  BBox3D bbox_3d_;
+  Box3D bbox_;
 };
 
 #endif // SHAPES_H
