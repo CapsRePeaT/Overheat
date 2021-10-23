@@ -15,14 +15,14 @@ class Box {
   bool undefined() const { return coordinates_ == DefaultCoordinates(); }
   Box() : coordinates_(DefaultCoordinates()) {}
  private:
-  using BoxArray = std::array<std::pair<float,float>, dim>;
-  static constexpr BoxArray DefaultCoordinates();
-  BoxArray coordinates_;
+  using Values = std::array<std::pair<float,float>, dim>;
+  static constexpr Values DefaultCoordinates();
+  Values coordinates_;
 };
 
 template<int dim>
-constexpr typename Box<dim>::BoxArray Box<dim>::DefaultCoordinates() {
-  BoxArray boxes;
+constexpr typename Box<dim>::Values Box<dim>::DefaultCoordinates() {
+  Values boxes;
   boxes.fill(std::make_pair(std::numeric_limits<float>::max(),std::numeric_limits<float>::min()));
   return boxes;
 };
