@@ -22,9 +22,9 @@ class Box {
 
 template<int dim>
 constexpr typename Box<dim>::Values Box<dim>::DefaultCoordinates() {
-  Values boxes;
-  boxes.fill(std::make_pair(std::numeric_limits<float>::max(),std::numeric_limits<float>::min()));
-  return boxes;
+  Values default_values;
+  default_values.fill(std::make_pair(std::numeric_limits<float>::max(),std::numeric_limits<float>::min()));
+  return default_values;
 };
 
 using Box3D = Box<3>;
