@@ -1,10 +1,13 @@
 set(MODULE_NAME ui)
 set(SOURCES
     src/main.cpp
-    src/OverheatMainWidnow.cpp
-    src/OverheatWindow.cpp
-    src/OverheatRenderWindow.cpp
-    src/OverheatSideWindow.cpp
+    src/mainwindow.cpp
+    src/visualisation_options.h
+    src/visualisation_options.cpp
+    src/visualisation_options.ui
+    src/renderer_widget.h
+    src/renderer_widget.cpp
+    src/renderer_widget.ui
 )
 
 # Qt components to include in target

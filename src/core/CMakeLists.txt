@@ -1,6 +1,12 @@
 set(MODULE_NAME core)
 set(SOURCES
     src/core.cpp
+    src/databases.h
+    src/databases.cpp
+    src/shapes.h
+    src/shapes.cpp
+    src/heatmap.h
+    src/heatmap.cpp
 )
 
 add_library(${MODULE_NAME} STATIC ${SOURCES})

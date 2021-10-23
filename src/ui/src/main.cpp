@@ -1,13 +1,12 @@
 #include <QApplication>
 #include <QLabel>
 
-#include "OverheatMainWidnow.h"
+#include "mainwindow.h"
 
 int main(int argc, char** argv)
 {
 	QApplication a(argc, argv);
-	QMainWindow& w = OverheatMainWindow::instance();
-	QLabel l("Hello Qt!", &w);
+    QMainWindow& w = MainWindow::instance();
 	w.show();
 	return a.exec();
 }

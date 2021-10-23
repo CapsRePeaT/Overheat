@@ -43,3 +43,7 @@ compile_commands.json
 
 # Cache
 .cache/
+
+# Local Docs
+local_docs/
+

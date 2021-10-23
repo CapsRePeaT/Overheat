@@ -1,7 +1,7 @@
 #pragma once
 
-#include "IOverheatRenderer.h"
+#include "i_renderer.h"
 
-class OverheatGLRenderer : public IOverheatRenderer {
+class GLRenderer : public IRenderer {
 
 };
