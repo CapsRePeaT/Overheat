@@ -10,6 +10,10 @@ set(SOURCES
     src/renderer_widget.ui
 )
 
+option(USE_QT "Try to find and link qt libraries to main module" ON)
+
+if(USE_QT)
+
 # Qt components to include in target
 set(QT_MODULES
     Widgets Gui OpenGLWidgets
@@ -74,3 +78,5 @@ endforeach()
 if(QT_VERSION_MAJOR EQUAL 6)
     qt_finalize_executable(${MODULE_NAME})
 endif()
+
+endif() # USE_QT
