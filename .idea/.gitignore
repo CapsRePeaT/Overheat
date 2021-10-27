@@ -1,0 +1,7 @@
+# Default ignored files
+/shelf/
+/workspace.xml
+
+# Do not ignore code styles
+!codeStyles/
+!.gitignore

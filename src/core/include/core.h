@@ -3,7 +3,7 @@
 #include <string>
 #include <vector>
 
-#include "../readers/IReader.h"
+#include "IReader.h"
 #include "common.h"
 
 class Core {

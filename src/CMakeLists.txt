@@ -20,7 +20,10 @@ add_subdirectory(ui)
 # And all targets dependent to common
 #
 
+if(USE_QT)
 target_link_libraries(ui PRIVATE renderer core common ${QT_LIBRARIES_TO_LINK})
-target_link_libraries(core PRIVATE reader-interface readers common)
+endif()
+target_link_libraries(core PRIVATE readers common)
+target_link_libraries(core PUBLIC reader-interface)
 target_link_libraries(renderer PRIVATE core common)
-target_link_libraries(readers PRIVATE reader-interface common)
+target_link_libraries(readers PRIVATE reader-interface common ${BOOST_LIBRARY_TO_LINK})
