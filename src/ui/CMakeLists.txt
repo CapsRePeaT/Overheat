@@ -19,9 +19,6 @@ set(QT_MODULES
     Widgets Gui OpenGLWidgets
 )
 
-# (Probably is not needed) Some files are generating in-place
-set(CMAKE_INCLUDE_CURRENT_DIR ON)
-
 # Load Qt libs
 find_package(QT NAMES Qt6 COMPONENTS ${QT_MODULES} REQUIRED)
 find_package(Qt${QT_VERSION_MAJOR} COMPONENTS ${QT_MODULES} REQUIRED)
@@ -29,9 +26,6 @@ find_package(Qt${QT_VERSION_MAJOR} COMPONENTS ${QT_MODULES} REQUIRED)
 # Set list of qt modules to link in format QtX::MODULE_NAME
 set(QT_MODULES_TO_LINK ${QT_MODULES})
 list(TRANSFORM QT_MODULES_TO_LINK PREPEND Qt${QT_VERSION_MAJOR}::)
-
-# For debugging purposes
-message(STATUS "Founded qt modules: ${QT_MODULES_TO_LINK}")
 
 # Add target
 if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)

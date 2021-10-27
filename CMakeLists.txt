@@ -18,10 +18,26 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 # Also considering multiconfig generators
 include(cmake/SetupBuildTypes.cmake)
 
+# Setup conan
+include(cmake/Conan.cmake)
+run_conan()
+
+
 # Export compile_commands.json
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 # Enable link libraries in folders where they are not building
 cmake_policy(SET CMP0079 NEW)
+
+include(FetchContent)
+FetchContent_Declare(
+  googletest
+  URL https://github.com/google/googletest/archive/refs/tags/release-1.11.0.zip
+)
+# For Windows: Prevent overriding the parent project's compiler/linker settings
+set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
+FetchContent_MakeAvailable(googletest)
+
+enable_testing()
 
 add_subdirectory(src)
