@@ -1,26 +1,23 @@
+#include <QGridLayout>
+#include <QLabel>
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 
-#include <QGridLayout>
-#include <QLabel>
-
-MainWindow::MainWindow(QWidget *parent) :
+MainWindow::MainWindow(QWidget* parent) :
     QMainWindow(parent),
-    ui_(new Ui::MainWindow)
-{
+    ui_(new Ui::MainWindow){
     ui_->setupUi(this);
-    mdiArea = new QMdiArea(this);  // инициализируем QMdiArea
-    // Настраиваем скроллбары
-    mdiArea->setHorizontalScrollBarPolicy(Qt::ScrollBarAsNeeded);
-    mdiArea->setVerticalScrollBarPolicy(Qt::ScrollBarAsNeeded);
-    // Устанавливаем Mdi Area в качестве центрального виджета
-    setCentralWidget(mdiArea);
+    mdi_area_ = new QMdiArea(this);  // init QMdiArea
+    // Define scrollbars
+    mdi_area_->setHorizontalScrollBarPolicy(Qt::ScrollBarAsNeeded);
+    mdi_area_->setVerticalScrollBarPolicy(Qt::ScrollBarAsNeeded);
+    // Set up Mdi Area as a central widget
+    setCentralWidget(mdi_area_);
 }
 
 
 
-MainWindow::~MainWindow()
-{
+MainWindow::~MainWindow(){
     delete ui_;
 }
 
@@ -33,21 +30,19 @@ void MainWindow::OnLoadFile(const std::string& file_name) {
   LoadFile(file_name);
 }
 
-void MainWindow::on_actionAddWindow_triggered()
-{
-    // Создаём виджет, который будет окном
-    QWidget *widget = new QWidget(mdiArea);
-    // Добавляем в него размещение
-    QGridLayout *gridLayout = new QGridLayout(widget);
-    widget->setLayout(gridLayout);
-    // Добавляем на виджет надпись
+void MainWindow::OnActionAddWindowTriggered(){
+    // Create a widget, that will be a window
+    QWidget* widget = new QWidget(mdi_area_);
+    // Add a position
+    QGridLayout *grid_layout = new QGridLayout(widget);
+    widget->setLayout(grid_layout);
+    // Add a label
     QLabel *label = new QLabel("Hello, I am sub window!!!", widget);
-    gridLayout->addWidget(label);
-
-    // Добавляем виджет в качестве подокна в Mdi Area
-    mdiArea->addSubWindow(widget);
-    // Устанавливаем заголовок окна
+    grid_layout->addWidget(label);
+    // Add widget as a subwindow Mdi Area
+    mdi_area_->addSubWindow(widget);
+    // Set up a window title
     widget->setWindowTitle("Sub Window");
-    // и показываем виджет
+    // Showing widget
     widget->show();
 }
