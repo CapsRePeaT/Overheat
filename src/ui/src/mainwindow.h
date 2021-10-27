@@ -4,6 +4,7 @@
 #include <QMainWindow>
 #include "renderer_widget.h"
 #include "visualisation_options.h"
+#include <QMdiArea>
 
 namespace Ui {
 class MainWindow;
@@ -21,12 +22,16 @@ class MainWindow : public QMainWindow
  public slots:
   void OnLoadFile(const std::string& file_name);
 
+ private slots:
+    void on_actionAddWindow_triggered();
+
  private:
   Core& core() { return Core::instance(); }
   explicit MainWindow(QWidget *parent = nullptr);
   std::unique_ptr<RendererWidget> render_widget_;
   std::unique_ptr<VisualisationOptionsWidget> visualisation_options_;
   Ui::MainWindow *ui_;
+  QMdiArea * mdiArea;
 
 };
 
