@@ -21,6 +21,7 @@ add_subdirectory(ui)
 #
 
 target_link_libraries(ui PRIVATE renderer core common ${QT_LIBRARIES_TO_LINK})
-target_link_libraries(core PRIVATE reader-interface readers common)
+target_link_libraries(core PRIVATE readers common)
+target_link_libraries(core PUBLIC reader-interface)
 target_link_libraries(renderer PRIVATE core common)
 target_link_libraries(readers PRIVATE reader-interface common)
