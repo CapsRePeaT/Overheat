@@ -19,7 +19,7 @@ class MainWindow : public QMainWindow {
  signals:
     //todo
  public slots:
-  void OnLoadFile(const std::string& file_name);
+  void OnLoadFileBtnPressed();
 
 // private slots:
 //  void OnActionAddWindowTriggered();

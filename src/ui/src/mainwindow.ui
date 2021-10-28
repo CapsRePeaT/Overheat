@@ -27,14 +27,14 @@
     <property name="title">
      <string>Menu</string>
     </property>
-    <addaction name="actionLoad"/>
+    <addaction name="load_file_btn"/>
     <addaction name="separator"/>
     <addaction name="actionRun_Computation"/>
    </widget>
    <addaction name="menuMenu"/>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
-  <action name="actionLoad">
+  <action name="load_file_btn">
    <property name="text">
     <string>Load...</string>
    </property>

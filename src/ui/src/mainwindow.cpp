@@ -1,5 +1,6 @@
 #include <QGridLayout>
 #include <QLabel>
+#include <QFileDialog>
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 
@@ -10,6 +11,9 @@ MainWindow::MainWindow(QWidget* parent)
   mdi_area_->setHorizontalScrollBarPolicy(Qt::ScrollBarAsNeeded);
   mdi_area_->setVerticalScrollBarPolicy(Qt::ScrollBarAsNeeded);
   setCentralWidget(mdi_area_);
+  // signals and slots connection
+  connect(ui_->load_file_btn, &QAction::triggered,
+          this, &MainWindow::OnLoadFileBtnPressed);
 }
 
 MainWindow::~MainWindow() {
@@ -18,11 +22,14 @@ MainWindow::~MainWindow() {
 
 void MainWindow::LoadFile(const std::string& file_name) {
   core().LoadGeometry(file_name);
-  render_widget_->RenderShapes(core().LoadShapes());
+  render_widget_->RenderShapes(core().GetShapes());
 }
 
-void MainWindow::OnLoadFile(const std::string& file_name) {
-  LoadFile(file_name);
+void MainWindow::OnLoadFileBtnPressed() {
+  const QString file_name = QFileDialog::getOpenFileName(this, tr("Open File"),
+                                                  QDir::currentPath(),
+                                                  tr("geom (*.cpp)"));
+  LoadFile(file_name.toStdString());
 }
 
 /*

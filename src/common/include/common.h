@@ -14,6 +14,9 @@ class Box {
  public:
   bool undefined() const { return coordinates_ == DefaultCoordinates(); }
   Box() : coordinates_(DefaultCoordinates()) {}
+// TODO: make handy realisation with coords
+//  Box(const std::array<std::pair<float,float>, dim>& coordinates)
+//    : coordinates_(coordinates) {}
  private:
   using Values = std::array<std::pair<float,float>, dim>;
   static constexpr Values DefaultCoordinates();

@@ -17,7 +17,10 @@ class RendererWidget : public QWidget
 {
   Q_OBJECT
  public:
-    void RenderShapes(const std::vector<BasicShape*>& shapes) {};
+  void RenderShapes(const Core::Shapes& shapes) {
+    assert(shapes.size() && "no shapes recived");
+    std::cout << "first shape id:" << shapes[0]->id() << std::endl;
+  };
 
   explicit RendererWidget(QWidget *parent = nullptr);
   ~RendererWidget();
