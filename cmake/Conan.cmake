@@ -2,7 +2,10 @@ option(USE_CONAN "Install dependencies with conan" ON)
 macro(config_conan)
     # List of packages to install
     set(CONAN_DEPS
-        boost/1.77.0
+#        boost/1.77.0
+        glad/0.1.34
+        glm/0.9.9.8
+        stb/20200203
         spdlog/1.9.2
     )
 
@@ -37,7 +40,7 @@ macro(run_conan)
         # Setup configuration
         conan_cmake_configure(
             REQUIRES ${CONAN_DEPS}
-            GENERATORS cmake_find_package
+            GENERATORS cmake
             OPTIONS ${CONAN_OPTIONS}
         )
         # Install libraries from conan with considering of build type
@@ -51,5 +54,8 @@ macro(run_conan)
                 INSTALL_FOLDER ${CONAN_INSTALL_DIR}
             )
         endforeach()
+
+        include(${CONAN_INSTALL_DIR}/conanbuildinfo.cmake)
+        conan_basic_setup(TARGETS)
     endif()
 endmacro()
