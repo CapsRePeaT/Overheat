@@ -1,21 +1,15 @@
-#include <vertexarray.h>
+#include "vertexarray.h"
 
-#include <opengllog.h>
-#include <vertexbuffer.h>
-#include <vertexbufferlayout.h>
+#include "vertexbuffer.h"
+#include "vertexbufferlayout.h"
 
-using namespace gl; // NOLINT(google-build-using-namespace)
+uint32_t VertexArray::bound_id_ = 0;
 
-GLuint VertexArray::boundId = 0;
-
-VertexArray::VertexArray() {
-	glCall<glGenVertexArrays>(1, &m_id);
-}
+VertexArray::VertexArray() { glGenVertexArrays(1, &id_); }
 
 VertexArray::~VertexArray() {
-	if (boundId == m_id)
-		boundId = 0;
-	glDeleteVertexArrays(1, &m_id);
+	if (bound_id_ == id_) bound_id_ = 0;
+	glDeleteVertexArrays(1, &id_);
 }
 
 VertexArray::VertexArray(VertexArray&& other) noexcept {
@@ -23,42 +17,44 @@ VertexArray::VertexArray(VertexArray&& other) noexcept {
 }
 
 VertexArray& VertexArray::operator=(VertexArray&& other) noexcept {
-	glDeleteVertexArrays(1, &m_id);
-
-	m_id = other.m_id;
-
-	other.m_id = 0;
+	// Delete owned array
+	glDeleteVertexArrays(1, &id_);
+	// Assign moving array data
+	id_ = other.id_;
+	// Invalidate moving array
+	other.id_ = 0;
 
 	return *this;
 }
 
-void VertexArray::addBuffer(const VertexBuffer& vb, const VertexBufferLayout& layout) {
-	bind();
-	vb.bind();
+void VertexArray::AddBuffer(const VertexBuffer& vb,
+                            const VertexBufferLayout& layout) {
+	Bind();
+	vb.Bind();
 
-	unsigned int offset = 0;
-	const auto& elements = layout.getElements();
+	char* offset = nullptr; // char* is compromise between conversion to void* and pointer arithmetic
+	const auto& elements = layout.elements();
 
 	for (unsigned int i = 0; i < elements.size(); ++i) {
 		const auto& element = elements[i];
-		glCall<glEnableVertexAttribArray>(i);
-		glCall<glVertexAttribPointer>(i, element.count, element.type, element.normalized, layout.getStride(),
-		                              reinterpret_cast<void*>(offset)); // NOLINT(performance-no-int-to-ptr)
+		glEnableVertexAttribArray(i);
+		glVertexAttribPointer(i, element.count, element.type, element.normalized,
+		                      layout.stride(), offset);
 
 		offset += element.count * element.size();
 	}
 }
 
-void VertexArray::bind() const {
-	if (m_id != boundId) {
-		glCall<glBindVertexArray>(m_id);
-		boundId = m_id;
+void VertexArray::Bind() const {
+	if (id_ != bound_id_) {
+		glBindVertexArray(id_);
+		bound_id_ = id_;
 	}
 }
 
-void VertexArray::unbind() {
-	if (boundId != 0) {
-		glCall<glBindVertexArray>(0);
-		boundId = 0;
+void VertexArray::Unbind() {
+	if (bound_id_ != 0) {
+		glBindVertexArray(0);
+		bound_id_ = 0;
 	}
 }

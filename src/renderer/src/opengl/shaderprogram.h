@@ -1,20 +1,17 @@
 #pragma once
 
-#include <string>
+#include <glad/glad.h>
+
 #include <filesystem>
-
-#include <glbinding/gl/enum.h>
-#include <glbinding/gl/types.h>
-#include <opengllog.h>
 #include <glm/gtc/matrix_transform.hpp>
+#include <string>
 
-class ShaderProgram
-{
-public:
+class ShaderProgram {
+ public:
 	using Path = std::filesystem::path;
-	ShaderProgram(const Path& vertexShader, const Path& fragmentShader);
-	ShaderProgram(ShaderProgram&& other) noexcept ;
-	ShaderProgram& operator=(ShaderProgram&& other) noexcept ;
+	ShaderProgram(const Path& vertex_shader, const Path& fragment_shader);
+	ShaderProgram(ShaderProgram&& other) noexcept;
+	ShaderProgram& operator=(ShaderProgram&& other) noexcept;
 
 	ShaderProgram() = delete;
 	ShaderProgram(const ShaderProgram&) = delete;
@@ -22,26 +19,25 @@ public:
 
 	~ShaderProgram();
 
-	[[nodiscard]] bool isCompiled() const noexcept { return m_isCompiled; }
-	inline void use() const {
-		if (m_id != usingId) {
-			glCall<gl::glUseProgram>(m_id);
-			usingId = m_id;
+	inline void Use() const {
+		if (id_ != using_id_) {
+			glUseProgram(id_);
+			using_id_ = id_;
 		}
 	}
+	[[nodiscard]] bool isCompiled() const noexcept { return is_compiled_; }
 
-	[[nodiscard]] gl::GLint getUniformLocation(const std::string& name) const;
+	void SetInt(const std::string& name, int32_t value) const;
+	void SetFloat(const std::string& name, float value) const;
+	void SetMat4(const std::string& name, const glm::mat4& value) const;
+	void SetVec3(const std::string& name, const glm::vec3& value) const;
 
-	void setInt(const std::string& name, gl::GLint value) const;
-	void setFloat(const std::string& name, gl::GLfloat value) const;
-	void setMat4(const std::string& name, const glm::mat4& value) const;
-	void setVec3(const std::string& name, const glm::vec3& value) const;
+ private:
+	[[nodiscard]] int32_t getUniformLocation(const std::string& name) const;
+	static bool createShader(const std::string& source, GLenum shader_type,
+	                         uint32_t& shader_id);
 
-private:
-	bool m_isCompiled = false;
-	gl::GLuint m_id = 0;
-
-	static gl::GLuint usingId;
-
-	static bool _createShader(const std::string& source, gl::GLenum shaderType, gl::GLuint& shaderId);
+	bool is_compiled_ = false;
+	uint32_t id_ = 0;
+	static uint32_t using_id_;
 };

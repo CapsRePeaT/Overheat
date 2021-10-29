@@ -1,15 +1,22 @@
 #pragma once
 
-#include <glbinding/gl/enum.h>
-#include <glbinding/gl/types.h>
+#include <glad/glad.h>
 
 #include <vector>
 
-class VertexBufferLayout
-{
-public:
+class VertexBufferLayout {
+ public:
 	struct VertexBufferElement;
 	using VertexBufferElements = std::vector<VertexBufferElement>;
+
+	struct VertexBufferElement  // NOLINT(cppcoreguidelines-avoid-magic-numbers)
+	{
+		int count;
+		GLenum type;
+		GLboolean normalized;
+
+		[[nodiscard]] unsigned int size() const;
+	};
 
 	VertexBufferLayout() = default;
 	~VertexBufferLayout() = default;
@@ -20,35 +27,28 @@ public:
 	VertexBufferLayout(const VertexBufferLayout&) = delete;
 	VertexBufferLayout& operator=(const VertexBufferLayout&) = delete;
 
-	template<typename T>
-	void push(unsigned int count) {
-		m_elements.push_back({count, _glTypeToEnum<T>(), sizeof(T) == 1});
-		m_stride += sizeof(T) * count;
+	template <typename T>
+	void Push(unsigned int count) {
+		elements_.push_back({count, TypeToGlEnum<T>(), sizeof(T) == 1});
+		stride_ += sizeof(T) * count;
+	}
+	[[nodiscard]] inline int32_t stride() const { return stride_; }
+
+	[[nodiscard]] inline const VertexBufferElements& elements() const {
+		return elements_;
 	}
 
-	[[nodiscard]] inline size_t getStride() const { return m_stride; }
-	[[nodiscard]] inline const VertexBufferElements& getElements() const { return m_elements; }
-
-
-	struct alignas(16) VertexBufferElement // NOLINT(cppcoreguidelines-avoid-magic-numbers)
-	{
-		unsigned int count;
-		gl::GLenum type;
-		gl::GLboolean normalized;
-
-		[[nodiscard]] unsigned int size() const;
-	};
-private:
-	size_t m_stride = 0;
-	VertexBufferElements m_elements;
-
-	template<typename T>
-	static constexpr gl::GLenum _glTypeToEnum() {
-		if constexpr(std::is_same_v<T, gl::GLfloat>)
-			return gl::GL_FLOAT;
-		else if constexpr(std::is_same_v<T, gl::GLuint>)
-			return gl::GL_UNSIGNED_INT;
-		else if constexpr(std::is_same_v<T, gl::GLbyte>)
-			return gl::GL_UNSIGNED_BYTE;
+ private:
+	template <typename T>
+	static constexpr GLenum TypeToGlEnum() {
+		if constexpr (std::is_same_v<T, float>)
+			return GL_FLOAT;
+		else if constexpr (std::is_same_v<T, uint32_t>)
+			return GL_UNSIGNED_INT;
+		else if constexpr (std::is_same_v<T, int8_t>)
+			return GL_BYTE;
 	}
+
+	int32_t stride_ = 0;
+	VertexBufferElements elements_;
 };

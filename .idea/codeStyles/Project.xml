@@ -19,6 +19,11 @@
       <option name="HEADER_GUARD_STYLE_PATTERN" value="${PROJECT_NAME}_${PROJECT_REL_PATH}_${FILE_NAME}_${EXT}_" />
     </Objective-C>
     <Objective-C-extensions>
+      <extensions>
+        <pair source="cpp" header="h" fileNamingConvention="SNAKE_CASE" />
+        <pair source="c" header="h" fileNamingConvention="NONE" />
+        <pair source="cu" header="cuh" fileNamingConvention="NONE" />
+      </extensions>
       <rules>
         <rule entity="MACRO" visibility="ANY" specifier="ANY" prefix="" style="SCREAMING_SNAKE_CASE" suffix="" />
         <rule entity="NAMESPACE" visibility="ANY" specifier="ANY" prefix="" style="SNAKE_CASE" suffix="" />
@@ -29,11 +34,17 @@
         <rule entity="GLOBAL_FUNCTION,CLASS_MEMBER_FUNCTION,STRUCT_MEMBER_FUNCTION" visibility="ANY" specifier="ANY" prefix="" style="PASCAL_CASE" suffix="" />
         <rule entity="PARAMETER,LOCAL_VARIABLE" visibility="ANY" specifier="ANY" prefix="" style="SNAKE_CASE" suffix="" />
         <rule entity="GLOBAL_VARIABLE,LOCAL_VARIABLE" visibility="ANY" specifier="CONST" prefix="k" style="PASCAL_CASE" suffix="" />
+        <rule entity="CLASS_MEMBER_FUNCTION" visibility="ANY" specifier="ANY" prefix="" style="CAMEL_CASE" suffix="" />
       </rules>
     </Objective-C-extensions>
     <clangFormatSettings>
       <option name="ENABLED" value="true" />
     </clangFormatSettings>
+    <codeStyleSettings language="GLSL">
+      <indentOptions>
+        <option name="USE_TAB_CHARACTER" value="true" />
+      </indentOptions>
+    </codeStyleSettings>
     <codeStyleSettings language="ObjectiveC">
       <option name="KEEP_BLANK_LINES_IN_DECLARATIONS" value="1" />
       <option name="KEEP_BLANK_LINES_IN_CODE" value="1" />

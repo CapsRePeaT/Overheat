@@ -1,16 +1,19 @@
-#pragma once
+#ifndef OVERHEAT_SRC_RENDERER_SRC_OPENGL_INDEXBUFFER_H_
+#define OVERHEAT_SRC_RENDERER_SRC_OPENGL_INDEXBUFFER_H_
 
-#include <glbinding/gl/types.h>
+#include <glad/glad.h>
 
-class IndexBuffer
-{
-public:
-	IndexBuffer(const gl::GLuint* data, size_t count);
+#include <array>
+#include <cstddef>
+
+class IndexBuffer {
+ public:
+	IndexBuffer(const uint32_t* data, size_t count);
+	template <size_t size>
+	explicit IndexBuffer(const std::array<uint32_t, size>& data)
+			: IndexBuffer(data.data(), size) {}
+
 	~IndexBuffer();
-
-	template<size_t size>
-	explicit IndexBuffer(const std::array<gl::GLuint, size>& data)
-			: IndexBuffer(data.data(), size) { }
 
 	IndexBuffer(IndexBuffer&& other) noexcept;
 	IndexBuffer& operator=(IndexBuffer&& other) noexcept;
@@ -19,11 +22,14 @@ public:
 	IndexBuffer(const IndexBuffer&) = delete;
 	IndexBuffer& operator=(const IndexBuffer&) = delete;
 
-	void bind() const;
-	static void unbind();
+	void Bind() const;
+	static void Unbind();
 
-	[[nodiscard]] gl::GLuint getCount() const { return m_count; };
-private:
-	gl::GLuint m_id = 0;
-	gl::GLuint m_count = 0;
+	[[nodiscard]] uint32_t elementsCount() const { return count_; };
+
+ private:
+	uint32_t id_ = 0;
+	uint32_t count_ = 0;
 };
+
+#endif  // OVERHEAT_SRC_RENDERER_SRC_OPENGL_INDEXBUFFER_H_

@@ -1,16 +1,11 @@
 #include "vertexbufferlayout.h"
 
-#include <opengllog.h>
-
 unsigned int VertexBufferLayout::VertexBufferElement::size() const {
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wswitch"
 	switch (type) {
-		case gl::GL_FLOAT:          return sizeof(gl::GLfloat);
-		case gl::GL_UNSIGNED_INT:   return sizeof(gl::GLuint);
-		case gl::GL_UNSIGNED_BYTE:  return sizeof(gl::GLbyte);
+		case GL_FLOAT:          return sizeof(float);
+		case GL_UNSIGNED_INT:   return sizeof(uint32_t);
+		case GL_BYTE:  return sizeof(int8_t);
 	}
-	OGL_ASSERT(false);
+
 	return 0;
-#pragma clang diagnostic pop
 }
