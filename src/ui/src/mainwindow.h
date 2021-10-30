@@ -3,6 +3,7 @@
 
 #include <QMainWindow>
 #include <QMdiArea>
+
 #include "renderer_widget.h"
 #include "visualisation_options.h"
 
@@ -11,30 +12,25 @@ class MainWindow;
 }
 
 class MainWindow : public QMainWindow {
-  Q_OBJECT
+	Q_OBJECT
  public:
-  static MainWindow& instance() { static MainWindow instance; return instance; }
-  void LoadFile(const std::string& file_name);
-  ~MainWindow();
+	explicit MainWindow(QWidget* parent = nullptr);
+	void LoadFile(const std::string& file_name);
+	~MainWindow();
  signals:
-    //todo
+	// todo
  public slots:
-  void OnLoadFileBtnPressed();
+	void OnLoadFileBtnPressed();
 
-// private slots:
-//  void OnActionAddWindowTriggered();
+	// private slots:
+	//  void OnActionAddWindowTriggered();
 
  private:
-  Core& core() { return Core::instance(); }
-  explicit MainWindow(QWidget* parent = nullptr);
-  std::unique_ptr<RendererWidget> render_widget_;
-  std::unique_ptr<VisualisationOptionsWidget> visualisation_options_;
-  Ui::MainWindow* ui_;
-  QMdiArea* mdi_area_;
+	Core& core() { return Core::instance(); }
+	RendererWidget* render_widget_ = nullptr;
+	VisualisationOptionsWidget* visualisation_options_ = nullptr;
+	Ui::MainWindow* ui_;
+	QMdiArea* mdi_area_;
 };
 
-
-
-
-
-#endif // MAINWINDOW_H
+#endif  // MAINWINDOW_H

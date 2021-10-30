@@ -1,6 +1,6 @@
 set(MODULE_NAME renderer)
 set(SOURCES
-    src/OverheatGLRenderer.cpp
+    src/gl_renderer.cpp
     src/opengl/indexbuffer.cpp
     src/opengl/vertexarray.cpp
     src/opengl/vertexbuffer.cpp

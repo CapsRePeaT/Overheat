@@ -7,7 +7,6 @@ set(SOURCES
     src/visualisation_options.ui
     src/renderer_widget.h
     src/renderer_widget.cpp
-    src/renderer_widget.ui
 )
 
 option(USE_QT "Try to find and link qt libraries to main module" ON)
