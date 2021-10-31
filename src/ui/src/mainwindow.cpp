@@ -34,3 +34,5 @@ void MainWindow::OnLoadFileBtnPressed() {
 			this, tr("Open File"), QDir::currentPath(), tr("geom (*.cpp)"));
 	LoadFile(file_name.toStdString());
 }
+
+

@@ -2,13 +2,12 @@
 
 #include <glad/glad.h>
 
-#include <filesystem>
 #include <glm/gtc/matrix_transform.hpp>
 #include <string>
 
 class ShaderProgram {
  public:
-	using Path = std::filesystem::path;
+  using Path = std::string;
 	ShaderProgram(const Path& vertex_shader, const Path& fragment_shader);
 	ShaderProgram(ShaderProgram&& other) noexcept;
 	ShaderProgram& operator=(ShaderProgram&& other) noexcept;
