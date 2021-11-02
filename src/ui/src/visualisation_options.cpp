@@ -3,7 +3,7 @@
 #include "ui_visualisation_options.h"
 
 VisualisationOptionsWidget::VisualisationOptionsWidget(QWidget* parent)
-		: QWidget(parent), ui_(new Ui::VisualisationOptions) {
+    : QDockWidget(parent), ui_(new Ui::VisualisationOptions) {
 	ui_->setupUi(this);
 }
 

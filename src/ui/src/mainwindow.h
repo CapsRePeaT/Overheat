@@ -3,9 +3,12 @@
 
 #include <QMainWindow>
 #include <QMdiArea>
+#include <QDockWidget>
 
 #include "renderer_widget.h"
 #include "visualisation_options.h"
+#include "metadata_widget.h"
+#include "shape_list_widget.h"
 
 namespace Ui {
 class MainWindow;
@@ -29,8 +32,10 @@ class MainWindow : public QMainWindow {
 	Core& core() { return Core::instance(); }
 	RendererWidget* render_widget_ = nullptr;
 	VisualisationOptionsWidget* visualisation_options_ = nullptr;
+  MetadataWidget* metadata_widget_ = nullptr;
+  ShapeListWidget* shape_list_widget_ = nullptr;
 	Ui::MainWindow* ui_;
-	QMdiArea* mdi_area_;
+  QMdiArea* mdi_area_;
 };
 
 #endif  // MAINWINDOW_H

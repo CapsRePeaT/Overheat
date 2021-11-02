@@ -1,8 +1,7 @@
 #ifndef VISUALISATION_OPTIONS_H
 #define VISUALISATION_OPTIONS_H
 
-#include <QWidget>
-
+#include <QDockWidget>
 #include "common.h"
 
 namespace Ui {
@@ -16,7 +15,7 @@ struct VisualisationOptions {
 // options should be saved between sessions
 // should we have one object with list of options? It will lower number of
 // signals and slots
-class VisualisationOptionsWidget : public QWidget {
+class VisualisationOptionsWidget : public QDockWidget {
 	Q_OBJECT
 
  public:
