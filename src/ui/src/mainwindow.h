@@ -35,7 +35,6 @@ class MainWindow : public QMainWindow {
   MetadataWidget* metadata_widget_ = nullptr;
   ShapeListWidget* shape_list_widget_ = nullptr;
 	Ui::MainWindow* ui_;
-  QMdiArea* mdi_area_;
 };
 
 #endif  // MAINWINDOW_H
