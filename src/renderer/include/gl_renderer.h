@@ -1,18 +1,26 @@
 #pragma once
+
+#include "core.h"
 #include "i_renderer.h"
-
-#include <glm/glm.hpp>
-
 
 class GLRenderer : public IRenderer {
  public:
+	GLRenderer();
 	~GLRenderer() override;
-	void Initialize(int w = 0, int h = 0) override;
-	void SetDrawMode(const DrawMode mode) override;
+	void Initialize(int w, int h) override;
+	void SetColorRange(Color min, Color max) override;
+	void SetTemperatureRange(float min, float max) override;
 	void RenderFrame() override;
 	void Resize(int w, int h) override;
-	void Clear() override;
+	void ClearResources() override;
+
+ protected:
+	void AddShape(const std::shared_ptr<BasicShape>& shape) override;
 
  private:
-
+	// Member hiding because GLRenderer is public for other modules
+	struct GLRendererData;
+	// For calling in destructor
+	void ClearResourcesImpl();
+	std::unique_ptr<GLRendererData> data_;
 };

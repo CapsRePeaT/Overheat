@@ -16,9 +16,8 @@ class RendererWidget : public QOpenGLWidget {
 	~RendererWidget() override;
 
 	void RenderShapes(const Core::Shapes& shapes) {
-		// TODO: pass shapes to renderer
 		assert(!shapes.empty() && "no shapes received");
-		std::cout << "first shape id:" << shapes[0]->id() << std::endl;
+		renderer_->RenderShapes(shapes);
 	};
 	void UpdateVisualisationOptions(
 			const VisualisationOptions& visualisation_options);
