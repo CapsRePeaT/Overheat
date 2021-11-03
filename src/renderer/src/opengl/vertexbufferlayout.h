@@ -11,7 +11,7 @@ class VertexBufferLayout {
 
 	struct VertexBufferElement  // NOLINT(cppcoreguidelines-avoid-magic-numbers)
 	{
-		int count;
+		unsigned count;
 		GLenum type;
 		GLboolean normalized;
 

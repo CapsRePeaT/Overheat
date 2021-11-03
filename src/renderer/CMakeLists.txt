@@ -11,6 +11,7 @@ set(SOURCES
 add_library(${MODULE_NAME} STATIC ${SOURCES})
 
 target_include_directories(${MODULE_NAME} PUBLIC include)
+target_include_directories(${MODULE_NAME} PRIVATE src)
 
 
 add_executable(renderer-test tests/test_main.cpp)

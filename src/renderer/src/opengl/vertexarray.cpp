@@ -27,10 +27,11 @@ VertexArray& VertexArray::operator=(VertexArray&& other) noexcept {
 	return *this;
 }
 
-void VertexArray::AddBuffer(const VertexBuffer& vb,
+void VertexArray::AddBuffer(
+		const std::shared_ptr<VertexBuffer>& vb,
                             const VertexBufferLayout& layout) {
 	Bind();
-	vb.Bind();
+	vb->Bind();
 
 	char* offset = nullptr; // char* is compromise between conversion to void* and pointer arithmetic
 	const auto& elements = layout.elements();
@@ -43,6 +44,8 @@ void VertexArray::AddBuffer(const VertexBuffer& vb,
 
 		offset += element.count * element.size();
 	}
+
+	vbos_.emplace_back(vb);
 }
 
 void VertexArray::Bind() const {
