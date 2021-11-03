@@ -12,6 +12,7 @@ class GeomStorage {
   GeomStorage() = default;
   void AddShape(ShapePtr shape) { shapes_.emplace_back(std::move(shape)); }
   const Shapes& get_all_shapes() { return shapes_; }
+  void Clear() { shapes_.clear(); }
  private:
   Shapes shapes_;
 };

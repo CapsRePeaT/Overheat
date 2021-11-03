@@ -20,17 +20,26 @@ RendererWidget::RendererWidget(QWidget* parent)
 }
 
 RendererWidget::~RendererWidget() {
-	renderer_->Clear();
+	makeCurrent();
+	renderer_.reset();
+	doneCurrent();
 	spdlog::debug("Render widget destroyed");
 }
 
 void RendererWidget::initializeGL() {
+	if (!renderer_) renderer_ = std::make_unique<GLRenderer>();
 	renderer_->Initialize(width(), height());
 }
 
-void RendererWidget::paintGL() { renderer_->RenderFrame(); }
+void RendererWidget::paintGL() {
+	renderer_->RenderFrame();
+	update();
+}
 
-void RendererWidget::resizeGL(int w, int h) { renderer_->Resize(w, h); }
+void RendererWidget::resizeGL(int w, int h) {
+	renderer_->Resize(w, h);
+	update();
+}
 
 // TODO: maybe need to delegate tweaks to renderer
 QSurfaceFormat defaultFormat() {

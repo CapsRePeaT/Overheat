@@ -24,10 +24,19 @@ class IReader {
 // TODO 2 add proper logging
 class DummyReader : IReader {
  public:
-  bool LoadGeometry(const std::string& filename, GeomStorage<BasicShape>& geom_storage) final {
-    std::cout << "file to load shapes from:" << filename << std::endl;
-    geom_storage.AddShape(std::make_shared<BasicShape>(42));
-    return true;
+  bool LoadGeometry(const std::string& filename,
+                    GeomStorage<BasicShape>& geom_storage) final {
+		std::cout << "file to load shapes from:" << filename << std::endl;
+    geom_storage.AddShape(std::make_shared<BasicShape>(
+      42, Box3D({{0.0f, 10.0f}, {0.0f, 10.0f}, {0.0f, 0.2f}})
+				));
+		geom_storage.AddShape(std::make_shared<BasicShape>(
+				43, Box3D({{-15.0f, -8.0f}, {-9.0f, 1.0f}, {0.0f, 0.2f}})
+		));
+		geom_storage.AddShape(std::make_shared<BasicShape>(
+				44, Box3D({{-3.0f, 8.0f}, {-15.0f, -7.0f}, {0.0f, 0.2f}})
+		));
+		return true;
   }
   // Сan we use std::ostream instead?
   bool LoadHeatmap(const std::string& filename, HeatmapStorage& heatmap_storage) final {

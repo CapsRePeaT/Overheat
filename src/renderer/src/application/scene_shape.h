@@ -1,0 +1,35 @@
+#pragma once
+
+#include <glm/glm.hpp>
+#include <glm/gtc/quaternion.hpp>
+#include <memory>
+
+// TODO: make shapes public
+#include "../../../core/src/shapes.h"
+#include "opengl/vertexarray.h"
+
+class SceneShape {
+ public:
+	SceneShape(const BasicShape& shape);
+
+	void Rotate(float angle, glm::vec3 axis) {
+		rotation_ = glm::rotate(rotation_, angle, axis);
+	}
+
+	[[nodiscard]] glm::mat4 transform() const {
+		glm::mat4 rotation = glm::mat4_cast(rotation_);
+
+		return glm::translate(glm::mat4(1.0f), position_) * rotation *
+		       glm::scale(glm::mat4(1.0f), scale_);
+	}
+	[[nodiscard]] const VertexArray& vertexArray() const {
+		return *vao_;
+	}
+
+ private:
+	size_t id_;
+	std::shared_ptr<VertexArray> vao_;
+	glm::vec3 position_ = { 0.0f, 0.0f, 0.0f };
+	glm::vec3 scale_ = { 1.0f, 1.0f, 1.0f };
+	glm::quat rotation_ = glm::quat({ 0.0f, 0.0f, 0.0f });
+};

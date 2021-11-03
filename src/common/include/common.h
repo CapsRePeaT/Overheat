@@ -12,13 +12,20 @@ enum Axis {X,Y,Z};
 template<int dim>
 class Box {
  public:
+  using Values = std::array<std::pair<float,float>, dim>;
   bool undefined() const { return coordinates_ == DefaultCoordinates(); }
   Box() : coordinates_(DefaultCoordinates()) {}
 // TODO: make handy realisation with coords
-//  Box(const std::array<std::pair<float,float>, dim>& coordinates)
-//    : coordinates_(coordinates) {}
+  Box(Values values)
+    : coordinates_(std::move(values)) {}
+	Box(typename Values::value_type (&&values)[dim])
+			: coordinates_(std::to_array(values)) {}
+	[[nodiscard]] const Values& values()
+      const {
+    return coordinates_;
+  }
+
  private:
-  using Values = std::array<std::pair<float,float>, dim>;
   static constexpr Values DefaultCoordinates();
   Values coordinates_;
 };
