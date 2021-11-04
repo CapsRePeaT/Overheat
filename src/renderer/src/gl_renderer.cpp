@@ -82,3 +82,4 @@ void GLRenderer::SetColorRange(IRenderer::Color min, IRenderer::Color max) {
 	data_->heatmap_material->SetColorRange({min[0], min[1], min[2]},
 	                                       {max[0], max[1], max[2]});
 }
+void GLRenderer::ClearScene() { data_->scene_shapes.clear(); }

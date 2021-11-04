@@ -21,6 +21,7 @@ class IRenderer {
 	virtual void RenderShapes(const Core::Shapes& shapes) {
 		for (const auto& shape : shapes) AddShape(shape);
 	}
+	virtual void ClearScene() = 0;
 
 	virtual void SetTemperatureRange(float min, float max) = 0;
 	inline void SetTemperatureRange(const TemperatureRange& temps) {

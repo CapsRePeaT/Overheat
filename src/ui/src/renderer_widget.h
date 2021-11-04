@@ -17,7 +17,10 @@ class RendererWidget : public QOpenGLWidget {
 
 	void RenderShapes(const Core::Shapes& shapes) {
 		assert(!shapes.empty() && "no shapes received");
+		makeCurrent();
+		renderer_->ClearScene();
 		renderer_->RenderShapes(shapes);
+		doneCurrent();
 	};
 	void UpdateVisualisationOptions(
 			const VisualisationOptions& visualisation_options);

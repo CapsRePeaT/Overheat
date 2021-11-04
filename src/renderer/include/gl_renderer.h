@@ -13,6 +13,7 @@ class GLRenderer : public IRenderer {
 	void RenderFrame() override;
 	void Resize(int w, int h) override;
 	void ClearResources() override;
+	void ClearScene() override;
 
  protected:
 	void AddShape(const std::shared_ptr<BasicShape>& shape) override;
