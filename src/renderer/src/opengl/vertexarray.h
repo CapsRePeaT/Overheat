@@ -21,12 +21,12 @@ class VertexArray {
 	VertexArray(const VertexArray&) = delete;
 	VertexArray& operator=(const VertexArray&) = delete;
 
-	void AddBuffer(const std::shared_ptr<VertexBuffer>& vb,
+	void AddBuffer(std::unique_ptr<VertexBuffer>&& vb,
 	               const VertexBufferLayout& layout);
-	void SetIndexBuffer(const std::shared_ptr<IndexBuffer>& ib) {
+	void SetIndexBuffer(std::unique_ptr<IndexBuffer>&& ib) {
 		Bind();
 		ib->Bind();
-		ib_ = ib;
+		ib_ = std::move(ib);
 	}
 
 	const IndexBuffer& indexBuffer() const { return *ib_; }
@@ -38,6 +38,6 @@ class VertexArray {
 	uint32_t id_;
 	static uint32_t bound_id_;
 
-	std::vector<std::shared_ptr<VertexBuffer>> vbos_;
-	std::shared_ptr<IndexBuffer> ib_;
+	std::vector<std::unique_ptr<VertexBuffer>> vbos_;
+	std::unique_ptr<IndexBuffer> ib_;
 };

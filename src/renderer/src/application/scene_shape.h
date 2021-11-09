@@ -28,7 +28,7 @@ class SceneShape {
 
  private:
 	size_t id_;
-	std::shared_ptr<VertexArray> vao_;
+	std::unique_ptr<VertexArray> vao_;
 	glm::vec3 position_ = { 0.0f, 0.0f, 0.0f };
 	glm::vec3 scale_ = { 1.0f, 1.0f, 1.0f };
 	glm::quat rotation_ = glm::quat({ 0.0f, 0.0f, 0.0f });

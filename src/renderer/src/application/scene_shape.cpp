@@ -57,15 +57,15 @@ SceneShape::SceneShape(const BasicShape& shape) : id_(shape.id()) {
 			6, 5, 7, 7, 5, 4   // face 6-7-4-5
 	};
 
-	auto vbo = std::make_shared<VertexBuffer>(static_cast<void*>(vertices.data()),
+	auto vbo = std::make_unique<VertexBuffer>(static_cast<void*>(vertices.data()),
 	                                          sizeof(Vertex) * 8);
 	VertexBufferLayout layout;
 	layout.Push<float>(3);
 	layout.Push<float>(2);
 
-	auto ibo = std::make_shared<IndexBuffer>(raw_ibo);
+	auto ibo = std::make_unique<IndexBuffer>(raw_ibo);
 
-	vao_ = std::make_shared<VertexArray>();
-	vao_->AddBuffer(vbo, layout);
-	vao_->SetIndexBuffer(ibo);
+	vao_ = std::make_unique<VertexArray>();
+	vao_->AddBuffer(std::move(vbo), layout);
+	vao_->SetIndexBuffer(std::move(ibo));
 }
