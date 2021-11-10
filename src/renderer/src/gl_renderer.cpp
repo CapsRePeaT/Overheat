@@ -8,8 +8,10 @@
 
 #include "application/heatmap_material.h"
 #include "application/scene_shape.h"
-#include "renderer/renderer_api.h"
+
+// TODO: maybe rename inner *renderer* folder to *primitives* or smth similar
 #include "renderer/orthographic_camera.h"
+#include "renderer/renderer_api.h"
 
 struct GLRenderer::GLRendererData {
 	std::unique_ptr<HeatmapMaterial> heatmap_material;
@@ -22,14 +24,16 @@ GLRenderer::GLRenderer() : data_(std::make_unique<GLRendererData>()) {}
 GLRenderer::~GLRenderer() { ClearResourcesImpl(); }
 
 void GLRenderer::Initialize(int w, int h) {
+	// OpenGL initialization
 	if (!gladLoadGL()) spdlog::error("Failed to initialize opengl functions");
-
 	spdlog::debug("GLAD initialized");
-	auto ogl = RendererAPI::instance();
-	ogl.Init();
-	ogl.SetViewPort(0, 0, w, h);
-	ogl.SetClearColor({0.49, 0.49, 0.49, 1});
 
+	auto api = RendererAPI::instance();
+	api->Init();
+	api->SetViewPort(0, 0, w, h);
+	api->SetClearColor({0.49, 0.49, 0.49, 1});
+
+	// Application initialization
 	float aspect_ratio = static_cast<float>(w) / static_cast<float>(h);
 	float zoom = 15.0f;
 	spdlog::debug(
@@ -57,17 +61,17 @@ void GLRenderer::RenderFrame() {
 		data_->scene_shapes[0]->Rotate(kRotSpeed, rot_axis);
 		rot_axis = glm::rotateZ<float>(rot_axis, kRotSpeed * 0.4);
 	}
-
-	RendererAPI::instance().Clear();
+	auto api = RendererAPI::instance();
+	api->Clear();
 	for (auto& shape : data_->scene_shapes) {
 		data_->heatmap_material->Use(shape->transform(),
 		                             data_->camera->viewProjectionMatrix());
-		RendererAPI::instance().DrawIndexed(shape->vertexArray());
+		api->DrawIndexed(shape->vertexArray());
 	}
 }
 
 void GLRenderer::Resize(int w, int h) {
-	RendererAPI::instance().SetViewPort(0, 0, w, h);
+	RendererAPI::instance()->SetViewPort(0, 0, w, h);
 	data_->camera->SetAspectRatio(static_cast<float>(w) / static_cast<float>(h));
 }
 

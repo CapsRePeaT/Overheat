@@ -3,6 +3,7 @@
 #include "common.h"
 #include "core.h"
 
+// TODO: rename to smth as Scene
 class IRenderer {
  public:
 	using TemperatureRange = std::pair<float, float>;
