@@ -56,8 +56,7 @@ SceneShape::SceneShape(const BasicShape& shape) : id_(shape.id()) {
 			6, 5, 7, 7, 5, 4   // face 6-7-4-5
 	};
 
-	auto vbo = std::make_unique<VertexBuffer>(static_cast<void*>(vertices.data()),
-	                                          sizeof(Vertex) * 8);
+	auto vbo = VertexBuffer::Create(vertices);
 	VertexBufferLayout layout;
 	layout.Push<float>(3);
 	layout.Push<float>(2);

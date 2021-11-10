@@ -1,45 +1,28 @@
 #pragma once
 
-#include <glad/glad.h>
-
 #include <array>
 #include <cstddef>
-#include <type_traits>
+#include <memory>
 
 class VertexBuffer {
  public:
-	enum class BufferType : GLenum {
-		STATIC = GL_STATIC_DRAW,
-		DYNAMIC = GL_DYNAMIC_DRAW,
-	};
+	virtual ~VertexBuffer() = default;
+	virtual void Bind() const = 0;
+	virtual void Unbind() const = 0;
 
-	VertexBuffer(const void* data, size_t size,
-	             BufferType buffer_type = BufferType::STATIC);
-	~VertexBuffer();
-
+	virtual void SetData(size_t size, const void* data) = 0;
 	template <typename T, size_t size>
-	explicit VertexBuffer(const std::array<T, size>& data,
-	                      BufferType buffer_type = BufferType::STATIC)
-			: VertexBuffer(data.data(), size * sizeof(T), buffer_type) {}
-
-	VertexBuffer(VertexBuffer&& other) noexcept;
-	VertexBuffer& operator=(VertexBuffer&& other) noexcept;
-
-	VertexBuffer() = delete;
-	VertexBuffer(const VertexBuffer&) = delete;
-	VertexBuffer& operator=(const VertexBuffer&) = delete;
-
-	void BufferSubData(GLsizeiptr size, const void* data, GLintptr offset = 0);
-	template <typename T, size_t size>
-	inline void BufferSubData(const std::array<T, size>& data,
-	                          GLintptr offset = 0) {
-		BufferSubData(size * sizeof(T), data.data(), offset);
+	inline void SetData(const std::array<T, size>& data) {
+		SetData(size * sizeof(T), data.data());
 	}
 
-	void Bind() const;
-	static void Unbind();
-
- private:
-	uint32_t id_ = 0;
-	static uint32_t bound_id_;
+	// Initialization of dynamic buffer
+	static std::unique_ptr<VertexBuffer> Create(size_t size);
+	// Initialization of static buffer
+	static std::unique_ptr<VertexBuffer> Create(size_t size, const void* data);
+	// Initialization of static buffer
+	template <typename T, size_t size>
+	static std::unique_ptr<VertexBuffer> Create(const std::array<T, size>& data) {
+		return Create(size * sizeof(T), data.data());
+	}
 };
