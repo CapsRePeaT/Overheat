@@ -1,7 +1,5 @@
 #pragma once
 
-#include <functional>
-
 #include "common.h"
 #include "core.h"
 

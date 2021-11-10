@@ -1,13 +1,5 @@
 set(MODULE_NAME core)
-set(SOURCES
-    src/core.cpp
-    src/databases.h
-    src/databases.cpp
-    src/shapes.h
-    src/shapes.cpp
-    src/heatmap.h
-    src/heatmap.cpp
-)
+file(GLOB_RECURSE SOURCES CONFIGURE_DEPENDS *.cpp *.h)
 
 add_library(${MODULE_NAME} STATIC ${SOURCES})
 

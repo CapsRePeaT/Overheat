@@ -6,7 +6,7 @@
 
 // TODO: make shapes public
 #include "../../../core/src/shapes.h"
-#include "opengl/vertexarray.h"
+#include "renderer/vertexarray.h"
 
 class SceneShape {
  public:

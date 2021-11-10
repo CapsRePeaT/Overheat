@@ -8,7 +8,7 @@
 
 #include "application/heatmap_material.h"
 #include "application/scene_shape.h"
-#include "opengl/renderer_api.h"
+#include "renderer/renderer_api.h"
 #include "renderer/orthographic_camera.h"
 
 struct GLRenderer::GLRendererData {

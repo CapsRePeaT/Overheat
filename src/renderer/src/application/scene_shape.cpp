@@ -1,8 +1,7 @@
 #include "scene_shape.h"
 
-#include "opengl/vertexarray.h"
-#include "opengl/vertexbuffer.h"
-#include "opengl/vertexbufferlayout.h"
+#include "renderer/vertexbuffer.h"
+#include "renderer/vertexbufferlayout.h"
 
 // TODO: handle vertices better
 struct Vertex {

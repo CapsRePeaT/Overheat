@@ -1,7 +1,5 @@
 set(MODULE_NAME readers)
-set(SOURCES
-    src/dummy.cpp
-)
+file(GLOB_RECURSE SOURCES CONFIGURE_DEPENDS *.cpp *.h)
 
 # This library
 add_library(${MODULE_NAME} STATIC ${SOURCES})

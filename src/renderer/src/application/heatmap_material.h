@@ -4,7 +4,7 @@
 #include <memory>
 
 #include "i_renderer.h"
-#include "opengl/shaderprogram.h"
+#include "renderer/shaderprogram.h"
 
 class HeatmapMaterial {
  public:

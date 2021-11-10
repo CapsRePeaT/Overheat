@@ -1,16 +1,5 @@
 set(MODULE_NAME renderer)
-set(SOURCES
-    src/gl_renderer.cpp
-    src/opengl/indexbuffer.cpp
-    src/opengl/vertexarray.cpp
-    src/opengl/vertexbuffer.cpp
-    src/opengl/shaderprogram.cpp
-    src/opengl/vertexbufferlayout.cpp
-    src/opengl/renderer_api.cpp
-    src/application/scene_shape.cpp
-    src/application/heatmap_material.cpp
-    src/renderer/orthographic_camera.cpp
-)
+file(GLOB_RECURSE SOURCES CONFIGURE_DEPENDS *.cpp *.h)
 
 add_library(${MODULE_NAME} STATIC ${SOURCES})
 
