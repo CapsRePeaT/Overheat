@@ -6,4 +6,6 @@ add_library(${MODULE_NAME} STATIC ${SOURCES})
 target_include_directories(${MODULE_NAME} PUBLIC include)
 
 target_compile_features(${MODULE_NAME} PUBLIC cxx_std_20)
-target_compile_options(${MODULE_NAME} PUBLIC -Wall -Wextra -Wpedantic -Wno-unused-parameter)
+if (CMAKE_CXX_COMPILER_ID STREQUAL "GNU") 
+    target_compile_options(${MODULE_NAME} PUBLIC -Wall -Wextra -Wpedantic -Wno-unused-parameter -Wno-unused-function)
+endif()

@@ -1,5 +1,7 @@
 #include "scene_shape.h"
 
+#include <memory>
+
 #include "renderer/vertexbuffer.h"
 #include "renderer/vertexbufferlayout.h"
 
@@ -56,14 +58,12 @@ SceneShape::SceneShape(const BasicShape& shape) : id_(shape.id()) {
 			6, 5, 7, 7, 5, 4   // face 6-7-4-5
 	};
 
-	auto vbo = VertexBuffer::Create(vertices);
-	VertexBufferLayout layout;
-	layout.Push<float>(3);
-	layout.Push<float>(2);
+	auto layout = std::make_unique<VertexBufferLayout>();
+	layout->Push<float>(3);
+	layout->Push<float>(2);
+	auto vbo = VertexBuffer::Create(vertices, std::move(layout));
 
-	auto ibo = std::make_unique<IndexBuffer>(raw_ibo);
+	auto ibo = IndexBuffer::Create(raw_ibo);
 
-	vao_ = std::make_unique<VertexArray>();
-	vao_->AddBuffer(std::move(vbo), layout);
-	vao_->SetIndexBuffer(std::move(ibo));
+	vao_ = VertexArray::Create(std::move(vbo), std::move(ibo));
 }

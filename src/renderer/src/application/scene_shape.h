@@ -22,14 +22,12 @@ class SceneShape {
 		return glm::translate(glm::mat4(1.0f), position_) * rotation *
 		       glm::scale(glm::mat4(1.0f), scale_);
 	}
-	[[nodiscard]] const VertexArray& vertexArray() const {
-		return *vao_;
-	}
+	[[nodiscard]] const VertexArray& vertexArray() const { return *vao_; }
 
  private:
 	size_t id_;
 	std::unique_ptr<VertexArray> vao_;
-	glm::vec3 position_ = { 0.0f, 0.0f, 0.0f };
-	glm::vec3 scale_ = { 1.0f, 1.0f, 1.0f };
-	glm::quat rotation_ = glm::quat({ 0.0f, 0.0f, 0.0f });
+	glm::vec3 position_ = {0.0f, 0.0f, 0.0f};
+	glm::vec3 scale_ = {1.0f, 1.0f, 1.0f};
+	glm::quat rotation_ = glm::quat({0.0f, 0.0f, 0.0f});
 };

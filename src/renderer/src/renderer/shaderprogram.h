@@ -3,6 +3,7 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <string>
 
+// TODO: abstract shader and make ShaderLibrary
 class ShaderProgram {
  public:
 	using Path = std::string;

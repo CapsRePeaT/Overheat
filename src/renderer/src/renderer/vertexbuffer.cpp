@@ -15,14 +15,15 @@ std::unique_ptr<VertexBuffer> VertexBuffer::Create(size_t size) {
 	return nullptr;
 }
 
-std::unique_ptr<VertexBuffer> VertexBuffer::Create(size_t size,
-                                                   const void* data) {
+std::unique_ptr<VertexBuffer> VertexBuffer::Create(
+		const void* data, size_t size,
+		std::unique_ptr<VertexBufferLayout>&& layout) {
 	switch (RendererAPI::instance()->api()) {
 		case RendererAPI::API::None:
 			assert(false && "Renderer::API::None is not currently supported");
 			return nullptr;
 		case RendererAPI::API::OpenGL:
-			return std::make_unique<OpenGLVertexBuffer>(size, data);
+			return std::make_unique<OpenGLVertexBuffer>(data, size, std::move(layout));
 	}
 	assert(false);
 	return nullptr;
