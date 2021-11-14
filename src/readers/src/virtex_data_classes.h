@@ -11,11 +11,8 @@ struct HorizontalSize {
 	}
 };
 
-class BaseLayer {
- public:
+struct BaseLayer {
 	virtual std::istream& read(std::istream& in) = 0;
-
- protected:
 	LayerType layer_type_ = LayerType::UNDEFINED;
 	float thermal_conductivity_;
 	float thickness_;
@@ -23,8 +20,7 @@ class BaseLayer {
 	~BaseLayer() = default;
 };
 
-class HPU : public BaseLayer {
- public:
+struct HPU : public BaseLayer {
 	HPU() { layer_type_ = LayerType::HPU; }
 
 	float env_thermal_conductivity;
@@ -36,16 +32,15 @@ class HPU : public BaseLayer {
 	std::istream& read(std::istream& in) override {
 		in >> thickness_ >> thermal_conductivity_ >> env_thermal_conductivity;
 		in >> x1_ >> x2_ >> y1_ >> y2_;
-
 		return in;
 	}
 };
 
-class BS : public BaseLayer {
- public:
+struct BS : public BaseLayer {
 	BS() { layer_type_ = LayerType::BS; }
 	float dist_between_spheres_;
 	struct SpheresHolders {
+    // coordinates of center of initial sphere
 		float x_center;
 		float y_center;
 		int nx;  // num of spheres around X axis
@@ -77,25 +72,22 @@ struct D : public BaseLayer {
 		float magic_number;  // TODO: TBD with Ryabov
 		std::array<float, 4> position;
 	};
-	size_t crystals_num_per_layer;
+	size_t crystals_num_per_layer_;
 	std::vector<Crystal> crystals_;
 
 	std::istream& read(std::istream& in) override {
 		in >> thickness_;
 		in >> thermal_conductivity_;
-		in >> crystals_num_per_layer;
+		in >> crystals_num_per_layer_;
 
-		while (true) {
+		while (!in.eof()) {
 			Crystal crystal;
 			in >> crystal.name >> crystal.power >> crystal.magic_number;
 			in >> crystal.position[0] >> crystal.position[1] >> crystal.position[2] >>
 					crystal.position[3];
-
-			if (in.eof()) break;
 		}
 		return in;
 	}
-
 };
 
 using Layers = std::vector<std::shared_ptr<BaseLayer>>;

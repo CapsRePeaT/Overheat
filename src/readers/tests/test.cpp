@@ -62,6 +62,6 @@ std::string sample = "VIRTEX\n"
 		"&CL NH=30 MH=30 ITERAT=15000 EPS=1.E-6 W=1.99 &END";
 
 TEST(VirtexReader, blablabla) {
-	auto data = Readers::VirtexReader().read(sample);
+	auto data = Readers::read(sample);
 	EXPECT_TRUE(true);
 }

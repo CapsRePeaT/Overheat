@@ -6,9 +6,16 @@
 #include "virtex_data_classes.h"
 
 namespace Readers {
+VirtexData read(const std::string& content);
+
 class VirtexReader : public IReader {
  public:
-	std::unique_ptr<IDataProvider> load(const fs::path& file) override;
-	VirtexData read(const std::string& content);
+	explicit VirtexReader(const fs::path& file) : file_(file) { load(); };
+
+ protected:
+	void load() override;
+
+ private:
+	fs::path file_;
 };
 }  // namespace Readers

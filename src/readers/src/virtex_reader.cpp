@@ -58,18 +58,18 @@ std::shared_ptr<BaseLayer> read_layer(const std::string& layer_tag,
 }  // namespace
 
 namespace Readers {
-std::unique_ptr<IDataProvider> VirtexReader::load(const fs::path& file) {
-	std::ifstream ifs{file};
-	if (ifs.good()) {
-		const auto file_content = stream_to_string(ifs);
-		const auto data = read(file_content);
-		ifs.close();
-		return std::make_unique<VirtexDataProvider>(data);
+void VirtexReader::load() {
+	std::ifstream ifs{file_};
+	if (!ifs.good()) {
+		throw std::runtime_error("Stream state is not good.");
 	}
-	return nullptr;
+	const auto file_content = stream_to_string(ifs);
+	const auto data = read(file_content);
+	ifs.close();
+	provider_ = std::make_unique<VirtexDataProvider>(data);
 }
 
-VirtexData VirtexReader::read(const std::string& content) {
+VirtexData read(const std::string& content) {
 	const auto groups =
 			split(content, std::regex{"^([A-Za-z]\\n[^#]*(?=\\n#))$"});
 
