@@ -12,6 +12,6 @@ class IReader {
 
  protected:
 	virtual void load() = 0;
-	std::unique_ptr<IDataProvider> provider_;
+	std::unique_ptr<IDataProvider> data_provider_;
 	virtual ~IReader() = default;
 };

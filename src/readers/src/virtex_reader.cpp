@@ -69,6 +69,7 @@ void VirtexReader::load() {
 	provider_ = std::make_unique<VirtexDataProvider>(data);
 }
 
+// Function which reads files similar to doc/virtex.txt
 VirtexData read(const std::string& content) {
 	const auto groups =
 			split(content, std::regex{"^([A-Za-z]\\n[^#]*(?=\\n#))$"});

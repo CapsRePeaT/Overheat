@@ -23,14 +23,14 @@ struct BaseLayer {
 struct HPU : public BaseLayer {
 	HPU() { layer_type_ = LayerType::HPU; }
 
-	float env_thermal_conductivity;
+	float env_thermal_conductivity_;
 	float x1_;
 	float x2_;
 	float y1_;
 	float y2_;
 
 	std::istream& read(std::istream& in) override {
-		in >> thickness_ >> thermal_conductivity_ >> env_thermal_conductivity;
+		in >> thickness_ >> thermal_conductivity_ >> env_thermal_conductivity_;
 		in >> x1_ >> x2_ >> y1_ >> y2_;
 		return in;
 	}
