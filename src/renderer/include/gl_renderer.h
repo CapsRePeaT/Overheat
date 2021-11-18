@@ -7,11 +7,11 @@ class GLRenderer final : public IRenderer {
  public:
 	GLRenderer();
 	~GLRenderer() override;
-	void Initialize(int w, int h) override;
-	void SetColorRange(Color min, Color max) override;
-	void SetTemperatureRange(float min, float max) override;
+	void Initialize(const int w, const int h) override;
+	void SetColorRange(const Color min, const Color max) override;
+	void SetTemperatureRange(const float min, const float max) override;
 	void RenderFrame() override;
-	void Resize(int w, int h) override;
+	void Resize(const int w, const int h) override;
 	void ClearResources() override;
 	void ClearScene() override;
 

@@ -12,9 +12,10 @@ std::unique_ptr<VertexArray> VertexArray::Create() {
 			return nullptr;
 		case RendererAPI::API::OpenGL:
 			return std::make_unique<OpenGLVertexArray>();
+		default:
+			assert(false && "Unknown Renderer::API");
+			return nullptr;
 	}
-	assert(false);
-	return nullptr;
 }
 
 std::unique_ptr<VertexArray> VertexArray::Create(
@@ -25,7 +26,8 @@ std::unique_ptr<VertexArray> VertexArray::Create(
 			return nullptr;
 		case RendererAPI::API::OpenGL:
 			return std::make_unique<OpenGLVertexArray>(std::move(vb), std::move(ib));
+		default:
+			assert(false && "Unknown Renderer::API");
+			return nullptr;
 	}
-	assert(false);
-	return nullptr;
 }

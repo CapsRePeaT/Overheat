@@ -10,9 +10,10 @@ std::unique_ptr<VertexBuffer> VertexBuffer::Create(size_t size) {
 			return nullptr;
 		case RendererAPI::API::OpenGL:
 			return std::make_unique<OpenGLVertexBuffer>(size);
+		default:
+			assert(false && "Unknown Renderer::API");
+			return nullptr;
 	}
-	assert(false);
-	return nullptr;
 }
 
 std::unique_ptr<VertexBuffer> VertexBuffer::Create(
@@ -23,8 +24,10 @@ std::unique_ptr<VertexBuffer> VertexBuffer::Create(
 			assert(false && "Renderer::API::None is not currently supported");
 			return nullptr;
 		case RendererAPI::API::OpenGL:
-			return std::make_unique<OpenGLVertexBuffer>(data, size, std::move(layout));
+			return std::make_unique<OpenGLVertexBuffer>(data, size,
+			                                            std::move(layout));
+		default:
+			assert(false && "Unknown Renderer::API");
+			return nullptr;
 	}
-	assert(false);
-	return nullptr;
 }

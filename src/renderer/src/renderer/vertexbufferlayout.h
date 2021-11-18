@@ -8,32 +8,28 @@ class VertexBufferLayout {
  public:
 	struct VertexBufferElement;
 	using VertexBufferElements = std::vector<VertexBufferElement>;
-
 	struct VertexBufferElement  // NOLINT(cppcoreguidelines-avoid-magic-numbers)
 	{
+		uint32_t location;
 		unsigned count;
 		GLenum type;
 		GLboolean normalized;
 
 		[[nodiscard]] unsigned int size() const;
 	};
-
 	VertexBufferLayout() = default;
-	~VertexBufferLayout() = default;
-
 	VertexBufferLayout(VertexBufferLayout&&) = default;
 	VertexBufferLayout& operator=(VertexBufferLayout&&) = default;
-
+	~VertexBufferLayout() = default;
 	VertexBufferLayout(const VertexBufferLayout&) = delete;
 	VertexBufferLayout& operator=(const VertexBufferLayout&) = delete;
-
 	template <typename T>
-	void Push(unsigned int count) {
-		elements_.push_back({count, TypeToGlEnum<T>(), sizeof(T) == 1});
+	void Push(const unsigned int count) {
+		elements_.push_back({static_cast<uint32_t>(elements_.size()), count,
+		                     TypeToGlEnum<T>(), sizeof(T) == 1});
 		stride_ += sizeof(T) * count;
 	}
 	[[nodiscard]] inline int32_t stride() const { return stride_; }
-
 	[[nodiscard]] inline const VertexBufferElements& elements() const {
 		return elements_;
 	}

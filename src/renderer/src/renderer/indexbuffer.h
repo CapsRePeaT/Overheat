@@ -6,14 +6,11 @@
 
 class IndexBuffer {
  public:
-	~IndexBuffer() = default;
+	virtual ~IndexBuffer() = default;
 	virtual void Bind() const = 0;
 	virtual void Unbind() const = 0;
-
-	[[nodiscard]] virtual uint32_t elementsCount() const = 0;
-
-	static std::unique_ptr<IndexBuffer> Create(const uint32_t* data, size_t size);
-
+	[[nodiscard]] virtual uint32_t elements_count() const = 0;
+	static std::unique_ptr<IndexBuffer> Create(const uint32_t* data, const size_t size);
 	template <size_t size>
 	static std::unique_ptr<IndexBuffer> Create(
 			const std::array<uint32_t, size>& data) {

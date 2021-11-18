@@ -11,21 +11,18 @@
 class SceneShape {
  public:
 	SceneShape(const BasicShape& shape);
-
-	void Rotate(float angle, glm::vec3 axis) {
+	void Rotate(const float angle, const glm::vec3 axis) {
 		rotation_ = glm::rotate(rotation_, angle, axis);
 	}
-
 	[[nodiscard]] glm::mat4 transform() const {
-		glm::mat4 rotation = glm::mat4_cast(rotation_);
-
+		const glm::mat4 rotation = glm::mat4_cast(rotation_);
 		return glm::translate(glm::mat4(1.0f), position_) * rotation *
 		       glm::scale(glm::mat4(1.0f), scale_);
 	}
-	[[nodiscard]] const VertexArray& vertexArray() const { return *vao_; }
+	[[nodiscard]] const VertexArray& vertex_array() const { return *vao_; }
 
  private:
-	size_t id_;
+	const size_t id_;
 	std::unique_ptr<VertexArray> vao_;
 	glm::vec3 position_ = {0.0f, 0.0f, 0.0f};
 	glm::vec3 scale_ = {1.0f, 1.0f, 1.0f};

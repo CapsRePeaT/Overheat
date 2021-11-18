@@ -14,6 +14,7 @@ std::unique_ptr<RendererAPI> RendererAPI::instance() {
 		case API::OpenGL:
 			return std::make_unique<OpenGLRendererAPI>();
 		default:
-			assert(false);
+			assert(false && "Unknown Renderer::API");
+			return nullptr;
 	}
 }

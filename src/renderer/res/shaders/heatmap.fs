@@ -11,7 +11,7 @@ float sqr(float x) { return x*x; }
 float parabolicDome(float x, float y) {
 	float maxTemp = 400;
 	float a = 400;
-	return maxTemp - a * (sqr(x - 0.5f) + sqr(y - 0.5f));
+	return maxTemp - a * (sqr(x-0.5f) + sqr(y-0.5f));
 
 }
 

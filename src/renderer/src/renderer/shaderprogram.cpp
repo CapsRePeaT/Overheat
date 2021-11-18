@@ -1,20 +1,22 @@
 #include "shaderprogram.h"
 
 #include <glad/glad.h>
-#include <spdlog/spdlog.h>
 #include <glm/gtc/type_ptr.hpp>
+#include <spdlog/spdlog.h>
 
+#include <array>
 #include <fstream>
 #include <sstream>
 
-constexpr int kGBufferSize = 4096;
+#include "platform/opengl/constants.h"
 
 uint32_t ShaderProgram::using_id_;
-bool CreateShader(const ShaderProgram::Path& source, GLenum shader_type, uint32_t& shader_id);
+bool CreateShader(const ShaderProgram::Path& source, GLenum shader_type,
+                  uint32_t& shader_id);
 
 ShaderProgram::ShaderProgram(const Path& vertex_shader_path,
                              const Path& fragment_shader_path)
-		: is_compiled_(true) {
+		: is_compiled_(false) {
 	Load(vertex_shader_path, fragment_shader_path);
 }
 
@@ -29,6 +31,7 @@ ShaderProgram::ShaderProgram(ShaderProgram&& other) noexcept {
 }
 
 ShaderProgram& ShaderProgram::operator=(ShaderProgram&& other) noexcept {
+	if (this == &other) return *this;
 	// Delete owned shader
 	glDeleteProgram(id_);
 	// Assign moving shader data
@@ -37,104 +40,117 @@ ShaderProgram& ShaderProgram::operator=(ShaderProgram&& other) noexcept {
 	// Invalidate moving shader
 	other.id_ = 0;
 	other.is_compiled_ = false;
-
 	return *this;
 }
 
-bool ShaderProgram::Load(const Path& vertex_shader_path,
-                         const Path& fragment_shader_path) {
+template <GLenum ptype>
+[[nodiscard]] bool GetCompileLinkSuccess(const int32_t id) {
+	static_assert(ptype == GL_LINK_STATUS || ptype == GL_COMPILE_STATUS,
+	              "Call for GetCompileLinkSuccess is permitted with only  with"
+	              "GL_LINK_STATUS or GL_COMPILE_STATUS");
+	int32_t success;
+	if constexpr (ptype == GL_LINK_STATUS)
+		glGetProgramiv(id, ptype, &success);
+	else if constexpr (ptype == GL_COMPILE_STATUS)
+		glGetShaderiv(id, ptype, &success);
+	return success;
+}
+
+template <GLenum ptype>
+[[nodiscard]] std::string GetCompileLinkInfoLog(const int32_t id) {
+	static_assert(ptype == GL_LINK_STATUS || ptype == GL_COMPILE_STATUS,
+	              "Call for GetCompileLinkInfoLog is permitted with only  with"
+	              "GL_LINK_STATUS or GL_COMPILE_STATUS");
+	std::array<GLchar, consts::error_message_buffer_size> info_log{};
+	if constexpr (ptype == GL_LINK_STATUS)
+		glGetProgramInfoLog(id, info_log.size(), nullptr, info_log.data());
+	else if constexpr (ptype == GL_COMPILE_STATUS)
+		glGetShaderInfoLog(id, info_log.size(), nullptr, info_log.data());
+	return info_log.data();
+}
+
+template <GLenum ptype, typename... Args>
+bool CheckSuccessAndLogError(const int32_t id,
+                             fmt::format_string<Args...> msg_template,
+                             Args&&... args) {
+	static_assert(ptype == GL_LINK_STATUS || ptype == GL_COMPILE_STATUS,
+	              "Call for CheckSuccess is permitted with only  with"
+	              "GL_LINK_STATUS or GL_COMPILE_STATUS");
+	const bool success = GetCompileLinkSuccess<ptype>(id);
+	if (!success) {
+		const auto info_log = GetCompileLinkInfoLog<ptype>(id);
+		spdlog::error(msg_template, std::forward<Args>(args)...);
+		spdlog::error(info_log);
+	}
+	return success;
+}
+
+bool ShaderProgram::Load(const Path& vertex_path, const Path& fragment_path) {
 	// TODO: find out if we need explicitly check errors with debug callback
 	// Create vertex and fragment shaders
-	uint32_t vs = 0;
-	uint32_t fs = 0;
-	bool is_vertex_compiled =
-			CreateShader(vertex_shader_path, GL_VERTEX_SHADER, vs);
-	bool is_fragment_compiled =
-			CreateShader(fragment_shader_path, GL_FRAGMENT_SHADER, fs);
-	// If one of the shaders didn't compile, delete them and return
-	if (!(is_vertex_compiled && is_fragment_compiled)) {
-		if (is_vertex_compiled) glDeleteShader(vs);
-		if (is_fragment_compiled) glDeleteShader(fs);
-		return is_compiled_ = false;
-	}
-	// Create shader program and link the shaders
+	uint32_t vs;
+	uint32_t fs;
+	bool shaders_compiled = true;
+	shaders_compiled &= CreateShader(vertex_path, GL_VERTEX_SHADER, vs);
+	shaders_compiled &= CreateShader(fragment_path, GL_FRAGMENT_SHADER, fs);
+	if (!shaders_compiled) return is_compiled_ = false;
+	// Create shader program, link and delete the shaders
 	id_ = glCreateProgram();
 	glAttachShader(id_, vs);
 	glAttachShader(id_, fs);
 	glLinkProgram(id_);
-	// Check link errors
-	int32_t success = 0;
-	glGetProgramiv(id_, GL_LINK_STATUS, &success);
-	if (success == 0) {
-		std::array<GLchar, kGBufferSize> info_log{};
-		glGetProgramInfoLog(id_, kGBufferSize, nullptr, info_log.data());
-		spdlog::error("SHADER: Link time error in:\n{}", info_log.data());
-		is_compiled_ = false;
-	}
-
 	glDeleteShader(vs);
 	glDeleteShader(fs);
-
-	return is_compiled_;
+	return is_compiled_ = CheckSuccessAndLogError<GL_LINK_STATUS>(
+						 id_, "SHADER: Link time error:");
 }
 
-bool CreateShader(const ShaderProgram::Path& source, GLenum shader_type,
+bool CreateShader(const ShaderProgram::Path& file_path, GLenum shader_type,
                   uint32_t& shader_id) {
+	// Open and read file into code_pointer
 	std::ifstream file_stream;
-	file_stream.open(source, std::ios::in | std::ios::binary);
+	file_stream.open(file_path, std::ios::in | std::ios::binary);
 	if (!file_stream.is_open()) {
-		spdlog::error("SHADER: Failed to open file: {}", source);
+		spdlog::error("SHADER: Failed to open file: {}", file_path);
 		return false;
 	}
 	std::stringstream buff;
 	buff << file_stream.rdbuf();
-	std::string code_string = buff.str();
+	const auto code_string = buff.str();
 	const char* code_pointer = code_string.c_str();
-
+	// Compile read code
 	shader_id = glCreateShader(shader_type);
 	glShaderSource(shader_id, 1, &code_pointer, nullptr);
 	glCompileShader(shader_id);
-
-	int32_t success = 0;
-	glGetShaderiv(shader_id, GL_COMPILE_STATUS, &success);
-	if (success == 0) {
-		std::array<GLchar, kGBufferSize> info_log{};
-		glGetShaderInfoLog(shader_id, kGBufferSize, nullptr, info_log.data());
-		spdlog::error("SHADER: Compile time error in {}:\n{}", source,
-		              info_log.data());
-		return false;
-	}
-
-	return true;
+	bool success = CheckSuccessAndLogError<GL_COMPILE_STATUS>(
+			shader_id, "SHADER: Compile time error in {}", file_path);
+	if (!success) glDeleteShader(shader_id);
+	return success;
 }
 
 // TODO: cache uniform locations and think about refactoring
-int32_t ShaderProgram::getUniformLocation(const std::string& name) const {
-	return glGetUniformLocation(id_, name.c_str());
+int32_t ShaderProgram::getUniformLocation(const char* name) const {
+	return glGetUniformLocation(id_, name);
 }
 
-void ShaderProgram::SetInt(const std::string& name, int32_t value) const {
+void ShaderProgram::SetInt(const char* name, const int32_t value) const {
 	glUniform1i(getUniformLocation(name), value);
 }
 
-void ShaderProgram::SetFloat(const std::string& name, float value) const {
+void ShaderProgram::SetFloat(const char* name, const float value) const {
 	glUniform1f(getUniformLocation(name), value);
 }
-void ShaderProgram::SetVec2(const std::string& name,
-                            const glm::vec2& value) const {
+void ShaderProgram::SetVec2(const char* name, const glm::vec2 value) const {
 	glUniform2f(getUniformLocation(name), value.x, value.y);
 }
-void ShaderProgram::SetVec3(const std::string& name,
-                            const glm::vec3& value) const {
+void ShaderProgram::SetVec3(const char* name, const glm::vec3 value) const {
 	glUniform3f(getUniformLocation(name), value.x, value.y, value.z);
 }
-void ShaderProgram::SetMat4(const std::string& name,
-                            const glm::mat4& value) const {
+void ShaderProgram::SetMat4(const char* name, const glm::mat4& value) const {
 	glUniformMatrix4fv(getUniformLocation(name), 1, GL_FALSE,
 	                   glm::value_ptr(value));
 }
-void ShaderProgram::SetMat2x3(const std::string& name,
-                              const glm::mat2x3& value) const {
+void ShaderProgram::SetMat2x3(const char* name, const glm::mat2x3 value) const {
 	glUniformMatrix2x3fv(getUniformLocation(name), 1, GL_FALSE,
 	                     glm::value_ptr(value));
 }
@@ -147,6 +163,7 @@ void ShaderProgram::Use() const {
 		using_id_ = id_;
 	}
 }
+
 void ShaderProgram::Unuse() {
 	glUseProgram(0);
 	using_id_ = 0;
