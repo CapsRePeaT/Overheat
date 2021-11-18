@@ -1,5 +1,4 @@
-#ifndef METADATA_WIDGET_H
-#define METADATA_WIDGET_H
+#pragma once
 
 #include <QDockWidget>
 
@@ -7,16 +6,13 @@ namespace Ui {
 class MetadataWidget;
 }
 
-class MetadataWidget : public QDockWidget
-{
-  Q_OBJECT
+class MetadataWidget : public QDockWidget {
+	Q_OBJECT
 
-public:
-  explicit MetadataWidget(QWidget *parent = nullptr);
-  ~MetadataWidget();
+ public:
+	explicit MetadataWidget(QWidget* parent = nullptr);
+	~MetadataWidget();
 
-private:
-  Ui::MetadataWidget *ui;
+ private:
+	Ui::MetadataWidget* ui;
 };
-
-#endif // METADATA_WIDGET_H

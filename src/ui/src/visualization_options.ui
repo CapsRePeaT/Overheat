@@ -2,8 +2,8 @@
  <author/>
  <comment/>
  <exportmacro/>
- <class>VisualisationOptions</class>
- <widget name="VisualisationOptions" class="QWidget">
+ <class>VisualizationOptions</class>
+ <widget name="VisualizationOptions" class="QWidget">
   <property name="geometry">
    <rect>
     <x>0</x>

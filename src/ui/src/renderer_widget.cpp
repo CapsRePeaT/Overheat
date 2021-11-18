@@ -45,7 +45,7 @@ void RendererWidget::initializeGL() {
 	//     subclasses too;
 	//  2. on next context initializing we reassign unique_ptr anyway
 	//     (see 1st line of this function).
-	// But I want to reuse the pointer in near future (TBT) and 
+	// But I want to reuse the pointer in near future (TBT) and
 	// this is more self-documented
 	connect(context(), &QOpenGLContext::aboutToBeDestroyed, this,
 	        [&renderer = *renderer_]() { renderer.ClearResources(); });

@@ -1,14 +1,13 @@
-#ifndef MAINWINDOW_H
-#define MAINWINDOW_H
+#pragma once
 
+#include <QDockWidget>
 #include <QMainWindow>
 #include <QMdiArea>
-#include <QDockWidget>
 
-#include "renderer_widget.h"
-#include "visualisation_options.h"
 #include "metadata_widget.h"
+#include "renderer_widget.h"
 #include "shape_list_widget.h"
+#include "visualization_options.h"
 
 namespace Ui {
 class MainWindow;
@@ -31,10 +30,8 @@ class MainWindow : public QMainWindow {
  private:
 	Core& core() { return Core::instance(); }
 	RendererWidget* render_widget_ = nullptr;
-	VisualisationOptionsWidget* visualisation_options_ = nullptr;
-  MetadataWidget* metadata_widget_ = nullptr;
-  ShapeListWidget* shape_list_widget_ = nullptr;
+	VisualizationOptionsWidget* visualization_options_ = nullptr;
+	MetadataWidget* metadata_widget_ = nullptr;
+	ShapeListWidget* shape_list_widget_ = nullptr;
 	Ui::MainWindow* ui_;
 };
-
-#endif  // MAINWINDOW_H

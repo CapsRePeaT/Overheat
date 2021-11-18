@@ -13,18 +13,18 @@ MainWindow::MainWindow(QWidget* parent)
 	setCentralWidget(render_widget_);
 	render_widget_->showMaximized();
 	// shape widget
-  shape_list_widget_ = new ShapeListWidget(this);
-  addDockWidget(Qt::LeftDockWidgetArea, shape_list_widget_);
-  shape_list_widget_->setWindowTitle("Shapes");
+	shape_list_widget_ = new ShapeListWidget(this);
+	addDockWidget(Qt::LeftDockWidgetArea, shape_list_widget_);
+	shape_list_widget_->setWindowTitle("Shapes");
 	// metadata widget
-  metadata_widget_ = new MetadataWidget(this);
-  addDockWidget(Qt::LeftDockWidgetArea, metadata_widget_);
-  metadata_widget_->setWindowTitle("Metadata");
+	metadata_widget_ = new MetadataWidget(this);
+	addDockWidget(Qt::LeftDockWidgetArea, metadata_widget_);
+	metadata_widget_->setWindowTitle("Metadata");
 	// options widget
-  visualisation_options_ = new VisualisationOptionsWidget(this);
-  addDockWidget(Qt::LeftDockWidgetArea, visualisation_options_);
-  visualisation_options_->setWindowTitle("Options");
-  // signals and slots connection
+	visualization_options_ = new VisualizationOptionsWidget(this);
+	addDockWidget(Qt::LeftDockWidgetArea, visualization_options_);
+	visualization_options_->setWindowTitle("Options");
+	// signals and slots connection
 	connect(ui_->load_file_btn, &QAction::triggered, this,
 	        &MainWindow::OnLoadFileBtnPressed);
 }

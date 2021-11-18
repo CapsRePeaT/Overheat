@@ -1,5 +1,4 @@
-#ifndef RENDERER_WIDGET_H
-#define RENDERER_WIDGET_H
+#pragma once
 
 #include <QOpenGLWidget>
 #include <memory>
@@ -7,7 +6,7 @@
 #include "common.h"
 #include "core.h"
 #include "i_renderer.h"
-#include "visualisation_options.h"
+#include "visualization_options.h"
 
 class RendererWidget : public QOpenGLWidget {
 	Q_OBJECT
@@ -22,20 +21,18 @@ class RendererWidget : public QOpenGLWidget {
 		renderer_->RenderShapes(shapes);
 		doneCurrent();
 	};
-	void UpdateVisualisationOptions(
-			const VisualisationOptions& visualisation_options);
+	void UpdateVisualizationOptions(
+			const VisualizationOptions& visualization_options);
 
 	void initializeGL() override;
 	void paintGL() override;
 	void resizeGL(int w, int h) override;
 
  public slots:
-	void onVisualisationOptionsChanged(
-			const VisualisationOptions& visualisation_options){};
+	void onVisualizationOptionsChanged(
+			const VisualizationOptions& visualization_options){};
 
  private:
 	std::unique_ptr<IRenderer> renderer_;
 	DrawMode draw_mode_ = DrawMode::Gradient;
 };
-
-#endif  // RENDERER_WIDGET_H
