@@ -40,7 +40,7 @@ struct BS : public BaseLayer {
 	BS() { layer_type_ = LayerType::BS; }
 	float dist_between_spheres_;
 	struct SpheresHolders {
-    // coordinates of center of initial sphere
+		// coordinates of center of initial sphere
 		float x_center;
 		float y_center;
 		int nx;  // num of spheres around X axis
@@ -66,12 +66,14 @@ struct BS : public BaseLayer {
 struct D : public BaseLayer {
  public:
 	D() { layer_type_ = LayerType::D; }
+
 	struct Crystal {
 		std::string name;
 		float power;
 		float magic_number;  // TODO: TBD with Ryabov
 		std::array<float, 4> position;
 	};
+
 	size_t crystals_num_per_layer_;
 	std::vector<Crystal> crystals_;
 
@@ -80,11 +82,13 @@ struct D : public BaseLayer {
 		in >> thermal_conductivity_;
 		in >> crystals_num_per_layer_;
 
+		crystals_.reserve(crystals_num_per_layer_);
 		while (!in.eof()) {
 			Crystal crystal;
 			in >> crystal.name >> crystal.power >> crystal.magic_number;
 			in >> crystal.position[0] >> crystal.position[1] >> crystal.position[2] >>
 					crystal.position[3];
+			crystals_.push_back(crystal);
 		}
 		return in;
 	}

@@ -7,7 +7,6 @@
 #include "virtex_data_provider.h"
 
 namespace {
-
 std::string stream_to_string(std::ifstream& stream) {
 	return std::string{std::istreambuf_iterator<char>(stream), {}};
 }
@@ -66,11 +65,12 @@ void VirtexReader::load() {
 	const auto file_content = stream_to_string(ifs);
 	const auto data = read(file_content);
 	ifs.close();
-	provider_ = std::make_unique<VirtexDataProvider>(data);
+	data_provider_ = std::make_unique<VirtexDataProvider>(data);
 }
 
 // Function which reads files similar to doc/virtex.txt
 VirtexData read(const std::string& content) {
+	// splits layers for groups (inside/outside box)
 	const auto groups =
 			split(content, std::regex{"^([A-Za-z]\\n[^#]*(?=\\n#))$"});
 
@@ -81,6 +81,7 @@ VirtexData read(const std::string& content) {
 
 	// read layers
 	for (const auto& group : groups) {
+		// splits layers groups for particular layers
 		const std::regex layers_regex{"^([A-Z])\\n"};
 		const auto layers_tags = split(group, layers_regex);
 		const auto layers_content = split(group, layers_regex, -1);
