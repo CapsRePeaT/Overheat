@@ -1,5 +1,5 @@
 set(MODULE_NAME renderer)
-file(GLOB_RECURSE SOURCES CONFIGURE_DEPENDS *.cpp *.h)
+file(GLOB_RECURSE SOURCES CONFIGURE_DEPENDS src/*.cpp src/*.h include/*.cpp include/*.h)
 
 add_library(${MODULE_NAME} STATIC ${SOURCES})
 

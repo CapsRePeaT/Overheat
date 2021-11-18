@@ -3,7 +3,7 @@
 #include "core.h"
 #include "i_renderer.h"
 
-class GLRenderer : public IRenderer {
+class GLRenderer final : public IRenderer {
  public:
 	GLRenderer();
 	~GLRenderer() override;
@@ -19,9 +19,14 @@ class GLRenderer : public IRenderer {
 	void AddShape(const std::shared_ptr<BasicShape>& shape) override;
 
  private:
-	// Member hiding because GLRenderer is public for other modules
+	// Member and headers hiding because GLRenderer is public for other modules
 	struct GLRendererData;
-	// For calling in destructor
+
+	// ClearResources must be invoked in dtor, but it's virtual. In this
+	// particular case we can safely do it, but for consistency and future safety
+	// I suggest to not to call virtual methods from dtors.
+	// TODO: pin rule about invoking virtual methods from dtors in code style
+	// documentation
 	void ClearResourcesImpl();
 	std::unique_ptr<GLRendererData> data_;
 };

@@ -10,7 +10,7 @@ QSurfaceFormat defaultFormat();
 QSurfaceFormat debugFormat();
 
 RendererWidget::RendererWidget(QWidget* parent)
-		: QOpenGLWidget(parent), renderer_(std::make_unique<GLRenderer>()) {
+		: QOpenGLWidget(parent), renderer_(nullptr) {
 	setMinimumSize(480, 360);
 #ifdef NDEBUG
 	setFormat(defaultFormat());
@@ -20,15 +20,35 @@ RendererWidget::RendererWidget(QWidget* parent)
 }
 
 RendererWidget::~RendererWidget() {
-	makeCurrent();
-	renderer_.reset();
-	doneCurrent();
+	// Context destroying is guaranted to happen after OpenGLWidget destruction
+	// (see https://doc.qt.io/qt-6/qopenglwidget.html#dtor.QOpenGLWidget).
+	// Hence, in order to avoid SEGFAULT on signal invoking (because it connected
+	// to *this) we must disconnect the signal.
+	// Also we can explicitly reset the pointer, or call ClearResources, but it
+	// will be done anyway as a part of RendererWidget destruction
+	disconnect(context(), &QOpenGLContext::aboutToBeDestroyed, this, nullptr);
 	spdlog::debug("Render widget destroyed");
 }
 
 void RendererWidget::initializeGL() {
-	if (!renderer_) renderer_ = std::make_unique<GLRenderer>();
+	// TODO: reuse the pointer
+	renderer_ = std::make_unique<GLRenderer>();
 	renderer_->Initialize(width(), height());
+	// Gracefully clear resources of renderer when context is destroying
+	// This is needed in cases, when we manually destroying context in a
+	// lifetime of one RenderWidget (that is unlikely, but still).
+	// For additional information see
+	// https://doc.qt.io/qt-6/qopenglcontext.html#aboutToBeDestroyed
+	//
+	// Also this can be done with renderer_.reset(), because:
+	//  1. its resource cleaning must be called in dtors of IRenderer
+	//     subclasses too;
+	//  2. on next context initializing we reassign unique_ptr anyway
+	//     (see 1st line of this function).
+	// But I want to reuse the pointer in near future (TBT) and 
+	// this is more self-documented
+	connect(context(), &QOpenGLContext::aboutToBeDestroyed, this,
+	        [&renderer = *renderer_]() { renderer.ClearResources(); });
 }
 
 void RendererWidget::paintGL() {
