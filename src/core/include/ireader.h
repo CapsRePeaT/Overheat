@@ -6,9 +6,9 @@ namespace fs = std::filesystem;
 
 class IReader {
  public:
-	GeomStorage<BasicShape*> geometry() { return provider_->geometry(); }
-	HeatmapStorage heatmap() { return provider_->heatmap(); }
-	MetadataStorage metadata() { return provider_->metadata(); }
+	GeomStorage<BasicShape*> geometry() { return data_provider_->geometry(); }
+	HeatmapStorage heatmap() { return data_provider_->heatmap(); }
+	MetadataStorage metadata() { return data_provider_->metadata(); }
 
  protected:
 	virtual void load() = 0;

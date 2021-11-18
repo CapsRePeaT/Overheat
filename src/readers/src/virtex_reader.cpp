@@ -87,7 +87,7 @@ VirtexData read(const std::string& content) {
 		const auto layers_content = split(group, layers_regex, -1);
 		// with boost it may looked better...
 		for (size_t i = 0; i < layers_content.size(); ++i) {
-			auto layer = read_layer(layers_tags[i], layers_content[i]);
+			const auto layer = read_layer(layers_tags[i], layers_content[i]);
 			data.layers_.push_back(layer);
 		}
 	}
