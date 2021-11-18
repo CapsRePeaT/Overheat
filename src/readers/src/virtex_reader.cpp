@@ -91,7 +91,6 @@ VirtexData read(const std::string& content) {
 			data.layers_.push_back(layer);
 		}
 	}
-
 	return data;
 }
 }  // namespace Readers
