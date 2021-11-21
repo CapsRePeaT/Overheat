@@ -13,6 +13,7 @@ enum Axis { X, Y, Z };
 template <int dim>
 class Box {
  public:
+	// TODO: move hide Values in private, make api to get coordinates values
 	using Values = std::array<std::pair<float, float>, dim>;
 	// TODO: this implementation doesn't give any benefits (and may be even
 	// slower!), compared to direct `coordinates_.fill(...)` in ctor body

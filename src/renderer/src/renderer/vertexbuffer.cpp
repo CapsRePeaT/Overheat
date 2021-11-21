@@ -3,7 +3,7 @@
 #include "platform/opengl/vertexbuffer.h"
 #include "renderer_api.h"
 
-std::unique_ptr<VertexBuffer> VertexBuffer::Create(size_t size) {
+std::unique_ptr<VertexBuffer> VertexBuffer::Create(const size_t size) {
 	switch (RendererAPI::instance()->api()) {
 		case RendererAPI::API::None:
 			assert(false);
@@ -17,7 +17,7 @@ std::unique_ptr<VertexBuffer> VertexBuffer::Create(size_t size) {
 }
 
 std::unique_ptr<VertexBuffer> VertexBuffer::Create(
-		const void* data, size_t size,
+		const void* data, const size_t size,
 		std::unique_ptr<VertexBufferLayout>&& layout) {
 	switch (RendererAPI::instance()->api()) {
 		case RendererAPI::API::None:

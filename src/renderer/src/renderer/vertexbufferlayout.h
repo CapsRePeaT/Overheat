@@ -2,6 +2,7 @@
 
 #include <glad/glad.h>
 
+#include <cassert>
 #include <vector>
 
 class VertexBufferLayout {
@@ -43,6 +44,8 @@ class VertexBufferLayout {
 			return GL_UNSIGNED_INT;
 		else if constexpr (std::is_same_v<T, int8_t>)
 			return GL_BYTE;
+		else
+			assert(false && "Push only float, uint32 and int8");
 	}
 
 	int32_t stride_ = 0;

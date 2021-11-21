@@ -14,5 +14,5 @@ class ShapeListWidget : public QDockWidget {
 	~ShapeListWidget();
 
  private:
-	Ui::ShapeListWidget* ui;
+	Ui::ShapeListWidget* ui_;
 };

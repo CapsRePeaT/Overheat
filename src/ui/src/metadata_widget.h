@@ -14,5 +14,5 @@ class MetadataWidget : public QDockWidget {
 	~MetadataWidget();
 
  private:
-	Ui::MetadataWidget* ui;
+	Ui::MetadataWidget* ui_;
 };

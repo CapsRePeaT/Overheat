@@ -11,9 +11,8 @@ class RendererAPI {
 	enum class API { None = 0, OpenGL = 1 };
 	virtual ~RendererAPI() = default;
 	virtual void Init() = 0;
-	virtual void SetViewPort(const uint32_t x, const uint32_t y, const uint32_t w,
-	                         const uint32_t h) = 0;
-	virtual void SetClearColor(const glm::vec4 color) = 0;
+	virtual void SetViewPort(uint32_t x, uint32_t y, uint32_t w, uint32_t h) = 0;
+	virtual void SetClearColor(glm::vec4 color) = 0;
 	virtual void Clear() = 0;
 	virtual void DrawIndexed(const VertexArray& va, const IndexBuffer& ib) = 0;
 	void DrawIndexed(const VertexArray& va) { DrawIndexed(va, va.indexBuffer()); }

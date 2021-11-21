@@ -7,7 +7,7 @@
 class OpenGLVertexBuffer : public VertexBuffer {
  public:
 	OpenGLVertexBuffer() = delete;
-	OpenGLVertexBuffer(const size_t size);
+	OpenGLVertexBuffer(size_t size);
 	OpenGLVertexBuffer(const void* data, size_t size,
 	                   std::unique_ptr<VertexBufferLayout>&& layout);
 	OpenGLVertexBuffer(OpenGLVertexBuffer&& other) noexcept;
@@ -18,7 +18,9 @@ class OpenGLVertexBuffer : public VertexBuffer {
 	void SetLayout(std::unique_ptr<VertexBufferLayout>&& layout) final {
 		layout_ = std::move(layout);
 	}
-	[[nodiscard]] const VertexBufferLayout& layout() const final { return *layout_; }
+	[[nodiscard]] const VertexBufferLayout& layout() const final {
+		return *layout_;
+	}
 	void Bind() const final;
 	void Unbind() const final;
 	void SetData(const void* data, size_t size,

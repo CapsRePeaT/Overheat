@@ -21,7 +21,8 @@ ShaderProgram::ShaderProgram(const Path& vertex_shader_path,
 }
 
 ShaderProgram::~ShaderProgram() {
-	if (isUsing()) Unuse();
+	if (isUsing())
+		Unuse();
 	glDeleteProgram(id_);
 	id_ = 0;
 }
@@ -31,7 +32,8 @@ ShaderProgram::ShaderProgram(ShaderProgram&& other) noexcept {
 }
 
 ShaderProgram& ShaderProgram::operator=(ShaderProgram&& other) noexcept {
-	if (this == &other) return *this;
+	if (this == &other)
+		return *this;
 	// Delete owned shader
 	glDeleteProgram(id_);
 	// Assign moving shader data
@@ -93,7 +95,8 @@ bool ShaderProgram::Load(const Path& vertex_path, const Path& fragment_path) {
 	bool shaders_compiled = true;
 	shaders_compiled &= CreateShader(vertex_path, GL_VERTEX_SHADER, vs);
 	shaders_compiled &= CreateShader(fragment_path, GL_FRAGMENT_SHADER, fs);
-	if (!shaders_compiled) return is_compiled_ = false;
+	if (!shaders_compiled)
+		return is_compiled_ = false;
 	// Create shader program, link and delete the shaders
 	id_ = glCreateProgram();
 	glAttachShader(id_, vs);
@@ -105,8 +108,8 @@ bool ShaderProgram::Load(const Path& vertex_path, const Path& fragment_path) {
 						 id_, "SHADER: Link time error:");
 }
 
-bool CreateShader(const ShaderProgram::Path& file_path, GLenum shader_type,
-                  uint32_t& shader_id) {
+bool CreateShader(const ShaderProgram::Path& file_path,
+                  const GLenum shader_type, uint32_t& shader_id) {
 	// Open and read file into code_pointer
 	std::ifstream file_stream;
 	file_stream.open(file_path, std::ios::in | std::ios::binary);
@@ -117,14 +120,16 @@ bool CreateShader(const ShaderProgram::Path& file_path, GLenum shader_type,
 	std::stringstream buff;
 	buff << file_stream.rdbuf();
 	const auto code_string = buff.str();
-	const char* code_pointer = code_string.c_str();
+	const std::array<const char*, 1> source_codes = {code_string.c_str()};
 	// Compile read code
 	shader_id = glCreateShader(shader_type);
-	glShaderSource(shader_id, 1, &code_pointer, nullptr);
+	glShaderSource(shader_id, source_codes.size(), source_codes.data(),
+	               /*length=*/nullptr);
 	glCompileShader(shader_id);
 	bool success = CheckSuccessAndLogError<GL_COMPILE_STATUS>(
 			shader_id, "SHADER: Compile time error in {}", file_path);
-	if (!success) glDeleteShader(shader_id);
+	if (!success)
+		glDeleteShader(shader_id);
 	return success;
 }
 

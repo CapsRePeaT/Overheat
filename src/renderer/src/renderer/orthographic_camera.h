@@ -7,19 +7,20 @@
 class OrthographicCamera {
  public:
 	OrthographicCamera() = default;
-	OrthographicCamera(const float aspect_ratio, const float zoom,
-	                   const std::pair<float, float> depth_bounds = {1.0f, 1.0f});
-	OrthographicCamera(const float left, const float right, const float bottom,
-	                   const float top, const float near = -1.0f,
-	                   const float far = 1.0f);
-	void SetPosition(const glm::vec3& position) {
+	OrthographicCamera(float aspect_ratio, float zoom,
+	                   std::pair<float, float> depth_bounds = {1.0f, 1.0f});
+	OrthographicCamera(float left, float right, float bottom, float top,
+	                   float near = -1.0f, float far = 1.0f);
+	void SetPosition(glm::vec3 position) {
 		position_ = position;
 		RecalculateViewMatrix();
 	}
+	[[nodiscard]] glm::vec3 position() const { return position_; }
 	void SetRotation(const float rotation) {
 		rotation_ = rotation;
 		RecalculateViewMatrix();
 	}
+	[[nodiscard]] float rotation() const { return rotation_; }
 	void Zoom(const float delta) {
 		zoom_level_ *= delta;
 		RecalculateProjectionMatrix();
@@ -28,9 +29,8 @@ class OrthographicCamera {
 		aspect_ratio_ = ratio;
 		RecalculateProjectionMatrix();
 	}
-	void SetProjection(const float left, const float right, const float bottom,
-	                   const float top, const float near = -1.0f,
-	                   const float far = 1.0f);
+	void SetProjection(float left, float right, float bottom, float top,
+	                   float near = -1.0f, float far = 1.0f);
 	[[nodiscard]] const glm::mat4& viewMatrix() const { return view_matrix_; }
 	[[nodiscard]] const glm::mat4& projectionMatrix() const {
 		return projection_matrix_;
@@ -40,8 +40,6 @@ class OrthographicCamera {
 	}
 	[[nodiscard]] float zoom_level() const { return zoom_level_; }
 	[[nodiscard]] float aspect_ratio() const { return aspect_ratio_; }
-	[[nodiscard]] glm::vec3 position() const { return position_; }
-	[[nodiscard]] float rotation() const { return rotation_; }
 
  private:
 	void RecalculateViewMatrix();

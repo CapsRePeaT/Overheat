@@ -12,7 +12,9 @@ OpenGLIndexBuffer::OpenGLIndexBuffer(const uint32_t* data, const size_t count)
 	             GL_STATIC_DRAW);
 }
 
-OpenGLIndexBuffer::~OpenGLIndexBuffer() { glDeleteBuffers(consts::buffer_count_one, &id_); }
+OpenGLIndexBuffer::~OpenGLIndexBuffer() {
+	glDeleteBuffers(consts::buffer_count_one, &id_);
+}
 
 OpenGLIndexBuffer::OpenGLIndexBuffer(OpenGLIndexBuffer&& other) noexcept {
 	*this = std::move(other);
@@ -20,7 +22,8 @@ OpenGLIndexBuffer::OpenGLIndexBuffer(OpenGLIndexBuffer&& other) noexcept {
 
 OpenGLIndexBuffer& OpenGLIndexBuffer::operator=(
 		OpenGLIndexBuffer&& other) noexcept {
-	if (this == &other) return *this;
+	if (this == &other)
+		return *this;
 	// Delete owned buffer
 	glDeleteBuffers(consts::buffer_count_one, &id_);
 	// Assign moving buffer data

@@ -3,8 +3,8 @@
 #include "ui_metadata_widget.h"
 
 MetadataWidget::MetadataWidget(QWidget* parent)
-		: QDockWidget(parent), ui(new Ui::MetadataWidget) {
-	ui->setupUi(this);
+		: QDockWidget(parent), ui_(new Ui::MetadataWidget) {
+	ui_->setupUi(this);
 }
 
-MetadataWidget::~MetadataWidget() { delete ui; }
+MetadataWidget::~MetadataWidget() { delete ui_; }

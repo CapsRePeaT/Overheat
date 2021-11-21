@@ -11,7 +11,7 @@
 class SceneShape {
  public:
 	SceneShape(const BasicShape& shape);
-	void Rotate(const float angle, const glm::vec3 axis) {
+	void Rotate(float angle, glm::vec3 axis) {
 		rotation_ = glm::rotate(rotation_, angle, axis);
 	}
 	[[nodiscard]] glm::mat4 transform() const {

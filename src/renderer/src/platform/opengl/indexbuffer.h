@@ -4,7 +4,7 @@
 
 class OpenGLIndexBuffer final : public IndexBuffer {
  public:
-	OpenGLIndexBuffer(const uint32_t* data, const size_t count);
+	OpenGLIndexBuffer(const uint32_t* data, size_t count);
 	template <size_t size>
 	explicit OpenGLIndexBuffer(const std::array<uint32_t, size>& data)
 			: IndexBuffer(data.data(), size) {}

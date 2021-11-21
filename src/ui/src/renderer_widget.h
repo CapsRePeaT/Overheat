@@ -14,16 +14,9 @@ class RendererWidget : public QOpenGLWidget {
 	explicit RendererWidget(QWidget* parent = nullptr);
 	~RendererWidget() override;
 
-	void RenderShapes(const Core::Shapes& shapes) {
-		assert(!shapes.empty() && "no shapes received");
-		makeCurrent();
-		renderer_->ClearScene();
-		renderer_->RenderShapes(shapes);
-		doneCurrent();
-	};
+	void RenderShapes(const Core::Shapes& shapes);
 	void UpdateVisualizationOptions(
 			const VisualizationOptions& visualization_options);
-
 	void initializeGL() override;
 	void paintGL() override;
 	void resizeGL(int w, int h) override;

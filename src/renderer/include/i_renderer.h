@@ -3,7 +3,8 @@
 #include "common.h"
 #include "core.h"
 
-// TODO: rename to smth as Scene
+// TODO: rename to SceneViewport
+// TODO: make method for retrieving new implementation
 class IRenderer {
  public:
 	using TemperatureRange = std::pair<float, float>;

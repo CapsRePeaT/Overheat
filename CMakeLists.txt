@@ -22,6 +22,8 @@ include(cmake/SetupBuildTypes.cmake)
 include(cmake/Conan.cmake)
 run_conan()
 
+# Set color mode for gcc and clang
+include(cmake/ColorfullOutput.cmake)
 
 # Export compile_commands.json
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)

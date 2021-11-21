@@ -9,11 +9,11 @@
 class HeatmapMaterial {
  public:
 	HeatmapMaterial();
-	void SetTemperatureRange(const float min, const float max) {
+	void SetTemperatureRange(float min, float max) {
 		temperature_range_[0] = min;
 		temperature_range_[1] = max;
 	}
-	void SetColorRange(const glm::vec3 min, const glm::vec3 max) {
+	void SetColorRange(glm::vec3 min, glm::vec3 max) {
 		color_range_[0] = min;
 		color_range_[1] = max;
 	}

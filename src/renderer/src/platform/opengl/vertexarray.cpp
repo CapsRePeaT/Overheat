@@ -22,7 +22,8 @@ OpenGLVertexArray::OpenGLVertexArray(OpenGLVertexArray&& other) noexcept {
 
 OpenGLVertexArray& OpenGLVertexArray::operator=(
 		OpenGLVertexArray&& other) noexcept {
-	if (this == &other) return *this;
+	if (this == &other)
+		return *this;
 	// Delete owned array
 	glDeleteVertexArrays(consts::vertex_array_count_one, &id_);
 	// Assign moving array data

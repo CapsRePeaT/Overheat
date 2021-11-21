@@ -15,17 +15,18 @@ class ShaderProgram {
 	~ShaderProgram();
 	ShaderProgram(const ShaderProgram&) = delete;
 	ShaderProgram& operator=(const ShaderProgram&) = delete;
+
 	bool Load(const Path& vertex_shader_path, const Path& fragment_shader_path);
 	void Use() const;
-	static void Unuse() ;
+	static void Unuse();
 	[[nodiscard]] bool isUsing() const { return id_ == using_id_; }
 	[[nodiscard]] bool isCompiled() const noexcept { return is_compiled_; }
-	void SetInt(const char* name, const int32_t value) const;
-	void SetFloat(const char* name, const float value) const;
-	void SetVec2(const char* name, const glm::vec2 value) const;
-	void SetVec3(const char* name, const glm::vec3 value) const;
+	void SetInt(const char* name, int32_t value) const;
+	void SetFloat(const char* name, float value) const;
+	void SetVec2(const char* name, glm::vec2 value) const;
+	void SetVec3(const char* name, glm::vec3 value) const;
 	void SetMat4(const char* name, const glm::mat4& value) const;
-	void SetMat2x3(const char* name, const glm::mat2x3 value) const;
+	void SetMat2x3(const char* name, glm::mat2x3 value) const;
 
  private:
 	[[nodiscard]] int32_t getUniformLocation(const char* name) const;

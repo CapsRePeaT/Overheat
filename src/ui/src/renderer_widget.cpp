@@ -6,16 +6,15 @@
 
 #include "gl_renderer.h"
 
-QSurfaceFormat defaultFormat();
-QSurfaceFormat debugFormat();
+QSurfaceFormat surface_format(QSurfaceFormat::FormatOptions options = {});
 
 RendererWidget::RendererWidget(QWidget* parent)
 		: QOpenGLWidget(parent), renderer_(nullptr) {
 	setMinimumSize(480, 360);
 #ifdef NDEBUG
-	setFormat(defaultFormat());
+	setFormat(surface_format());
 #else
-	setFormat(debugFormat());
+	setFormat(surface_format(QSurfaceFormat::DebugContext));
 #endif
 }
 
@@ -45,8 +44,8 @@ void RendererWidget::initializeGL() {
 	//     subclasses too;
 	//  2. on next context initializing we reassign unique_ptr anyway
 	//     (see 1st line of this function).
-	// But I want to reuse the pointer in near future (TBT) and
-	// this is more self-documented
+	// But 1. I want to reuse the pointer in near future (TBT) and
+	// 2. this is more self-documented
 	connect(context(), &QOpenGLContext::aboutToBeDestroyed, this,
 	        [&renderer = *renderer_]() { renderer.ClearResources(); });
 }
@@ -56,34 +55,30 @@ void RendererWidget::paintGL() {
 	update();
 }
 
-void RendererWidget::resizeGL(int w, int h) {
+void RendererWidget::resizeGL(const int w, const int h) {
 	renderer_->Resize(w, h);
 	update();
 }
 
+void RendererWidget::RenderShapes(const Core::Shapes& shapes) {
+	assert(!shapes.empty() && "no shapes received");
+	makeCurrent();
+	renderer_->ClearScene();
+	renderer_->RenderShapes(shapes);
+	doneCurrent();
+};
+
 // TODO: maybe need to delegate tweaks to renderer
-QSurfaceFormat defaultFormat() {
-	auto surface_format = QSurfaceFormat();
+QSurfaceFormat surface_format(const QSurfaceFormat::FormatOptions options) {
+	QSurfaceFormat surface_format = QSurfaceFormat(options);
 	surface_format.setVersion(4, 3);
 	surface_format.setProfile(QSurfaceFormat::CoreProfile);
 	surface_format.setRenderableType(QSurfaceFormat::OpenGL);
 	surface_format.setSwapBehavior(QSurfaceFormat::TripleBuffer);
+	// One swap per screen update (classic vsync)
 	surface_format.setSwapInterval(1);
+	// Sizes in bits
 	surface_format.setDepthBufferSize(24);
 	surface_format.setStencilBufferSize(8);
-
-	return surface_format;
-}
-
-QSurfaceFormat debugFormat() {
-	auto surface_format = QSurfaceFormat(QSurfaceFormat::DebugContext);
-	surface_format.setVersion(4, 3);
-	surface_format.setProfile(QSurfaceFormat::CoreProfile);
-	surface_format.setRenderableType(QSurfaceFormat::OpenGL);
-	surface_format.setSwapBehavior(QSurfaceFormat::TripleBuffer);
-	surface_format.setSwapInterval(1);
-	surface_format.setDepthBufferSize(24);
-	surface_format.setStencilBufferSize(8);
-
 	return surface_format;
 }
