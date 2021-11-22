@@ -37,6 +37,7 @@ build/*
 # IDE config directories
 .idea/*
 .vs/
+.vscode/
 CMakeLists.txt.user
 
 # Compile commands link in root

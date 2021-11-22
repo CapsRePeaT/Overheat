@@ -2,7 +2,7 @@
 
 #include <fstream>
 
-#include "../src/virtex_reader.h"
+#include "virtex_reader.h"
 
 std::string sample = "VIRTEX\n"
 		"35. 35.\n"

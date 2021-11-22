@@ -1,4 +1,10 @@
 #pragma once
+
+#include <array>
+#include <istream>
+#include <memory>
+#include <vector>
+
 enum class LayerType { BS, HPU, D, UNDEFINED };  // layers types from Ryabov doc
 
 struct HorizontalSize {

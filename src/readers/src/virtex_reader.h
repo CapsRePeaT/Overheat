@@ -1,9 +1,12 @@
 #pragma once
 
+#include <filesystem>
 #include <optional>
 
-#include "../../core/include/ireader.h"
+#include "ireader.h"
 #include "virtex_data_classes.h"
+
+namespace fs = std::filesystem;
 
 namespace Readers {
 VirtexData read(const std::string& content);

@@ -1,8 +1,11 @@
 set(MODULE_NAME common)
-set(SOURCES
-    src/dummy.cpp
-)
+file(GLOB_RECURSE SOURCES CONFIGURE_DEPENDS *.cpp *.h)
 
 add_library(${MODULE_NAME} STATIC ${SOURCES})
 
 target_include_directories(${MODULE_NAME} PUBLIC include)
+
+target_compile_features(${MODULE_NAME} PUBLIC cxx_std_20)
+if (CMAKE_CXX_COMPILER_ID STREQUAL "GNU") 
+    target_compile_options(${MODULE_NAME} PUBLIC -Wall -Wextra -Wpedantic -Wno-unused-parameter -Wno-unused-function)
+endif()

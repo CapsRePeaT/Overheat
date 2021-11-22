@@ -1,12 +1,15 @@
 #pragma once
 
-#include <filesystem>
+#include <iostream>
+
+#include "databases.h"
 #include "idata_provider.h"
-namespace fs = std::filesystem;
+#include "shapes.h"
+
 
 class IReader {
  public:
-	GeomStorage<BasicShape*> geometry() { return data_provider_->geometry(); }
+	GeomStorage<BasicShape> geometry() { return data_provider_->geometry(); }
 	HeatmapStorage heatmap() { return data_provider_->heatmap(); }
 	MetadataStorage metadata() { return data_provider_->metadata(); }
 

@@ -1,14 +1,5 @@
 set(MODULE_NAME ui)
-set(SOURCES
-    src/main.cpp
-    src/mainwindow.cpp
-    src/visualisation_options.h
-    src/visualisation_options.cpp
-    src/visualisation_options.ui
-    src/renderer_widget.h
-    src/renderer_widget.cpp
-    src/renderer_widget.ui
-)
+file(GLOB_RECURSE SOURCES CONFIGURE_DEPENDS *.cpp *.h)
 
 option(USE_QT "Try to find and link qt libraries to main module" ON)
 
