@@ -1,26 +1,21 @@
 set(MODULE_NAME readers)
 file(GLOB_RECURSE SOURCES CONFIGURE_DEPENDS *.cpp *.h)
 
+set(PRIVATE_INCLUDES src)
+set(PUBLIC_INCLUDES include)
+
 # This library
 add_library(${MODULE_NAME} STATIC ${SOURCES})
-target_include_directories(${MODULE_NAME} PUBLIC include)
 
-# Set boost components name
-#set(BOOST_MODULES
-#    json)
+target_include_directories(${MODULE_NAME} PUBLIC ${PUBLIC_INCLUDES})
+target_include_directories(${MODULE_NAME} PRIVATE ${PRIVATE_INCLUDES})
 
-# Find installed boost
-#find_package(Boost 1.77.0 REQUIRED COMPONENTS ${BOOST_MODULES})
+target_compile_features(${MODULE_NAME} PRIVATE cxx_std_20)
 
-# Prepend boost components name with Boost::
-#set(BOOST_MODULES_TO_LINK ${BOOST_MODULES})
-#list(TRANSFORM BOOST_MODULES_TO_LINK PREPEND Boost::)
+# add_executable(reader-test tests/test.cpp)
+# target_include_directories(reader-test PRIVATE ${PUBLIC_INCLUDES} ${PRIVATE_INCLUDES})
 
-# Labrary name
-#set(BOOST_LIBRARY_TO_LINK boost-library)
-#set(BOOST_LIBRARY_TO_LINK ${BOOST_LIBRARY_TO_LINK} PARENT_SCOPE)
+# target_link_libraries(reader-test gtest_main ${MODULE_NAME})
 
-# Add library with boost to link in outer scope. (Because find_package is intendent to use only in this scope)
-#add_library(${BOOST_LIBRARY_TO_LINK} INTERFACE)
-#target_include_directories(${BOOST_LIBRARY_TO_LINK} INTERFACE ${Boost_INCLUDE_DIRS})
-#target_link_libraries(${BOOST_LIBRARY_TO_LINK} INTERFACE ${BOOST_MODULES_TO_LINK})
+# include(GoogleTest)
+# gtest_discover_tests(reader-test)

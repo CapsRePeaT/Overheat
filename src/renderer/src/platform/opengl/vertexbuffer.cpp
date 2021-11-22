@@ -9,7 +9,7 @@
 #include "renderer/vertexbufferlayout.h"
 
 uint32_t InitBuffer(const size_t size, const void* data, const int draw_type) {
-	if (data && draw_type == GL_STATIC_DRAW)
+	if (!data && draw_type == GL_STATIC_DRAW)
 		spdlog::warn("Creating empty static vertex buffer");
 	uint32_t id;
 	glGenBuffers(consts::buffer_count_one, &id);

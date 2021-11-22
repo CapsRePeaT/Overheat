@@ -4,8 +4,7 @@
 #include <glm/gtc/quaternion.hpp>
 #include <memory>
 
-// TODO: make shapes public
-#include "../../../core/src/shapes.h"
+#include "shapes.h"
 #include "renderer/vertexarray.h"
 
 class SceneShape {
