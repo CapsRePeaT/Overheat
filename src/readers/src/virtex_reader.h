@@ -3,7 +3,7 @@
 #include <filesystem>
 #include <optional>
 
-#include "ireader.h"
+#include "../../core/include/ireader.h"
 #include "virtex_data_classes.h"
 
 namespace fs = std::filesystem;

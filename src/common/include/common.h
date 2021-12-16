@@ -4,7 +4,7 @@
 #include <limits>
 
 enum class DrawMode { Gradient, Stratified };
-enum class ShapeType { Undefined };
+enum class ShapeType { Undefined, Box, Sphere };
 enum Axis { X, Y, Z };
 
 // represents 3d box //should we use dimension as template parameter?

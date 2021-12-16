@@ -1,7 +1,7 @@
 #pragma once
 
-#include "databases.h"
-#include "shapes.h"
+#include "../../core/include/databases.h"
+#include "../../core/include/shapes.h"
 
 class IDataProvider {
  public:

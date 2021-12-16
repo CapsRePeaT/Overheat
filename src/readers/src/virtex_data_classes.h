@@ -5,6 +5,11 @@
 #include <memory>
 #include <vector>
 
+#include "../../core/include/databases.h"
+#include "../../core/include/shapes.h"
+
+namespace Readers {
+
 enum class LayerType { BS, HPU, D, UNDEFINED };  // layers types from Ryabov doc
 
 struct HorizontalSize {
@@ -17,33 +22,52 @@ struct HorizontalSize {
 	}
 };
 
-struct BaseLayer {
-	virtual std::istream& read(std::istream& in) = 0;
-	LayerType layer_type_ = LayerType::UNDEFINED;
-	float thermal_conductivity_;
-	float thickness_;
-
-	~BaseLayer() = default;
-};
-
-struct HPU : public BaseLayer {
-	HPU() { layer_type_ = LayerType::HPU; }
-
-	float env_thermal_conductivity_;
+struct Coordinates {
 	float x1_;
 	float x2_;
 	float y1_;
 	float y2_;
-
-	std::istream& read(std::istream& in) override {
-		in >> thickness_ >> thermal_conductivity_ >> env_thermal_conductivity_;
-		in >> x1_ >> x2_ >> y1_ >> y2_;
-		return in;
-	}
 };
 
-struct BS : public BaseLayer {
+class BaseLayer {
+ public:
+	// getters
+	LayerType getType();
+	float getThermalConductivity();
+	float getThickness();
+
+	// read ryabov file content from stream
+	virtual std::istream& read(std::istream& in) = 0;
+	virtual GeomStorage<BasicShape> getGeometry() = 0;
+
+	~BaseLayer() = default;
+
+ protected:
+	LayerType layer_type_ = LayerType::UNDEFINED;
+	float thermal_conductivity_;
+	float thickness_;
+};
+
+class HPU : public BaseLayer {
+ public:
+	HPU() { layer_type_ = LayerType::HPU; }
+
+	std::istream& read(std::istream& in) override;
+	GeomStorage<BasicShape> getGeometry() override;
+
+ private:
+	float env_thermal_conductivity_;
+  Coordinates coordinates_;
+};
+
+class BS : public BaseLayer {
+ public:
 	BS() { layer_type_ = LayerType::BS; }
+
+	std::istream& read(std::istream& in) override;
+	GeomStorage<BasicShape> getGeometry() override;
+
+ private:
 	float dist_between_spheres_;
 	struct SpheresHolders {
 		// coordinates of center of initial sphere
@@ -53,51 +77,25 @@ struct BS : public BaseLayer {
 		int ny;  // num of spheres around Y axis
 	};
 	std::vector<SpheresHolders> spheres_holders_;
-
-	std::istream& read(std::istream& in) override {
-		// thickness_ equals to spheres diameter
-		in >> thickness_ >> thermal_conductivity_ >> dist_between_spheres_;
-		size_t sphere_nums;
-		in >> sphere_nums;
-		spheres_holders_.reserve(sphere_nums);
-		for (auto i = 0; i < sphere_nums; ++i) {
-			SpheresHolders holder;
-			in >> holder.x_center >> holder.y_center >> holder.nx >> holder.ny;
-			spheres_holders_.push_back(holder);
-		}
-		return in;
-	}
 };
 
-struct D : public BaseLayer {
+class D : public BaseLayer {
  public:
 	D() { layer_type_ = LayerType::D; }
 
+	std::istream& read(std::istream& in) override;
+	GeomStorage<BasicShape> getGeometry() override;
+
+ private:
 	struct Crystal {
 		std::string name;
 		float power;
 		float magic_number;  // TODO: TBD with Ryabov
-		std::array<float, 4> position;
+    Coordinates coordinates_;
 	};
 
 	size_t crystals_num_per_layer_;
 	std::vector<Crystal> crystals_;
-
-	std::istream& read(std::istream& in) override {
-		in >> thickness_;
-		in >> thermal_conductivity_;
-		in >> crystals_num_per_layer_;
-
-		crystals_.reserve(crystals_num_per_layer_);
-		while (!in.eof()) {
-			Crystal crystal;
-			in >> crystal.name >> crystal.power >> crystal.magic_number;
-			in >> crystal.position[0] >> crystal.position[1] >> crystal.position[2] >>
-					crystal.position[3];
-			crystals_.push_back(crystal);
-		}
-		return in;
-	}
 };
 
 using Layers = std::vector<std::shared_ptr<BaseLayer>>;
@@ -107,3 +105,5 @@ struct VirtexData {
 	HorizontalSize size_;
 	Layers layers_;
 };
+
+}  // namespace Readers
