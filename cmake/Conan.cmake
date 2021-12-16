@@ -11,6 +11,8 @@ macro(config_conan)
 
     # Configuration of packages
     set(CONAN_OPTIONS
+        glad:gl_version=4.3
+        glad:gl_profile=core
     )
 
     # Path to place conan.cmake file
