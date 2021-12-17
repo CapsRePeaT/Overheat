@@ -1,7 +1,7 @@
 #include "virtex_data_provider.h"
 
 namespace {
-Box3D liftBox(Box3D box, float offset) {
+Box3D liftBox(const Box3D box, float offset) {
 	auto coordinates = box.coordinates();
   coordinates.back().first += offset;
   coordinates.back().second += offset;
@@ -20,10 +20,10 @@ void VirtexDataProvider::load_geometry(const VirtexData& data) {
 	float offset = 0;
 	geometry_.Clear();
 	for (const auto& layer : data.layers_) {
-		auto geom = layer->getGeometry();
+		auto geom = layer->geometry();
 		for (const auto& shape : geom.get_all_shapes()) {
 			shape->setBox(liftBox(shape->bbox(), offset));
-			offset += layer->getThickness();
+			offset += layer->thickness();
 			geometry_.AddShape(shape);
 		}
 	}

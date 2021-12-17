@@ -12,18 +12,19 @@ size_t getNewId() {
 	return id;
 }
 
-std::pair<float, float> getSphereProjection(float center, size_t offset,
-                                            float radius) {
+std::pair<float, float> getSphereProjection(const float center,
+                                            const size_t offset,
+                                            const float radius) {
 	return {center + offset - radius, center + offset + radius};
 }
 }  // namespace
 
 namespace Readers {
-LayerType BaseLayer::getType() { return layer_type_; };
+LayerType BaseLayer::type() { return type_; };
 
-float BaseLayer::getThermalConductivity() { return thermal_conductivity_; };
+float BaseLayer::thermal_conductivity() { return thermal_conductivity_; };
 
-float BaseLayer::getThickness() { return thickness_; };
+float BaseLayer::thickness() { return thickness_; };
 
 std::istream& HPU::read(std::istream& in) {
 	in >> thickness_ >> thermal_conductivity_ >> env_thermal_conductivity_;
@@ -62,17 +63,16 @@ std::istream& D::read(std::istream& in) {
 	return in;
 }
 
-GeomStorage<BasicShape> HPU::getGeometry() {
+GeomStorage<BasicShape> HPU::geometry() {
 	Box3D box{{{coordinates_.x1_, coordinates_.x2_},
 	           {coordinates_.y1_, coordinates_.y2_},
 	           {0.f, thickness_}}};
 	GeomStorage<BasicShape> storage;
-	storage.AddShape(
-			std::make_shared<BasicShape>(getNewId(), box, ShapeType::Box));
+	storage.AddShape(std::make_shared<BasicShape>(getNewId(), box));
 	return storage;
 }
 
-GeomStorage<BasicShape> BS::getGeometry() {
+GeomStorage<BasicShape> BS::geometry() {
 	GeomStorage<BasicShape> storage;
 	// thickness_ aka diameter for this case
 	const auto radius = thickness_ / 2;
@@ -84,22 +84,20 @@ GeomStorage<BasicShape> BS::getGeometry() {
 				const auto y_ray = getSphereProjection(y_center, ny, radius);
 				Box3D::Values vals{x_ray, y_ray, {0.f, thickness_}};
 				Box3D box{vals};
-				storage.AddShape(
-						std::make_shared<BasicShape>(getNewId(), box, ShapeType::Sphere));
+				storage.AddShape(std::make_shared<BasicShape>(getNewId(), box));
 			}
 		}
 	}
 	return storage;
 }
 
-GeomStorage<BasicShape> D::getGeometry() {
+GeomStorage<BasicShape> D::geometry() {
 	GeomStorage<BasicShape> storage;
 	for (const auto& crystal : crystals_) {
 		Box3D box{{{crystal.coordinates_.x1_, crystal.coordinates_.x2_},
 		           {crystal.coordinates_.y1_, crystal.coordinates_.y2_},
 		           {0.f, thickness_}}};
-		storage.AddShape(
-				std::make_shared<BasicShape>(getNewId(), box, ShapeType::Box));
+		storage.AddShape(std::make_shared<BasicShape>(getNewId(), box));
 	}
 	return storage;
 }

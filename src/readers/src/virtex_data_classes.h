@@ -32,28 +32,28 @@ struct Coordinates {
 class BaseLayer {
  public:
 	// getters
-	LayerType getType();
-	float getThermalConductivity();
-	float getThickness();
+	LayerType type();
+	float thermal_conductivity();
+	float thickness();
 
 	// read ryabov file content from stream
 	virtual std::istream& read(std::istream& in) = 0;
-	virtual GeomStorage<BasicShape> getGeometry() = 0;
+	virtual GeomStorage<BasicShape> geometry() = 0;
 
 	~BaseLayer() = default;
 
  protected:
-	LayerType layer_type_ = LayerType::UNDEFINED;
+	LayerType type_ = LayerType::UNDEFINED;
 	float thermal_conductivity_;
 	float thickness_;
 };
 
 class HPU : public BaseLayer {
  public:
-	HPU() { layer_type_ = LayerType::HPU; }
+	HPU() { type_ = LayerType::HPU; }
 
 	std::istream& read(std::istream& in) override;
-	GeomStorage<BasicShape> getGeometry() override;
+	GeomStorage<BasicShape> geometry() override;
 
  private:
 	float env_thermal_conductivity_;
@@ -62,10 +62,10 @@ class HPU : public BaseLayer {
 
 class BS : public BaseLayer {
  public:
-	BS() { layer_type_ = LayerType::BS; }
+	BS() { type_ = LayerType::BS; }
 
 	std::istream& read(std::istream& in) override;
-	GeomStorage<BasicShape> getGeometry() override;
+	GeomStorage<BasicShape> geometry() override;
 
  private:
 	float dist_between_spheres_;
@@ -81,10 +81,10 @@ class BS : public BaseLayer {
 
 class D : public BaseLayer {
  public:
-	D() { layer_type_ = LayerType::D; }
+	D() { type_ = LayerType::D; }
 
 	std::istream& read(std::istream& in) override;
-	GeomStorage<BasicShape> getGeometry() override;
+	GeomStorage<BasicShape> geometry() override;
 
  private:
 	struct Crystal {
