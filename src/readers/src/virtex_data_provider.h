@@ -3,11 +3,23 @@
 #include "idata_provider.h"
 #include "virtex_data_classes.h"
 
+namespace Readers {
+
 class VirtexDataProvider : public IDataProvider {
  public:
-	explicit VirtexDataProvider(const VirtexData& data) {}
+	explicit VirtexDataProvider(const VirtexData& data);
 
-	GeomStorage<BasicShape> geometry() override { return {}; }
-	HeatmapStorage heatmap() override { return {}; }
-	MetadataStorage metadata() override { return {}; };
+	GeomStorage<BasicShape> geometry() override { return geometry_; };
+	HeatmapStorage heatmap() override { return heatmap_; }
+	MetadataStorage metadata() override { return metadata_; };
+
+ private:
+	void load_geometry(const VirtexData& data);
+	void load_heatmap(const VirtexData& data){};
+	void load_metadata(const VirtexData& data){};
+
+	GeomStorage<BasicShape> geometry_{};
+	HeatmapStorage heatmap_{};
+	MetadataStorage metadata_{};
 };
+}  // namespace Readers
