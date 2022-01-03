@@ -13,28 +13,28 @@ class IRenderer {
 	virtual ~IRenderer() = default;
 	// Initializes OpenGL functions and resources.
 	// Needs to be called with active OpenGL context.
-	virtual void Initialize(const int w, const int h) = 0;
+	virtual void Initialize(int w, int h) = 0;
 	// Clears all of the hardware resources to gracefully shutdown
 	// renderer API context.
 	// Must be called in overriden dtors of this interface!
 	virtual void ClearResources() = 0;
 	virtual void RenderFrame() = 0;
-	virtual void Resize(const int w, const int h) = 0;
+	virtual void Resize(int w, int h) = 0;
 	// Removes objects from scene
 	virtual void ClearScene() = 0;
 	virtual void RenderShapes(const Core::Shapes& shapes) {
 		for (const auto& shape : shapes) AddShape(shape);
 	}
-	virtual void SetTemperatureRange(const float min, const float max) = 0;
-	inline void SetTemperatureRange(const TemperatureRange& temps) {
+	virtual void SetTemperatureRange(float min, float max) = 0;
+	inline void SetTemperatureRange(TemperatureRange temps) {
 		SetTemperatureRange(temps.first, temps.second);
 	}
-	virtual void SetColorRange(const Color min, const Color max) = 0;
-	inline void SetColorRange(const ColorRange& colors) {
+	virtual void SetColorRange(Color min, Color max) = 0;
+	inline void SetColorRange(ColorRange colors) {
 		SetColorRange(colors.first, colors.second);
 	}
-	inline void SetMinMaxTemperatureAndColorRanges(
-			const TemperatureRange& temperatures, const ColorRange& colors) {
+	inline void SetMinMaxTemperatureAndColorRanges(TemperatureRange temperatures,
+	                                               ColorRange colors) {
 		SetTemperatureRange(temperatures);
 		SetColorRange(colors);
 	}

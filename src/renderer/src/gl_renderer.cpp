@@ -1,9 +1,9 @@
 #include "gl_renderer.h"
 
 #include <glad/glad.h>
+#include <glm/gtx/rotate_vector.hpp>
 #include <spdlog/spdlog.h>
 
-#include <glm/gtx/rotate_vector.hpp>
 #include <memory>
 
 #include "application/heatmap_material.h"
@@ -24,7 +24,8 @@ GLRenderer::~GLRenderer() { ClearResourcesImpl(); }
 
 void GLRenderer::Initialize(const int w, const int h) {
 	// OpenGL initialization
-	if (!gladLoadGL()) spdlog::error("Failed to initialize opengl functions");
+	if (!gladLoadGL())
+		spdlog::error("Failed to initialize opengl functions");
 	spdlog::debug("GLAD initialized");
 	auto api = RendererAPI::instance();
 	api->Init();
@@ -81,7 +82,8 @@ void GLRenderer::SetTemperatureRange(const float min, const float max) {
 	data_->heatmap_material->SetTemperatureRange(min, max);
 }
 
-void GLRenderer::SetColorRange(const IRenderer::Color min, const IRenderer::Color max) {
+void GLRenderer::SetColorRange(const IRenderer::Color min,
+                               const IRenderer::Color max) {
 	data_->heatmap_material->SetColorRange({min[0], min[1], min[2]},
 	                                       {max[0], max[1], max[2]});
 }
