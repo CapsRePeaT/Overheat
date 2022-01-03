@@ -18,7 +18,8 @@ struct GLSceneViewport::GLRendererData {
 	std::unique_ptr<OrthographicCamera> camera;
 };
 
-GLSceneViewport::GLSceneViewport() : data_(std::make_unique<GLRendererData>()) {}
+GLSceneViewport::GLSceneViewport()
+		: data_(std::make_unique<GLRendererData>()) {}
 
 GLSceneViewport::~GLSceneViewport() { ClearResourcesImpl(); }
 
@@ -83,7 +84,7 @@ void GLSceneViewport::SetTemperatureRange(const float min, const float max) {
 }
 
 void GLSceneViewport::SetColorRange(const ISceneViewport::Color min,
-                               const ISceneViewport::Color max) {
+                                    const ISceneViewport::Color max) {
 	data_->heatmap_material->SetColorRange({min[0], min[1], min[2]},
 	                                       {max[0], max[1], max[2]});
 }

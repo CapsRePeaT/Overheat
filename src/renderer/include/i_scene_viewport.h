@@ -1,15 +1,24 @@
 #pragma once
 
+#include <memory>
+
 #include "common.h"
 #include "core.h"
 
-// TODO: make method for retrieving new implementation
 class ISceneViewport {
  public:
+	enum class API {
+		None,
+		OpenGL,
+		Vulkan,
+		D3D,
+	};
+
 	using TemperatureRange = std::pair<float, float>;
 	using Color = std::array<float, 3>;
 	using ColorRange = std::pair<Color, Color>;
 	virtual ~ISceneViewport() = default;
+	static std::unique_ptr<ISceneViewport> Create(API api);
 	// Initializes OpenGL functions and resources.
 	// Needs to be called with active OpenGL context.
 	virtual void Initialize(int w, int h) = 0;
