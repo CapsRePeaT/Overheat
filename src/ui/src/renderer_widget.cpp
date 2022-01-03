@@ -4,7 +4,7 @@
 
 #include <QOpenGLContext>
 
-#include "gl_renderer.h"
+#include "gl_scene_viewport.h"
 
 QSurfaceFormat surface_format(QSurfaceFormat::FormatOptions options = {});
 
@@ -31,7 +31,7 @@ RendererWidget::~RendererWidget() {
 
 void RendererWidget::initializeGL() {
 	// TODO: reuse the pointer
-	renderer_ = std::make_unique<GLRenderer>();
+	renderer_ = std::make_unique<GLSceneViewport>();
 	renderer_->Initialize(width(), height());
 	// Gracefully clear resources of renderer when context is destroying
 	// This is needed in cases, when we manually destroying context in a

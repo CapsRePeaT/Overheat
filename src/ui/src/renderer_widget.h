@@ -5,7 +5,7 @@
 
 #include "common.h"
 #include "core.h"
-#include "i_renderer.h"
+#include "i_scene_viewport.h"
 #include "visualization_options.h"
 
 class RendererWidget : public QOpenGLWidget {
@@ -26,6 +26,6 @@ class RendererWidget : public QOpenGLWidget {
 			const VisualizationOptions& visualization_options){};
 
  private:
-	std::unique_ptr<IRenderer> renderer_;
+	std::unique_ptr<ISceneViewport> renderer_;
 	DrawMode draw_mode_ = DrawMode::Gradient;
 };

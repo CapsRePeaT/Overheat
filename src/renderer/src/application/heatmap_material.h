@@ -3,7 +3,7 @@
 #include <glm/glm.hpp>
 #include <memory>
 
-#include "i_renderer.h"
+#include "i_scene_viewport.h"
 #include "renderer/shaderprogram.h"
 
 class HeatmapMaterial {

@@ -3,14 +3,13 @@
 #include "common.h"
 #include "core.h"
 
-// TODO: rename to SceneViewport
 // TODO: make method for retrieving new implementation
-class IRenderer {
+class ISceneViewport {
  public:
 	using TemperatureRange = std::pair<float, float>;
 	using Color = std::array<float, 3>;
 	using ColorRange = std::pair<Color, Color>;
-	virtual ~IRenderer() = default;
+	virtual ~ISceneViewport() = default;
 	// Initializes OpenGL functions and resources.
 	// Needs to be called with active OpenGL context.
 	virtual void Initialize(int w, int h) = 0;

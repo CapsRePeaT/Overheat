@@ -1,4 +1,4 @@
-#include "gl_renderer.h"
+#include "gl_scene_viewport.h"
 
 #include <glad/glad.h>
 #include <glm/gtx/rotate_vector.hpp>
@@ -12,17 +12,17 @@
 #include "renderer/orthographic_camera.h"
 #include "renderer/renderer_api.h"
 
-struct GLRenderer::GLRendererData {
+struct GLSceneViewport::GLRendererData {
 	std::unique_ptr<HeatmapMaterial> heatmap_material;
 	std::vector<std::shared_ptr<SceneShape>> scene_shapes;
 	std::unique_ptr<OrthographicCamera> camera;
 };
 
-GLRenderer::GLRenderer() : data_(std::make_unique<GLRendererData>()) {}
+GLSceneViewport::GLSceneViewport() : data_(std::make_unique<GLRendererData>()) {}
 
-GLRenderer::~GLRenderer() { ClearResourcesImpl(); }
+GLSceneViewport::~GLSceneViewport() { ClearResourcesImpl(); }
 
-void GLRenderer::Initialize(const int w, const int h) {
+void GLSceneViewport::Initialize(const int w, const int h) {
 	// OpenGL initialization
 	if (!gladLoadGL())
 		spdlog::error("Failed to initialize opengl functions");
@@ -45,15 +45,15 @@ void GLRenderer::Initialize(const int w, const int h) {
 	is_initialized_ = true;
 }
 
-void GLRenderer::ClearResources() { ClearResourcesImpl(); }
+void GLSceneViewport::ClearResources() { ClearResourcesImpl(); }
 
-void GLRenderer::ClearResourcesImpl() {
+void GLSceneViewport::ClearResourcesImpl() {
 	data_->heatmap_material.reset();
 	data_->scene_shapes.clear();
 	spdlog::debug("Context cleared");
 }
 
-void GLRenderer::RenderFrame() {
+void GLSceneViewport::RenderFrame() {
 	static glm::vec3 rot_axis = {-1.0f, 0.0f, 0.0f};
 	const float kRotSpeed = 0.05f;
 	if (!data_->scene_shapes.empty()) {
@@ -69,22 +69,22 @@ void GLRenderer::RenderFrame() {
 	}
 }
 
-void GLRenderer::Resize(const int w, const int h) {
+void GLSceneViewport::Resize(const int w, const int h) {
 	RendererAPI::instance()->SetViewPort(0, 0, w, h);
 	data_->camera->SetAspectRatio(static_cast<float>(w) / static_cast<float>(h));
 }
 
-void GLRenderer::AddShape(const std::shared_ptr<BasicShape>& shape) {
+void GLSceneViewport::AddShape(const std::shared_ptr<BasicShape>& shape) {
 	data_->scene_shapes.emplace_back(std::make_shared<SceneShape>(*shape));
 }
 
-void GLRenderer::SetTemperatureRange(const float min, const float max) {
+void GLSceneViewport::SetTemperatureRange(const float min, const float max) {
 	data_->heatmap_material->SetTemperatureRange(min, max);
 }
 
-void GLRenderer::SetColorRange(const IRenderer::Color min,
-                               const IRenderer::Color max) {
+void GLSceneViewport::SetColorRange(const ISceneViewport::Color min,
+                               const ISceneViewport::Color max) {
 	data_->heatmap_material->SetColorRange({min[0], min[1], min[2]},
 	                                       {max[0], max[1], max[2]});
 }
-void GLRenderer::ClearScene() { data_->scene_shapes.clear(); }
+void GLSceneViewport::ClearScene() { data_->scene_shapes.clear(); }

@@ -1,12 +1,12 @@
 #pragma once
 
 #include "core.h"
-#include "i_renderer.h"
+#include "i_scene_viewport.h"
 
-class GLRenderer final : public IRenderer {
+class GLSceneViewport final : public ISceneViewport {
  public:
-	GLRenderer();
-	~GLRenderer() override;
+	GLSceneViewport();
+	~GLSceneViewport() override;
 	void Initialize(int w, int h) override;
 	void SetColorRange(Color min, Color max) override;
 	void SetTemperatureRange(float min, float max) override;
