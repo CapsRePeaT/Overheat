@@ -27,6 +27,9 @@ MainWindow::MainWindow(QWidget* parent)
 	// signals and slots connection
 	connect(ui_->load_file_btn, &QAction::triggered, this,
 	        &MainWindow::OnLoadFileBtnPressed);
+	connect(visualization_options_,
+	        &VisualizationOptionsWidget::VisualizationOptionsChanged,
+	        render_widget_, &RendererWidget::onVisualizationOptionsChanged);
 }
 
 MainWindow::~MainWindow() { delete ui_; }
