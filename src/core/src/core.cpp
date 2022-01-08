@@ -1,5 +1,6 @@
 #include "core.h"
 #include <iostream>
+#include "../../readers/src/virtex_reader.h"
 
 // TODO delete after proper reader implementation (or leave for testing, TBD)
 // TODO 2 add proper logging
@@ -36,7 +37,6 @@ Core::Shapes Core::GetShapes(const Box3D& area) {
 
 void Core::LoadGeometry(const std::string& file_name) {
   // TODO make proper interface class usage
-  DummyReader reader;
-	geom_storage_.Clear();
-  reader.LoadGeometry(file_name, geom_storage_);
+	Readers::VirtexReader reader{file_name};
+	geom_storage_ = reader.geometry();
 }

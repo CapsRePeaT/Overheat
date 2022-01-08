@@ -38,7 +38,7 @@ void MainWindow::LoadFile(const std::string& file_name) {
 
 void MainWindow::OnLoadFileBtnPressed() {
 	const QString file_name = QFileDialog::getOpenFileName(
-			this, tr("Open File"), QDir::currentPath(), tr("geom (*.cpp)"));
+			this, tr("Open File"), QDir::currentPath(), tr("geom (*.txt *.TRM);; ALL (*.*)"));
 	// TODO: check if file_name is empty (on cancel)
 	LoadFile(file_name.toStdString());
 }

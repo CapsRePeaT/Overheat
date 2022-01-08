@@ -1,9 +1,7 @@
 #include "renderer_widget.h"
-
 #include <spdlog/spdlog.h>
-
 #include <QOpenGLContext>
-
+#include <iostream>
 #include "gl_renderer.h"
 
 QSurfaceFormat surface_format(QSurfaceFormat::FormatOptions options = {});
@@ -61,11 +59,23 @@ void RendererWidget::resizeGL(const int w, const int h) {
 }
 
 void RendererWidget::RenderShapes(const Core::Shapes& shapes) {
+	std::cout << "Number of shapes for rendering " << shapes.size() << std::endl;
 	assert(!shapes.empty() && "no shapes received");
 	makeCurrent();
 	renderer_->ClearScene();
 	renderer_->RenderShapes(shapes);
 	doneCurrent();
+};
+
+void RendererWidget::UpdateVisualizationOptions(
+		const VisualizationOptions& visualization_options) {
+	const auto min_color = visualization_options.min_temp_color;
+	const auto max_color = visualization_options.max_temp_color;
+	renderer_->SetColorRange(
+			std::array<float, 3>{min_color.redF(), min_color.greenF(), min_color.blueF()},
+			std::array<float, 3>{max_color.redF(), max_color.greenF(), max_color.blueF()});
+	renderer_->SetTemperatureRange(visualization_options.min_temp, visualization_options.max_temp);
+	renderer_->SetDrawMode(visualization_options.draw_mode);
 };
 
 // TODO: maybe need to delegate tweaks to renderer
@@ -82,3 +92,4 @@ QSurfaceFormat surface_format(const QSurfaceFormat::FormatOptions options) {
 	surface_format.setStencilBufferSize(8);
 	return surface_format;
 }
+
