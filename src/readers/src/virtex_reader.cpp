@@ -22,32 +22,32 @@ std::vector<std::string> split(const std::string& str, const std::regex& regex,
 	return retval;
 }
 
-void read_general_info(const std::string& content, VirtexData& data) {
+void read_general_info(const std::string& content, Readers::VirtexData& data) {
 	std::stringstream istream;
 	istream.str(content);
 	istream >> data.program_name_;
 	istream >> data.size_;
 }
 
-std::shared_ptr<BaseLayer> make_layer(const std::string& layer_tag) {
+std::shared_ptr<Readers::BaseLayer> make_layer(const std::string& layer_tag) {
 	switch (std::toupper(layer_tag[0])) {
 		case 'H':
 		case 'P':
 		case 'U': {
-			return std::make_shared<HPU>();
+			return std::make_shared<Readers::HPU>();
 		}
 		case 'B':
 		case 'S': {
-			return std::make_shared<BS>();
+			return std::make_shared<Readers::BS>();
 		}
 		case 'D':
-			return std::make_shared<D>();
+			return std::make_shared<Readers::D>();
 		default:
 			throw std::runtime_error("Unknown layer type.");
 	}
 }
 
-std::shared_ptr<BaseLayer> read_layer(const std::string& layer_tag,
+std::shared_ptr<Readers::BaseLayer> read_layer(const std::string& layer_tag,
                                       const std::string& layer_content) {
 	std::stringstream ss{layer_content};
 	auto layer = make_layer(layer_tag);
