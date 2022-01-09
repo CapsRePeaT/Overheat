@@ -42,7 +42,7 @@
     <rect>
      <x>10</x>
      <y>10</y>
-     <width>223</width>
+     <width>226</width>
      <height>252</height>
     </rect>
    </property>
@@ -57,7 +57,14 @@
        </widget>
       </item>
       <item>
-       <widget class="QDoubleSpinBox" name="min_temp"/>
+       <widget class="QDoubleSpinBox" name="min_temp">
+        <property name="minimum">
+         <double>-100.000000000000000</double>
+        </property>
+        <property name="maximum">
+         <double>1000.000000000000000</double>
+        </property>
+       </widget>
       </item>
       <item>
        <widget class="QLabel" name="label_5">
@@ -67,7 +74,14 @@
        </widget>
       </item>
       <item>
-       <widget class="QDoubleSpinBox" name="max_temp"/>
+       <widget class="QDoubleSpinBox" name="max_temp">
+        <property name="minimum">
+         <double>-100.000000000000000</double>
+        </property>
+        <property name="maximum">
+         <double>1000.000000000000000</double>
+        </property>
+       </widget>
       </item>
      </layout>
     </item>

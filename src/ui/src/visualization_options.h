@@ -10,10 +10,10 @@ class VisualizationOptionsWidget;
 
 struct VisualizationOptions {
 	DrawMode draw_mode;
-	QColor min_temp_color = "blue";
-	QColor max_temp_color = "red";
-	float min_temp = 300.0f;
-	float max_temp = 400.0f;
+	QColor min_temp_color;
+	QColor max_temp_color;
+	float min_temp;
+	float max_temp;
 };
 
 // options should be saved between sessions

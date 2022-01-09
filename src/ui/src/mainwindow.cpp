@@ -1,6 +1,7 @@
 #include "mainwindow.h"
 
 #include <QFileDialog>
+#include <QMessageBox>
 
 #include "ui_mainwindow.h"
 
@@ -43,5 +44,14 @@ void MainWindow::OnLoadFileBtnPressed() {
 	const QString file_name = QFileDialog::getOpenFileName(
 			this, tr("Open File"), QDir::currentPath(), tr("geom (*.txt *.TRM);; ALL (*.*)"));
 	// TODO: check if file_name is empty (on cancel)
-	LoadFile(file_name.toStdString());
+	if (file_name.length()) {
+		try {
+			LoadFile(file_name.toStdString());
+		} catch(...) {
+			QMessageBox messageBox;
+			messageBox.critical(0, "Error", "Unknown error. File cannot be parsed, please check file format.");
+			messageBox.setFixedSize(500, 200);
+		}
+	}
+	
 }
