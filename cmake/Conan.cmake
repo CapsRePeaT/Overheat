@@ -7,12 +7,19 @@ macro(config_conan)
         glm/0.9.9.8
         stb/20200203
         spdlog/1.9.2
+        qt/6.2.2
     )
+    if(UNIX)
+        list(APPEND CONAN_DEPS 
+            expat/2.4.2
+        )
+    endif()
 
     # Configuration of packages
     set(CONAN_OPTIONS
-        glad:gl_version=4.3
+        glad:gl_version=4.4
         glad:gl_profile=core
+        qt:shared=True
     )
 
     # Path to place conan.cmake file
@@ -31,23 +38,43 @@ macro(run_conan)
         if(NOT EXISTS ${CONAN_CMAKE_PATH})
             message(STATUS "Downloading conan.cmake from https://github.com/conan-io/cmake-conan")
             file(DOWNLOAD
-                "https://raw.githubusercontent.com/conan-io/cmake-conan/v0.16.1/conan.cmake"
+                "https://raw.githubusercontent.com/conan-io/cmake-conan/0.17.0/conan.cmake"
                 ${CONAN_CMAKE_PATH}
-                EXPECTED_HASH SHA256=396e16d0f5eabdc6a14afddbcfff62a54a7ee75c6da23f32f7a31bc85db23484
+                EXPECTED_HASH SHA256=3bef79da16c2e031dc429e1dac87a08b9226418b300ce004cc125a82687baeef
                 TLS_VERIFY ON
             )
-        endif()
+        endif()  # NOT EXISTS ${CONAN_CMAKE_PATH}
         include(${CONAN_CMAKE_PATH})
-
+        
+        # Set import variables
+        if(WIN32)
+            STRING(CONCAT IMPORT_DLL_FILES "bin, *.dll -> " ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})
+            STRING(CONCAT IMPORT_RES_DLL_FILES "res/archdatadir/plugins, * -> " ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})
+        endif()  # WIN32
+        
         # Setup configuration
         conan_cmake_configure(
             REQUIRES ${CONAN_DEPS}
-            GENERATORS cmake
+            GENERATORS cmake_find_package
             OPTIONS ${CONAN_OPTIONS}
+            IMPORTS ${IMPORT_DLL_FILES}
+            IMPORTS ${IMPORT_RES_DLL_FILES}
         )
         # Install libraries from conan with considering of build type
-        foreach(TYPE ${CMAKE_CONFIGURATION_TYPES})
-            conan_cmake_autodetect(settings BUILD_TYPE ${TYPE})
+        get_property(isMultiConfig GLOBAL PROPERTY GENERATOR_IS_MULTI_CONFIG)
+        if(isMultiConfig)
+            foreach(TYPE ${CMAKE_CONFIGURATION_TYPES})
+                conan_cmake_autodetect(settings BUILD_TYPE ${TYPE})
+                conan_cmake_install(
+                    PATH_OR_REFERENCE .
+                    BUILD missing
+                    REMOTE conancenter
+                    SETTINGS ${settings}
+                    INSTALL_FOLDER ${CONAN_INSTALL_DIR}/${TYPE}
+                )
+            endforeach() # TYPE
+        else()  # isMultiConfig
+            conan_cmake_autodetect(settings BUILD_TYPE ${CMAKE_BUILD_TYPE})
             conan_cmake_install(
                 PATH_OR_REFERENCE .
                 BUILD missing
@@ -55,9 +82,6 @@ macro(run_conan)
                 SETTINGS ${settings}
                 INSTALL_FOLDER ${CONAN_INSTALL_DIR}
             )
-        endforeach()
-
-        include(${CONAN_INSTALL_DIR}/conanbuildinfo.cmake)
-        conan_basic_setup(TARGETS)
-    endif()
-endmacro()
+        endif()  # isMultiConfig
+    endif()  # USE_CONAN
+endmacro()  # run_conan
