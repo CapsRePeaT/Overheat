@@ -17,7 +17,7 @@ class Core {
 	void LoadHeatmap(const std::string& file_name) {}
 	void LoadGeometry(const std::string& file_name);
 	// FIXME implement geom search, now we return all shapes
-	Shapes GetShapes(const Box3D& area = Box3D());
+	const Shapes& GetShapes(const Box3D& area = Box3D()) const;
 	const Box3D design_borders() { return design_borders_; }
 	// get metadata by id func
 
