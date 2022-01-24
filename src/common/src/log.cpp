@@ -6,6 +6,7 @@
 
 std::shared_ptr<spdlog::logger> Log::logger_;
 
+// TODO: config level from entrypoint
 #ifdef NDEBUG
 auto log_level = spdlog::level::info;
 #else
