@@ -9,7 +9,7 @@
 
 class SceneShape {
  public:
-	SceneShape(const BasicShape& shape);
+	explicit SceneShape(const BasicShape& shape);
 	void Rotate(float angle, glm::vec3 axis) {
 		rotation_ = glm::rotate(rotation_, angle, axis);
 	}

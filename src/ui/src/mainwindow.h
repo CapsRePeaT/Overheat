@@ -8,6 +8,7 @@
 #include "renderer_widget.h"
 #include "shape_list_widget.h"
 #include "visualization_options.h"
+#include "scene.h"
 
 namespace Ui {
 class MainWindow;
@@ -30,6 +31,7 @@ class MainWindow : public QMainWindow {
  private:
 	Core& core() { return Core::instance(); }
 	RendererWidget* render_widget_ = nullptr;
+	std::shared_ptr<Scene> scene_;
 	VisualizationOptionsWidget* visualization_options_ = nullptr;
 	MetadataWidget* metadata_widget_ = nullptr;
 	ShapeListWidget* shape_list_widget_ = nullptr;

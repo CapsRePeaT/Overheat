@@ -1,15 +1,20 @@
 #include "mainwindow.h"
 
 #include <QFileDialog>
+#include <memory>
 
+#include "log.h"
+#include "scene.h"
 #include "ui_mainwindow.h"
 
 MainWindow::MainWindow(QWidget* parent)
-		: QMainWindow(parent), ui_(new Ui::MainWindow) {
+		: QMainWindow(parent),
+			scene_(std::make_shared<Scene>()), 
+			ui_(new Ui::MainWindow) {
 	ui_->setupUi(this);
 	setWindowTitle(tr("OVERHEAT application"));
 	// renderer widget
-	render_widget_ = new RendererWidget(this);
+	render_widget_ = new RendererWidget(this, scene_);
 	setCentralWidget(render_widget_);
 	render_widget_->showMaximized();
 	// shape widget
@@ -33,7 +38,19 @@ MainWindow::~MainWindow() { delete ui_; }
 
 void MainWindow::LoadFile(const std::string& file_name) {
 	core().LoadGeometry(file_name);
-	render_widget_->RenderShapes(core().GetShapes());
+	const auto loaded_shapes = core().GetShapes();
+	// Do we really need this assert?
+	// assert(!loaded_shapes.empty() && "no shapes received");
+	if (!loaded_shapes.empty()) {
+		// FIXME: Adding shapes shouldn't need to make API context current
+		render_widget_->makeCurrent();
+		scene_->Clear();
+		scene_->AddShapes(loaded_shapes);
+		render_widget_->doneCurrent();
+	}
+	else {
+		LOG_WARN("No shaped received from file {}", file_name);
+	}
 }
 
 void MainWindow::OnLoadFileBtnPressed() {

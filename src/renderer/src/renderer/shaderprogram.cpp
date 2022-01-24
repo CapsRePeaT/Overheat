@@ -50,7 +50,7 @@ template <GLenum ptype>
 	static_assert(ptype == GL_LINK_STATUS || ptype == GL_COMPILE_STATUS,
 	              "Call for GetCompileLinkSuccess is permitted with only  with"
 	              "GL_LINK_STATUS or GL_COMPILE_STATUS");
-	int32_t success;
+	int32_t success = 0;
 	if constexpr (ptype == GL_LINK_STATUS)
 		glGetProgramiv(id, ptype, &success);
 	else if constexpr (ptype == GL_COMPILE_STATUS)

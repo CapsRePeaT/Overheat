@@ -6,20 +6,13 @@
 
 #include <memory>
 
-#include "application/heatmap_material.h"
-#include "application/scene_shape.h"
 // TODO: maybe rename inner *renderer* folder to *primitives* or smth similar
-#include "renderer/orthographic_camera.h"
+#include "scene.h"
+#include "application/scene_shape.h"
 #include "renderer/renderer_api.h"
 
-struct GLSceneViewport::GLRendererData {
-	std::unique_ptr<HeatmapMaterial> heatmap_material;
-	std::vector<std::shared_ptr<SceneShape>> scene_shapes;
-	std::unique_ptr<OrthographicCamera> camera;
-};
-
-GLSceneViewport::GLSceneViewport()
-		: data_(std::make_unique<GLRendererData>()) {}
+GLSceneViewport::GLSceneViewport(std::shared_ptr<Scene> scene)
+		: scene_(scene) {}
 
 GLSceneViewport::~GLSceneViewport() { ClearResourcesImpl(); }
 
@@ -39,53 +32,53 @@ void GLSceneViewport::Initialize(const int w, const int h) {
 	spdlog::debug(
 			"Initializing camera: w = {}, h = {}, aspect_ratio = {}, zoom = {}", w, h,
 			aspect_ratio, zoom);
-	data_->camera = std::make_unique<OrthographicCamera>(
+	camera_ = std::make_unique<OrthographicCamera>(
 			aspect_ratio, zoom, std::pair{-20.0f, 20.0f});
-	data_->camera->SetPosition({0.0f, 0.0f, -5.0f});
-	data_->heatmap_material = std::make_unique<HeatmapMaterial>();
+	camera_->SetPosition({0.0f, 0.0f, -5.0f});
+	heatmap_material_ = std::make_unique<HeatmapMaterial>();
 	is_initialized_ = true;
 }
 
 void GLSceneViewport::ClearResources() { ClearResourcesImpl(); }
 
 void GLSceneViewport::ClearResourcesImpl() {
-	data_->heatmap_material.reset();
-	data_->scene_shapes.clear();
+	heatmap_material_.reset();
+	scene_->Clear();
 	spdlog::debug("Context cleared");
 }
 
 void GLSceneViewport::RenderFrame() {
+	// TODO: pass scene to renderer
 	static glm::vec3 rot_axis = {-1.0f, 0.0f, 0.0f};
 	const float kRotSpeed = 0.05f;
-	if (!data_->scene_shapes.empty()) {
-		data_->scene_shapes[0]->Rotate(kRotSpeed, rot_axis);
+	if (!scene_->shapes().empty()) {
+		scene_->shapes()[0]->Rotate(kRotSpeed, rot_axis);
 		rot_axis = glm::rotateZ<float>(rot_axis, kRotSpeed * 0.4);
 	}
 	auto api = RendererAPI::instance();
 	api->Clear();
-	for (auto& shape : data_->scene_shapes) {
-		data_->heatmap_material->Use(shape->transform(),
-		                             data_->camera->viewProjectionMatrix());
+	for (auto& shape : scene_->shapes()) {
+		heatmap_material_->Use(shape->transform(),
+		                             camera_->viewProjectionMatrix());
 		api->DrawIndexed(shape->vertex_array());
 	}
 }
 
 void GLSceneViewport::Resize(const int w, const int h) {
 	RendererAPI::instance()->SetViewPort(0, 0, w, h);
-	data_->camera->SetAspectRatio(static_cast<float>(w) / static_cast<float>(h));
-}
-
-void GLSceneViewport::AddShape(const std::shared_ptr<BasicShape>& shape) {
-	data_->scene_shapes.emplace_back(std::make_shared<SceneShape>(*shape));
+	camera_->SetAspectRatio(static_cast<float>(w) / static_cast<float>(h));
 }
 
 void GLSceneViewport::SetTemperatureRange(const float min, const float max) {
-	data_->heatmap_material->SetTemperatureRange(min, max);
+	heatmap_material_->SetTemperatureRange(min, max);
 }
 
 void GLSceneViewport::SetColorRange(const ISceneViewport::Color min,
                                     const ISceneViewport::Color max) {
-	data_->heatmap_material->SetColorRange({min[0], min[1], min[2]},
+	heatmap_material_->SetColorRange({min[0], min[1], min[2]},
 	                                       {max[0], max[1], max[2]});
 }
-void GLSceneViewport::ClearScene() { data_->scene_shapes.clear(); }
+
+void GLSceneViewport::MoveCamera(int x, int y, int dX, int dY) {}
+void GLSceneViewport::RotateCamera(int x, int y, int dX, int dY) {}
+void GLSceneViewport::ZoomView(float delta) {}

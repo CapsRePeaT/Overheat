@@ -1,15 +1,17 @@
 #include "renderer_widget.h"
 
+#include <qwidget.h>
 #include <spdlog/spdlog.h>
 
 #include <QOpenGLContext>
+#include <memory>
 
 #include "i_scene_viewport.h"
 
 QSurfaceFormat surface_format(QSurfaceFormat::FormatOptions options = {});
 
-RendererWidget::RendererWidget(QWidget* parent)
-		: QOpenGLWidget(parent), renderer_(nullptr) {
+RendererWidget::RendererWidget(QWidget* parent, std::shared_ptr<Scene> scene)
+		: QOpenGLWidget(parent), viewport_(nullptr), scene_(scene) {
 	setMinimumSize(480, 360);
 #ifdef NDEBUG
 	setFormat(surface_format());
@@ -17,6 +19,9 @@ RendererWidget::RendererWidget(QWidget* parent)
 	setFormat(surface_format(QSurfaceFormat::DebugContext));
 #endif
 }
+
+RendererWidget::RendererWidget(QWidget* parent)
+		: RendererWidget(parent, nullptr) {}
 
 RendererWidget::~RendererWidget() {
 	// Context destroying is guaranted to happen after OpenGLWidget destruction
@@ -30,9 +35,16 @@ RendererWidget::~RendererWidget() {
 }
 
 void RendererWidget::initializeGL() {
+	// We need know which scene to link to viewport after creating RendererWidget,
+	// hence we have to store it in class.
+	// As RendererWidget is considered to be owned by somthing, that also owns
+	// Scene, we can store weak_ptr here.
+	assert(!scene_.expired() && "Scene was destroyed before RendererWidget");
+	auto&& scene = scene_.lock();
 	// TODO: reuse the pointer
-	renderer_ = ISceneViewport::Create(ISceneViewport::API::OpenGL);
-	renderer_->Initialize(width(), height());
+	viewport_ =
+			ISceneViewport::Create(ISceneViewport::API::OpenGL, std::move(scene));
+	viewport_->Initialize(width(), height());
 	// Gracefully clear resources of renderer when context is destroying
 	// This is needed in cases, when we manually destroying context in a
 	// lifetime of one RenderWidget (that is unlikely, but still).
@@ -47,26 +59,18 @@ void RendererWidget::initializeGL() {
 	// But 1. I want to reuse the pointer in near future (TBT) and
 	// 2. this is more self-documented
 	connect(context(), &QOpenGLContext::aboutToBeDestroyed, this,
-	        [&renderer = *renderer_]() { renderer.ClearResources(); });
+	        [&renderer = *viewport_]() { renderer.ClearResources(); });
 }
 
 void RendererWidget::paintGL() {
-	renderer_->RenderFrame();
+	viewport_->RenderFrame();
 	update();
 }
 
 void RendererWidget::resizeGL(const int w, const int h) {
-	renderer_->Resize(w, h);
+	viewport_->Resize(w, h);
 	update();
 }
-
-void RendererWidget::RenderShapes(const Core::Shapes& shapes) {
-	assert(!shapes.empty() && "no shapes received");
-	makeCurrent();
-	renderer_->ClearScene();
-	renderer_->RenderShapes(shapes);
-	doneCurrent();
-};
 
 // TODO: maybe need to delegate tweaks to renderer
 QSurfaceFormat surface_format(const QSurfaceFormat::FormatOptions options) {
