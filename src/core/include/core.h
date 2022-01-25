@@ -1,6 +1,7 @@
 #pragma once
 
 #include <string>
+#include <cassert>
 
 #include "common.h"
 #include "databases.h"
@@ -8,7 +9,7 @@
 
 class Core {
  public:
-	using Shapes = GeomStorage<BasicShape>::Shapes;
+	using Shapes = FileRepresentation::Shapes;
 
 	static Core& instance() {
 		static Core instance;
@@ -16,15 +17,13 @@ class Core {
 	}
 	void LoadHeatmap(const std::string& file_name) {}
 	void LoadGeometry(const std::string& file_name);
-	// FIXME implement geom search, now we return all shapes
-	Shapes GetShapes(const Box3D& area = Box3D());
-	const Box3D design_borders() { return design_borders_; }
-	// get metadata by id func
+	// for now we have only one file loaded
+	FileRepresentation& GetFirstFile() {
+		assert(representations_.size() && "any representations available");
+		return representations_[0];
+	}
 
  private:
 	Core() = default;
-	GeomStorage<BasicShape> geom_storage_;
-	HeatmapStorage heatmap_storage_;
-	MetadataStorage metadata_storage_;
-	Box3D design_borders_;
+	std::vector<FileRepresentation> representations_;
 };

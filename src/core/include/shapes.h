@@ -15,6 +15,7 @@ class BasicShape {
 
  private:
 	size_t id_;
+	size_t layer_id_;
 	ShapeType shape_type_ = ShapeType::Undefined;
 	Box3D bbox_;
 };

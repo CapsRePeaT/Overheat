@@ -5,6 +5,8 @@
 
 #include "ui_mainwindow.h"
 
+
+
 MainWindow::MainWindow(QWidget* parent)
 		: QMainWindow(parent), ui_(new Ui::MainWindow) {
 	ui_->setupUi(this);
@@ -37,7 +39,7 @@ MainWindow::~MainWindow() { delete ui_; }
 
 void MainWindow::LoadFile(const std::string& file_name) {
 	core().LoadGeometry(file_name);
-	render_widget_->RenderShapes(core().GetShapes());
+	render_widget_->RenderShapes(core().GetFirstFile().GetShapes());
 }
 
 void MainWindow::OnLoadFileBtnPressed() {

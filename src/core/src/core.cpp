@@ -17,12 +17,6 @@ class DummyReader {
 				44, Box3D({{-3.0f, 8.0f}, {-15.0f, -7.0f}, {0.0f, 0.2f}})));
 		return true;
 	}
-	// Сan we use std::ostream instead?
-	bool LoadHeatmap(const std::string& filename,
-	                 HeatmapStorage& heatmap_storage) {
-		std::cout << "heatmap loading..." << std::endl;
-		return true;
-	}
 	bool LoadMetadata(const std::string& filename,
 	                  MetadataStorage& metadata_storage) {
 		std::cout << "metadata loading..." << std::endl;
@@ -31,12 +25,11 @@ class DummyReader {
 };
 
 
-Core::Shapes Core::GetShapes(const Box3D& area) {
-  return geom_storage_.get_all_shapes();
-}
 
 void Core::LoadGeometry(const std::string& file_name) {
   // TODO make proper interface class usage
 	Readers::VirtexReader reader{file_name};
-	geom_storage_ = reader.geometry();
+	FileRepresentation new_representation;
+	new_representation.geom_storage() = reader.geometry();
+	representations_.push_back(new_representation);
 }
