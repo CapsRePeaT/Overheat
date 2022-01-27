@@ -21,8 +21,10 @@ MainWindow::MainWindow(QWidget* parent)
 	shape_list_widget_->setWindowTitle("Shapes");
 	// metadata widget
 	metadata_widget_ = new MetadataWidget(this);
-	addDockWidget(Qt::LeftDockWidgetArea, metadata_widget_);
-	metadata_widget_->setWindowTitle("Metadata");
+	QDockWidget* metadata_dock = new QDockWidget(tr("Metadata"), this);
+	metadata_dock->setWidget(metadata_widget_);
+	addDockWidget(Qt::LeftDockWidgetArea, metadata_dock);
+
 	// options widget
 	visualization_options_ = new VisualizationOptionsWidget(this);
 	addDockWidget(Qt::LeftDockWidgetArea, visualization_options_);
