@@ -10,7 +10,7 @@ class Log {
 	}
 
  private:
-	static std::shared_ptr<spdlog::logger> logger_;
+	static inline std::shared_ptr<spdlog::logger> logger_;
 };
 
 //
