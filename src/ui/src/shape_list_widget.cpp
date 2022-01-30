@@ -19,8 +19,8 @@ ShapeListWidget::ShapeListWidget(QWidget* parent)
 }
 
 void ShapeListWidget::Test() {
-	model_->TestFillWithTxtFile(
-			"C:\\Users\\winroot\\Desktop\\overheat\\local_docs\\default.txt");
+	//model_->TestFillWithTxtFile(
+	//		"C:\\Users\\winroot\\Desktop\\overheat\\local_docs\\default.txt");
 }
 
 // TreeItem

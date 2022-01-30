@@ -25,8 +25,6 @@ class DummyReader {
 	}
 };
 
-
-
 void Core::LoadGeometry(const std::string& file_name) {
   // TODO make proper interface class usage
 	Readers::VirtexReader reader{file_name};
