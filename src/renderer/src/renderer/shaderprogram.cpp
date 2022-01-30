@@ -8,7 +8,7 @@
 #include <fstream>
 #include <sstream>
 
-#include "platform/opengl/constants.h"
+#include "constants.h"
 
 uint32_t ShaderProgram::using_id_;
 bool CreateShader(const ShaderProgram::Path& source, GLenum shader_type,
