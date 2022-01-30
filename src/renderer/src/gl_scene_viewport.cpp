@@ -7,9 +7,9 @@
 #include <memory>
 
 // TODO: maybe rename inner *renderer* folder to *primitives* or smth similar
-#include "scene.h"
 #include "application/scene_shape.h"
 #include "renderer/renderer_api.h"
+#include "scene.h"
 
 GLSceneViewport::GLSceneViewport(std::shared_ptr<Scene> scene)
 		: scene_(scene) {}
@@ -32,8 +32,8 @@ void GLSceneViewport::Initialize(const int w, const int h) {
 	spdlog::debug(
 			"Initializing camera: w = {}, h = {}, aspect_ratio = {}, zoom = {}", w, h,
 			aspect_ratio, zoom);
-	camera_ = std::make_unique<OrthographicCamera>(
-			aspect_ratio, zoom, std::pair{-20.0f, 20.0f});
+	camera_ = std::make_unique<OrthographicCamera>(aspect_ratio, zoom,
+	                                               std::pair{-20.0f, 20.0f});
 	camera_->SetPosition({0.0f, 0.0f, -5.0f});
 	heatmap_material_ = std::make_unique<HeatmapMaterial>();
 	is_initialized_ = true;
@@ -58,8 +58,7 @@ void GLSceneViewport::RenderFrame() {
 	auto api = RendererAPI::instance();
 	api->Clear();
 	for (auto& shape : scene_->shapes()) {
-		heatmap_material_->Use(shape->transform(),
-		                             camera_->viewProjectionMatrix());
+		heatmap_material_->Use(shape->transform(), camera_->viewProjectionMatrix());
 		api->DrawIndexed(shape->vertex_array());
 	}
 }
@@ -76,9 +75,10 @@ void GLSceneViewport::SetTemperatureRange(const float min, const float max) {
 void GLSceneViewport::SetColorRange(const ISceneViewport::Color min,
                                     const ISceneViewport::Color max) {
 	heatmap_material_->SetColorRange({min[0], min[1], min[2]},
-	                                       {max[0], max[1], max[2]});
+	                                 {max[0], max[1], max[2]});
 }
 
-void GLSceneViewport::MoveCamera(int x, int y, int dX, int dY) {}
-void GLSceneViewport::RotateCamera(int x, int y, int dX, int dY) {}
+void GLSceneViewport::MoveCamera(const Vec2D screenPoint, const Vec2D delta) {}
+void GLSceneViewport::RotateCamera(const Vec2D screenPoint, const Vec2D delta) {
+}
 void GLSceneViewport::ZoomView(float delta) {}

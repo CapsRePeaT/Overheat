@@ -17,8 +17,8 @@ class GLSceneViewport final : public ISceneViewport {
 	void RenderFrame() override;
 	void ClearResources() override;
 	void Resize(int w, int h) override;
-	void MoveCamera(int x, int y, int dX, int dY) override;
-	void RotateCamera(int x, int y, int dX, int dY) override;
+	void MoveCamera(Vec2D screenPoint, Vec2D delta) override;
+	void RotateCamera(Vec2D screenPoint, Vec2D delta) override;
 	void ZoomView(float delta) override;
 
  private:

@@ -6,6 +6,11 @@
 #include "core.h"
 #include "scene.h"
 
+struct Vec2D {
+	int x;
+	int y;
+};
+
 class ISceneViewport {
  public:
 	enum class API {
@@ -32,13 +37,13 @@ class ISceneViewport {
 	virtual void Resize(int w, int h) = 0;
 
 	// Moves camera perpendicular to it's forward vector
-	// x, y - coordinates in screen view (0 in top-left corner)
-	// dX, dY - deltas for `x` and `y`
-	virtual void MoveCamera(int x, int y, int dX, int dY) = 0;
+	// screenPoint - mouse position in screen view (0 in top-left corner)
+	// delta - last frame increment of mouse position
+	virtual void MoveCamera(Vec2D screenPoint, Vec2D delta) = 0;
 	// Rotates camera according to it's controller
-	// x, y - coordinates in screen view (0 in top-left corner)
-	// dX, dY - deltas for `x` and `y`
-	virtual void RotateCamera(int x, int y, int dX, int dY) = 0;
+	// screenPoint - mouse position in screen view (0 in top-left corner)
+	// delta - last frame increment of mouse position
+	virtual void RotateCamera(Vec2D screenPoint, Vec2D delta) = 0;
 	// Zooms view in and out
 	virtual void ZoomView(float delta) = 0;
 
@@ -59,6 +64,6 @@ class ISceneViewport {
 	[[nodiscard]] bool is_initialized() const { return is_initialized_; }
 
  protected:
-	DrawMode draw_mode_;
+	DrawMode draw_mode_ = DrawMode::Gradient;
 	bool is_initialized_ = false;
 };
