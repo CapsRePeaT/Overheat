@@ -5,11 +5,15 @@
 #include "common.h"
 
 namespace Ui {
-class VisualizationOptions;
+class VisualizationOptionsWidget;
 }
 
 struct VisualizationOptions {
 	DrawMode draw_mode;
+	QColor min_temp_color;
+	QColor max_temp_color;
+	float min_temp;
+	float max_temp;
 };
 
 // options should be saved between sessions
@@ -21,12 +25,11 @@ class VisualizationOptionsWidget : public QDockWidget {
  public:
 	explicit VisualizationOptionsWidget(QWidget* parent = nullptr);
 	~VisualizationOptionsWidget();
-
  signals:
 	void VisualizationOptionsChanged(
 			const VisualizationOptions& visualization_options);
 
  private:
-	Ui::VisualizationOptions* ui_;
+	Ui::VisualizationOptionsWidget* ui_;
 	VisualizationOptions visualization_options_;
 };

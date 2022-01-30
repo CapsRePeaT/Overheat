@@ -4,8 +4,7 @@
 #include <spdlog/sinks/basic_file_sink.h>
 #include <spdlog/sinks/stdout_color_sinks.h>
 
-std::shared_ptr<spdlog::logger> Log::logger_;
-
+// TODO: config level from entrypoint
 #ifdef NDEBUG
 auto log_level = spdlog::level::info;
 #else

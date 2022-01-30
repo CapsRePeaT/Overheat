@@ -6,7 +6,7 @@
 
 // maybe better to inmpement it in multy dimentional format (3D, 2D, 1D) and
 // make dimention as template ardument ?
-template <int N>
+// template <int N>
 class Heatmap {
  public:
 	Heatmap();
