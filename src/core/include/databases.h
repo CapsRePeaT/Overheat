@@ -9,8 +9,9 @@
 
 template <class Shape>
 class GeomStorage {
+	
  public:
-	using ShapePtr = std::shared_ptr<Shape>;
+  using ShapePtr = std::shared_ptr<Shape>;
 	using Shapes = std::vector<ShapePtr>;
 	GeomStorage() = default;
 	void AddShape(ShapePtr shape) { shapes_.emplace_back(std::move(shape)); }

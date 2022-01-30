@@ -1,11 +1,14 @@
 #pragma once
 
 #include <QDockWidget>
+#include <QAbstractItemModel>
+#include <QModelIndex>
+#include <QVariant>
+#include <QVector>
+#include <QTreeView>
 
-namespace Ui {
-class ShapeListWidget;
-}
 
+class TreeModel;
 
 // top level item should be a design
 class ShapeListWidget : public QDockWidget {
@@ -13,36 +16,27 @@ class ShapeListWidget : public QDockWidget {
 
  public:
 	explicit ShapeListWidget(QWidget* parent = nullptr);
-	~ShapeListWidget();
-
+	~ShapeListWidget() = default;
 
  private:
-	Ui::ShapeListWidget* ui_;
+	void Test();
+	TreeModel* model_ = nullptr;
+	QTreeView* view_ = nullptr;
 };
-
-// ONLY FOR EXAMPLE
-
-#include <QAbstractItemModel>
-#include <QModelIndex>
-#include <QVariant>
-#include <QVector>
 
 class TreeItem
 {
 public:
     explicit TreeItem(const QVector<QVariant> &data, TreeItem *parentItem = nullptr);
-    ~TreeItem();
-
-    void appendChild(TreeItem *child);
-
+		~TreeItem() { qDeleteAll(m_childItems); }
+    void append_child(TreeItem* item) { m_childItems.append(item); }
     TreeItem *child(int row);
-    int childCount() const;
-    int columnCount() const;
+		int child_count() const { return m_childItems.count(); }
+		int column_count() const { return m_itemData.count(); }
     QVariant data(int column) const;
     int row() const;
-    TreeItem *parentItem();
-
-private:
+		TreeItem* parentItem() { return m_parentItem; }
+	 private:
     QVector<TreeItem*> m_childItems;
     QVector<QVariant> m_itemData;
     TreeItem *m_parentItem;
@@ -52,8 +46,8 @@ class TreeModel : public QAbstractItemModel {
 	Q_OBJECT
 
  public:
-	explicit TreeModel(const QString& data, QObject* parent = nullptr);
-	~TreeModel();
+	explicit TreeModel(QObject* parent = nullptr);
+	~TreeModel() { delete rootItem; }
 
 	QVariant data(const QModelIndex& index, int role) const override;
 	Qt::ItemFlags flags(const QModelIndex& index) const override;
@@ -65,8 +59,8 @@ class TreeModel : public QAbstractItemModel {
 	int rowCount(const QModelIndex& parent = QModelIndex()) const override;
 	int columnCount(const QModelIndex& parent = QModelIndex()) const override;
 
+	void TestFillWithTxtFile(const QString& file_path);
  private:
-	void setupModelData(const QStringList& lines, TreeItem* parent);
 
 	TreeItem* rootItem;
 };
