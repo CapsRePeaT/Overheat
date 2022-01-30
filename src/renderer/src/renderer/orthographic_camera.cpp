@@ -24,8 +24,9 @@ OrthographicCamera::OrthographicCamera(const float left, const float right,
 	view_projection_matrix_ = projection_matrix_ * view_matrix_;
 }
 
-void OrthographicCamera::SetProjection(const float left, const float right, const float bottom,
-                                       const float top, const float near, const float far) {
+void OrthographicCamera::SetProjection(const float left, const float right,
+                                       const float bottom, const float top,
+                                       const float near, const float far) {
 	projection_matrix_ = glm::ortho(left, right, bottom, top, near, far);
 	view_projection_matrix_ = projection_matrix_ * view_matrix_;
 	near_ = near;
@@ -33,14 +34,35 @@ void OrthographicCamera::SetProjection(const float left, const float right, cons
 }
 
 void OrthographicCamera::RecalculateViewMatrix() {
-	glm::mat4 transform =
-			glm::translate(glm::mat4(1.0f), position_) *
-			glm::rotate(glm::mat4(1.0f), glm::radians(rotation_), glm::vec3(0, 0, 1));
-	view_matrix_ = glm::inverse(transform);
+	view_matrix_ = glm::inverse(transform());
 	view_projection_matrix_ = projection_matrix_ * view_matrix_;
 }
 
 void OrthographicCamera::RecalculateProjectionMatrix() {
 	SetProjection(-aspect_ratio_ * zoom_level_, aspect_ratio_ * zoom_level_,
 	              -zoom_level_, zoom_level_, near_, far_);
+}
+
+void OrthographicCamera::LookAt(const glm::vec3 point_to_view) {
+
+}
+
+void OrthographicCamera::SetPosition(const glm::vec3 position) {
+	position_ = position;
+	RecalculateViewMatrix();
+}
+
+void OrthographicCamera::SetRotation(const glm::quat rotation) {
+	rotation_ = rotation;
+	RecalculateViewMatrix();
+}
+
+void OrthographicCamera::Zoom(const float delta) {
+	zoom_level_ *= delta;
+	RecalculateProjectionMatrix();
+}
+
+void OrthographicCamera::SetAspectRatio(const float ratio) {
+	aspect_ratio_ = ratio;
+	RecalculateProjectionMatrix();
 }

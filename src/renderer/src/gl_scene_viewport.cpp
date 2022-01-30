@@ -53,7 +53,7 @@ void GLSceneViewport::RenderFrame() {
 	const float kRotSpeed = 0.05f;
 	if (!scene_->shapes().empty()) {
 		scene_->shapes()[0]->Rotate(kRotSpeed, rot_axis);
-		rot_axis = glm::rotateZ<float>(rot_axis, kRotSpeed * 0.4);
+		rot_axis = glm::rotateZ<float>(rot_axis, kRotSpeed * 0.4f);
 	}
 	auto api = RendererAPI::instance();
 	api->Clear();
