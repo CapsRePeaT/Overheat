@@ -23,7 +23,9 @@ class RendererWidget : public QOpenGLWidget {
 
  public slots:
 	void onVisualizationOptionsChanged(
-			const VisualizationOptions& visualization_options){};
+			const VisualizationOptions& visualization_options){
+		UpdateVisualizationOptions(visualization_options);
+	};
 
  private:
 	std::unique_ptr<IRenderer> renderer_;

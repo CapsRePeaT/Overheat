@@ -2,14 +2,13 @@
 
 #include <glm/gtc/matrix_transform.hpp>
 #include <string>
+#include <filesystem>
 
 // TODO: abstract shader and make ShaderLibrary
 class ShaderProgram {
  public:
-	using Path = std::string;
-	ShaderProgram() = default;
-	ShaderProgram(const Path& vertex_shader_path,
-	              const Path& fragment_shader_path);
+	using Path = std::filesystem::path;
+	ShaderProgram(const Path& vertex_shader_path, const Path& fragment_shader_path);
 	ShaderProgram(ShaderProgram&& other) noexcept;
 	ShaderProgram& operator=(ShaderProgram&& other) noexcept;
 	~ShaderProgram();

@@ -1,8 +1,11 @@
 #include "mainwindow.h"
 
 #include <QFileDialog>
+#include <QMessageBox>
 
 #include "ui_mainwindow.h"
+
+
 
 MainWindow::MainWindow(QWidget* parent)
 		: QMainWindow(parent), ui_(new Ui::MainWindow) {
@@ -18,8 +21,10 @@ MainWindow::MainWindow(QWidget* parent)
 	shape_list_widget_->setWindowTitle("Shapes");
 	// metadata widget
 	metadata_widget_ = new MetadataWidget(this);
-	addDockWidget(Qt::LeftDockWidgetArea, metadata_widget_);
-	metadata_widget_->setWindowTitle("Metadata");
+	QDockWidget* metadata_dock = new QDockWidget(tr("Metadata"), this);
+	metadata_dock->setWidget(metadata_widget_);
+	addDockWidget(Qt::LeftDockWidgetArea, metadata_dock);
+
 	// options widget
 	visualization_options_ = new VisualizationOptionsWidget(this);
 	addDockWidget(Qt::LeftDockWidgetArea, visualization_options_);
@@ -27,18 +32,30 @@ MainWindow::MainWindow(QWidget* parent)
 	// signals and slots connection
 	connect(ui_->load_file_btn, &QAction::triggered, this,
 	        &MainWindow::OnLoadFileBtnPressed);
+	connect(visualization_options_,
+	        &VisualizationOptionsWidget::VisualizationOptionsChanged,
+	        render_widget_, &RendererWidget::onVisualizationOptionsChanged);
 }
 
 MainWindow::~MainWindow() { delete ui_; }
 
 void MainWindow::LoadFile(const std::string& file_name) {
 	core().LoadGeometry(file_name);
-	render_widget_->RenderShapes(core().GetShapes());
+	render_widget_->RenderShapes(core().GetFirstFile().GetShapes());
 }
 
 void MainWindow::OnLoadFileBtnPressed() {
 	const QString file_name = QFileDialog::getOpenFileName(
-			this, tr("Open File"), QDir::currentPath(), tr("geom (*.cpp)"));
+			this, tr("Open File"), QDir::currentPath(), tr("geom (*.txt *.TRM);; ALL (*.*)"));
 	// TODO: check if file_name is empty (on cancel)
-	LoadFile(file_name.toStdString());
+	if (file_name.length()) {
+		try {
+			LoadFile(file_name.toStdString());
+		} catch(...) {
+			QMessageBox messageBox;
+			messageBox.critical(0, "Error", "Unknown error. File cannot be parsed, please check file format.");
+			messageBox.setFixedSize(500, 200);
+		}
+	}
+	
 }

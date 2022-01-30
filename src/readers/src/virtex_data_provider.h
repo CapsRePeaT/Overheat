@@ -5,12 +5,14 @@
 
 namespace Readers {
 
+
+// FIXME we should return one instance FileRepresentation only
 class VirtexDataProvider : public IDataProvider {
  public:
 	explicit VirtexDataProvider(const VirtexData& data);
 
 	GeomStorage<BasicShape> geometry() override { return geometry_; };
-	HeatmapStorage heatmap() override { return heatmap_; }
+//	HeatmapStorage heatmap() override { return heatmap_; }
 	MetadataStorage metadata() override { return metadata_; };
 
  private:
@@ -19,7 +21,7 @@ class VirtexDataProvider : public IDataProvider {
 	void load_metadata(const VirtexData& data){};
 
 	GeomStorage<BasicShape> geometry_{};
-	HeatmapStorage heatmap_{};
+	//HeatmapStorage heatmap_{};
 	MetadataStorage metadata_{};
 };
 }  // namespace Readers

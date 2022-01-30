@@ -40,5 +40,6 @@ constexpr typename Box<dim>::Values Box<dim>::DefaultCoordinates() {
 	return default_values;
 };
 
+inline constexpr size_t UndefinedSizeT = std::numeric_limits<size_t>::max();
 using Box3D = Box<3>;
 using Box2D = Box<2>;

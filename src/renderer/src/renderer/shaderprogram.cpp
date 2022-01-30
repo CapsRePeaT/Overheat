@@ -114,7 +114,7 @@ bool CreateShader(const ShaderProgram::Path& file_path,
 	std::ifstream file_stream;
 	file_stream.open(file_path, std::ios::in | std::ios::binary);
 	if (!file_stream.is_open()) {
-		spdlog::error("SHADER: Failed to open file: {}", file_path);
+		spdlog::error("SHADER: Failed to open file: {}", file_path.string());
 		return false;
 	}
 	std::stringstream buff;
@@ -127,7 +127,7 @@ bool CreateShader(const ShaderProgram::Path& file_path,
 	               /*length=*/nullptr);
 	glCompileShader(shader_id);
 	bool success = CheckSuccessAndLogError<GL_COMPILE_STATUS>(
-			shader_id, "SHADER: Compile time error in {}", file_path);
+			shader_id, "SHADER: Compile time error in {}", file_path.string());
 	if (!success)
 		glDeleteShader(shader_id);
 	return success;
