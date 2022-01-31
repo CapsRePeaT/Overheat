@@ -1,6 +1,7 @@
 #pragma once
 
 #include <QOpenGLWidget>
+#include <QMouseEvent>
 #include <memory>
 
 #include "common.h"
@@ -20,7 +21,18 @@ class RendererWidget : public QOpenGLWidget {
 	void initializeGL() override;
 	void paintGL() override;
 	void resizeGL(int w, int h) override;
-
+	// camera controls 
+	// Right btn pressed + move = rotate
+	// left btn = selection
+	// Middle btn pressed + move = pan
+	// weel move = move
+	virtual void mousePressEvent(QMouseEvent* event) override;
+	virtual void mouseReleaseEvent(QMouseEvent* event) override;
+	virtual void mouseMoveEvent(QMouseEvent* event) override;
+	virtual void mouseDoubleClickEvent(QMouseEvent* event) override;
+#if QT_CONFIG(wheelevent)
+	virtual void wheelEvent(QWheelEvent* event) override;
+#endif
  public slots:
 	void onVisualizationOptionsChanged(
 			const VisualizationOptions& visualization_options){
@@ -28,6 +40,8 @@ class RendererWidget : public QOpenGLWidget {
 	};
 
  private:
+	Qt::MouseButton current_pressed_button_ = Qt::NoButton;
+	QPoint previous_mouse_pos_; 
 	std::unique_ptr<ISceneViewport> viewport_;
 	std::weak_ptr<Scene> scene_;
 	DrawMode draw_mode_ = DrawMode::Gradient;

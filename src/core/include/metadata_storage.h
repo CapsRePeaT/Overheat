@@ -7,6 +7,7 @@
 
 #include "../../common/include/common.h"
 
+// TODO add concept to check ability to convert data to string
 template<class... Data>
 class MetadataStorage {
 	using DataTypes = std::tuple<Data...>;
@@ -20,18 +21,19 @@ class MetadataStorage {
 	};
 	
  public:
-	std::vector<std::string> GetData(size_t shape_id);
+	std::vector<std::string> GetData(size_t shape_id) const;
 	template <typename T, class... Args>
-	void AddData(size_t shape_id, T data, const Args... args) {
-		shape_id2metadata_id_[shape_id].push_back(AddOnePieceOfData(data));
-		AddData(shape_id, args...);
+	void AddData(size_t shape_id, T&& data, Args&&... args) {
+		shape_id2metadata_id_[shape_id].push_back(
+				AddOnePieceOfData(std::forward<T>(data)));
+		AddData(shape_id, std::forward<Args>(args)...);
 	}
 	MetadataStorage() = default;
 	~MetadataStorage() = default;
 	
  private : 
 	template <class T>
-	MetadataID AddOnePieceOfData(const T& data);
+	MetadataID AddOnePieceOfData(T&& data);
 	std::tuple<std::map<size_t, Data>...> data_;
 	std::map<size_t, std::vector<MetadataID>> shape_id2metadata_id_;
 };
@@ -56,10 +58,10 @@ struct index_in_tuple {
 template <class... Data>
 template <class T>
 MetadataStorage<Data...>::MetadataID
-MetadataStorage<Data...>::AddOnePieceOfData(const T& data) {
+MetadataStorage<Data...>::AddOnePieceOfData(T&& data) {
 	constexpr size_t type_id = index_in_tuple<T, DataTypes>::value;
 	auto data_storage_of_type = std::get<type_id>(data_);
-	const auto needed_element = data_storage_of_type.find(data);
+	const auto& needed_element = data_storage_of_type.find(data);
 	size_t data_id = UndefinedSizeT;
 	if (needed_element == data_storage_of_type.end()) {
 		data_id = data_storage_of_type.size();
@@ -71,7 +73,8 @@ MetadataStorage<Data...>::AddOnePieceOfData(const T& data) {
 }
 
 template <class... Data>
-std::vector<std::string> MetadataStorage<Data...>::GetData(const size_t shape_id) {
+std::vector<std::string> MetadataStorage<Data...>::GetData(
+		const size_t shape_id) const  {
 	std::vector<std::string> result;
 	for (const auto& metadata_id : shape_id2metadata_id_[shape_id]) {
 		const auto& data_storage = std::get<metadata_id.TypeId()>(data_);
