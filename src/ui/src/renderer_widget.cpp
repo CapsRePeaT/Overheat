@@ -1,6 +1,8 @@
 #include "renderer_widget.h"
-#include <spdlog/spdlog.h>
+
 #include <QOpenGLContext>
+
+#include "log.h"
 #include "i_scene_viewport.h"
 
 QSurfaceFormat surface_format(QSurfaceFormat::FormatOptions options = {});
@@ -93,3 +95,53 @@ QSurfaceFormat surface_format(const QSurfaceFormat::FormatOptions options) {
 	return surface_format;
 }
 
+void RendererWidget::mousePressEvent(QMouseEvent* event) { 
+	event->accept();
+}
+
+void RendererWidget::mouseReleaseEvent(QMouseEvent* event) { 
+	event->accept(); 
+}
+
+void RendererWidget::mouseMoveEvent(QMouseEvent* event) {
+	auto clicked_buttons = event->buttons();
+	// if button still clicked we use it and don't mention other clicked buttons
+	if (current_pressed_button_ & clicked_buttons)
+		clicked_buttons = current_pressed_button_;
+	bool action_requiered = true;
+	const auto q_curr_pos = event->pos();
+	const auto q_delta = q_curr_pos - previous_mouse_pos_;
+	const Vec2D curr_pos(q_curr_pos.x(), q_curr_pos.y());
+	const Vec2D delta(q_delta.x(), q_delta.y());
+	// rotate
+	if ((clicked_buttons & Qt::RightButton) && action_requiered) {
+		current_pressed_button_ = Qt::RightButton;
+		action_requiered = false;
+		viewport_->RotateCamera(curr_pos, delta);
+		LOG_DEBUG("Camera rotated, current pos: x {0}, y {1}, delta: x {2}, y {3}.",
+		          curr_pos.x, curr_pos.y, delta.x, delta.y);
+	}
+	// move
+	if ((clicked_buttons & Qt::MiddleButton) && action_requiered) {
+		current_pressed_button_ = Qt::RightButton;
+		action_requiered = false;
+		viewport_->MoveCamera(curr_pos, delta);
+		LOG_DEBUG("Camera moved, current pos: x {0}, y {1}, delta: x {2}, y {3}.",
+		          curr_pos.x, curr_pos.y, delta.x, delta.y);
+	}
+	previous_mouse_pos_ = q_curr_pos;
+	event->accept();
+}
+
+void RendererWidget::mouseDoubleClickEvent(QMouseEvent* event) {
+	event->accept();
+}
+
+void RendererWidget::wheelEvent(QWheelEvent* event) { 
+	// TODO play with
+	const float sensivity = 1.0f;
+	const float delta = event->angleDelta().y() * sensivity;
+	viewport_->ZoomView(delta); 
+	event->accept();
+	LOG_DEBUG("Wheel moved, delta: {0}.", delta);
+}
