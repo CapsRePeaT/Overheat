@@ -11,7 +11,8 @@ set(QT_MODULES
 )
 
 # Load Qt libs
-find_package(QT NAMES Qt6 COMPONENTS ${QT_MODULES} REQUIRED)
+#find_package(QT NAMES Qt6 COMPONENTS ${QT_MODULES} REQUIRED)
+set(QT_VERSION_MAJOR 6)
 find_package(Qt${QT_VERSION_MAJOR} COMPONENTS ${QT_MODULES} REQUIRED)
 
 # Set list of qt modules to link in format QtX::MODULE_NAME
