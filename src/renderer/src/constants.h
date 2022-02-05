@@ -13,8 +13,12 @@ constexpr glm::vec3 vec3_x = {1.0f, 0.0f, 0.0f};
 constexpr glm::vec3 vec3_y = {0.0f, 1.0f, 0.0f};
 constexpr glm::vec3 vec3_z = {0.0f, 0.0f, 1.0f};
 
-constexpr glm::vec4 vec4_x = {1.0f, 0.0f, 0.0f, 0.0f};
-constexpr glm::vec4 vec4_y = {0.0f, 1.0f, 0.0f, 0.0f};
-constexpr glm::vec4 vec4_z = {0.0f, 0.0f, 1.0f, 0.0f};
+constexpr glm::vec4 vec4_x = {1.0f, 0.0f, 0.0f, 1.0f};
+constexpr glm::vec4 vec4_y = {0.0f, 1.0f, 0.0f, 1.0f};
+constexpr glm::vec4 vec4_z = {0.0f, 0.0f, 1.0f, 1.0f};
+
+constexpr glm::vec4 vec4_x_v = {1.0f, 0.0f, 0.0f, 0.0f};
+constexpr glm::vec4 vec4_y_v = {0.0f, 1.0f, 0.0f, 0.0f};
+constexpr glm::vec4 vec4_z_v = {0.0f, 0.0f, 1.0f, 0.0f};
 
 }  // namespace consts
