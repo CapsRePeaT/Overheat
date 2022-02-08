@@ -10,7 +10,7 @@ class ICamera : public SceneObject {
 
 	[[nodiscard]] glm::mat4 transform() const override {
 		const glm::mat4 rot = glm::toMat4(rotation());
-		return glm::translate(glm::mat4(1.0f), position_) * rot;
+		return glm::translate(glm::mat4(1.0f), position()) * rot;
 	}
 
 	virtual void LookAt(glm::vec3 point_to_view) = 0;

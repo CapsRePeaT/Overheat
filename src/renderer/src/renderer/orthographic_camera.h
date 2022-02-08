@@ -36,6 +36,7 @@ class OrthographicCamera : public ICamera {
  private:
 	void RecalculateViewMatrix();
 	void RecalculateProjectionMatrix();
+	void CalculateViewProjectionMatrix();
 	glm::mat4 view_matrix_ = glm::mat4(1.0f);
 	glm::mat4 projection_matrix_ = glm::mat4(1.0f);
 	glm::mat4 view_projection_matrix_ = glm::mat4(1.0f);

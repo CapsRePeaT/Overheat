@@ -59,7 +59,7 @@ class SceneObject {
 	inline void AddPitch(float angle) { Rotate(angle, consts::vec4_y_v); }
 	inline void AddYaw(float angle) { Rotate(angle, consts::vec4_z_v); }
 
- protected:
+ private:
 	glm::vec3 position_ = consts::initial_position;
 	glm::vec3 scale_ = consts::initial_scale;
 	glm::quat rotation_ = consts::initial_rotation;
