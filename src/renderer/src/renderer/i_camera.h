@@ -7,11 +7,9 @@
 class ICamera : public SceneObject {
  public:
 	inline void SetScale(glm::vec3 /*scale*/) final {}
-	inline void ApplyScale(glm::vec3 /*scale*/) final {}
-	inline void ApplyScale(float /*scale*/) final {}
 
 	[[nodiscard]] glm::mat4 transform() const override {
-		const glm::mat4 rot = glm::mat4_cast(rotation_);
+		const glm::mat4 rot = glm::toMat4(rotation());
 		return glm::translate(glm::mat4(1.0f), position_) * rot;
 	}
 
@@ -25,7 +23,4 @@ class ICamera : public SceneObject {
 	[[nodiscard]] virtual const glm::mat4& viewMatrix() const = 0;
 	[[nodiscard]] virtual const glm::mat4& projectionMatrix() const = 0;
 	[[nodiscard]] virtual const glm::mat4& viewProjectionMatrix() const = 0;
-	
-	[[nodiscard]] virtual inline glm::vec3 forwardVec() {
-	}
 };
