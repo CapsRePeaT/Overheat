@@ -19,9 +19,16 @@ class GeomStorage {
 };
 
 // not sure that we need it now as we have only one heatmap
+//Shitty class with net and temperatures
+//TODO: Fix it in future to make handy
 class HeatmapStorage {
  public:
 	HeatmapStorage() = default;
+
+  size_t layers_count;
+  std::vector<float> x;
+  std::vector<float> y;
+  std::vector<float> temperature;
 };
 
 class MetadataStorage {

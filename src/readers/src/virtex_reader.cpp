@@ -1,9 +1,12 @@
 #include "virtex_reader.h"
 
+#include <format>
 #include <fstream>
 #include <regex>
 #include <string_view>
+#include <unordered_map>
 
+#include "T2D.h"
 #include "virtex_data_provider.h"
 
 namespace {
@@ -22,7 +25,7 @@ std::vector<std::string> split(const std::string& str, const std::regex& regex,
 	return retval;
 }
 
-void read_general_info(const std::string& content, Readers::VirtexData& data) {
+void read_general_info(const std::string& content, Readers::TRM& data) {
 	std::stringstream istream;
 	istream.str(content);
 	istream >> data.program_name_;
@@ -47,36 +50,46 @@ std::shared_ptr<Readers::BaseLayer> make_layer(const std::string& layer_tag) {
 	}
 }
 
-std::shared_ptr<Readers::BaseLayer> read_layer(const std::string& layer_tag,
-                                      const std::string& layer_content) {
+std::shared_ptr<Readers::BaseLayer> read_layer(
+		const std::string& layer_tag, const std::string& layer_content) {
 	std::stringstream ss{layer_content};
 	auto layer = make_layer(layer_tag);
 	layer->read(ss);
 	return layer;
 }
+
+std::string validate_and_get_content(const fs::path& path) {
+	std::ifstream ifs{path};
+	if (!ifs.good()) {
+		throw std::runtime_error("Stream state is not good");
+	}
+	auto content = stream_to_string(ifs);
+	ifs.close();
+	return content;
+}
+
 }  // namespace
 
 namespace Readers {
 void VirtexReader::load() {
-	std::ifstream ifs{file_};
-	if (!ifs.good()) {
-		throw std::runtime_error("Stream state is not good.");
-	}
-	const auto file_content = stream_to_string(ifs);
-	const auto data = read(file_content);
-	ifs.close();
-	data_provider_ = std::make_unique<VirtexDataProvider>(data);
+	data_provider_ =
+			std::make_unique<VirtexDataProvider>(load_geometry(), load_heatmap());
+}
+TRM VirtexReader::load_geometry() {
+	const auto file_content = validate_and_get_content(trm_file_);
+	return read_geometry(file_content);
 }
 
 // Function which reads files similar to doc/virtex.txt
-VirtexData read(const std::string& content) {
+TRM read_geometry(const std::string& content) {
 	// splits layers for groups (inside/outside box)
 	const auto groups =
 			split(content, std::regex{"^([A-Za-z]\\n[^#]*(?=\\n#))$"});
 
-	if (groups.size() < 2) throw std::runtime_error("File has wrong format.");
+	if (groups.size() < 2)
+		throw std::runtime_error("File has wrong format.");
 
-	VirtexData data;
+	TRM data;
 	read_general_info(content, data);
 
 	// read layers
@@ -93,4 +106,23 @@ VirtexData read(const std::string& content) {
 	}
 	return data;
 }
+
+T2D read_heatmap(std::ifstream& istream) {
+	T2D t2d;
+	istream >> t2d;
+	return t2d;
+}
+
+T2D VirtexReader::load_heatmap() {
+	std::ifstream ifs{t2d_file_};
+
+	if (!ifs.good()) {
+		throw std::runtime_error("Stream state is not good");
+	}
+
+	auto map = read_heatmap(ifs);
+	ifs.close();
+	return map;
+}
+
 }  // namespace Readers

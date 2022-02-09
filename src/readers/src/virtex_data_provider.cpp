@@ -3,20 +3,21 @@
 namespace {
 Box3D liftBox(const Box3D box, float offset) {
 	auto coordinates = box.coordinates();
-  coordinates.back().first += offset;
-  coordinates.back().second += offset;
+	coordinates.back().first += offset;
+	coordinates.back().second += offset;
 	return {coordinates};
 }
 
 }  // namespace
 
 namespace Readers {
-VirtexDataProvider::VirtexDataProvider(const VirtexData& data) {
-	load_geometry(data);
-	load_heatmap(data);
-	load_metadata(data);
+VirtexDataProvider::VirtexDataProvider(const TRM& geom,
+                                       const T2D& heat) {
+	load_geometry(geom);
+	load_heatmap(heat);
+	load_metadata();
 }
-void VirtexDataProvider::load_geometry(const VirtexData& data) {
+void VirtexDataProvider::load_geometry(const TRM& data) {
 	float offset = 0;
 	geometry_.Clear();
 	for (const auto& layer : data.layers_) {

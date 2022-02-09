@@ -10,7 +10,17 @@
 
 namespace Readers {
 
-enum class LayerType { BS, HPU, D, UNDEFINED };  // layers types from Ryabov doc
+// HPU - boxes
+// BS - spheres
+enum class LayerType {
+	B,
+	S,
+	H,
+	P,
+	U,
+	D,
+	UNDEFINED
+};  // layers types from Ryabov doc
 
 struct HorizontalSize {
 	float length;
@@ -32,9 +42,10 @@ struct Coordinates {
 class BaseLayer {
  public:
 	// getters
-	LayerType type();
-	float thermal_conductivity();
-	float thickness();
+	[[nodiscard]] LayerType type() const;
+  [[nodiscard]] std::string_view type_tag() const;
+  [[nodiscard]] float thermal_conductivity() const;
+  [[nodiscard]] float thickness() const;
 
 	// read ryabov file content from stream
 	virtual std::istream& read(std::istream& in) = 0;
@@ -43,6 +54,7 @@ class BaseLayer {
 	~BaseLayer() = default;
 
  protected:
+	std::string raw_type_tag_;
 	LayerType type_ = LayerType::UNDEFINED;
 	float thermal_conductivity_;
 	float thickness_;
@@ -50,20 +62,29 @@ class BaseLayer {
 
 class HPU : public BaseLayer {
  public:
-	HPU() { type_ = LayerType::HPU; }
-
 	std::istream& read(std::istream& in) override;
 	GeomStorage<BasicShape> geometry() override;
 
  private:
 	float env_thermal_conductivity_;
-  Coordinates coordinates_;
+	Coordinates coordinates_;
+};
+
+class H : public HPU {
+ public:
+	H() { type_ = LayerType::H; }
+};
+class P : public HPU {
+ public:
+	P() { type_ = LayerType::P; }
+};
+class U : public HPU {
+ public:
+	U() { type_ = LayerType::U; }
 };
 
 class BS : public BaseLayer {
  public:
-	BS() { type_ = LayerType::BS; }
-
 	std::istream& read(std::istream& in) override;
 	GeomStorage<BasicShape> geometry() override;
 
@@ -79,6 +100,16 @@ class BS : public BaseLayer {
 	std::vector<SpheresHolders> spheres_holders_;
 };
 
+class B : public BS {
+ public:
+	B() { type_ = LayerType::B; }
+};
+
+class S : public BS {
+ public:
+	S() { type_ = LayerType::S; }
+};
+
 class D : public BaseLayer {
  public:
 	D() { type_ = LayerType::D; }
@@ -91,7 +122,7 @@ class D : public BaseLayer {
 		std::string name;
 		float power;
 		float magic_number;  // TODO: TBD with Ryabov
-    Coordinates coordinates_;
+		Coordinates coordinates_;
 	};
 
 	size_t crystals_num_per_layer_;
@@ -100,7 +131,7 @@ class D : public BaseLayer {
 
 using Layers = std::vector<std::shared_ptr<BaseLayer>>;
 
-struct VirtexData {
+struct TRM {
 	std::string program_name_;
 	HorizontalSize size_;
 	Layers layers_;
