@@ -1,4 +1,4 @@
-#include "virtex_data_classes.h"
+#include "TRM.h"
 
 #include <databases.h>
 #include <shapes.h>
@@ -20,11 +20,12 @@ std::pair<float, float> getSphereProjection(const float center,
 }  // namespace
 
 namespace Readers {
-LayerType BaseLayer::type() { return type_; };
+LayerType BaseLayer::type() const { return type_; };
 
-float BaseLayer::thermal_conductivity() { return thermal_conductivity_; };
+float BaseLayer::thermal_conductivity() const { return thermal_conductivity_; };
 
-float BaseLayer::thickness() { return thickness_; };
+float BaseLayer::thickness() const { return thickness_; }
+std::string_view BaseLayer::type_tag() const { return raw_type_tag_; };
 
 std::istream& HPU::read(std::istream& in) {
 	in >> thickness_ >> thermal_conductivity_ >> env_thermal_conductivity_;

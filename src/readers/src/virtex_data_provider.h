@@ -1,22 +1,23 @@
 #pragma once
 
+#include "T2D.h"
+#include "TRM.h"
 #include "idata_provider.h"
-#include "virtex_data_classes.h"
 
 namespace Readers {
 
 class VirtexDataProvider : public IDataProvider {
  public:
-	explicit VirtexDataProvider(const VirtexData& data);
+	VirtexDataProvider(const TRM& geom, const T2D& heat);
 
 	GeomStorage<BasicShape> geometry() override { return geometry_; };
 	HeatmapStorage heatmap() override { return heatmap_; }
 	MetadataStorage metadata() override { return metadata_; };
 
  private:
-	void load_geometry(const VirtexData& data);
-	void load_heatmap(const VirtexData& data){};
-	void load_metadata(const VirtexData& data){};
+	void load_geometry(const TRM& data);
+	void load_heatmap(const T2D& data){};
+	void load_metadata(){};
 
 	GeomStorage<BasicShape> geometry_{};
 	HeatmapStorage heatmap_{};
