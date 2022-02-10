@@ -5,7 +5,8 @@
 #include "../src/virtex_data_provider.h"
 #include "../src/virtex_reader.h"
 
-std::string sample = "VIRTEX\n"
+std::string sample =
+		"VIRTEX\n"
 		"35. 35.\n"
 		"B\n"
 		"0.4 0.05 1.\n"
@@ -62,13 +63,23 @@ std::string sample = "VIRTEX\n"
 		"&AM TC=20. AK=0. &END\n"
 		"&CL NH=30 MH=30 ITERAT=15000 EPS=1.E-6 W=1.99 &END";
 
+
+TEST(VirtexReader, read_heat_test) {
+  auto data = Readers::read_geometry(sample);
+  fs::path t2d = "C:\\Users\\asavinov\\Desktop\\heat\\2\\virtex.t2d";
+  fs::path trm = "C:\\Users\\asavinov\\Desktop\\heat\\2\\virtex.TRN";
+  Readers::VirtexReader(trm, t2d);
+  EXPECT_TRUE(true);
+}
+
 TEST(VirtexReader, read_raw_test) {
-	auto data = Readers::read(sample);
+	auto data = Readers::read_geometry(sample);
 	EXPECT_TRUE(true);
 }
 
 TEST(VirtexReader, read_geometry_test) {
-  auto data = Readers::read(sample);
-	auto geometry = Readers::VirtexDataProvider(data).geometry();
-  EXPECT_TRUE(true);
+	auto data = Readers::read_geometry(sample);
+	auto geometry = Readers::VirtexDataProvider(data, {}).geometry();
+	EXPECT_TRUE(true);
 }
+

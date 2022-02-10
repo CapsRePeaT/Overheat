@@ -9,7 +9,7 @@ class SerializableVec {
  public:
 	SerializableVec() = default;
 
-	SerializableVec& set_size(size_t size) {
+	SerializableVec& set_size(const size_t size) {
 		elem_count_ = size;
 		data_.reserve(elem_count_);
 		return *this;
@@ -51,34 +51,32 @@ struct BodyParams {
 	}
 };
 
-struct CoordsMinMax {
-	float min_x;
-	float min_y;
-	float max_x;
-	float max_y;
+struct Point2 {
+	float x;
+	float y;
 
-	friend std::istream& operator>>(std::istream& in, CoordsMinMax& coords) {
-		in >> coords.min_x >> coords.min_y >> coords.max_x >> coords.max_y;
+	friend std::istream& operator>>(std::istream& in, Point2& coords) {
+		in >> coords.x >> coords.y;
 		return in;
 	}
 };
 
-struct Coords {
-	float x;
-	float y;
+struct CoordsMinMax {
+	Point2 min;
+	Point2 max;
 
-	friend std::istream& operator>>(std::istream& in, Coords& coords) {
-		in >> coords.x >> coords.y;
+	friend std::istream& operator>>(std::istream& in, CoordsMinMax& coords) {
+		in >> coords.min >> coords.max;
 		return in;
 	}
 };
 
 struct Spheres {
 	explicit Spheres(size_t count) {
-		spheres_centers_ = SerializableVec<Coords>{}.set_size(count);
+		spheres_centers_ = SerializableVec<Point2>{}.set_size(count);
 	}
 	float diameter_{0};
-	SerializableVec<Coords> spheres_centers_;
+	SerializableVec<Point2> spheres_centers_;
 
 	friend std::istream& operator>>(std::istream& in, Spheres& spheres) {
 		in >> spheres.diameter_;
@@ -153,16 +151,18 @@ class T2D {
 	}
 
  private:
+	//имя программы
 	std::string program_name_;
 
+	//размер бокса
 	BodySize body_size_;
 
 	size_t IST_;  //– общее число слоев в корпусе,
 	size_t IH_;   // – число однородных слоев,
 	size_t ID_;   // – число слоев кристаллов ИС,
 	size_t IB_;   // – число слоев шариковых выводов,
-	size_t IV_;   // – число слоев межсоединений1
-	size_t IP_;   // – число боксов2
+	size_t IV_;   // – число слоев межсоединений
+	size_t IP_;   // – число боксов
 	size_t NH_;   // – число узлов сетки по оси x,
 	size_t MH_;   // – число узлов сетки по оси y
 

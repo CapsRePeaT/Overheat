@@ -7,8 +7,7 @@ macro(config_conan)
         glm/0.9.9.8
         stb/20200203
         spdlog/1.9.2
-        qt/6.2.2
-    )
+            )
     if(UNIX)
         list(APPEND CONAN_DEPS 
             expat/2.4.2

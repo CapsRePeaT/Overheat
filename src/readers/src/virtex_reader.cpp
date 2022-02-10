@@ -115,11 +115,9 @@ T2D read_heatmap(std::ifstream& istream) {
 
 T2D VirtexReader::load_heatmap() {
 	std::ifstream ifs{t2d_file_};
-
 	if (!ifs.good()) {
 		throw std::runtime_error("Stream state is not good");
 	}
-
 	auto map = read_heatmap(ifs);
 	ifs.close();
 	return map;
