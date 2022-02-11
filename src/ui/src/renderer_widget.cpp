@@ -96,8 +96,10 @@ QSurfaceFormat surface_format(const QSurfaceFormat::FormatOptions options) {
 }
 
 void RendererWidget::mousePressEvent(QMouseEvent* event) { 
+	previous_mouse_pos_ = event->pos();
 	event->accept();
 }
+
 
 void RendererWidget::mouseReleaseEvent(QMouseEvent* event) { 
 	event->accept(); 
@@ -105,7 +107,7 @@ void RendererWidget::mouseReleaseEvent(QMouseEvent* event) {
 
 void RendererWidget::mouseMoveEvent(QMouseEvent* event) {
 	auto clicked_buttons = event->buttons();
-	// if button still clicked we use it and don't mention other clicked buttons
+	// if button still pressed we use it and don't mention other clicked buttons
 	if (current_pressed_button_ & clicked_buttons)
 		clicked_buttons = current_pressed_button_;
 	bool action_requiered = true;

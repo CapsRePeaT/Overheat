@@ -26,19 +26,18 @@ class RendererWidget : public QOpenGLWidget {
 	// left btn = selection
 	// Middle btn pressed + move = pan
 	// weel move = move
-	virtual void mousePressEvent(QMouseEvent* event) override;
-	virtual void mouseReleaseEvent(QMouseEvent* event) override;
-	virtual void mouseMoveEvent(QMouseEvent* event) override;
-	virtual void mouseDoubleClickEvent(QMouseEvent* event) override;
+	void mousePressEvent(QMouseEvent* event) override;
+	void mouseReleaseEvent(QMouseEvent* event) override;
+	void mouseMoveEvent(QMouseEvent* event) override;
+	void mouseDoubleClickEvent(QMouseEvent* event) override;
 #if QT_CONFIG(wheelevent)
-	virtual void wheelEvent(QWheelEvent* event) override;
+	void wheelEvent(QWheelEvent* event) override;
 #endif
  public slots:
 	void onVisualizationOptionsChanged(
-			const VisualizationOptions& visualization_options){
+			const VisualizationOptions& visualization_options) {
 		UpdateVisualizationOptions(visualization_options);
 	};
-
  private:
 	Qt::MouseButton current_pressed_button_ = Qt::NoButton;
 	QPoint previous_mouse_pos_; 
