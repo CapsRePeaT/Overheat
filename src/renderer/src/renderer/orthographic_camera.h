@@ -2,16 +2,18 @@
 
 #include <glm/glm.hpp>
 
+#include "constants.h"
 #include "i_camera.h"
 #include "platform/opengl/vertexarray.h"
 
 class OrthographicCamera : public ICamera {
  public:
 	OrthographicCamera() = default;
-	OrthographicCamera(float aspect_ratio, float zoom,
-	                   std::pair<float, float> depth_bounds = {1.0f, 1.0f});
+	OrthographicCamera(
+			float aspect_ratio, float zoom,
+			std::pair<float, float> depth_bounds = {0.0f, 1.0f});
 	OrthographicCamera(float left, float right, float bottom, float top,
-	                   float near = -1.0f, float far = 1.0f);
+	                   float near = 0.0f, float far = 1.0f);
 	void SetPosition(glm::vec3 position) override;
 	void SetRotation(glm::quat rotation) override;
 
@@ -22,7 +24,7 @@ class OrthographicCamera : public ICamera {
 	[[nodiscard]] float aspect_ratio() const override { return aspect_ratio_; }
 
 	void SetProjection(float left, float right, float bottom, float top,
-	                   float near = -1.0f, float far = 1.0f);
+	                   float near = 0.0f, float far = 1.0f);
 	[[nodiscard]] const glm::mat4& viewMatrix() const override {
 		return view_matrix_;
 	}
@@ -37,11 +39,12 @@ class OrthographicCamera : public ICamera {
 	void RecalculateViewMatrix();
 	void RecalculateProjectionMatrix();
 	void CalculateViewProjectionMatrix();
-	glm::mat4 view_matrix_ = glm::mat4(1.0f);
-	glm::mat4 projection_matrix_ = glm::mat4(1.0f);
+	glm::mat4 view_matrix_            = glm::mat4(1.0f);
+	glm::mat4 projection_matrix_      = glm::mat4(1.0f);
 	glm::mat4 view_projection_matrix_ = glm::mat4(1.0f);
-	float zoom_level_ = 1.0f;
+
+	float zoom_level_   = 1.0f;
 	float aspect_ratio_ = 1.0f;
-	float near_ = -1.0f;
-	float far_ = 1.0f;
+	float near_         = 0.0f;
+	float far_          = 1.0f;
 };

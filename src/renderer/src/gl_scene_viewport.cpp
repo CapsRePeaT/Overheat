@@ -1,42 +1,79 @@
 #include "gl_scene_viewport.h"
 
 #include <glad/glad.h>
-#include <glm/gtx/rotate_vector.hpp>
 #include <spdlog/spdlog.h>
 
 #include <memory>
 
 // TODO: maybe rename inner *renderer* folder to *primitives* or smth similar
 #include "application/scene_shape.h"
+#include "camera_controller.h"
+#include "constants.h"
+#include "log.h"
+#include "misc/formatters.h"
+#include "renderer/debug/axes.h"
+#include "renderer/debug/debug_material.h"
+#include "renderer/i_camera.h"
+#include "renderer/orthographic_camera.h"
 #include "renderer/renderer_api.h"
 #include "scene.h"
 
+struct GLSceneViewport::Impl {
+	std::unique_ptr<debug::DebugMaterial> debug_material =
+			std::make_unique<debug::DebugMaterial>();
+	std::unique_ptr<debug::Axes> axes = std::make_unique<debug::Axes>();
+};
+
 GLSceneViewport::GLSceneViewport(std::shared_ptr<Scene> scene)
-		: scene_(scene) {}
+		: scene_(std::move(scene)), data_(nullptr) {}
 
 GLSceneViewport::~GLSceneViewport() { ClearResourcesImpl(); }
 
 void GLSceneViewport::Initialize(const int w, const int h) {
-	// OpenGL initialization
+	OpenGlInit(w, h);
+	ApplicationInit(w, h);
+#ifndef NDEBUG
+	DebugInit(w, h);
+#endif
+
+	is_initialized_ = true;
+}
+
+void GLSceneViewport::OpenGlInit(const int w, const int h) {
 	if (!gladLoadGL())
-		spdlog::error("Failed to initialize opengl functions");
-	spdlog::debug("GLAD initialized");
+		LOG_ERROR("Failed to initialize opengl functions");
+	LOG_DEBUG("GLAD initialized");
+
 	auto api = RendererAPI::instance();
 	api->Init();
+	api->SetClearColor(consts::init::clear_color);
 	api->SetViewPort(0, 0, w, h);
-	api->SetClearColor({0.49, 0.49, 0.49, 1});
+}
 
-	// Application initialization
+void GLSceneViewport::ApplicationInit(const int w, const int h) {
 	const float aspect_ratio = static_cast<float>(w) / static_cast<float>(h);
-	const float zoom = 15.0f;
-	spdlog::debug(
-			"Initializing camera: w = {}, h = {}, aspect_ratio = {}, zoom = {}", w, h,
-			aspect_ratio, zoom);
-	camera_ = std::make_unique<OrthographicCamera>(aspect_ratio, zoom,
-	                                               std::pair{-20.0f, 20.0f});
-	camera_->SetPosition({0.0f, 0.0f, -5.0f});
+
+	LOG_DEBUG("Initializing camera: w = {}, h = {}, aspect_ratio = {}, zoom = {}",
+	          w, h, aspect_ratio, consts::init::zoom);
+
+	auto camera = std::make_unique<OrthographicCamera>(
+			aspect_ratio, consts::init::zoom, consts::init::near_far_bounds);
+	camera_controller_ = std::make_unique<SphericalCameraController>(
+			std::move(camera), 100.0f, glm::pi<float>());
 	heatmap_material_ = std::make_unique<HeatmapMaterial>();
-	is_initialized_ = true;
+}
+
+void GLSceneViewport::DebugInit(const int /*w*/, const int /*h*/) {
+	data_ = std::make_unique<Impl>();
+	data_->axes->ApplyScale(4);
+	const Core::Shapes shapes = {
+			std::make_shared<BasicShape>(
+					0, Box3D({{0.0f, 1.0f}, {0.0f, 2.0f}, {0.0f, 3.0f}}
+           ), 0)
+  };
+	scene_->AddShapes(shapes);
+	constexpr glm::vec3 offset = {0.1, 0.1, 0.1};
+	scene_->shapes()[0]->Translate(offset);
 }
 
 void GLSceneViewport::ClearResources() { ClearResourcesImpl(); }
@@ -44,28 +81,32 @@ void GLSceneViewport::ClearResources() { ClearResourcesImpl(); }
 void GLSceneViewport::ClearResourcesImpl() {
 	heatmap_material_.reset();
 	scene_->Clear();
-	spdlog::debug("Context cleared");
+	LOG_DEBUG("Context cleared");
 }
 
 void GLSceneViewport::RenderFrame() {
-	// TODO: pass scene to renderer
-	static glm::vec3 rot_axis = {-1.0f, 0.0f, 0.0f};
-	const float kRotSpeed = 0.05f;
-	if (!scene_->shapes().empty()) {
-		scene_->shapes()[0]->Rotate(kRotSpeed, rot_axis);
-		rot_axis = glm::rotateZ<float>(rot_axis, kRotSpeed * 0.4f);
-	}
 	auto api = RendererAPI::instance();
 	api->Clear();
-	for (auto& shape : scene_->shapes()) {
-		heatmap_material_->Use(shape->transform(), camera_->viewProjectionMatrix());
+
+	const ICamera& camera = camera_controller_->camera();
+
+	for (const auto& shape : scene_->shapes()) {
+		heatmap_material_->Use(shape->transform(), camera.viewProjectionMatrix());
 		api->DrawIndexed(shape->vertex_array());
+	}
+
+	if (data_) {
+		const auto& axes = data_->axes;
+		data_->debug_material->Use(axes->transform(), camera.viewProjectionMatrix(),
+		                           1.0f);
+		api->DrawIndexed(axes->vertex_array(), PrimitiveType::LINES);
 	}
 }
 
 void GLSceneViewport::Resize(const int w, const int h) {
 	RendererAPI::instance()->SetViewPort(0, 0, w, h);
-	camera_->SetAspectRatio(static_cast<float>(w) / static_cast<float>(h));
+	camera_controller_->SetCameraAspectRatio(static_cast<float>(w) /
+	                                         static_cast<float>(h));
 }
 
 void GLSceneViewport::SetTemperatureRange(const float min, const float max) {
@@ -78,7 +119,44 @@ void GLSceneViewport::SetColorRange(const ISceneViewport::Color min,
 	                                 {max[0], max[1], max[2]});
 }
 
-void GLSceneViewport::MoveCamera(const Vec2D screenPoint, const Vec2D delta) {}
-void GLSceneViewport::RotateCamera(const Vec2D screenPoint, const Vec2D delta) {
+void GLSceneViewport::MoveCamera(const Vec2D /*screenPoint*/,
+                                 const Vec2D delta) {
+	static constexpr float zoom_coefficient = 0.002f;
+	const float zoom_level = camera_controller_->camera().zoom_level();
+
+	const float x_coefficient = -zoom_level * zoom_coefficient;
+	const float y_coefficient = zoom_level * zoom_coefficient;
+
+	const auto dx = static_cast<float>(delta.x);
+	const auto dy = static_cast<float>(delta.y);
+
+	const auto horizontal_translation =
+			x_coefficient * dx * camera_controller_->camera().rightVector();
+	const auto vertical_translation =
+			y_coefficient * dy * camera_controller_->camera().upVector();
+
+	camera_controller_->Translate(horizontal_translation + vertical_translation);
 }
-void GLSceneViewport::ZoomView(float delta) {}
+
+void GLSceneViewport::RotateCamera(const Vec2D /*screenPoint*/,
+                                   const Vec2D delta) {
+	static constexpr float zoom_coefficient = 1.0f / 1500.0f;
+	const float zoom_level = camera_controller_->camera().zoom_level();
+
+	const float y_coefficient = zoom_level * zoom_coefficient;
+	const float x_coefficient = -zoom_level * zoom_coefficient;
+
+	const auto dx = static_cast<float>(delta.x);
+	const auto dy = static_cast<float>(delta.y);
+
+	camera_controller_->AddLongitude(x_coefficient * dx);
+	camera_controller_->AddLatitude(y_coefficient * dy);
+}
+
+void GLSceneViewport::ZoomView(const float delta) {
+	static constexpr float zoom_base              = 2.0f;
+	static constexpr float zoom_delta_coefficient = -1.0f / 180.0f;
+	const float zoom = std::pow(zoom_base, delta * zoom_delta_coefficient);
+
+	camera_controller_->Zoom(zoom);
+}

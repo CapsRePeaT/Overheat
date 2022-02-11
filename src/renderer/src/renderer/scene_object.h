@@ -6,9 +6,9 @@
 
 class SceneObject {
  public:
-	explicit SceneObject(glm::vec3 position = consts::initial_position,
-	                     glm::vec3 scale = consts::initial_scale,
-	                     glm::quat rotation = consts::initial_rotation)
+	explicit SceneObject(glm::vec3 position = consts::init::position,
+	                     glm::vec3 scale    = consts::init::scale,
+	                     glm::quat rotation = consts::init::rotation)
 			: position_(position), scale_(scale), rotation_(rotation) {}
 
 	// Setters and getters of common transformation attributes of any scene object
@@ -25,13 +25,13 @@ class SceneObject {
 	}
 
 	[[nodiscard]] inline glm::vec3 forwardVector() const {
-		return glm::rotate(rotation(), consts::vec3_x);
+		return glm::rotate(rotation(), consts::vec3_z);
 	}
 	[[nodiscard]] inline glm::vec3 rightVector() const {
-		return glm::rotate(rotation(), consts::vec3_y);
+		return glm::rotate(rotation(), consts::vec3_x);
 	}
 	[[nodiscard]] inline glm::vec3 upVector() const {
-		return glm::rotate(rotation(), consts::vec3_z);
+		return glm::rotate(rotation(), consts::vec3_y);
 	}
 	[[nodiscard]] virtual inline float roll() const {
 		return glm::eulerAngles(rotation_).x;
@@ -60,7 +60,7 @@ class SceneObject {
 	inline void AddYaw(float angle) { Rotate(angle, consts::vec4_z_v); }
 
  private:
-	glm::vec3 position_ = consts::initial_position;
-	glm::vec3 scale_ = consts::initial_scale;
-	glm::quat rotation_ = consts::initial_rotation;
+	glm::vec3 position_ = consts::init::position;
+	glm::vec3 scale_    = consts::init::scale;
+	glm::quat rotation_ = consts::init::rotation;
 };

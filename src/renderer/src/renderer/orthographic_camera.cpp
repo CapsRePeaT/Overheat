@@ -5,6 +5,7 @@
 #include <glm/ext/quaternion_geometric.hpp>
 #include <glm/gtc/quaternion.hpp>
 #include <glm/gtc/type_ptr.hpp>
+
 #include "constants.h"
 #include "renderer/scene_object.h"
 
@@ -36,7 +37,7 @@ void OrthographicCamera::SetProjection(const float left, const float right,
 	projection_matrix_ = glm::ortho(left, right, bottom, top, near, far);
 	CalculateViewProjectionMatrix();
 	near_ = near;
-	far_ = far;
+	far_  = far;
 }
 
 void OrthographicCamera::RecalculateViewMatrix() {
