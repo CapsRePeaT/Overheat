@@ -26,7 +26,7 @@ class SerializableVec {
 	[[nodiscard]] const std::vector<T>& data() const { return data_; }
 
  private:
-	size_t elem_count_{0};
+	size_t elem_count_ = 0;
 	std::vector<T> data_;
 };
 
@@ -72,15 +72,15 @@ struct CoordsMinMax {
 };
 
 struct Spheres {
-	explicit Spheres(size_t count) {
-		spheres_centers_ = SerializableVec<Point2>{}.set_size(count);
+	explicit Spheres(const size_t count) {
+		spheres_centers = SerializableVec<Point2>{}.set_size(count);
 	}
-	float diameter_{0};
-	SerializableVec<Point2> spheres_centers_;
+	float diameter = 0;
+	SerializableVec<Point2> spheres_centers;
 
 	friend std::istream& operator>>(std::istream& in, Spheres& spheres) {
-		in >> spheres.diameter_;
-		in >> spheres.spheres_centers_;
+		in >> spheres.diameter;
+		in >> spheres.spheres_centers;
 		return in;
 	}
 };
@@ -104,16 +104,13 @@ struct SpheresGroup {
 };
 }  // namespace
 
+// class with heatmap and data about layers
 class T2D {
  public:
 	size_t layers_count() const { return IST_; }
-
 	const std::vector<float>& net_x() const { return net_x_coords.data(); }
-
 	const std::vector<float>& net_y() const { return net_y_coords.data(); }
-
 	const std::vector<float>& temperatures() const { return temperature_.data(); }
-
 	friend std::istream& operator>>(std::istream& istream, T2D& t2d) {
 		istream >> t2d.program_name_;
 		istream >> t2d.body_size_;
@@ -126,19 +123,19 @@ class T2D {
 		istream >> t2d.NH_;
 		istream >> t2d.MH_;
 		istream >> t2d.raw_layers_;
-		istream >> t2d.n_crystals_in_crystal_layer_;
-		istream >> t2d.common_layesr_num_crystals_;
+		istream >> t2d.num_crystals_in_crystal_layer_;
+		istream >> t2d.common_layer_num_crystals_;
 		istream >> t2d.box_num_;
 		istream >> t2d.spheres_count_.set_size(t2d.IB_);
 		istream >> t2d.common_layesr_num_spheres_.set_size(t2d.IB_);
 		istream >> t2d.spheres_out_layers_.set_size(t2d.IB_);
-		istream >> t2d.body_num_;
+		istream >> t2d.body_id_;
 		istream >> t2d.body_params_;
 		istream >> t2d.body_coords_;
 		if (t2d.IH_ > 0)
 			istream >> t2d.ihs_.set_size(t2d.IST_);
 		istream >> t2d.temp_.set_size(t2d.IST_);
-		istream >> t2d.ids_.set_size(t2d.n_crystals_in_crystal_layer_);
+		istream >> t2d.ids_.set_size(t2d.num_crystals_in_crystal_layer_);
 		istream >> t2d.spheres_.init(t2d.spheres_count_.data());
 		istream >> t2d.net_y_coords.set_size(t2d.MH_);
 		istream >> t2d.net_x_coords.set_size(t2d.NH_);
@@ -153,10 +150,8 @@ class T2D {
  private:
 	//имя программы
 	std::string program_name_;
-
 	//размер бокса
 	BodySize body_size_;
-
 	size_t IST_;  //– общее число слоев в корпусе,
 	size_t IH_;   // – число однородных слоев,
 	size_t ID_;   // – число слоев кристаллов ИС,
@@ -165,33 +160,22 @@ class T2D {
 	size_t IP_;   // – число боксов
 	size_t NH_;   // – число узлов сетки по оси x,
 	size_t MH_;   // – число узлов сетки по оси y
-
-	std::string raw_layers_;  // BHSUSDUH
-
-	size_t
-			n_crystals_in_crystal_layer_;  //количество кристаллов в слое кристаллов,
-
-	size_t common_layesr_num_crystals_;  // общие номера слоев кристалов
-
+	std::string raw_layers_;  // string with char representation of layers
+	size_t num_crystals_in_crystal_layer_;  //количество кристаллов в слое
+	                                        //кристаллов,
+	size_t common_layer_num_crystals_;  // общие номера слоев кристалов
 	size_t box_num_;  // вводится номер бокса, в котором лежит данный слой
 	                  // кристаллов:
-
 	SerializableVec<size_t> spheres_count_;  // количество шариковых выводов
 	                                         // в I-м слое шариковых выводов
 	                                         // IB>0
-
 	SerializableVec<size_t>
 			common_layesr_num_spheres_;  // общие номера слоев кристалов шариковых
-
 	SerializableVec<size_t> spheres_out_layers_;  //номер бокса, в котором лежит
 	                                              //данный слой шариковых выводов
-
-	size_t body_num_;  //номер бокса
-
-	BodyParams body_params_;  //параметры бокса
-
+	size_t body_id_;            //номер бокса
+	BodyParams body_params_;    //параметры бокса
 	CoordsMinMax body_coords_;  //координаты бокса
-
 	//*Если IH>0, вводятся данные об однородных слоях:
 	//В строке 14 вводится номер бокса, в котором лежит этот слой, номер
 	//однородного слоя, это его номер в общей нумерации слоев: (LH(I),I=1,IST)
@@ -200,7 +184,6 @@ class T2D {
 	// 0 0 0 0 0 0 1 1*//
 	SerializableVec<size_t> ihs_;
 	SerializableVec<size_t> temp_;  // not used
-
 	/*Далее вводятся ID групп координат кристаллов ИС в ID слоях кристаллов:
 	(XL(J,I),XP(J,I),YS(J,I),YH(J,I),I=1,KD(J))
 	1.0500000E+01 1.4500000E+01 1.3500000E+01 2.1500000E+01 1.5500000E+01
@@ -211,29 +194,23 @@ class T2D {
 	(В этом примере 1 слой кристаллов и в нем 3 кристалла)
 	*/
 	SerializableVec<CoordsMinMax> ids_;
-
 	/*Если IB>0, вводятся IB групп строк, описывающих шариковые выводы:
 	В первой строке вводится диаметр шариков данного слоя: DB(J)
 	*/
 	SpheresGroup spheres_{spheres_count_.data()};  // IB>0
-
 	//Далее вводятся массивы шагов разностной сетки по осям x и y:
 	SerializableVec<float> net_x_coords;
 	SerializableVec<float> net_y_coords;
-
 	//Далее вводятся IST массивов минимальных и максимальных координат слоев по
 	//горизонтали:
 	SerializableVec<float> min_max_layers_coords_;
-
 	//Далее вводится массив толщин слоев:
 	SerializableVec<float> thicknesses_;
 	//Далее вводятся IST массивов целого типа, кодирующих топологию слоев (K –
 	//номер слоя)3
 	SerializableVec<float> topology_;
-
 	//Далее вводится температура окружающей среды:
 	float env_temp_;
-
 	//Далее вводятся IST массивов действительного типа значений температуры в
 	//узлах сетки на границах раздела слоев (K – номер слоя)
 	SerializableVec<float> temperature_;
