@@ -1,0 +1,29 @@
+---
+Checks: '-*,
+    google-*,
+    -google-readability-todo,
+    
+    modernize-*,
+    -modernize-use-trailing-return-type,
+    
+    readability-*,
+    -readability-uppercase-literal-suffix,
+    -readability-implicit-bool-conversion,
+    
+    performance-*,
+    
+    portability-*,
+
+    clang-analyzer-*,
+
+    bugprone-*,
+    -bugprone-easily-swappable-parameters,
+
+    misc-*,
+
+    cppcoreguidelines-*,
+    -cppcoreguidelines-pro-type-union-access,
+    
+    -*-braces-around-statements,
+		-*-non-private-member-variables-in-classes,
+'
