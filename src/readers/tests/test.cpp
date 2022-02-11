@@ -66,8 +66,8 @@ std::string sample =
 
 TEST(VirtexReader, read_heat_test) {
   auto data = Readers::read_geometry(sample);
-  fs::path t2d = "C:\\Users\\asavinov\\Desktop\\heat\\2\\virtex.t2d";
-  fs::path trm = "C:\\Users\\asavinov\\Desktop\\heat\\2\\virtex.TRN";
+  fs::path trm = fs::current_path().parent_path().parent_path() / "readers/doc/test/virtex.TRM";
+  fs::path t2d = fs::current_path();
   Readers::VirtexReader(trm, t2d);
   EXPECT_TRUE(true);
 }
