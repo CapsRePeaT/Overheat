@@ -26,6 +26,7 @@ class ICamera : public SceneObject {
 	[[nodiscard]] virtual const glm::mat4& projectionMatrix() const = 0;
 	[[nodiscard]] virtual const glm::mat4& viewProjectionMatrix() const = 0;
 	
-	[[nodiscard]] virtual inline glm::vec3 forwardVec() {
-	}
+// unfinished func
+// [[nodiscard]] virtual inline glm::vec3 forwardVec() {
+// }
 };

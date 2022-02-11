@@ -69,7 +69,7 @@ GeomStorage<BasicShape> HPU::geometry() {
 	           {coordinates_.y1_, coordinates_.y2_},
 	           {0.f, thickness_}}};
 	GeomStorage<BasicShape> storage;
-	assert(false && "add proper layer id and parent");
+	//assert(false && "add proper layer id and parent");
 	const size_t dummy = 0;
 	storage.AddShape(std::make_shared<BasicShape>(getNewId(), box, dummy));
 	return storage;
@@ -87,7 +87,7 @@ GeomStorage<BasicShape> BS::geometry() {
 				const auto y_ray = getSphereProjection(y_center, ny, radius);
 				Box3D::Values vals{x_ray, y_ray, {0.f, thickness_}};
 				Box3D box{vals};
-				assert(false && "add proper layer id and parent");
+				//assert(false && "add proper layer id and parent");
 				const size_t dummy = 0;
 				storage.AddShape(std::make_shared<BasicShape>(getNewId(), box, dummy));
 			}
@@ -102,7 +102,7 @@ GeomStorage<BasicShape> D::geometry() {
 		Box3D box{{{crystal.coordinates_.x1_, crystal.coordinates_.x2_},
 		           {crystal.coordinates_.y1_, crystal.coordinates_.y2_},
 		           {0.f, thickness_}}};
-		assert(false && "add proper layer id and parent");
+		//assert(false && "add proper layer id and parent");
 		const size_t dummy = 0;
 		storage.AddShape(std::make_shared<BasicShape>(getNewId(), box, dummy));
 	}
