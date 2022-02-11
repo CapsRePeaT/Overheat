@@ -1,6 +1,6 @@
 set(MODULE_NAME readers)
 set(SOURCES
-        src/virtex_reader.cpp src/virtex_data_classes.h include/idata_provider.h src/virtex_data_provider.h src/virtex_data_provider.cpp src/virtex_data_classes.cpp)
+        src/virtex_reader.cpp src/TRM.h include/idata_provider.h src/virtex_data_provider.h src/virtex_data_provider.cpp src/TRM.cpp src/T2D.h)
 
 # This library
 add_library(${MODULE_NAME} STATIC ${SOURCES})
