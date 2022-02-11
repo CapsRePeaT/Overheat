@@ -43,8 +43,9 @@ MainWindow::MainWindow(QWidget* parent)
 
 MainWindow::~MainWindow() { delete ui_; }
 
-void MainWindow::LoadFile(const std::string& file_name) {
-	core().LoadGeometry(file_name);
+void MainWindow::LoadFile(const std::string& trm_file,
+                          const std::string& t2d_file) {
+	core().LoadGeometry(trm_file, t2d_file);
 	const auto loaded_shapes = core().GetFirstFile().GetShapes();
 	// Do we really need this assert?
 	// assert(!loaded_shapes.empty() && "no shapes received");
@@ -57,17 +58,21 @@ void MainWindow::LoadFile(const std::string& file_name) {
 		render_widget_->doneCurrent();
 	}
 	else {
-		LOG_WARN("No shaped received from file {}", file_name);
+		LOG_WARN("No shaped received from file {}", trm_file);
 	}
 }
 
 void MainWindow::OnLoadFileBtnPressed() {
-	const QString file_name = QFileDialog::getOpenFileName(
-			this, tr("Open File"), QDir::currentPath(), tr("geom (*.txt *.TRM);; ALL (*.*)"));
+	const QString trm_file = QFileDialog::getOpenFileName(
+			this, tr("Open trm File"), QDir::currentPath(), 
+						tr("geom (*.txt *.TRM);; ALL (*.*)"));
+	const QString t2d_file = QFileDialog::getOpenFileName(
+			this, tr("Open T2D File"), QDir::currentPath(),
+						tr("geom (*.txt *.TRM);; ALL (*.*)"));
 	// TODO: check if file_name is empty (on cancel)
-	if (file_name.length()) {
+	if (trm_file.length() && t2d_file.length()) {
 		try {
-			LoadFile(file_name.toStdString());
+			LoadFile(trm_file.toStdString(), t2d_file.toStdString());
 		} catch(...) {
 			QMessageBox messageBox;
 			messageBox.critical(0, "Error", "Unknown error. File cannot be parsed, please check file format.");

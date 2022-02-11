@@ -33,6 +33,18 @@ class Layer {
 	size_t bottom_heatmap_id_;
 };
 
+// class with net and temperatures
+// TODO: Fix it in future to make handy
+class HeatmapStorage {
+ public:
+	HeatmapStorage() = default;
+
+	size_t layers_count;
+	std::vector<float> x;
+	std::vector<float> y;
+	std::vector<float> temperature;
+};
+
 class MetadataStorage {
  public:
 	MetadataStorage() = default;

@@ -18,7 +18,8 @@ class MainWindow : public QMainWindow {
 	Q_OBJECT
  public:
 	explicit MainWindow(QWidget* parent = nullptr);
-	void LoadFile(const std::string& file_name);
+	void LoadFile(const std::string& trm_file, 
+								const std::string& t2d_file);
 	~MainWindow();
  signals:
 	// todo

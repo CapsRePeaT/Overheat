@@ -25,9 +25,10 @@ class DummyReader {
 	}
 };
 
-void Core::LoadGeometry(const std::string& file_name) {
+void Core::LoadGeometry(const std::string& trm_file,
+                        const std::string& t2d_file) {
   // TODO make proper interface class usage
-	Readers::VirtexReader reader{file_name};
+	Readers::VirtexReader reader{trm_file, t2d_file};
 	FileRepresentation new_representation;
 	new_representation.geom_storage() = reader.geometry();
 	representations_.push_back(new_representation);
