@@ -3,9 +3,9 @@
 #include <memory>
 
 #include "application/heatmap_material.h"
+#include "camera_controller.h"
 #include "core.h"
 #include "i_scene_viewport.h"
-#include "renderer/orthographic_camera.h"
 
 class GLSceneViewport final : public ISceneViewport {
  public:
@@ -28,7 +28,13 @@ class GLSceneViewport final : public ISceneViewport {
 	// TODO: pin rule about invoking virtual methods from dtors in code style
 	// documentation
 	void ClearResourcesImpl();
+	void OpenGlInit(int w, int h);
+	void ApplicationInit(int w, int h);
+	void DebugInit(int w, int h);
 	std::unique_ptr<HeatmapMaterial> heatmap_material_;
-	std::unique_ptr<OrthographicCamera> camera_;
+	std::unique_ptr<SphericalCameraController> camera_controller_;
 	std::shared_ptr<Scene> scene_;
+
+	struct Impl;
+	std::unique_ptr<Impl> data_;
 };

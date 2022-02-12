@@ -120,16 +120,12 @@ void RendererWidget::mouseMoveEvent(QMouseEvent* event) {
 		current_pressed_button_ = Qt::RightButton;
 		action_requiered = false;
 		viewport_->RotateCamera(curr_pos, delta);
-		LOG_DEBUG("Camera rotated, current pos: x {0}, y {1}, delta: x {2}, y {3}.",
-		          curr_pos.x, curr_pos.y, delta.x, delta.y);
 	}
 	// move
 	if ((clicked_buttons & Qt::MiddleButton) && action_requiered) {
 		current_pressed_button_ = Qt::RightButton;
 		action_requiered = false;
 		viewport_->MoveCamera(curr_pos, delta);
-		LOG_DEBUG("Camera moved, current pos: x {0}, y {1}, delta: x {2}, y {3}.",
-		          curr_pos.x, curr_pos.y, delta.x, delta.y);
 	}
 	previous_mouse_pos_ = q_curr_pos;
 	event->accept();

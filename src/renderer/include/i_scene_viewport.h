@@ -5,11 +5,7 @@
 #include "common.h"
 #include "core.h"
 #include "scene.h"
-
-struct Vec2D {
-	int x;
-	int y;
-};
+#include "vector.h"
 
 class ISceneViewport {
  public:
