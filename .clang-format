@@ -4,7 +4,8 @@ Language:        Cpp
 AccessModifierOffset: -1
 AlignAfterOpenBracket: Align
 AlignConsecutiveMacros: None
-AlignConsecutiveAssignments: None
+AlignArrayOfStructures: Left
+AlignConsecutiveAssignments: Consecutive
 AlignConsecutiveBitFields: None
 AlignConsecutiveDeclarations: None
 AlignEscapedNewlines: Left
