@@ -24,9 +24,10 @@ void VirtexDataProvider::load_geometry(const TRM& data) {
 		auto geom = layer->geometry();
 		for (const auto& shape : geom.get_all_shapes()) {
 			shape->setBox(liftBox(shape->bbox(), offset));
-			offset += layer->thickness();
 			geometry_.AddShape(shape);
 		}
+		offset += layer->thickness();
+
 	}
 }
 

@@ -68,7 +68,7 @@ void MainWindow::OnLoadFileBtnPressed() {
 						tr("geom (*.txt *.TRM);; ALL (*.*)"));
 	const QString t2d_file = QFileDialog::getOpenFileName(
 			this, tr("Open T2D File"), QDir::currentPath(),
-						tr("geom (*.txt *.TRM);; ALL (*.*)"));
+						tr("geom (*.txt *.T2D);; ALL (*.*)"));
 	// TODO: check if file_name is empty (on cancel)
 	if (trm_file.length() && t2d_file.length()) {
 		try {

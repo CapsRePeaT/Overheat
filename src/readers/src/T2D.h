@@ -3,6 +3,8 @@
 #include <numeric>
 #include <vector>
 
+#include <map>
+
 namespace {
 template <typename T>
 class SerializableVec {
@@ -144,6 +146,14 @@ class T2D {
 		istream >> t2d.topology_.set_size(t2d.IST_ * t2d.NH_ * t2d.MH_);
 		istream >> t2d.env_temp_;
 		istream >> t2d.temperature_.set_size(t2d.IST_ * t2d.NH_ * t2d.MH_);
+		
+
+		//float total_x_step = 0;
+		//for (const float net_x_coord : t2d.net_x_coords.data())
+		//	total_x_step += net_x_coord; 
+		//float total_y_step = 0;
+		//for (const float net_y_coord : t2d.net_y_coords.data())
+		//	total_y_step += net_y_coord; 
 		return istream;
 	}
 

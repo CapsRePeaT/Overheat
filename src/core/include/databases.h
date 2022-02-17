@@ -39,7 +39,8 @@ class HeatmapStorage {
  public:
 	HeatmapStorage() = default;
 
-	size_t layers_count;
+	// NH MH - size of layer
+	size_t layers_count; // IST in T2D file
 	std::vector<float> x;
 	std::vector<float> y;
 	std::vector<float> temperature;
