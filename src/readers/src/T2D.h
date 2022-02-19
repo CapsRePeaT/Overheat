@@ -137,8 +137,8 @@ class T2D {
 		istream >> t2d.temp_.set_size(t2d.IST_);
 		istream >> t2d.ids_.set_size(t2d.num_crystals_in_crystal_layer_);
 		istream >> t2d.spheres_.init(t2d.spheres_count_.data());
-		istream >> t2d.net_y_coords.set_size(t2d.MH_);
 		istream >> t2d.net_x_coords.set_size(t2d.NH_);
+		istream >> t2d.net_y_coords.set_size(t2d.MH_);
 		istream >> t2d.min_max_layers_coords_.set_size(t2d.IST_ * 2 * 2);
 		istream >> t2d.thicknesses_.set_size(t2d.IST_);
 		istream >> t2d.topology_.set_size(t2d.IST_ * t2d.NH_ * t2d.MH_);
