@@ -108,8 +108,7 @@ struct SpheresGroup {
 class T2D {
  public:
 	size_t layers_count() const { return IST_; }
-	const std::vector<float>& net_x() const { return net_x_coords.data(); }
-	const std::vector<float>& net_y() const { return net_y_coords.data(); }
+	const std::vector<Point2>& net() const { return net_x_y.data(); }
 	const std::vector<float>& temperatures() const { return temperature_.data(); }
 	friend std::istream& operator>>(std::istream& istream, T2D& t2d) {
 		istream >> t2d.program_name_;
@@ -137,8 +136,7 @@ class T2D {
 		istream >> t2d.temp_.set_size(t2d.IST_);
 		istream >> t2d.ids_.set_size(t2d.num_crystals_in_crystal_layer_);
 		istream >> t2d.spheres_.init(t2d.spheres_count_.data());
-		istream >> t2d.net_y_coords.set_size(t2d.MH_);
-		istream >> t2d.net_x_coords.set_size(t2d.NH_);
+		istream >> t2d.net_x_y.set_size((t2d.MH_ + t2d.NH_) / 2);
 		istream >> t2d.min_max_layers_coords_.set_size(t2d.IST_ * 2 * 2);
 		istream >> t2d.thicknesses_.set_size(t2d.IST_);
 		istream >> t2d.topology_.set_size(t2d.IST_ * t2d.NH_ * t2d.MH_);
@@ -199,8 +197,7 @@ class T2D {
 	*/
 	SpheresGroup spheres_{spheres_count_.data()};  // IB>0
 	//Далее вводятся массивы шагов разностной сетки по осям x и y:
-	SerializableVec<float> net_x_coords;
-	SerializableVec<float> net_y_coords;
+	SerializableVec<Point2> net_x_y;
 	//Далее вводятся IST массивов минимальных и максимальных координат слоев по
 	//горизонтали:
 	SerializableVec<float> min_max_layers_coords_;

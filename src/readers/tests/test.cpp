@@ -63,13 +63,16 @@ std::string sample =
 		"&AM TC=20. AK=0. &END\n"
 		"&CL NH=30 MH=30 ITERAT=15000 EPS=1.E-6 W=1.99 &END";
 
-
 TEST(VirtexReader, read_heat_test) {
-  auto data = Readers::read_geometry(sample);
-  fs::path trm = fs::current_path().parent_path().parent_path() / "readers/doc/test/virtex.TRM";
-  fs::path t2d = fs::current_path();
-  Readers::VirtexReader(trm, t2d);
-  EXPECT_TRUE(true);
+	auto data = Readers::read_geometry(sample);
+	fs::path trm = fs::current_path().parent_path().parent_path() / "src" /
+	               "readers" / "tests" / "virtex.TRM";
+	fs::path t2d = fs::current_path().parent_path().parent_path() / "src" /
+	               "readers"  / "tests" / "virtex.t2d";
+	auto trm_ex = exists(trm);
+	auto t2d_ex = exists(t2d);
+	Readers::VirtexReader(trm, t2d);
+	EXPECT_TRUE(true);
 }
 
 TEST(VirtexReader, read_raw_test) {
@@ -82,4 +85,3 @@ TEST(VirtexReader, read_geometry_test) {
 	auto geometry = Readers::VirtexDataProvider(data, {}).geometry();
 	EXPECT_TRUE(true);
 }
-
