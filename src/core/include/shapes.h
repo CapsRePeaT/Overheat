@@ -12,8 +12,9 @@ class BasicShape {
 	using ShapePtr = std::shared_ptr<BasicShape>;
   using Shapes = std::vector<ShapePtr>;
 	explicit BasicShape(const size_t id) : id_(id) {}
-	BasicShape(const size_t id, Box3D bbox /* non const for move*/, 
-						 const size_t layer_id)
+	BasicShape(const size_t id,
+	           const size_t layer_id,
+						 Box3D bbox /* non const for move*/)
 			: id_(id), layer_id_(layer_id), bbox_(std::move(bbox)) {}
 	size_t id() const { return id_; }
 	const Box3D& bbox() const { return bbox_; }

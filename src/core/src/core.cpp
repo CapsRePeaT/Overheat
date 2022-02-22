@@ -11,11 +11,11 @@ class DummyReader {
 		std::cout << "file to load shapes from:" << filename << std::endl;
 		const size_t dummy_layer_id = 0;
 		geom_storage.AddShape(std::make_shared<BasicShape>(
-				42, Box3D({{0.0f, 10.0f}, {0.0f, 10.0f}, {-0.25f, 0.25f}}), dummy_layer_id));
+				42, dummy_layer_id, Box3D({{0.0f, 10.0f}, {0.0f, 10.0f}, {-0.25f, 0.25f}})));
 		geom_storage.AddShape(std::make_shared<BasicShape>(
-				43, Box3D({{-15.0f, -8.0f}, {-9.0f, 1.0f}, {0.0f, 0.2f}}), dummy_layer_id));
+				43, dummy_layer_id, Box3D({{-15.0f, -8.0f}, {-9.0f, 1.0f}, {0.0f, 0.2f}})));
 		geom_storage.AddShape(std::make_shared<BasicShape>(
-				44, Box3D({{-3.0f, 8.0f}, {-15.0f, -7.0f}, {0.0f, 0.2f}}), dummy_layer_id));
+				44, dummy_layer_id, Box3D({{-3.0f, 8.0f}, {-15.0f, -7.0f}, {0.0f, 0.2f}})));
 		return true;
 	}
 	bool LoadMetadata(const std::string& filename,
@@ -31,5 +31,6 @@ void Core::LoadGeometry(const std::string& trm_file,
 	Readers::VirtexReader reader{trm_file, t2d_file};
 	FileRepresentation new_representation;
 	new_representation.geom_storage() = reader.geometry();
+	new_representation.heatmaps()     = reader.heatmaps();
 	representations_.push_back(new_representation);
 }

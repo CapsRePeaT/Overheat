@@ -37,13 +37,17 @@ class Layer {
 // TODO: Fix it in future to make handy
 class HeatmapStorage {
  public:
+	using Heatmaps = std::vector<Heatmap>;
 	HeatmapStorage() = default;
+	HeatmapStorage(std::vector<float> x_steps, 
+								 std::vector<float> y_steps,
+	               std::vector<float> temperature);
 
 	// NH MH - size of layer
-	size_t layers_count; // IST in T2D file
-	std::vector<float> x;
-	std::vector<float> y;
-	std::vector<float> temperature;
+	size_t layers_count_; // IST in T2D file
+	std::vector<float> x_steps_;
+	std::vector<float> y_steps_;
+	Heatmaps heatmaps_;
 };
 
 class MetadataStorage {
@@ -54,17 +58,17 @@ class MetadataStorage {
 class FileRepresentation {
  public:
 	using Layers = std::vector<Layer>;
-	using Heatmaps = std::vector<Heatmap>;
+	
   using Shapes = GeomStorage<BasicShape>::Shapes;
 	// FIXME implement geom search, now we return all shapes
 	const Shapes& GetShapes(const Box3D& area = Box3D()) const;
 	const Box3D design_borders() const { return design_borders_; }
 	GeomStorage<BasicShape>& geom_storage() { return geom_storage_; }
-
+	HeatmapStorage& heatmaps() { return heatmaps_; }
  private:
 	GeomStorage<BasicShape> geom_storage_;
 	Layers layers_;
-	Heatmaps heatmaps_;
+	HeatmapStorage heatmaps_;
 	MetadataStorage metadata_storage_;
 	Box3D design_borders_;
 };

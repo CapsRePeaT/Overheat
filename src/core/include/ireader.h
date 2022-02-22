@@ -12,6 +12,7 @@ class IReader {
 	// TODO we sould return new class FileRepresentation
 	GeomStorage<BasicShape> geometry() { return data_provider_->geometry(); }
 	MetadataStorage metadata() { return data_provider_->metadata(); }
+	HeatmapStorage heatmaps() { return data_provider_->heatmaps(); }
 
  protected:
 	virtual void load() = 0;

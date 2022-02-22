@@ -9,7 +9,7 @@
 // template <int N>
 class Heatmap {
  public:
-	Heatmap();
+	Heatmap(std::vector<float> temperature);
 	// some tipe? operator[](std::size_t idx);
 	float min_temp() const { return min_temp_; }
 	float max_temp() const { return max_temp_; }
@@ -17,7 +17,7 @@ class Heatmap {
  private:
 	// for alexey purposes we whant to use single mem array, so we implement 2d
 	// array acess on out own
-	std::vector<float> raw_data_;
+	std::vector<float> temperature_;
 	float max_temp_ = std::numeric_limits<float>::min();
 	float min_temp_ = std::numeric_limits<float>::max();
 };
