@@ -1,8 +1,15 @@
 #include "databases.h"
+#include <cassert>
 
 const FileRepresentation::Shapes& 
 FileRepresentation::GetShapes(const Box3D& area) const {
 	return geom_storage_.get_all_shapes();
+}
+
+MetadataPack FileRepresentation::GetShapeMetadata(ShapeId::Id id) const { 
+	MetadataPack result; 
+	assert(false && "not implemented");
+	return result;
 }
 
 HeatmapStorage::HeatmapStorage(std::vector<float> x_steps,

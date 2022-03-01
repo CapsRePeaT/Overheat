@@ -29,7 +29,7 @@ void Core::LoadGeometry(const std::string& trm_file,
                         const std::string& t2d_file) {
   // TODO make proper interface class usage
 	Readers::VirtexReader reader{trm_file, t2d_file};
-	FileRepresentation new_representation;
+	FileRepresentation new_representation(representations_.size());
 	new_representation.geom_storage() = reader.geometry();
 	new_representation.heatmaps()     = reader.heatmaps();
 	representations_.push_back(new_representation);

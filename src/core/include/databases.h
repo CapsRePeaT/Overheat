@@ -58,14 +58,17 @@ class MetadataStorage {
 class FileRepresentation {
  public:
 	using Layers = std::vector<Layer>;
-	
   using Shapes = GeomStorage<BasicShape>::Shapes;
+	FileRepresentation(RepresentationId id) : id_(id) {}
 	// FIXME implement geom search, now we return all shapes
 	const Shapes& GetShapes(const Box3D& area = Box3D()) const;
+	MetadataPack GetShapeMetadata(ShapeId::Id id) const;
 	const Box3D design_borders() const { return design_borders_; }
 	GeomStorage<BasicShape>& geom_storage() { return geom_storage_; }
 	HeatmapStorage& heatmaps() { return heatmaps_; }
+	RepresentationId id() const { return id_; }
  private:
+	const RepresentationId id_;
 	GeomStorage<BasicShape> geom_storage_;
 	Layers layers_;
 	HeatmapStorage heatmaps_;

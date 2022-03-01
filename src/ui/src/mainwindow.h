@@ -23,8 +23,10 @@ class MainWindow : public QMainWindow {
 	~MainWindow();
  signals:
 	// todo
+	void ShowMetadata(const MetadataPack& pack);
  public slots:
 	void OnLoadFileBtnPressed();
+	void OnShapeSelected(const ShapeIds& shape_ids);
 
 	// private slots:
 	//  void OnActionAddWindowTriggered();
@@ -37,4 +39,8 @@ class MainWindow : public QMainWindow {
 	MetadataWidget* metadata_widget_ = nullptr;
 	ShapeListWidget* shape_list_widget_ = nullptr;
 	Ui::MainWindow* ui_;
+	// we need to store them for iteration over 
+	// selected shapes and providing metadata
+	ShapeIds selected_shape_ids_;
+	size_t selected_shape_index_ = 0;
 };

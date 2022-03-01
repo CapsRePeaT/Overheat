@@ -28,6 +28,8 @@ MainWindow::MainWindow(QWidget* parent)
 	QDockWidget* metadata_dock = new QDockWidget(tr("Metadata"), this);
 	metadata_dock->setWidget(metadata_widget_);
 	addDockWidget(Qt::LeftDockWidgetArea, metadata_dock);
+	connect(this, MainWindow::ShowMetadata, 
+					metadata_widget_, MetadataWidget::OnShowMetadata);
 
 	// options widget
 	visualization_options_ = new VisualizationOptionsWidget(this);
@@ -75,9 +77,22 @@ void MainWindow::OnLoadFileBtnPressed() {
 			LoadFile(trm_file.toStdString(), t2d_file.toStdString());
 		} catch(...) {
 			QMessageBox messageBox;
-			messageBox.critical(0, "Error", "Unknown error. File cannot be parsed, please check file format.");
+			messageBox.critical(0, "Error", 
+				  "Unknown error. File cannot be parsed, please check file format.");
 			messageBox.setFixedSize(500, 200);
 		}
 	}
-	
 }
+
+void MainWindow::OnShapeSelected(const ShapeIds& shape_ids) { 
+	if (shape_ids == selected_shape_ids_) {
+		++selected_shape_index_;
+		if (selected_shape_index_ >= shape_ids.size())
+			selected_shape_index_ = 0;
+	} else {
+		selected_shape_ids_ = shape_ids;
+		selected_shape_index_ = 0;
+	}
+	emit ShowMetadata(core().GetShapeMetadata(selected_shape_ids_[selected_shape_index_]));
+}
+
