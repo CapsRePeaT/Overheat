@@ -23,6 +23,7 @@ Checks: '-*,
 
     cppcoreguidelines-*,
     -cppcoreguidelines-pro-type-union-access,
+    -cppcoreguidelines-owning-memory,
     
     -*-braces-around-statements,
 		-*-non-private-member-variables-in-classes,

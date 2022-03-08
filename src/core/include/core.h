@@ -25,6 +25,7 @@ class Core {
 	}
 	MetadataPack GetShapeMetadata(const ShapeId id) { 
 		GetRepresentation(id.design_id()).GetShapeMetadata(id.id());
+		return {};
 	}
  private:
 	Core() = default;
