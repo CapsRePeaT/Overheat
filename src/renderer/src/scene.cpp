@@ -16,7 +16,7 @@ Scene::Scene(Scene&& other) noexcept { *this = std::move(other); }
 Scene& Scene::operator=(Scene&& other) noexcept {
 	if (this != &other) {
 		delete impl_;
-		impl_ = other.impl_;
+		impl_       = other.impl_;
 		other.impl_ = nullptr;
 	}
 	return *this;
@@ -27,6 +27,8 @@ Scene::~Scene() { delete impl_; }
 void Scene::AddShape(const std::shared_ptr<BasicShape>& shape) {
 	impl_->scene_shapes.emplace_back(std::make_shared<SceneShape>(*shape));
 }
+
+void Scene::AddHeatmaps(const HeatmapStorage& heatmaps_storage) {}
 
 const std::vector<std::shared_ptr<SceneShape>>& Scene::shapes() const {
 	return impl_->scene_shapes;

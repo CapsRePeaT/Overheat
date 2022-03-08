@@ -15,11 +15,12 @@ class Scene {
 	~Scene();
 	Scene(const Scene&) = delete;
 	Scene& operator=(Scene&) = delete;
-	void Clear();
 	// Removes objects from scene
+	void Clear();
 	void AddShapes(const Core::Shapes& shapes) {
 		for (const auto& shape : shapes) AddShape(shape);
 	}
+	void AddHeatmaps(const HeatmapStorage& heatmaps_storage);
 	// Only for in-module usage (maybe will be removed and by-passed, TBT)
 	[[nodiscard]] const std::vector<std::shared_ptr<SceneShape>>& shapes() const;
 

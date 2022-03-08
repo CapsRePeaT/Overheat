@@ -1,5 +1,4 @@
-#ifndef DATABASES_H
-#define DATABASES_H
+#pragma once
 
 #include <memory>
 #include <vector>
@@ -74,5 +73,3 @@ class FileRepresentation {
 	MetadataStorage metadata_storage_;
 	Box3D design_borders_;
 };
-
-#endif  // DATABASES_H
