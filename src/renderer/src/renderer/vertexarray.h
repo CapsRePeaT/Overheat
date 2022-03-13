@@ -15,9 +15,6 @@ class VertexArray {
 	virtual void Unbind() const = 0;
 	virtual void SetIndexBuffer(std::unique_ptr<IndexBuffer>&& ib) = 0;
 	[[nodiscard]] virtual const IndexBuffer& indexBuffer() const = 0;
-	static std::unique_ptr<VertexArray> Create();
-	static std::unique_ptr<VertexArray> Create(std::unique_ptr<VertexBuffer>&& vb,
-	                                           std::unique_ptr<IndexBuffer>&& ib);
 };
 
 }  // namespace renderer

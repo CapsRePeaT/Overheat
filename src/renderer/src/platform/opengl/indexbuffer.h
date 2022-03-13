@@ -1,5 +1,6 @@
 #pragma once
 
+#include <cstddef>
 #include "renderer/indexbuffer.h"
 
 namespace renderer {

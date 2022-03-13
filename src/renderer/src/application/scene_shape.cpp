@@ -5,6 +5,7 @@
 
 #include <memory>
 
+#include "renderer/renderer_api.h"
 #include "renderer/vertexbuffer.h"
 #include "renderer/vertexbufferlayout.h"
 
@@ -71,9 +72,10 @@ SceneShape::SceneShape(const BasicShape& shape) : id_(shape.id().id()) {
 	auto&& layout = std::make_unique<VertexBufferLayout>();
 	layout->Push<float>(3);
 	layout->Push<float>(2);
-	auto&& vbo = VertexBuffer::Create(vertices, std::move(layout));
-	auto&& ibo = IndexBuffer::Create(raw_ibo);
-	vao_       = VertexArray::Create(std::move(vbo), std::move(ibo));
+	auto& factory = RendererAPI::instance().factory();
+	auto&& vbo = factory.NewVertexBuffer(vertices, std::move(layout));
+	auto&& ibo = factory.NewIndexBuffer(raw_ibo);
+	vao_ = factory.NewVertexArray(std::move(vbo), std::move(ibo));
 }
 
 }  // namespace renderer

@@ -3,6 +3,7 @@
 #include <array>
 #include <memory>
 
+#include "renderer/renderer_api.h"
 #include "renderer/scene_object.h"
 #include "renderer/vertexbufferlayout.h"
 
@@ -28,7 +29,7 @@ Axes::Axes() {
 	//   o------> x (red)
 	//
 	static constexpr std::array<const Vertex, 6> vertices = {
-			//       x     y     z       r     g     b
+			//        x     y     z       r     g     b
 			Vertex({{0.0f, 0.0f, 0.0f}, {1.0f, 0.0f, 0.0f}}),  // x1
 			Vertex({{1.0f, 0.0f, 0.0f}, {1.0f, 0.0f, 0.0f}}),  // x2
 			Vertex({{0.0f, 0.0f, 0.0f}, {0.0f, 1.0f, 0.0f}}),  // y1
@@ -42,9 +43,10 @@ Axes::Axes() {
 	auto layout = std::make_unique<VertexBufferLayout>();
 	layout->Push<float>(3);
 	layout->Push<float>(3);
-	auto&& vbo = VertexBuffer::Create(vertices, std::move(layout));
-	auto&& ibo = IndexBuffer::Create(raw_ibo);
-	vao_ = VertexArray::Create(std::move(vbo), std::move(ibo));
+	auto& factory = RendererAPI::instance().factory();
+	auto&& vbo = factory.NewVertexBuffer(vertices, std::move(layout));
+	auto&& ibo = factory.NewIndexBuffer(raw_ibo);
+	vao_ = factory.NewVertexArray(std::move(vbo), std::move(ibo));
 }
 
 }  // namespace debug

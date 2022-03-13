@@ -6,6 +6,7 @@
 
 #include "i_scene_viewport.h"
 #include "indexbuffer.h"
+#include "renderer/i_renderer_factory.h"
 #include "vertexarray.h"
 
 namespace renderer {
@@ -42,6 +43,7 @@ class RendererAPI {
 	}
 	[[nodiscard]] static RendererAPI& instance();
 	[[nodiscard]] static API api();
+	[[nodiscard]] static IRendererFactory& factory();
 
  protected:
 	virtual void DrawIndexedImpl(const VertexArray& va, const IndexBuffer& ib,
