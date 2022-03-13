@@ -9,6 +9,8 @@
 #include "constants.h"
 #include "renderer/scene_object.h"
 
+namespace renderer {
+
 OrthographicCamera::OrthographicCamera(
 		const float aspect_ratio, const float zoom,
 		const std::pair<float, float> depth_bounds)
@@ -37,7 +39,7 @@ void OrthographicCamera::SetProjection(const float left, const float right,
 	projection_matrix_ = glm::ortho(left, right, bottom, top, near, far);
 	CalculateViewProjectionMatrix();
 	near_ = near;
-	far_  = far;
+	far_ = far;
 }
 
 void OrthographicCamera::RecalculateViewMatrix() {
@@ -78,3 +80,5 @@ void OrthographicCamera::SetAspectRatio(const float ratio) {
 	aspect_ratio_ = ratio;
 	RecalculateProjectionMatrix();
 }
+
+}  // namespace renderer

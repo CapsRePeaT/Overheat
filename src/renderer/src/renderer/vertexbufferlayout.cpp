@@ -1,5 +1,8 @@
 #include "vertexbufferlayout.h"
+
 #include <cassert>
+
+namespace renderer {
 
 unsigned int VertexBufferLayout::VertexBufferElement::size() const {
 	switch (type) {
@@ -12,3 +15,5 @@ unsigned int VertexBufferLayout::VertexBufferElement::size() const {
 	}
 	return 0;
 }
+
+}  // namespace renderer

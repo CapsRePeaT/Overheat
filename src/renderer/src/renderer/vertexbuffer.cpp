@@ -3,13 +3,15 @@
 #include "platform/opengl/vertexbuffer.h"
 #include "renderer_api.h"
 
+namespace renderer {
+
 std::unique_ptr<VertexBuffer> VertexBuffer::Create(const size_t size) {
 	switch (RendererAPI::instance()->api()) {
 		case RendererAPI::API::None:
 			assert(false);
 			return nullptr;
 		case RendererAPI::API::OpenGL:
-			return std::make_unique<OpenGLVertexBuffer>(size);
+			return std::make_unique<gl::VertexBuffer>(size);
 		default:
 			assert(false && "Unknown Renderer::API");
 			return nullptr;
@@ -24,10 +26,11 @@ std::unique_ptr<VertexBuffer> VertexBuffer::Create(
 			assert(false && "Renderer::API::None is not currently supported");
 			return nullptr;
 		case RendererAPI::API::OpenGL:
-			return std::make_unique<OpenGLVertexBuffer>(data, size,
-			                                            std::move(layout));
+			return std::make_unique<gl::VertexBuffer>(data, size, std::move(layout));
 		default:
 			assert(false && "Unknown Renderer::API");
 			return nullptr;
 	}
 }
+
+}  // namespace renderer

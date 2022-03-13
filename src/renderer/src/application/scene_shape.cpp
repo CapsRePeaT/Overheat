@@ -8,6 +8,8 @@
 #include "renderer/vertexbuffer.h"
 #include "renderer/vertexbufferlayout.h"
 
+namespace renderer {
+
 // TODO: handle vertices better
 struct Vertex {
 	glm::vec3 positions;
@@ -73,3 +75,5 @@ SceneShape::SceneShape(const BasicShape& shape) : id_(shape.id().id()) {
 	auto&& ibo = IndexBuffer::Create(raw_ibo);
 	vao_       = VertexArray::Create(std::move(vbo), std::move(ibo));
 }
+
+}  // namespace renderer

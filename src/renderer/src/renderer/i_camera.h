@@ -2,7 +2,10 @@
 
 #include <glm/ext/quaternion_geometric.hpp>
 #include <glm/ext/vector_float3.hpp>
+
 #include "renderer/scene_object.h"
+
+namespace renderer {
 
 class ICamera : public SceneObject {
  public:
@@ -19,8 +22,10 @@ class ICamera : public SceneObject {
 	[[nodiscard]] virtual float zoom_level() const = 0;
 	virtual void SetAspectRatio(float ratio) = 0;
 	[[nodiscard]] virtual float aspect_ratio() const = 0;
-	
+
 	[[nodiscard]] virtual const glm::mat4& viewMatrix() const = 0;
 	[[nodiscard]] virtual const glm::mat4& projectionMatrix() const = 0;
 	[[nodiscard]] virtual const glm::mat4& viewProjectionMatrix() const = 0;
 };
+
+}  // namespace renderer

@@ -1,9 +1,13 @@
 #include "axes.h"
+
 #include <array>
 #include <memory>
 
 #include "renderer/scene_object.h"
 #include "renderer/vertexbufferlayout.h"
+
+namespace renderer {
+
 namespace {
 
 struct Vertex {
@@ -24,18 +28,16 @@ Axes::Axes() {
 	//   o------> x (red)
 	//
 	static constexpr std::array<const Vertex, 6> vertices = {
-		//        x     y     z       r     g     b
-		Vertex({{0.0f, 0.0f, 0.0f}, {1.0f, 0.0f, 0.0f}}), // x1
-		Vertex({{1.0f, 0.0f, 0.0f}, {1.0f, 0.0f, 0.0f}}), // x2
-		Vertex({{0.0f, 0.0f, 0.0f}, {0.0f, 1.0f, 0.0f}}), // y1
-		Vertex({{0.0f, 1.0f, 0.0f}, {0.0f, 1.0f, 0.0f}}), // y2
-		Vertex({{0.0f, 0.0f, 0.0f}, {0.0f, 0.0f, 1.0f}}), // z1
-		Vertex({{0.0f, 0.0f, 1.0f}, {0.0f, 0.0f, 1.0f}}), // z2
+			//       x     y     z       r     g     b
+			Vertex({{0.0f, 0.0f, 0.0f}, {1.0f, 0.0f, 0.0f}}),  // x1
+			Vertex({{1.0f, 0.0f, 0.0f}, {1.0f, 0.0f, 0.0f}}),  // x2
+			Vertex({{0.0f, 0.0f, 0.0f}, {0.0f, 1.0f, 0.0f}}),  // y1
+			Vertex({{0.0f, 1.0f, 0.0f}, {0.0f, 1.0f, 0.0f}}),  // y2
+			Vertex({{0.0f, 0.0f, 0.0f}, {0.0f, 0.0f, 1.0f}}),  // z1
+			Vertex({{0.0f, 0.0f, 1.0f}, {0.0f, 0.0f, 1.0f}}),  // z2
 	};
 
-	static constexpr std::array<uint32_t, 3 * 2> raw_ibo = {
-		0, 1, 2, 3, 4, 5
-	};
+	static constexpr std::array<uint32_t, 3 * 2> raw_ibo = {0, 1, 2, 3, 4, 5};
 
 	auto layout = std::make_unique<VertexBufferLayout>();
 	layout->Push<float>(3);
@@ -46,3 +48,4 @@ Axes::Axes() {
 }
 
 }  // namespace debug
+}  // namespace renderer

@@ -9,7 +9,7 @@
 
 MainWindow::MainWindow(QWidget* parent)
 		: QMainWindow(parent),
-			scene_(std::make_shared<Scene>()),
+			scene_(std::make_shared<renderer::Scene>()),
 			render_widget_(new RendererWidget(this, scene_)),
 			visualization_options_(new VisualizationOptionsWidget(this)),
 			metadata_widget_(new MetadataWidget(this)),

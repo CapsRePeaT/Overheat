@@ -4,6 +4,8 @@
 
 #include "constants.h"
 
+namespace renderer {
+
 class SceneObject {
  public:
 	explicit SceneObject(glm::vec3 position = consts::init::position,
@@ -64,3 +66,5 @@ class SceneObject {
 	glm::vec3 scale_    = consts::init::scale;
 	glm::quat rotation_ = consts::init::rotation;
 };
+
+}  // namespace renderer

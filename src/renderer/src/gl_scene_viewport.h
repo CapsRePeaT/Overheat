@@ -7,6 +7,8 @@
 #include "core.h"
 #include "i_scene_viewport.h"
 
+namespace renderer {
+
 class GLSceneViewport final : public ISceneViewport {
  public:
 	explicit GLSceneViewport(std::shared_ptr<Scene> scene);
@@ -38,3 +40,5 @@ class GLSceneViewport final : public ISceneViewport {
 	struct Impl;
 	std::unique_ptr<Impl> data_;
 };
+
+}  // namespace renderer

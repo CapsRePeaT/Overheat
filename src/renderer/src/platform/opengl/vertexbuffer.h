@@ -4,17 +4,20 @@
 
 #include "renderer/vertexbuffer.h"
 
-class OpenGLVertexBuffer : public VertexBuffer {
+namespace renderer {
+namespace gl {
+
+class VertexBuffer : public renderer::VertexBuffer {
  public:
-	OpenGLVertexBuffer() = delete;
-	OpenGLVertexBuffer(size_t size);
-	OpenGLVertexBuffer(const void* data, size_t size,
-	                   std::unique_ptr<VertexBufferLayout>&& layout);
-	OpenGLVertexBuffer(OpenGLVertexBuffer&& other) noexcept;
-	OpenGLVertexBuffer& operator=(OpenGLVertexBuffer&& other) noexcept;
-	~OpenGLVertexBuffer();
-	OpenGLVertexBuffer(const OpenGLVertexBuffer&) = delete;
-	OpenGLVertexBuffer& operator=(const OpenGLVertexBuffer&) = delete;
+	VertexBuffer() = delete;
+	explicit VertexBuffer(size_t size);
+	VertexBuffer(const void* data, size_t size,
+	             std::unique_ptr<VertexBufferLayout>&& layout);
+	VertexBuffer(VertexBuffer&& other) noexcept;
+	VertexBuffer& operator=(VertexBuffer&& other) noexcept;
+	~VertexBuffer();
+	VertexBuffer(const VertexBuffer&) = delete;
+	VertexBuffer& operator=(const VertexBuffer&) = delete;
 	void SetLayout(std::unique_ptr<VertexBufferLayout>&& layout) final {
 		layout_ = std::move(layout);
 	}
@@ -32,3 +35,6 @@ class OpenGLVertexBuffer : public VertexBuffer {
 	// layout statically via vertex structs and reflection
 	std::unique_ptr<VertexBufferLayout> layout_;
 };
+
+}  // namespace gl
+}  // namespace renderer

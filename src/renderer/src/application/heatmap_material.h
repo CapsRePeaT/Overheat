@@ -1,10 +1,13 @@
 #pragma once
 
 #include <glm/glm.hpp>
+
 #include <memory>
 
 #include "i_scene_viewport.h"
 #include "renderer/shaderprogram.h"
+
+namespace renderer {
 
 class HeatmapMaterial {
  public:
@@ -41,3 +44,5 @@ class HeatmapMaterial {
 	const char* view_proj_shader_var_ = "u_ViewProjection";
 	const char* transform_shader_var_ = "u_ModelTransform";
 };
+
+}  // namespace renderer

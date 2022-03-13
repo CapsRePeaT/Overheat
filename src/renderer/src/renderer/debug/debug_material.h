@@ -7,12 +7,14 @@
 #include "i_scene_viewport.h"
 #include "renderer/shaderprogram.h"
 
+namespace renderer {
 namespace debug {
 
 class DebugMaterial {
  public:
 	DebugMaterial();
-	void Use(const glm::mat4& transform, const glm::mat4& view_projection, float alpha) {
+	void Use(const glm::mat4& transform, const glm::mat4& view_projection,
+	         float alpha) {
 		shader_->Use();
 		shader_->SetFloat(alpha_shader_var, alpha);
 		shader_->SetMat4(transform_shader_var_, transform);
@@ -22,9 +24,10 @@ class DebugMaterial {
  private:
 	std::shared_ptr<ShaderProgram> shader_;
 	// TODO: move to templated base class
-	const char* alpha_shader_var      = "u_Alpha";
+	const char* alpha_shader_var = "u_Alpha";
 	const char* view_proj_shader_var_ = "u_ViewProjection";
 	const char* transform_shader_var_ = "u_ModelTransform";
 };
 
 }  // namespace debug
+}  // namespace renderer

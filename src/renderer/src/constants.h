@@ -4,6 +4,8 @@
 #include <glm/vec3.hpp>
 #include <glm/vec4.hpp>
 
+namespace renderer {
+
 namespace consts {
 
 /* Scalar constants */
@@ -42,3 +44,5 @@ constexpr glm::quat rotation = {1.0f, 0.0f, 0.0f, 0.0f};
 }  // namespace init
 
 }  // namespace consts
+
+}  // namespace renderer

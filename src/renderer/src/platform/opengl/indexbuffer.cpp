@@ -4,7 +4,10 @@
 
 #include "constants.h"
 
-OpenGLIndexBuffer::OpenGLIndexBuffer(const uint32_t* data, const size_t count)
+namespace renderer {
+namespace gl {
+
+IndexBuffer::IndexBuffer(const uint32_t* data, const size_t count)
 		: count_(count) {
 	glGenBuffers(consts::buffer_count_one, &id_);
 	Bind();
@@ -12,16 +15,13 @@ OpenGLIndexBuffer::OpenGLIndexBuffer(const uint32_t* data, const size_t count)
 	             GL_STATIC_DRAW);
 }
 
-OpenGLIndexBuffer::~OpenGLIndexBuffer() {
-	glDeleteBuffers(consts::buffer_count_one, &id_);
-}
+IndexBuffer::~IndexBuffer() { glDeleteBuffers(consts::buffer_count_one, &id_); }
 
-OpenGLIndexBuffer::OpenGLIndexBuffer(OpenGLIndexBuffer&& other) noexcept {
+IndexBuffer::IndexBuffer(IndexBuffer&& other) noexcept {
 	*this = std::move(other);
 }
 
-OpenGLIndexBuffer& OpenGLIndexBuffer::operator=(
-		OpenGLIndexBuffer&& other) noexcept {
+IndexBuffer& IndexBuffer::operator=(IndexBuffer&& other) noexcept {
 	if (this == &other)
 		return *this;
 	// Delete owned buffer
@@ -35,10 +35,9 @@ OpenGLIndexBuffer& OpenGLIndexBuffer::operator=(
 	return *this;
 }
 
-void OpenGLIndexBuffer::Bind() const {
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, id_);
-}
+void IndexBuffer::Bind() const { glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, id_); }
 
-void OpenGLIndexBuffer::Unbind() const {
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
-}
+void IndexBuffer::Unbind() const { glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0); }
+
+}  // namespace gl
+}  // namespace renderer

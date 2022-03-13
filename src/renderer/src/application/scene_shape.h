@@ -2,11 +2,14 @@
 
 #include <glm/glm.hpp>
 #include <glm/gtc/quaternion.hpp>
+
 #include <memory>
 
 #include "renderer/scene_object.h"
-#include "shapes.h"
 #include "renderer/vertexarray.h"
+#include "shapes.h"
+
+namespace renderer {
 
 class SceneShape : public SceneObject {
  public:
@@ -17,3 +20,5 @@ class SceneShape : public SceneObject {
 	const size_t id_;
 	std::unique_ptr<VertexArray> vao_;
 };
+
+}  // namespace renderer

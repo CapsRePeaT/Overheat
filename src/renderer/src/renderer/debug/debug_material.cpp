@@ -1,5 +1,6 @@
 #include "debug_material.h"
 
+namespace renderer {
 namespace debug {
 
 DebugMaterial::DebugMaterial()
@@ -8,3 +9,4 @@ DebugMaterial::DebugMaterial()
 					std::filesystem::current_path() / "res" / "shaders" / "debug.vs",
 					std::filesystem::current_path() / "res" / "shaders" / "debug.fs")) {}
 }  // namespace debug
+}  // namespace renderer

@@ -7,6 +7,7 @@
 
 #include "renderer/renderer_api.h"
 
+namespace renderer {
 namespace {
 
 inline decltype(GL_TRIANGLES) PrimitiveTypeToGL(const PrimitiveType draw_as) {
@@ -55,7 +56,9 @@ void OpenGLMessageCallback(GLenum source, GLenum type, GLuint id,
 
 }  // namespace
 
-void OpenGLRendererAPI::Init() {
+namespace gl {
+
+void RendererAPI::Init() {
 #ifndef NDEBUG
 	spdlog::info("Setting debug opengl context..");
 	glEnable(GL_DEBUG_OUTPUT);
@@ -71,25 +74,27 @@ void OpenGLRendererAPI::Init() {
 	glEnable(GL_DEPTH_TEST);
 }
 
-void OpenGLRendererAPI::SetViewPort(const uint32_t x, const uint32_t y,
-                                    const uint32_t w, const uint32_t h) {
+void RendererAPI::SetViewPort(const uint32_t x, const uint32_t y,
+                              const uint32_t w, const uint32_t h) {
 	glViewport(x, y, w, h);  // NOLINT(cppcoreguidelines-narrowing-conversions)
 }
 
-void OpenGLRendererAPI::SetClearColor(const glm::vec4 color) {
+void RendererAPI::SetClearColor(const glm::vec4 color) {
 	glClearColor(color.r, color.g, color.b, color.a);
 }
 
-void OpenGLRendererAPI::Clear() {
+void RendererAPI::Clear() {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 }
 
-void OpenGLRendererAPI::DrawIndexedImpl(const VertexArray& va,
-                                        const IndexBuffer& ib,
-                                        const PrimitiveType draw_as) {
+void RendererAPI::DrawIndexedImpl(const VertexArray& va, const IndexBuffer& ib,
+                                  const PrimitiveType draw_as) {
 	va.Bind();
 	glDrawElements(
 			PrimitiveTypeToGL(draw_as), ib.elements_count(),
 			GL_UNSIGNED_INT,  // NOLINT(cppcoreguidelines-narrowing-conversions)
 			nullptr);
 }
+
+}  // namespace gl
+}  // namespace renderer

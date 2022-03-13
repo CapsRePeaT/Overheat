@@ -4,6 +4,8 @@
 #include "application/scene_shape.h"
 #include "renderer/orthographic_camera.h"
 
+namespace renderer {
+
 struct Scene::SceneImpl {
 	std::vector<std::shared_ptr<SceneShape>> scene_shapes;
 	std::unique_ptr<OrthographicCamera> camera;
@@ -35,3 +37,5 @@ const std::vector<std::shared_ptr<SceneShape>>& Scene::shapes() const {
 }
 
 void Scene::Clear() { impl_->scene_shapes.clear(); }
+
+}  // namespace renderer

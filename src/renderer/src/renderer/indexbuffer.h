@@ -4,6 +4,8 @@
 #include <cstddef>
 #include <memory>
 
+namespace renderer {
+
 class IndexBuffer {
  public:
 	virtual ~IndexBuffer() = default;
@@ -17,3 +19,5 @@ class IndexBuffer {
 		return Create(data.data(), size);
 	}
 };
+
+}  // namespace renderer

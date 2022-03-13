@@ -8,7 +8,7 @@
 QSurfaceFormat surface_format(QSurfaceFormat::FormatOptions options = {});
 
 RendererWidget::RendererWidget(QWidget* parent,
-                               const std::shared_ptr<Scene>& scene)
+                               const std::shared_ptr<renderer::Scene>& scene)
 		: QOpenGLWidget(parent), viewport_(nullptr), scene_(scene) {
 	setMinimumSize(480, 360);
 #ifdef NDEBUG
@@ -41,7 +41,7 @@ void RendererWidget::initializeGL() {
 	auto&& scene = scene_.lock();
 	// TODO: reuse the pointer
 	viewport_ =
-			ISceneViewport::Create(ISceneViewport::API::OpenGL, std::move(scene));
+			renderer::ISceneViewport::Create(renderer::API::OpenGL, std::move(scene));
 	viewport_->Initialize(width(), height());
 	// Gracefully clear resources of renderer when context is destroying
 	// This is needed in cases, when we manually destroying context in a
@@ -111,21 +111,21 @@ void RendererWidget::mouseMoveEvent(QMouseEvent* event) {
 	// if button still pressed we use it and don't mention other clicked buttons
 	if (current_pressed_button_ & clicked_buttons)
 		clicked_buttons = current_pressed_button_;
-	bool action_requiered = true;
+	bool action_required = true;
 	const auto q_curr_pos = event->pos();
-	const auto q_delta    = q_curr_pos - previous_mouse_pos_;
-	const Vec2D curr_pos{q_curr_pos.x(), q_curr_pos.y()};
-	const Vec2D delta{q_delta.x(), q_delta.y()};
+	const auto q_delta = q_curr_pos - previous_mouse_pos_;
+	const renderer::Vec2D curr_pos{q_curr_pos.x(), q_curr_pos.y()};
+	const renderer::Vec2D delta{q_delta.x(), q_delta.y()};
 	// rotate
-	if ((clicked_buttons & Qt::RightButton) && action_requiered) {
+	if ((clicked_buttons & Qt::RightButton) && action_required) {
 		current_pressed_button_ = Qt::RightButton;
-		action_requiered        = false;
+		action_required        = false;
 		viewport_->RotateCamera(curr_pos, delta);
 	}
 	// move
-	if ((clicked_buttons & Qt::MiddleButton) && action_requiered) {
+	if ((clicked_buttons & Qt::MiddleButton) && action_required) {
 		current_pressed_button_ = Qt::RightButton;
-		action_requiered        = false;
+		action_required        = false;
 		viewport_->MoveCamera(curr_pos, delta);
 	}
 	previous_mouse_pos_ = q_curr_pos;

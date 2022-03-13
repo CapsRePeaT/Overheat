@@ -1,14 +1,18 @@
 #pragma once
 
 #include <glm/gtc/matrix_transform.hpp>
-#include <string>
+
 #include <filesystem>
+#include <string>
+
+namespace renderer {
 
 // TODO: abstract shader and make ShaderLibrary
 class ShaderProgram {
  public:
 	using Path = std::filesystem::path;
-	ShaderProgram(const Path& vertex_shader_path, const Path& fragment_shader_path);
+	ShaderProgram(const Path& vertex_shader_path,
+	              const Path& fragment_shader_path);
 	ShaderProgram(ShaderProgram&& other) noexcept;
 	ShaderProgram& operator=(ShaderProgram&& other) noexcept;
 	~ShaderProgram();
@@ -33,3 +37,5 @@ class ShaderProgram {
 	uint32_t id_ = 0;
 	static uint32_t using_id_;
 };
+
+}  // namespace renderer

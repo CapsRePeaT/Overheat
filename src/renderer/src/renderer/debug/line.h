@@ -7,14 +7,17 @@
 #include "renderer/renderer_api.h"
 #include "renderer/scene_object.h"
 
+namespace renderer {
 namespace debug {
 
 class Line : public SceneObject {
  public:
 	explicit Line(glm::mat2x3 location);
-	void Render(const glm::mat4& parentTransform) {  }
+	void Render(const glm::mat4& parentTransform) {}
+
  private:
 	std::unique_ptr<VertexArray> vao_;
 };
 
-} // namespace debug
+}  // namespace debug
+}  // namespace renderer

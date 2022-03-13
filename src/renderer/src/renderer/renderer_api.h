@@ -7,6 +7,8 @@
 #include "indexbuffer.h"
 #include "vertexarray.h"
 
+namespace renderer {
+
 enum class PrimitiveType {
 	POINTS,
 	LINES,
@@ -27,11 +29,11 @@ class RendererAPI {
 	virtual void Clear() = 0;
 
 	inline void DrawIndexed(const VertexArray& va, const IndexBuffer& ib,
-	                 PrimitiveType draw_as = PrimitiveType::TRIANGLES) {
+	                        PrimitiveType draw_as = PrimitiveType::TRIANGLES) {
 		DrawIndexedImpl(va, ib, draw_as);
 	}
 	inline void DrawIndexed(const VertexArray& va,
-	                 PrimitiveType draw_as = PrimitiveType::TRIANGLES) {
+	                        PrimitiveType draw_as = PrimitiveType::TRIANGLES) {
 		DrawIndexedImpl(va, va.indexBuffer(), draw_as);
 	}
 	[[nodiscard]] static std::unique_ptr<RendererAPI> instance();
@@ -44,3 +46,5 @@ class RendererAPI {
  private:
 	static API api_;
 };
+
+}  // namespace renderer

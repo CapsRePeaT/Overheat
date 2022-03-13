@@ -33,7 +33,7 @@ class MainWindow final : public QMainWindow {
  private:
 	void GetFilesAndLoad(GeometryType type);
 	Core& core() { return Core::instance(); }
-	std::shared_ptr<Scene> scene_;
+	std::shared_ptr<renderer::Scene> scene_;
 	RendererWidget* render_widget_ = nullptr;
 	VisualizationOptionsWidget* visualization_options_ = nullptr;
 	MetadataWidget* metadata_widget_ = nullptr;

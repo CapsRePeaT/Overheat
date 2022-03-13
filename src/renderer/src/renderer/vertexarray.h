@@ -5,6 +5,8 @@
 #include "indexbuffer.h"
 #include "vertexbuffer.h"
 
+namespace renderer {
+
 class VertexArray {
  public:
 	virtual ~VertexArray() = default;
@@ -17,3 +19,5 @@ class VertexArray {
 	static std::unique_ptr<VertexArray> Create(std::unique_ptr<VertexBuffer>&& vb,
 	                                           std::unique_ptr<IndexBuffer>&& ib);
 };
+
+}  // namespace renderer

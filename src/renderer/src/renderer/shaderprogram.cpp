@@ -10,6 +10,8 @@
 
 #include "constants.h"
 
+namespace renderer {
+
 uint32_t ShaderProgram::using_id_;
 bool CreateShader(const ShaderProgram::Path& source, GLenum shader_type,
                   uint32_t& shader_id);
@@ -173,3 +175,5 @@ void ShaderProgram::Unuse() {
 	glUseProgram(0);
 	using_id_ = 0;
 }
+
+}  // namespace renderer

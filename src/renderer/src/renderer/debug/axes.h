@@ -6,6 +6,7 @@
 #include "renderer/scene_object.h"
 #include "renderer/vertexarray.h"
 
+namespace renderer {
 namespace debug {
 
 class Axes : public SceneObject {
@@ -18,3 +19,4 @@ class Axes : public SceneObject {
 };
 
 }  // namespace debug
+}  // namespace renderer

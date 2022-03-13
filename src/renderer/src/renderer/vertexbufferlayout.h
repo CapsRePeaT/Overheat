@@ -5,6 +5,8 @@
 #include <cassert>
 #include <vector>
 
+namespace renderer {
+
 class VertexBufferLayout {
  public:
 	struct VertexBufferElement;
@@ -51,3 +53,5 @@ class VertexBufferLayout {
 	int32_t stride_ = 0;
 	VertexBufferElements elements_;
 };
+
+}  // namespace renderer

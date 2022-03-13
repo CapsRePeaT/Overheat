@@ -5,6 +5,8 @@
 
 #include "core.h"
 
+namespace renderer {
+
 class SceneShape;
 
 class Scene {
@@ -31,3 +33,5 @@ class Scene {
 	// Idk why, but unique_ptr is not working
 	SceneImpl* impl_;
 };
+
+}  // namespace renderer

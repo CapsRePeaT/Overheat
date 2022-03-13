@@ -18,6 +18,8 @@
 #include "renderer/renderer_api.h"
 #include "scene.h"
 
+namespace renderer {
+
 struct GLSceneViewport::Impl {
 	std::unique_ptr<debug::DebugMaterial> debug_material =
 			std::make_unique<debug::DebugMaterial>();
@@ -155,9 +157,11 @@ void GLSceneViewport::RotateCamera(const Vec2D /*screenPoint*/,
 }
 
 void GLSceneViewport::ZoomView(const float delta) {
-	static constexpr float zoom_base              = 2.0f;
+	static constexpr float zoom_base = 2.0f;
 	static constexpr float zoom_delta_coefficient = -1.0f / 180.0f;
 	const float zoom = std::pow(zoom_base, delta * zoom_delta_coefficient);
 
 	camera_controller_->Zoom(zoom);
 }
+
+}  // namespace renderer

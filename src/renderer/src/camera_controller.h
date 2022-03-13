@@ -8,6 +8,8 @@
 #include "renderer/i_camera.h"
 #include "renderer/scene_object.h"
 
+namespace renderer {
+
 template <std::three_way_comparable T>
 class BoundedValue {
  public:
@@ -94,3 +96,5 @@ class SphericalCameraController : public SceneObject {
 	BFloat phi_    = initial_phi;
 	BFloat theta_  = initial_theta;
 };
+
+}  // namespace renderer

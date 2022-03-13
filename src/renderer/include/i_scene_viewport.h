@@ -7,15 +7,17 @@
 #include "scene.h"
 #include "vector.h"
 
+namespace renderer {
+
+enum class API {
+	None,    // Not supported
+	OpenGL,
+	Vulkan,  // Not supported
+	D3D,     // Not supported
+};
+
 class ISceneViewport {
  public:
-	enum class API {
-		None,
-		OpenGL,
-		Vulkan,
-		D3D,
-	};
-
 	using TemperatureRange = std::pair<float, float>;
 	using Color = std::array<float, 3>;
 	using ColorRange = std::pair<Color, Color>;
@@ -63,3 +65,5 @@ class ISceneViewport {
 	DrawMode draw_mode_ = DrawMode::Gradient;
 	bool is_initialized_ = false;
 };
+
+}  // namespace renderer

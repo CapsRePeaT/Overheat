@@ -1,5 +1,7 @@
 #include "camera_controller.h"
 
+namespace renderer {
+
 void SphericalCameraController::SetRadius(const float radius) {
 	radius_ = radius;
 	ReplaceCamera();
@@ -27,3 +29,5 @@ void SphericalCameraController::ReplaceCamera() {
 	camera_->SetPosition(transform() * radius_vector);
 	camera_->LookAt(position());
 }
+
+}  // namespace renderer
