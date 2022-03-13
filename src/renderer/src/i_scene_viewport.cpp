@@ -17,9 +17,9 @@ std::unique_ptr<ISceneViewport> ISceneViewport::Create(
 	switch (api) {
 		case API::OpenGL:
 			return std::make_unique<GLSceneViewport>(std::move(scene));
-			CASE_NOT_SUPPORTED(API::None);
-			CASE_NOT_SUPPORTED(API::Vulkan);
-			CASE_NOT_SUPPORTED(API::D3D);
+		CASE_NOT_SUPPORTED(API::None);
+		CASE_NOT_SUPPORTED(API::Vulkan);
+		CASE_NOT_SUPPORTED(API::D3D);
 		default:
 			LOG_CRITICAL("Unkown GraphicsAPI");
 			return nullptr;

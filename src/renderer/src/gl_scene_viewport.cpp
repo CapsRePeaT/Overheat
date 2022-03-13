@@ -46,10 +46,9 @@ void GLSceneViewport::OpenGlInit(const int w, const int h) {
 		LOG_ERROR("Failed to initialize opengl functions");
 	LOG_DEBUG("GLAD initialized");
 
-	auto api = RendererAPI::instance();
-	api->Init();
-	api->SetClearColor(consts::init::clear_color);
-	api->SetViewPort(0, 0, w, h);
+	auto& api = RendererAPI::Init(API::OpenGL);
+	api.SetClearColor(consts::init::clear_color);
+	api.SetViewPort(0, 0, w, h);
 }
 
 void GLSceneViewport::ApplicationInit(const int w, const int h) {
@@ -88,26 +87,26 @@ void GLSceneViewport::ClearResourcesImpl() {
 }
 
 void GLSceneViewport::RenderFrame() {
-	auto api = RendererAPI::instance();
-	api->Clear();
+	auto& api = RendererAPI::instance();
+	api.Clear();
 
 	const ICamera& camera = camera_controller_->camera();
 
 	for (const auto& shape : scene_->shapes()) {
 		heatmap_material_->Use(shape->transform(), camera.viewProjectionMatrix());
-		api->DrawIndexed(shape->vertex_array());
+		api.DrawIndexed(shape->vertex_array());
 	}
 
 	if (data_) {
 		const auto& axes = data_->axes;
 		data_->debug_material->Use(axes->transform(), camera.viewProjectionMatrix(),
 		                           1.0f);
-		api->DrawIndexed(axes->vertex_array(), PrimitiveType::LINES);
+		api.DrawIndexed(axes->vertex_array(), PrimitiveType::LINES);
 	}
 }
 
 void GLSceneViewport::Resize(const int w, const int h) {
-	RendererAPI::instance()->SetViewPort(0, 0, w, h);
+	RendererAPI::instance().SetViewPort(0, 0, w, h);
 	camera_controller_->SetCameraAspectRatio(static_cast<float>(w) /
 	                                         static_cast<float>(h));
 }

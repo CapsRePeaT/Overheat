@@ -58,7 +58,7 @@ void OpenGLMessageCallback(GLenum source, GLenum type, GLuint id,
 
 namespace gl {
 
-void RendererAPI::Init() {
+void RendererAPI::InitImpl() {
 #ifndef NDEBUG
 	spdlog::info("Setting debug opengl context..");
 	glEnable(GL_DEBUG_OUTPUT);
@@ -88,7 +88,7 @@ void RendererAPI::Clear() {
 }
 
 void RendererAPI::DrawIndexedImpl(const VertexArray& va, const IndexBuffer& ib,
-                                  const PrimitiveType draw_as) {
+                                  const PrimitiveType draw_as) const {
 	va.Bind();
 	glDrawElements(
 			PrimitiveTypeToGL(draw_as), ib.elements_count(),
