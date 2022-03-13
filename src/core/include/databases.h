@@ -61,10 +61,10 @@ class FileRepresentation {
 	const Shapes& GetShapes(const Box3D& area = Box3D()) const;
 	MetadataPack GetShapeMetadata(Id id) const;
 	const Box3D design_borders() const { return design_borders_; }
+	RepresentationId id() const { return id_; }
+	// needed for geometry loading
 	GeomStorage<BasicShape>& geom_storage() { return geom_storage_; }
 	HeatmapStorage& heatmaps() { return heatmaps_; }
-	RepresentationId id() const { return id_; }
-
  private:
 	const RepresentationId id_;
 	GeomStorage<BasicShape> geom_storage_;

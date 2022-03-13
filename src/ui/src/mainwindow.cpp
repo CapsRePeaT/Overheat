@@ -47,6 +47,7 @@ void MainWindow::LoadFile(const std::string& trm_file,
                           const std::string& t2d_file) {
 	core().LoadGeometry(trm_file, t2d_file);
 	const auto loaded_shapes = core().GetFirstFile().GetShapes();
+	const auto loaded_heatmaps = core().GetFirstFile().heatmaps();
 	// Do we really need this assert?
 	// assert(!loaded_shapes.empty() && "no shapes received");
 	if (!loaded_shapes.empty()) {
@@ -55,6 +56,7 @@ void MainWindow::LoadFile(const std::string& trm_file,
 		render_widget_->makeCurrent();
 		scene_->Clear();
 		scene_->AddShapes(loaded_shapes);
+		scene_->AddHeatmaps(loaded_heatmaps);
 		render_widget_->doneCurrent();
 	} else {
 		LOG_WARN("No shaped received from file {}", trm_file);
