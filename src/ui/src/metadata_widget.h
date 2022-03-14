@@ -1,18 +1,20 @@
 #pragma once
 
 #include <QDockWidget>
+#include <QTableWidget>
 
-namespace Ui {
-class MetadataWidget;
-}
+#include "common.h"
 
-class MetadataWidget : public QDockWidget {
+
+class MetadataWidget : public QTableWidget {
 	Q_OBJECT
 
  public:
 	explicit MetadataWidget(QWidget* parent = nullptr);
-	~MetadataWidget();
-
+	~MetadataWidget() = default;
+	void Test();
+ public slots:
+	void OnShowMetadata(const MetadataPack& pack);
  private:
-	Ui::MetadataWidget* ui_;
+	QStringList lables_ = {"Parameter", "Value"};
 };

@@ -2,6 +2,8 @@
 
 #include <array>
 #include <limits>
+#include <string>
+#include <set>
 
 enum class DrawMode { Gradient, Stratified };
 enum class ShapeType { Undefined, Box, Sphere };
@@ -40,5 +42,17 @@ constexpr typename Box<dim>::Values Box<dim>::DefaultCoordinates() {
 	return default_values;
 };
 
+class PreparedMetadata : public std::pair<std::string, std::string> {
+ public:
+	PreparedMetadata(const std::string& meaning, const std::string& value)
+			: std::pair<std::string, std::string>(meaning, value) {}
+	const std::string& meaning() const { return first; }
+	const std::string& value() const { return second; }
+};
+
+
+inline constexpr size_t UndefinedSizeT = std::numeric_limits<size_t>::max();
 using Box3D = Box<3>;
 using Box2D = Box<2>;
+using RepresentationId = size_t;
+using MetadataPack = std::set<PreparedMetadata>;

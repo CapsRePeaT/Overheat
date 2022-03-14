@@ -1,6 +1,5 @@
 #include "virtex_reader.h"
 
-#include <format>
 #include <fstream>
 #include <regex>
 #include <string_view>

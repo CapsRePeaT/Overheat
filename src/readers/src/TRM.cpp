@@ -4,12 +4,14 @@
 #include <shapes.h>
 
 #include <ranges>
+#include <cassert>
 
 namespace {
-size_t getNewId() {
+ShapeIdPair getNewId() {
 	static size_t id{0};
 	++id;
-	return id;
+	// TODO: pass disign_id
+	return {0, id};
 }
 
 std::pair<float, float> getSphereProjection(const float center,
@@ -37,10 +39,10 @@ std::istream& HPU::read(std::istream& in) {
 std::istream& BS::read(std::istream& in) {
 	// thickness_ equals to spheres diameter
 	in >> thickness_ >> thermal_conductivity_ >> dist_between_spheres_;
-	size_t sphere_nums;
+	size_t sphere_nums = 0;
 	in >> sphere_nums;
 	spheres_holders_.reserve(sphere_nums);
-	for (auto i = 0; i < sphere_nums; ++i) {
+	for (size_t i = 0; i < sphere_nums; ++i) {
 		SpheresHolders holder;
 		in >> holder.x_center >> holder.y_center >> holder.nx >> holder.ny;
 		spheres_holders_.push_back(holder);
@@ -69,7 +71,9 @@ GeomStorage<BasicShape> HPU::geometry() {
 	           {coordinates_.y1_, coordinates_.y2_},
 	           {0.f, thickness_}}};
 	GeomStorage<BasicShape> storage;
-	storage.AddShape(std::make_shared<BasicShape>(getNewId(), box));
+	//assert(false && "add proper layer id and parent");
+	const size_t dummy_layer = 0;
+	storage.AddShape(std::make_shared<BasicShape>(getNewId(), dummy_layer, box));
 	return storage;
 }
 
@@ -85,7 +89,9 @@ GeomStorage<BasicShape> BS::geometry() {
 				const auto y_ray = getSphereProjection(y_center, ny, radius);
 				Box3D::Values vals{x_ray, y_ray, {0.f, thickness_}};
 				Box3D box{vals};
-				storage.AddShape(std::make_shared<BasicShape>(getNewId(), box));
+				//assert(false && "add proper layer id and parent");
+				const size_t dummy_layer = 0;
+				storage.AddShape(std::make_shared<BasicShape>(getNewId(), dummy_layer, box));
 			}
 		}
 	}
@@ -98,7 +104,10 @@ GeomStorage<BasicShape> D::geometry() {
 		Box3D box{{{crystal.coordinates_.x1_, crystal.coordinates_.x2_},
 		           {crystal.coordinates_.y1_, crystal.coordinates_.y2_},
 		           {0.f, thickness_}}};
-		storage.AddShape(std::make_shared<BasicShape>(getNewId(), box));
+		//assert(false && "add proper layer id and parent");
+		const size_t dummy_layer = 0;
+		storage.AddShape(
+				std::make_shared<BasicShape>(getNewId(), dummy_layer, box));
 	}
 	return storage;
 }

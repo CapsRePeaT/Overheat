@@ -1,6 +1,7 @@
 #pragma once
 
 #include <string>
+#include <cassert>
 
 #include "common.h"
 #include "databases.h"
@@ -8,23 +9,29 @@
 
 class Core {
  public:
-	using Shapes = GeomStorage<BasicShape>::Shapes;
+	using Shapes = FileRepresentation::Shapes;
 
 	static Core& instance() {
 		static Core instance;
 		return instance;
 	}
 	void LoadHeatmap(const std::string& file_name) {}
-	void LoadGeometry(const std::string& file_name);
-	// FIXME implement geom search, now we return all shapes
-	const Shapes& GetShapes(const Box3D& area = Box3D()) const;
-	const Box3D design_borders() { return design_borders_; }
-	// get metadata by id func
-
+	void LoadGeometry(const std::string& trm_file, 
+									  const std::string& t2d_file);
+	// for now we have only one file loaded
+	FileRepresentation& GetFirstFile() {
+		assert(representations_.size() && "any representations available");
+		return representations_[0];
+	}
+	MetadataPack GetShapeMetadata(const ShapeId id) { 
+		GetRepresentation(id.design_id()).GetShapeMetadata(id.id());
+		return {};
+	}
  private:
 	Core() = default;
-	GeomStorage<BasicShape> geom_storage_;
-	HeatmapStorage heatmap_storage_;
-	MetadataStorage metadata_storage_;
-	Box3D design_borders_;
+	const FileRepresentation& GetRepresentation(RepresentationId id) const {
+		// in the future there might be another connection with id and container
+		return representations_.at(id);
+	}
+	std::vector<FileRepresentation> representations_;
 };

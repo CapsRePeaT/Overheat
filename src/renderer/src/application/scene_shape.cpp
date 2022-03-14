@@ -23,7 +23,7 @@ static_assert(sizeof(glm::vec3) == sizeof(float) * 3 &&
 static_assert(sizeof(glm::vec2) == sizeof(float) * 2 &&
               "All data in vertex struct must be contigious");
 
-SceneShape::SceneShape(const BasicShape& shape) : id_(shape.id()) {
+SceneShape::SceneShape(const BasicShape& shape) : id_(shape.id().id()) {
 	// (minX, maxX), (minY, maxY), (minZ, maxZ)
 	const auto bounds = shape.bbox().coordinates();
 
@@ -71,5 +71,5 @@ SceneShape::SceneShape(const BasicShape& shape) : id_(shape.id()) {
 	layout->Push<float>(2);
 	auto&& vbo = VertexBuffer::Create(vertices, std::move(layout));
 	auto&& ibo = IndexBuffer::Create(raw_ibo);
-	vao_ = VertexArray::Create(std::move(vbo), std::move(ibo));
+	vao_       = VertexArray::Create(std::move(vbo), std::move(ibo));
 }
