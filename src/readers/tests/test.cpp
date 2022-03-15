@@ -76,8 +76,8 @@ TEST(VirtexReader, read_heat_test) {
 }
 
 TEST(VirtexReader, read_raw_test) {
-	auto data = Readers::read_geometry(sample);
-	EXPECT_TRUE(true);
+  auto data = Readers::read_geometry(sample);
+  EXPECT_TRUE(true);
 }
 
 TEST(VirtexReader, read_geometry_test) {

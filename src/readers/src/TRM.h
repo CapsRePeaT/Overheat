@@ -2,6 +2,7 @@
 
 #include <array>
 #include <istream>
+#include <map>
 #include <memory>
 #include <vector>
 
@@ -22,6 +23,14 @@ enum class LayerType {
 	UNDEFINED
 };  // layers types from Ryabov doc
 
+inline bool isHPU(LayerType type) {
+	return type == LayerType::H || type == LayerType::P || type == LayerType::U;
+}
+
+inline bool isBS(LayerType type) {
+	return type == LayerType::B || type == LayerType::S;
+}
+
 struct HorizontalSize {
 	float length;
 	float width;
@@ -41,15 +50,16 @@ struct Coordinates {
 
 class BaseLayer {
  public:
+	BaseLayer(LayerType type) { type_ = type; }
 	// getters
 	[[nodiscard]] LayerType type() const;
-  [[nodiscard]] std::string_view type_tag() const;
-  [[nodiscard]] float thermal_conductivity() const;
-  [[nodiscard]] float thickness() const;
+	[[nodiscard]] std::string_view type_tag() const;
+	[[nodiscard]] float thermal_conductivity() const;
+	[[nodiscard]] float thickness() const;
 
 	// read ryabov file content from stream
 	virtual std::istream& read(std::istream& in) = 0;
-	virtual GeomStorage<BasicShape> geometry() = 0;
+	virtual GeomStorage<BasicShape> geometry()   = 0;
 
 	~BaseLayer() = default;
 
@@ -62,6 +72,7 @@ class BaseLayer {
 
 class HPU : public BaseLayer {
  public:
+	HPU(LayerType type) : BaseLayer(type){};
 	std::istream& read(std::istream& in) override;
 	GeomStorage<BasicShape> geometry() override;
 
@@ -70,22 +81,10 @@ class HPU : public BaseLayer {
 	Coordinates coordinates_;
 };
 
-class H : public HPU {
- public:
-	H() { type_ = LayerType::H; }
-};
-class P : public HPU {
- public:
-	P() { type_ = LayerType::P; }
-};
-class U : public HPU {
- public:
-	U() { type_ = LayerType::U; }
-};
-
 class BS : public BaseLayer {
  public:
-	std::istream& read(std::istream& in) override;
+  BS(LayerType type) : BaseLayer(type){};
+  std::istream& read(std::istream& in) override;
 	GeomStorage<BasicShape> geometry() override;
 
  private:
@@ -100,21 +99,10 @@ class BS : public BaseLayer {
 	std::vector<SpheresHolders> spheres_holders_;
 };
 
-class B : public BS {
- public:
-	B() { type_ = LayerType::B; }
-};
-
-class S : public BS {
- public:
-	S() { type_ = LayerType::S; }
-};
-
 class D : public BaseLayer {
  public:
-	D() { type_ = LayerType::D; }
-
-	std::istream& read(std::istream& in) override;
+  D(LayerType type) : BaseLayer(type){};
+  std::istream& read(std::istream& in) override;
 	GeomStorage<BasicShape> geometry() override;
 
  private:
@@ -129,12 +117,15 @@ class D : public BaseLayer {
 	std::vector<Crystal> crystals_;
 };
 
-using Layers = std::vector<std::shared_ptr<BaseLayer>>;
+enum GroupsPosition { UnderBody, Body, AboveBody };
+
+using Layers       = std::vector<std::shared_ptr<BaseLayer>>;
+using LayersGroups = std::map<GroupsPosition, Layers>;
 
 struct TRM {
 	std::string program_name_;
 	HorizontalSize size_;
-	Layers layers_;
+	LayersGroups layers_groups_;
 };
 
 }  // namespace Readers
