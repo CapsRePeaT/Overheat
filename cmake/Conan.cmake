@@ -42,9 +42,7 @@ endmacro()
 macro(run_conan)
     if(USE_CONAN)
         config_conan()
-        list(APPEND CMAKE_MODULE_PATH ${CONAN_INSTALL_DIR})
-        list(APPEND CMAKE_PREFIX_PATH ${CONAN_INSTALL_DIR})
-        if(NOT EXISTS ${CONAN_CMAKE_PATH})
+        if (NOT EXISTS ${CONAN_CMAKE_PATH})
             message(STATUS "Downloading conan.cmake from https://github.com/conan-io/cmake-conan")
             file(DOWNLOAD
                 "https://raw.githubusercontent.com/conan-io/cmake-conan/0.17.0/conan.cmake"
@@ -63,12 +61,13 @@ macro(run_conan)
         
         # Setup configuration
         conan_cmake_configure(
-            REQUIRES ${CONAN_DEPS}
-            GENERATORS cmake_find_package
-            OPTIONS ${CONAN_OPTIONS}
-            IMPORTS ${IMPORT_DLL_FILES}
-            IMPORTS ${IMPORT_RES_DLL_FILES}
+                REQUIRES ${CONAN_DEPS}
+                GENERATORS cmake_find_package cmake_paths
+                OPTIONS ${CONAN_OPTIONS}
+                IMPORTS ${IMPORT_DLL_FILES}
+                IMPORTS ${IMPORT_RES_DLL_FILES}
         )
+        include(${CONAN_INSTALL_DIR}/conan_paths.cmake)
         # Install libraries from conan with considering of build type
         get_property(isMultiConfig GLOBAL PROPERTY GENERATOR_IS_MULTI_CONFIG)
         if(isMultiConfig)
