@@ -22,11 +22,18 @@ jobs:
     - name: Get Conan
       uses: turtlebrowser/get-conan@v1.0
 
+    - name: Create Build Environment
+      run: cmake -E make_directory ${{env.builddir}}
+
     - name: Configure CMake
-      run: cmake -B ${{env.builddir}} -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}}
+      shell: bash
+      working-directory: ${{env.builddir}}
+      run: cmake $GITHUB_WORKSPACE -G "Ninja" -A x64 -DCMAKE_BUILD_TYPE=$BUILD_TYPE
 
     - name: Build
-      run: cmake --build ${{env.builddir}} --config ${{env.BUILD_TYPE}}
+      shell: bash
+      working-directory: ${{env.builddir}}
+      run: cmake --build . --config $BUILD_TYPE --parallel --target ui
 
     - uses: montudor/action-zip@v1
       with:
