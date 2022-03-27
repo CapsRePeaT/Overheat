@@ -2,7 +2,7 @@
 
 #include <iostream>
 
-#include "../../readers/src/virtex_reader.h"
+#include "../../readers/src/type1/type1_eader.h"
 
 // TODO delete after proper reader implementation (or leave for testing, TBD)
 // TODO 2 add proper logging
@@ -45,7 +45,7 @@ class DummyReader {
 void Core::LoadGeometry(const std::string& trm_file,
                         const std::string& t2d_file) {
 	// TODO make proper interface class usage
-	Readers::VirtexReader reader{trm_file, t2d_file};
+	Readers::Type1::Type1Reader reader{trm_file, t2d_file};
 	FileRepresentation new_representation(representations_.size());
 	new_representation.geom_storage() = reader.geometry();
 	new_representation.heatmaps()     = reader.heatmaps();

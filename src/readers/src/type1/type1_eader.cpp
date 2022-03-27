@@ -1,4 +1,4 @@
-#include "virtex_reader.h"
+#include "type1_eader.h"
 
 #include <magic_enum.hpp>
 
@@ -7,13 +7,9 @@
 #include <string_view>
 #include <unordered_map>
 
-#include "T2D.h"
-#include "virtex_data_provider.h"
+#include "type1_data_provider.h"
 
 namespace {
-std::string stream_to_string(std::ifstream& stream) {
-	return std::string{std::istreambuf_iterator<char>(stream), {}};
-}
 
 std::vector<std::string> split(const std::string& str, const std::regex& regex,
                                int submatch = 0) {
@@ -26,28 +22,28 @@ std::vector<std::string> split(const std::string& str, const std::regex& regex,
 	return retval;
 }
 
-void read_general_info(const std::string& content, Readers::TRM& data) {
+void read_general_info(const std::string& content, Readers::Type1::TRM& data) {
 	std::stringstream istream;
 	istream.str(content);
 	istream >> data.program_name_;
 	istream >> data.size_;
 }
 
-std::shared_ptr<Readers::BaseLayer> make_layer(std::string layer_tag) {
+std::shared_ptr<Readers::Type1::BaseLayer> make_layer(std::string layer_tag) {
 	layer_tag.erase(std::remove(layer_tag.begin(), layer_tag.end(), '\n'),
-                  layer_tag.end());
+	                layer_tag.end());
 
-	auto layer_type = magic_enum::enum_cast<Readers::LayerType>(layer_tag);
+	auto layer_type = magic_enum::enum_cast<Readers::Type1::LayerType>(layer_tag);
 	if (!layer_type.has_value())
 		throw std::runtime_error("Unknown layer type.");
-	if (Readers::isHPU(*layer_type))
-		return std::make_shared<Readers::HPU>(*layer_type);
-	if (Readers::isBS(*layer_type))
-		return std::make_shared<Readers::BS>(*layer_type);
-	return std::make_shared<Readers::D>(*layer_type);
+	if (Readers::Type1::isHPU(*layer_type))
+		return std::make_shared<Readers::Type1::HPU>(*layer_type);
+	if (Readers::Type1::isBS(*layer_type))
+		return std::make_shared<Readers::Type1::BS>(*layer_type);
+	return std::make_shared<Readers::Type1::D>(*layer_type);
 }
 
-std::shared_ptr<Readers::BaseLayer> read_layer(
+std::shared_ptr<Readers::Type1::BaseLayer> read_layer(
 		const std::string& layer_tag, const std::string& layer_content) {
 	std::stringstream ss{layer_content};
 	auto layer = make_layer(layer_tag);
@@ -55,24 +51,14 @@ std::shared_ptr<Readers::BaseLayer> read_layer(
 	return layer;
 }
 
-std::string validate_and_get_content(const fs::path& path) {
-	std::ifstream ifs{path};
-	if (!ifs.good()) {
-		throw std::runtime_error("Stream state is not good");
-	}
-	auto content = stream_to_string(ifs);
-	ifs.close();
-	return content;
-}
-
 }  // namespace
 
-namespace Readers {
-void VirtexReader::load() {
+namespace Readers::Type1 {
+void Type1Reader::load() {
 	data_provider_ =
-			std::make_unique<VirtexDataProvider>(load_geometry(), load_heatmap());
+			std::make_unique<Type1DataProvider>(load_geometry(), load_heatmap());
 }
-TRM VirtexReader::load_geometry() {
+TRM Type1Reader::load_geometry() {
 	const auto file_content = validate_and_get_content(trm_file_);
 	return read_geometry(file_content);
 }
@@ -107,13 +93,13 @@ TRM read_geometry(const std::string& content) {
 
 	return data;
 }
-T2D read_heatmap(std::ifstream& istream) {
-	T2D t2d;
+type1_T2D read_heatmap(std::ifstream& istream) {
+	type1_T2D t2d;
 	istream >> t2d;
 	return t2d;
 }
 
-T2D VirtexReader::load_heatmap() {
+type1_T2D Type1Reader::load_heatmap() {
 	std::ifstream ifs{t2d_file_};
 	if (!ifs.good()) {
 		throw std::runtime_error("Stream state is not good");
@@ -123,4 +109,4 @@ T2D VirtexReader::load_heatmap() {
 	return map;
 }
 
-}  // namespace Readers
+}  // namespace Readers::Type1

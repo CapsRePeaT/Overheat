@@ -1,4 +1,4 @@
-#include "virtex_data_provider.h"
+#include "type1_data_provider.h"
 
 namespace {
 Box3D liftBox(const Box3D box, float offset) {
@@ -9,14 +9,14 @@ Box3D liftBox(const Box3D box, float offset) {
 }
 }  // namespace
 
-namespace Readers {
-VirtexDataProvider::VirtexDataProvider(const TRM& geom, const T2D& heat) {
+namespace Readers::Type1 {
+Type1DataProvider::Type1DataProvider(const TRM& geom, const type1_T2D& heat) {
 	load_geometry(geom);
 	load_heatmap(heat);
 	load_metadata();
 }
 
-void VirtexDataProvider::load_geometry(const TRM& data) {
+void Type1DataProvider::load_geometry(const TRM& data) {
 	float offset          = 0;
 	size_t box_counter_   = 0;
 	size_t layer_counter_ = 0;
@@ -37,7 +37,7 @@ void VirtexDataProvider::load_geometry(const TRM& data) {
 	}
 }
 
-void VirtexDataProvider::load_heatmap(const T2D& data) {
+void Type1DataProvider::load_heatmap(const type1_T2D& data) {
 	heatmap_ = HeatmapStorage(data.net_x(), data.net_y(), data.temperatures());
 }
 

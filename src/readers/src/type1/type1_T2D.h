@@ -1,36 +1,12 @@
 #pragma once
 #include <istream>
+#include <map>
 #include <numeric>
 #include <vector>
 
-#include <map>
+#include "../common.h"
 
 namespace {
-template <typename T>
-class SerializableVec {
- public:
-	SerializableVec() = default;
-
-	SerializableVec& set_size(const size_t size) {
-		elem_count_ = size;
-		data_.reserve(elem_count_);
-		return *this;
-	}
-
-	friend std::istream& operator>>(std::istream& in, SerializableVec& vec) {
-		for (size_t i = 0; i < vec.elem_count_; ++i) {
-			T value;
-			in >> value;
-			vec.data_.push_back(value);
-		}
-		return in;
-	}
-	[[nodiscard]] const std::vector<T>& data() const { return data_; }
-
- private:
-	size_t elem_count_ = 0;
-	std::vector<T> data_;
-};
 
 struct BodySize {
 	float x, y, z;  //размеры корпуса по осям x, y, z:
@@ -107,13 +83,13 @@ struct SpheresGroup {
 }  // namespace
 
 // class with heatmap and data about layers
-class T2D {
+class type1_T2D {
  public:
 	size_t layers_count() const { return IST_; }
 	const std::vector<float>& net_x() const { return net_x_coords.data(); }
 	const std::vector<float>& net_y() const { return net_y_coords.data(); }
 	const std::vector<float>& temperatures() const { return temperature_.data(); }
-	friend std::istream& operator>>(std::istream& istream, T2D& t2d) {
+	friend std::istream& operator>>(std::istream& istream, type1_T2D& t2d) {
 		istream >> t2d.program_name_;
 		istream >> t2d.body_size_;
 		istream >> t2d.IST_;

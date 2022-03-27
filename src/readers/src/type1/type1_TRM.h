@@ -6,10 +6,11 @@
 #include <memory>
 #include <vector>
 
-#include "../../core/include/databases.h"
-#include "../../core/include/shapes.h"
+#include "../../../core/include/databases.h"
+#include "../../../core/include/shapes.h"
+#include "../common.h"
 
-namespace Readers {
+namespace Readers::Type1 {
 
 // HPU - boxes
 // BS - spheres
@@ -30,23 +31,6 @@ inline bool isHPU(LayerType type) {
 inline bool isBS(LayerType type) {
 	return type == LayerType::B || type == LayerType::S;
 }
-
-struct HorizontalSize {
-	float length;
-	float width;
-
-	friend std::istream& operator>>(std::istream& in, HorizontalSize& obj) {
-		in >> obj.length >> obj.width;  // mb this order is wrong. TBD with Ryabov
-		return in;
-	}
-};
-
-struct Coordinates {
-	float x1_;
-	float x2_;
-	float y1_;
-	float y2_;
-};
 
 class BaseLayer {
  public:

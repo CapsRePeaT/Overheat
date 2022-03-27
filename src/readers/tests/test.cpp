@@ -2,8 +2,8 @@
 
 #include <fstream>
 
-#include "../src/virtex_data_provider.h"
-#include "../src/virtex_reader.h"
+#include "../src/type1/type1_data_provider.h"
+#include "../src/type1/type1_eader.h"
 
 std::string sample =
 		"VIRTEX\n"
@@ -64,24 +64,24 @@ std::string sample =
 		"&CL NH=30 MH=30 ITERAT=15000 EPS=1.E-6 W=1.99 &END";
 
 TEST(VirtexReader, read_heat_test) {
-	auto data = Readers::read_geometry(sample);
+	auto data = Readers::Type1::read_geometry(sample);
 	fs::path trm = fs::current_path().parent_path().parent_path() / "src" /
 	               "readers" / "tests" / "virtex.TRM";
 	fs::path t2d = fs::current_path().parent_path().parent_path() / "src" /
 	               "readers"  / "tests" / "virtex.t2d";
 	auto trm_ex = exists(trm);
 	auto t2d_ex = exists(t2d);
-	Readers::VirtexReader(trm, t2d);
+	Readers::Type1::Type1Reader(trm, t2d);
 	EXPECT_TRUE(true);
 }
 
 TEST(VirtexReader, read_raw_test) {
-  auto data = Readers::read_geometry(sample);
+  auto data = Readers::Type1::read_geometry(sample);
   EXPECT_TRUE(true);
 }
 
 TEST(VirtexReader, read_geometry_test) {
-	auto data = Readers::read_geometry(sample);
-	auto geometry = Readers::VirtexDataProvider(data, {}).geometry();
+	auto data = Readers::Type1::read_geometry(sample);
+	auto geometry = Readers::Type1::Type1DataProvider(data, {}).geometry();
 	EXPECT_TRUE(true);
 }
