@@ -4,21 +4,21 @@
 #include <utility>
 
 const FileRepresentation::Shapes& FileRepresentation::GetShapes(
-		const Box3D& area) const {
+		const Box3D& /*area*/) const {
 	return geom_storage_.get_all_shapes();
 }
 
-MetadataPack FileRepresentation::GetShapeMetadata(Id id) const {
+MetadataPack FileRepresentation::GetShapeMetadata(Id const id) const {
 	MetadataPack result;
 	assert(false && "not implemented");
 	return result;
 }
 
-HeatmapStorage::HeatmapStorage(std::vector<float> x_steps,
-                               std::vector<float> y_steps,
+HeatmapStorage::HeatmapStorage(std::vector<float> x_steps_mv,
+                               std::vector<float> y_steps_mv,
                                const std::vector<float>& temperature)
-		: x_steps_(std::move(x_steps)), y_steps_(std::move(y_steps)) {
-	const size_t num_of_nodes = x_steps_.size() * y_steps_.size();
+		: x_steps_mv_(std::move(x_steps_mv)), y_steps_mv_(std::move(y_steps_mv)) {
+	const size_t num_of_nodes = x_steps_mv_.size() * y_steps_mv_.size();
 	layers_count_             = temperature.size() / num_of_nodes;
 	for (size_t i = 0; i < layers_count_;) {
 		auto first = temperature.cbegin() + (num_of_nodes * i);
