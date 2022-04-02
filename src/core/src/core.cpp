@@ -12,6 +12,7 @@ class DummyReader {
 	                  GeomStorage<BasicShape>& geom_storage) {
 		std::cout << "file to load shapes from:" << filename << std::endl;
 		const size_t dummy_layer_id = 0;
+		const RepresentationId design_id = 0;
 		geom_storage.AddShape(std::make_shared<BasicShape>(
 				ShapeId(1, 42), dummy_layer_id,
 				Box3D({
@@ -42,10 +43,10 @@ class DummyReader {
 	}
 };
 
-void Core::LoadGeometry(const std::string& trm_file,
-                        const std::string& t2d_file) {
+void Core::LoadGeometry(const std::string& trm_filename,
+                        const std::string& t2d_filename) {
 	// TODO make proper interface class usage
-	Readers::Solver3d::Solver3dReader reader{trm_file, t2d_file};
+	Readers::Solver3d::Solver3dReader reader(trm_filename, t2d_filename);
 	FileRepresentation new_representation(representations_.size());
 	new_representation.geom_storage() = reader.geometry();
 	new_representation.heatmaps()     = reader.heatmaps();

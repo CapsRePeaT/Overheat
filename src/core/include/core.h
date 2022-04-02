@@ -23,13 +23,13 @@ class Core {
 		assert(representations_.size() && "any representations available");
 		return representations_[0];
 	}
-	MetadataPack GetShapeMetadata(const ShapeId id) { 
+	MetadataPack const GetShapeMetadata(const ShapeId id) { 
 		GetRepresentation(id.design_id()).GetShapeMetadata(id.id());
 		return {};
 	}
  private:
 	Core() = default;
-	const FileRepresentation& GetRepresentation(RepresentationId id) const {
+	const FileRepresentation& GetRepresentation(RepresentationId const id) const {
 		// in the future there might be another connection with id and container
 		return representations_.at(id);
 	}
