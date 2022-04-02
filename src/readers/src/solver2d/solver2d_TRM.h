@@ -11,8 +11,10 @@
 #include "../../../core/include/shapes.h"
 #include "../common.h"
 
-namespace Readers::Type2 {
+namespace Readers::Solver2d {
 
+//CP because this enum describes vars from such strings:
+// &СP NBAUND=2,M=6,N=6,NBB=2,LAYER1=2,LAYER2=3
 enum CPVars { NBAUND, M, N, NBB, LAYER1, LAYER2 };
 
 struct CP {
@@ -20,6 +22,8 @@ struct CP {
 	                                       {NBB, 0},    {LAYER1, 0}, {LAYER2, 0}};
 };
 
+//PRT because this enum describes vars from such strings:
+//&PRT XLP=0.5,XPP=1.,YSP=0.5,YPP=1. /
 enum PRTVars { PR2, XLP, XPP, YSP, YHP,YPP };
 
 struct PRT {
@@ -56,7 +60,7 @@ struct Element {
 	}
 };
 
-struct type2_TRM {
+struct Solver2d_TRM {
 	std::string program_name_;
 	std::string raw_cp_;
 	CP cp_;
@@ -70,7 +74,7 @@ struct type2_TRM {
 	PRT prt_;
 	std::vector<Element> elements_;
 
-	friend std::istream& operator>>(std::istream& istream, type2_TRM& trm);
+	friend std::istream& operator>>(std::istream& istream, Solver2d_TRM& trm);
 };
 
 }  // namespace Readers::Type2

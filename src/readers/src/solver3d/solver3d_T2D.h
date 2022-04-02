@@ -83,13 +83,13 @@ struct SpheresGroup {
 }  // namespace
 
 // class with heatmap and data about layers
-class type1_T2D {
+class Solver3d_T2D {
  public:
 	size_t layers_count() const { return IST_; }
 	const std::vector<float>& net_x() const { return net_x_coords.data(); }
 	const std::vector<float>& net_y() const { return net_y_coords.data(); }
 	const std::vector<float>& temperatures() const { return temperature_.data(); }
-	friend std::istream& operator>>(std::istream& istream, type1_T2D& t2d) {
+	friend std::istream& operator>>(std::istream& istream, Solver3d_T2D& t2d) {
 		istream >> t2d.program_name_;
 		istream >> t2d.body_size_;
 		istream >> t2d.IST_;
@@ -122,14 +122,7 @@ class type1_T2D {
 		istream >> t2d.topology_.set_size(t2d.IST_ * t2d.NH_ * t2d.MH_);
 		istream >> t2d.env_temp_;
 		istream >> t2d.temperature_.set_size(t2d.IST_ * t2d.NH_ * t2d.MH_);
-		
 
-		//float total_x_step = 0;
-		//for (const float net_x_coord : t2d.net_x_coords.data())
-		//	total_x_step += net_x_coord; 
-		//float total_y_step = 0;
-		//for (const float net_y_coord : t2d.net_y_coords.data())
-		//	total_y_step += net_y_coord; 
 		return istream;
 	}
 

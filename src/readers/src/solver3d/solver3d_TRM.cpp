@@ -1,10 +1,10 @@
-#include "type1_TRM.h"
-
 #include <databases.h>
 #include <shapes.h>
 
 #include <cassert>
 #include <ranges>
+
+#include "solver3d_TRM.h"
 
 namespace {
 ShapeIdPair getNewId() {
@@ -21,7 +21,7 @@ std::pair<float, float> getSphereProjection(const float center,
 }
 }  // namespace
 
-namespace Readers::Type1 {
+namespace Readers::Solver3d {
 LayerType BaseLayer::type() const { return type_; };
 
 float BaseLayer::thermal_conductivity() const { return thermal_conductivity_; };

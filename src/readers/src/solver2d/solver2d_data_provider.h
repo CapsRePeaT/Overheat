@@ -1,22 +1,22 @@
 #pragma once
 
 #include "idata_provider.h"
-#include "type2_TRM.h"
+#include "solver2d_TRM.h"
 
-namespace Readers::Type2 {
+namespace Readers::Solver2d {
 
 
 // FIXME we should return one instance FileRepresentation only
-class Type2DataProvider : public IDataProvider {
+class Solver2dDataProvider : public IDataProvider {
  public:
-  Type2DataProvider(const type2_TRM& geom);
+  Solver2dDataProvider(const Solver2d_TRM& geom);
 
 	GeomStorage<BasicShape> geometry() override { return geometry_; };
 	HeatmapStorage heatmaps() override { return heatmap_; }
 	MetadataStorage metadata() override { return metadata_; };
 
  private:
-	void load_geometry(const type2_TRM& data);
+	void load_geometry(const Solver2d_TRM& data);
 
 
 	GeomStorage<BasicShape> geometry_{};

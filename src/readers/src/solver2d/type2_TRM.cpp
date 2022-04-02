@@ -1,21 +1,23 @@
-#include "type2_TRM.h"
-
 #include <magic_enum.hpp>
 
 #include <any>
 #include <regex>
 
+#include "solver2d_TRM.h"
+
 using namespace magic_enum;
 
 namespace {
-void read_layers_info(std::istream& istream, Readers::Type2::LayerType& layer,
-                      int layers_num) {
-	if (layers_num > 0) {
+void read_layers_info(std::istream& istream,
+                      Readers::Solver2d::LayerType& layer,
+                      const size_t layers_num) {
+	if (layers_num) {
 		std::string tmp;
-		istream >> layer.zc_.set_size(layers_num) >> tmp;
-		istream >> layer.vc_.set_size(layers_num) >> tmp;
-		istream >> layer.cc_.set_size(layers_num) >> tmp;
-		istream >> layer.rc_.set_size(layers_num) >> tmp;
+		layer.set_size(layers_num);
+		istream >> layer.zc_ >> tmp;
+		istream >> layer.vc_ >> tmp;
+		istream >> layer.cc_ >> tmp;
+		istream >> layer.rc_ >> tmp;
 	}
 }
 
@@ -23,6 +25,7 @@ template <typename Key, typename Val>
 void init_vars_from_raw(std::unordered_map<Key, Val>& vars,
                         const std::string& raw_vars) {
 	// split strings to variables names and values (VarName)=(VarValue)
+	// example: &СP NBAUND=2,M=6,N=6,NBB=2,LAYER1=2,LAYER2=3
 	std::regex rgx(R"rgx(([a-zA-z1-9]+)[=\s]+([[0-9]*[.]*]*[0-9]+))rgx",
 	               std::regex::extended);
 	std::smatch match;
@@ -43,8 +46,8 @@ void init_vars_from_raw(std::unordered_map<Key, Val>& vars,
 
 }  // namespace
 
-namespace Readers::Type2 {
-std::istream& operator>>(std::istream& istream, type2_TRM& trm) {
+namespace Readers::Solver2d {
+std::istream& operator>>(std::istream& istream, Solver2d_TRM& trm) {
 	std::getline(istream, trm.program_name_);
 
 	std::getline(istream, trm.raw_cp_);
@@ -68,4 +71,4 @@ std::istream& operator>>(std::istream& istream, type2_TRM& trm) {
 	return istream;
 };
 
-}  // namespace Readers::Type2
+}  // namespace Readers::Solver2d

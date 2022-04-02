@@ -10,7 +10,7 @@
 #include "../../../core/include/shapes.h"
 #include "../common.h"
 
-namespace Readers::Type1 {
+namespace Readers::Solver3d {
 
 // HPU - boxes
 // BS - spheres
@@ -106,7 +106,7 @@ enum GroupsPosition { UnderBody, Body, AboveBody };
 using Layers       = std::vector<std::shared_ptr<BaseLayer>>;
 using LayersGroups = std::map<GroupsPosition, Layers>;
 
-struct TRM {
+struct Solver3d_TRM {
 	std::string program_name_;
 	HorizontalSize size_;
 	LayersGroups layers_groups_;

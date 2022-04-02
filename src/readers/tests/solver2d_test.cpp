@@ -1,6 +1,6 @@
 #include <gtest/gtest.h>
 
-#include "../src/type2/type2_reader.h"
+#include "../src/solver2d/solver2d_reader.h"
 
 
 namespace {
@@ -29,7 +29,7 @@ std::string sample =
 
 }
 
-TEST(type2, read_geometry) {
-  Readers::Type2::read_geometry(sample);
+TEST(Solver2d, read_geometry) {
+  Readers::Solver2d::read_geometry(sample);
 	EXPECT_TRUE(true);
 }

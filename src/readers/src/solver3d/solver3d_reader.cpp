@@ -1,4 +1,4 @@
-#include "type1_eader.h"
+#include "solver3d_reader.h"
 
 #include <magic_enum.hpp>
 
@@ -7,7 +7,7 @@
 #include <string_view>
 #include <unordered_map>
 
-#include "type1_data_provider.h"
+#include "solver3d_data_provider.h"
 
 namespace {
 
@@ -22,28 +22,31 @@ std::vector<std::string> split(const std::string& str, const std::regex& regex,
 	return retval;
 }
 
-void read_general_info(const std::string& content, Readers::Type1::TRM& data) {
+void read_general_info(const std::string& content,
+                       Readers::Solver3d::Solver3d_TRM& data) {
 	std::stringstream istream;
 	istream.str(content);
 	istream >> data.program_name_;
 	istream >> data.size_;
 }
 
-std::shared_ptr<Readers::Type1::BaseLayer> make_layer(std::string layer_tag) {
+std::shared_ptr<Readers::Solver3d::BaseLayer> make_layer(
+		std::string layer_tag) {
 	layer_tag.erase(std::remove(layer_tag.begin(), layer_tag.end(), '\n'),
 	                layer_tag.end());
 
-	auto layer_type = magic_enum::enum_cast<Readers::Type1::LayerType>(layer_tag);
+	auto layer_type =
+			magic_enum::enum_cast<Readers::Solver3d::LayerType>(layer_tag);
 	if (!layer_type.has_value())
 		throw std::runtime_error("Unknown layer type.");
-	if (Readers::Type1::isHPU(*layer_type))
-		return std::make_shared<Readers::Type1::HPU>(*layer_type);
-	if (Readers::Type1::isBS(*layer_type))
-		return std::make_shared<Readers::Type1::BS>(*layer_type);
-	return std::make_shared<Readers::Type1::D>(*layer_type);
+	if (Readers::Solver3d::isHPU(*layer_type))
+		return std::make_shared<Readers::Solver3d::HPU>(*layer_type);
+	if (Readers::Solver3d::isBS(*layer_type))
+		return std::make_shared<Readers::Solver3d::BS>(*layer_type);
+	return std::make_shared<Readers::Solver3d::D>(*layer_type);
 }
 
-std::shared_ptr<Readers::Type1::BaseLayer> read_layer(
+std::shared_ptr<Readers::Solver3d::BaseLayer> read_layer(
 		const std::string& layer_tag, const std::string& layer_content) {
 	std::stringstream ss{layer_content};
 	auto layer = make_layer(layer_tag);
@@ -53,18 +56,18 @@ std::shared_ptr<Readers::Type1::BaseLayer> read_layer(
 
 }  // namespace
 
-namespace Readers::Type1 {
-void Type1Reader::load() {
+namespace Readers::Solver3d {
+void Solver3dReader::load() {
 	data_provider_ =
-			std::make_unique<Type1DataProvider>(load_geometry(), load_heatmap());
+			std::make_unique<Solver3dDataProvider>(load_geometry(), load_heatmap());
 }
-TRM Type1Reader::load_geometry() {
+Solver3d_TRM Solver3dReader::load_geometry() {
 	const auto file_content = validate_and_get_content(trm_file_);
 	return read_geometry(file_content);
 }
 
 // Function which reads files similar to doc/virtex.txt
-TRM read_geometry(const std::string& content) {
+Solver3d_TRM read_geometry(const std::string& content) {
 	// splits layers for groups (inside/outside box)
 	const auto groups =
 			split(content, std::regex{"^([A-Za-z]\\n[^#]*(?=\\n#))$"});
@@ -72,7 +75,7 @@ TRM read_geometry(const std::string& content) {
 	if (groups.size() < 2)
 		throw std::runtime_error("File has wrong format.");
 
-	TRM data;
+	Solver3d_TRM data;
 	read_general_info(content, data);
 
 	// read layers
@@ -93,13 +96,13 @@ TRM read_geometry(const std::string& content) {
 
 	return data;
 }
-type1_T2D read_heatmap(std::ifstream& istream) {
-	type1_T2D t2d;
+Solver3d_T2D read_heatmap(std::ifstream& istream) {
+  Solver3d_T2D t2d;
 	istream >> t2d;
 	return t2d;
 }
 
-type1_T2D Type1Reader::load_heatmap() {
+Solver3d_T2D Solver3dReader::load_heatmap() {
 	std::ifstream ifs{t2d_file_};
 	if (!ifs.good()) {
 		throw std::runtime_error("Stream state is not good");
@@ -109,4 +112,4 @@ type1_T2D Type1Reader::load_heatmap() {
 	return map;
 }
 
-}  // namespace Readers::Type1
+}  // namespace Readers::Solver3d
