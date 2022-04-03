@@ -15,7 +15,7 @@ macro(config_conan)
         )
     endif()
     if(UNIX)
-        list(APPEND CONAN_DEPS 
+        list(APPEND CONAN_DEPS
             expat/2.4.2
         )
     endif()
@@ -52,13 +52,13 @@ macro(run_conan)
             )
         endif()  # NOT EXISTS ${CONAN_CMAKE_PATH}
         include(${CONAN_CMAKE_PATH})
-        
+
         # Set import variables
         if(WIN32)
             STRING(CONCAT IMPORT_DLL_FILES "bin, *.dll -> " ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})
             STRING(CONCAT IMPORT_RES_DLL_FILES "res/archdatadir/plugins, * -> " ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})
         endif()  # WIN32
-        
+
         # Setup configuration
         conan_cmake_configure(
                 REQUIRES ${CONAN_DEPS}
@@ -67,7 +67,7 @@ macro(run_conan)
                 IMPORTS ${IMPORT_DLL_FILES}
                 IMPORTS ${IMPORT_RES_DLL_FILES}
         )
-        include(${CONAN_INSTALL_DIR}/conan_paths.cmake)
+
         # Install libraries from conan with considering of build type
         get_property(isMultiConfig GLOBAL PROPERTY GENERATOR_IS_MULTI_CONFIG)
         if(isMultiConfig)
@@ -91,5 +91,8 @@ macro(run_conan)
                 INSTALL_FOLDER ${CONAN_INSTALL_DIR}
             )
         endif()  # isMultiConfig
+
+        include(${CONAN_INSTALL_DIR}/conan_paths.cmake)
+
     endif()  # USE_CONAN
 endmacro()  # run_conan
