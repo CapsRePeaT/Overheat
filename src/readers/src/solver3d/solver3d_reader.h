@@ -17,8 +17,8 @@ class Solver3dReader : public IReader {
  public:
 	// trm_file file with geometry
 	// t2d file with heatmap
-  Solver3dReader(fs::path trm_file, fs::path t2d_file)
-			: trm_file_(std::move(trm_file)), t2d_file_(std::move(t2d_file)) {
+  Solver3dReader(fs::path trm_file_mv_, fs::path t2d_file_mv_)
+			: trm_file_(std::move(trm_file_mv_)), t2d_file_(std::move(t2d_file_mv_)) {
 		load();
 	};
 
