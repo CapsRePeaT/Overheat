@@ -23,7 +23,7 @@ struct CP {
 };
 
 // PRT because this enum describes vars from such strings:
-//&PRT XLP=0.5,XPP=1.,YSP=0.5,YPP=1. /
+// &PRT XLP=0.5,XPP=1.,YSP=0.5,YPP=1. /
 enum PRTVars { PR2, XLP, XPP, YSP, YHP, YPP };
 
 struct PRT {
@@ -31,11 +31,16 @@ struct PRT {
 	                                          {YSP, 0.f}, {YHP, 0.f}, {YPP, 0.f}};
 };
 
+enum class Position{
+	Upper,
+	Lower
+};
 struct LayerType {
-	SerializableVec<float> zc_{};
-	SerializableVec<float> vc_{};
-	SerializableVec<float> cc_{};
-	SerializableVec<float> rc_{};
+  Position position;
+	SerializableVec<float> zc_;
+	SerializableVec<float> vc_;
+	SerializableVec<float> cc_;
+	SerializableVec<float> rc_;
 
 	void set_size(const size_t size) {
 		zc_.set_size(size);
@@ -65,11 +70,11 @@ struct Solver2d_TRM {
 	std::string raw_cp_{};
 	CP cp_{};
 	HorizontalSize size_;
-	float tc_{};  // температура окружающей среды или корпуса, К
-	float fc1_{};  // коэффициент конвективного теплобмена сверху корпуса
-	float fc2_{};  // коэффициент конвективного теплобмена снизу корпуса
-	LayerType l2_{};
-	LayerType l1_{};
+	float tc_{};  //температура окружающей среды или корпуса, К
+	float fc1_{};  //коэффициент конвективного теплобмена сверху корпуса
+	float fc2_{};  //коэффициент конвективного теплобмена снизу корпуса
+	LayerType l2_{.position=Position::Upper};
+	LayerType l1_{.position=Position::Lower};
 	std::string raw_prt_{};
 	PRT prt_{};
 	std::vector<Element> elements_{};
