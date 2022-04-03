@@ -31,7 +31,12 @@ struct PRT {
 			{PR2, 0.f}, {XLP, 0.f}, {XPP, 0.f}, {YSP, 0.f}, {YHP, 0.f}, {YPP, 0.f}};
 };
 
+enum class Position{
+	Upper,
+	Lower
+};
 struct LayerType {
+  Position position;
 	SerializableVec<float> zc_;
 	SerializableVec<float> vc_;
 	SerializableVec<float> cc_;
@@ -68,8 +73,8 @@ struct Solver2d_TRM {
 	float tc_;  //температура окружающей среды или корпуса, К
 	float fc1_;  //коэффициент конвективного теплобмена сверху корпуса
 	float fc2_;  //коэффициент конвективного теплобмена снизу корпуса
-	LayerType l2_;
-	LayerType l1_;
+	LayerType l2_{.position=Position::Upper};
+	LayerType l1_{.position=Position::Lower};
 	std::string raw_prt_;
 	PRT prt_;
 	std::vector<Element> elements_;
