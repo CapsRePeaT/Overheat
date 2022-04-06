@@ -2,12 +2,13 @@
 
 #include <QOpenGLContext>
 
-#include "log.h"
 #include "i_scene_viewport.h"
+#include "log.h"
 
 QSurfaceFormat surface_format(QSurfaceFormat::FormatOptions options = {});
 
-RendererWidget::RendererWidget(QWidget* parent, std::shared_ptr<Scene> scene)
+RendererWidget::RendererWidget(QWidget* parent,
+                               const std::shared_ptr<Scene>& scene)
 		: QOpenGLWidget(parent), viewport_(nullptr), scene_(scene) {
 	setMinimumSize(480, 360);
 #ifdef NDEBUG
@@ -74,9 +75,12 @@ void RendererWidget::UpdateVisualizationOptions(
 	const auto min_color = visualization_options.min_temp_color;
 	const auto max_color = visualization_options.max_temp_color;
 	viewport_->SetColorRange(
-			std::array<float, 3>{min_color.redF(), min_color.greenF(), min_color.blueF()},
-			std::array<float, 3>{max_color.redF(), max_color.greenF(), max_color.blueF()});
-	viewport_->SetTemperatureRange(visualization_options.min_temp, visualization_options.max_temp);
+			std::array<float, 3>{min_color.redF(), min_color.greenF(),
+	                         min_color.blueF()},
+			std::array<float, 3>{max_color.redF(), max_color.greenF(),
+	                         max_color.blueF()});
+	viewport_->SetTemperatureRange(visualization_options.min_temp,
+	                               visualization_options.max_temp);
 	viewport_->SetDrawMode(visualization_options.draw_mode);
 };
 
@@ -95,15 +99,12 @@ QSurfaceFormat surface_format(const QSurfaceFormat::FormatOptions options) {
 	return surface_format;
 }
 
-void RendererWidget::mousePressEvent(QMouseEvent* event) { 
+void RendererWidget::mousePressEvent(QMouseEvent* event) {
 	previous_mouse_pos_ = event->pos();
 	event->accept();
 }
 
-
-void RendererWidget::mouseReleaseEvent(QMouseEvent* event) { 
-	event->accept(); 
-}
+void RendererWidget::mouseReleaseEvent(QMouseEvent* event) { event->accept(); }
 
 void RendererWidget::mouseMoveEvent(QMouseEvent* event) {
 	auto clicked_buttons = event->buttons();
@@ -112,19 +113,19 @@ void RendererWidget::mouseMoveEvent(QMouseEvent* event) {
 		clicked_buttons = current_pressed_button_;
 	bool action_requiered = true;
 	const auto q_curr_pos = event->pos();
-	const auto q_delta = q_curr_pos - previous_mouse_pos_;
-	const Vec2D curr_pos(q_curr_pos.x(), q_curr_pos.y());
-	const Vec2D delta(q_delta.x(), q_delta.y());
+	const auto q_delta    = q_curr_pos - previous_mouse_pos_;
+	const Vec2D curr_pos{q_curr_pos.x(), q_curr_pos.y()};
+	const Vec2D delta{q_delta.x(), q_delta.y()};
 	// rotate
 	if ((clicked_buttons & Qt::RightButton) && action_requiered) {
 		current_pressed_button_ = Qt::RightButton;
-		action_requiered = false;
+		action_requiered        = false;
 		viewport_->RotateCamera(curr_pos, delta);
 	}
 	// move
 	if ((clicked_buttons & Qt::MiddleButton) && action_requiered) {
 		current_pressed_button_ = Qt::RightButton;
-		action_requiered = false;
+		action_requiered        = false;
 		viewport_->MoveCamera(curr_pos, delta);
 	}
 	previous_mouse_pos_ = q_curr_pos;
@@ -135,11 +136,11 @@ void RendererWidget::mouseDoubleClickEvent(QMouseEvent* event) {
 	event->accept();
 }
 
-void RendererWidget::wheelEvent(QWheelEvent* event) { 
+void RendererWidget::wheelEvent(QWheelEvent* event) {
 	// TODO play with
-	const float sensivity = 1.0f;
-	const float delta = event->angleDelta().y() * sensivity;
-	viewport_->ZoomView(delta); 
+	const float sensitivity = 1.0f;
+	const float delta       = event->angleDelta().y() * sensitivity;
+	viewport_->ZoomView(delta);
 	event->accept();
 	LOG_DEBUG("Wheel moved, delta: {0}.", delta);
 }

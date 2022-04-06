@@ -7,15 +7,15 @@
 #include "solver3d_TRM.h"
 
 namespace {
-ShapeIdPair getNewId() {
-	static size_t id{0};
+GlobalShapeId getNewId() {
+	static size_t id = 0;
 	++id;
 	// TODO: pass disign_id
 	return {0, id};
 }
 
 std::pair<float, float> getSphereProjection(const float center,
-                                            const size_t offset,
+                                            const int offset,
                                             const float radius) {
 	return {center + offset - radius, center + offset + radius};
 }
@@ -43,7 +43,7 @@ std::istream& BS::read(std::istream& in) {
 	in >> sphere_nums;
 	spheres_holders_.reserve(sphere_nums);
 	for (size_t i = 0; i < sphere_nums; ++i) {
-		SpheresHolders holder;
+		SpheresHolders holder{};
 		in >> holder.x_center >> holder.y_center >> holder.nx >> holder.ny;
 		spheres_holders_.push_back(holder);
 	}
@@ -112,4 +112,4 @@ GeomStorage<BasicShape> D::geometry() {
 	return storage;
 }
 
-}  // namespace Readers
+}  // namespace Readers::Solver3d

@@ -5,35 +5,37 @@
 
 #include "../../common/include/common.h"
 
-using Id          = size_t;
-using ShapeIdPair = std::pair<Id, RepresentationId>;
-
-class ShapeId : public ShapeIdPair {
+class GlobalShapeId {
  public:
-	constexpr ShapeId(const Id id, const RepresentationId design_id)
-			: ShapeIdPair(id, design_id) {}
-	constexpr ShapeId(const ShapeIdPair& ids)  // NOLINT(google-explicit-constructor)
-			: ShapeIdPair(ids) {}
-	[[nodiscard]] constexpr Id id() const { return first; }
-	[[nodiscard]] constexpr RepresentationId design_id() const { return second; }
+	constexpr GlobalShapeId(const ShapeId id, const RepresentationId design_id)
+			: id_(id), representation_id_(design_id) {}
+	[[nodiscard]] bool operator==(const GlobalShapeId& other) const = default;
+	[[nodiscard]] constexpr ShapeId id() const { return id_; }
+	[[nodiscard]] constexpr RepresentationId representation_id() const {
+		return representation_id_;
+	}
+
+ private:
+	ShapeId id_                         = UndefinedId;
+	RepresentationId representation_id_ = UndefinedId;
 };
 
-using ShapeIds = std::vector<ShapeId>;
+using GlobalShapeIds = std::vector<GlobalShapeId>;
 
 class BasicShape {
  public:
-	explicit BasicShape(const ShapeId id) : id_(id) {}
-	BasicShape(const ShapeId id, const size_t layer_id, Box3D bbox_mv)
-			: id_(id), layer_id_(layer_id), bbox_mv_(std::move(bbox_mv)) {}
-	[[nodiscard]] ShapeId id() const { return id_; }
-	[[nodiscard]] const Box3D& bbox() const { return bbox_mv_; }
-	void setBox(Box3D box) { bbox_mv_ = std::move(box); }
+	explicit BasicShape(const GlobalShapeId id) : id_(id) {}
+	BasicShape(const GlobalShapeId id, const LayerId layer_id, Box3D bbox_mv)
+			: id_(id), layer_id_(layer_id), bbox_(std::move(bbox_mv)) {}
+	[[nodiscard]] GlobalShapeId id() const { return id_; }
+	[[nodiscard]] const Box3D& bbox() const { return bbox_; }
+	void setBox(Box3D box_mv) { bbox_ = std::move(box_mv); }
 
  private:
-	const ShapeId id_;
-	const size_t layer_id_ = UndefinedSizeT;
-	ShapeType shape_type_  = ShapeType::Undefined;
-	Box3D bbox_mv_;
+	const GlobalShapeId id_;
+	const LayerId layer_id_ = UndefinedId;
+	ShapeType shape_type_   = ShapeType::Undefined;
+	Box3D bbox_;
 };
 
 using ShapePtr = std::shared_ptr<BasicShape>;

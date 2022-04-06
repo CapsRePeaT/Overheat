@@ -1,43 +1,46 @@
-#pragma once;
+#pragma once
 
+#include <map>
 #include <string>
 #include <tuple>
-#include <map>
 #include <vector>
 
 #include "../../common/include/common.h"
 
-// TODO we need data description
+// TODO: we need data description
 // followed structure should be like this:
 // data type
 // data description
 // data array
-template<class... Data>
+template <class... Data>
 class MetadataStorage {
 	using DataTypes = std::tuple<Data...>;
 	class MetadataID {
 	 public:
 		MetadataID(size_t type_id, const std::string& description, size_t data_id)
-				: desctiption_(desctiption) {
+				: description_(description) {
 			ids_[0] = type_id;
 			ids_[1] = data_id;
 		}
 		~MetadataID() = default;
-		size_t TypeId() const { return ids_[0]; }
-		size_t DataId() const { return ids_[1]; }
-		const std::string& Description() const { return desctiption_; }
-	 private
-		// according to Section 23.1.2#8 (associative container requirements) it should work
-		const std::string& desctiption_;
-		std::array<size_t, 2> ids_;
+		[[nodiscard]] size_t TypeId() const { return ids_[0]; }
+		[[nodiscard]] size_t DataId() const { return ids_[1]; }
+		[[nodiscard]] const std::string& Description() const {
+			return description_;
+		}
+
+	 private:
+		// according to Section 23.1.2#8 (associative container requirements) it
+		// should work
+		const std::string& description_;
+		std::array<size_t, 2> ids_{};
 	};
 	class DataDescriptionAndValue : std::pair<std::string, std::string> {
-		public: 
-		 DataDescriptionAndValue(std::string&& description,
-		                         std::string&& value)
-				 : std::pair<std::string, std::string>(description, value) { }
+	 public:
+		DataDescriptionAndValue(std::string&& description, std::string&& value)
+				: std::pair<std::string, std::string>(description, value) {}
 	};
-	
+
  public:
 	std::vector<DataDescriptionAndValue> GetData(size_t shape_id) const;
 	template <typename T, class... Args>
@@ -48,10 +51,10 @@ class MetadataStorage {
 		AddData(shape_id, std::forward<std::string>(description),
 		        std::forward<Args>(args)...);
 	}
-	MetadataStorage() = default;
+	MetadataStorage()  = default;
 	~MetadataStorage() = default;
-	
- private : 
+
+ private:
 	template <class T>
 	MetadataID AddOnePieceOfData(T&& data, std::string&& description);
 	std::tuple<std::map<std::string, std::map<size_t, Data>>...> data_;
@@ -62,7 +65,7 @@ template <size_t I, typename T, typename Tuple_t>
 constexpr size_t index_in_tuple_fn() {
 	static_assert(I < std::tuple_size<Tuple_t>::value,
 	              "The element is not in the tuple");
-	using element = std::tuple_element<I, Tuple_t>::type;
+	using element = typename std::tuple_element<I, Tuple_t>::type;
 	if constexpr (std::is_same<T, element>::value) {
 		return I;
 	} else {
@@ -77,23 +80,25 @@ struct index_in_tuple {
 
 template <class... Data>
 template <class T>
-MetadataStorage<Data...>::MetadataID
-MetadataStorage<Data...>::AddOnePieceOfData(T&& data, std::string&& description) {
-	constexpr size_t type_id = index_in_tuple<T, DataTypes>::value;
-	auto data_storages_of_type = std::get<type_id>(data_);
+typename MetadataStorage<Data...>::MetadataID
+MetadataStorage<Data...>::AddOnePieceOfData(T&& data,
+                                            std::string&& description) {
+	constexpr size_t type_id       = index_in_tuple<T, DataTypes>::value;
+	auto data_storages_of_type     = std::get<type_id>(data_);
 	const auto& needed_description = data_storages_of_type.find(description);
-	size_t data_id = 0;
-	if (data_storage_of_type[description].find(data) 
-			!= data_storage_of_type[description].end())
-		data_id = data_storage_of_type[description].find(data).first;
-	else 
-		data_storage_of_type[description][data_id] = data;
-	return MetadataID(type_id, data_storage_of_type.find(description).first, data_id);
+	size_t data_id                 = 0;
+	if (data_storages_of_type[description].find(data) !=
+	    data_storages_of_type[description].end())
+		data_id = data_storages_of_type[description].find(data).first;
+	else
+		data_storages_of_type[description][data_id] = data;
+	return MetadataID(type_id, data_storages_of_type.find(description).first,
+	                  data_id);
 }
 
 template <class... Data>
-std::vector<std::string> MetadataStorage<Data...>::GetData(
-		const size_t shape_id) const  {
+std::vector<typename MetadataStorage<Data...>::DataDescriptionAndValue>
+MetadataStorage<Data...>::GetData(const size_t shape_id) const {
 	std::vector<std::string> result;
 	for (const auto& metadata_id : shape_id2metadata_id_[shape_id]) {
 		const auto& data_storage = std::get<metadata_id.TypeId()>(data_);
@@ -101,9 +106,8 @@ std::vector<std::string> MetadataStorage<Data...>::GetData(
 		// std::stringstream stream_result;
 		// stream_result << data_storage.at(metadata_id.TypeId());
 		result.push_back({metadata_id.Description(),
-		                  std::string(data_storage.at(
-													metadata_id.Description()).at(metadata_id.TypeId()))});
+		                  std::string(data_storage.at(metadata_id.Description())
+		                                  .at(metadata_id.TypeId()))});
 	}
 	return result;
 }
-

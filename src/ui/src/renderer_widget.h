@@ -13,7 +13,7 @@ class RendererWidget : public QOpenGLWidget {
 	Q_OBJECT
  public:
 	explicit RendererWidget(QWidget* parent = nullptr);
-	RendererWidget(QWidget* parent, std::shared_ptr<Scene> scene);
+	RendererWidget(QWidget* parent, const std::shared_ptr<Scene>& scene);
 	~RendererWidget() override;
 
 	void UpdateVisualizationOptions(

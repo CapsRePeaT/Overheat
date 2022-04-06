@@ -1,60 +1,57 @@
 #include "shape_list_widget.h"
 
-#include <QStringList>
 #include <QFile>
-
+#include <QStringList>
+#include <algorithm>
 
 ShapeListWidget::ShapeListWidget(QWidget* parent)
-		: QDockWidget(parent) {
-
-	// example with checkboxes https://stackoverflow.com/questions/14158191/qt-qtreeview-and-custom-model-with-checkbox-columns
-	
-	model_ = new TreeModel(this);
-	view_ = new QTreeView(this);
-	view_->setModel(model_);
+		: QDockWidget(parent),
+			model_(new TreeModel(this)),
+			view_(new QTreeView(this)) {
+	// example with checkboxes
+	// https://stackoverflow.com/questions/14158191/qt-qtreeview-and-custom-model-with-checkbox-columns
 	view_->setWindowTitle(QObject::tr("Simple Tree Model"));
 	setWidget(view_);
 
-	Test();
+	// Test();
 }
 
 void ShapeListWidget::Test() {
-	model_->TestFillWithTxtFile(
-			"C:\\Users\\winroot\\Desktop\\overheat\\local_docs\\default.txt");
+	// model_->TestFillWithTxtFile(
+	// 		"C:\\Users\\winroot\\Desktop\\overheat\\local_docs\\default.txt");
 }
 
 // TreeItem
 
-
 TreeItem::TreeItem(const QVector<QVariant>& data, TreeItem* parent)
-		: m_itemData(data), m_parentItem(parent) {}
+		: item_data_(data), parent_item_(parent) {}
 
 TreeItem* TreeItem::child(int row) {
-	if (row < 0 || row >= m_childItems.size())
+	if (row < 0 || row >= child_items_.size())
 		return nullptr;
-	return m_childItems.at(row);
+	return child_items_.at(row);
 }
 
 QVariant TreeItem::data(int column) const {
-	if (column < 0 || column >= m_itemData.size())
-		return QVariant();
-	return m_itemData.at(column);
+	if (column < 0 || column >= item_data_.size())
+		return {};
+	return item_data_.at(column);
 }
 
 int TreeItem::row() const {
-	if (m_parentItem)
-		return m_parentItem->m_childItems.indexOf(const_cast<TreeItem*>(this));
+	if (parent_item_)
+		return static_cast<int>(parent_item_->child_items_.indexOf(this));
 
 	return 0;
 }
 
 // Tree Model
 
-TreeModel::TreeModel(QObject* parent)
-		: QAbstractItemModel(parent) {
+TreeModel::TreeModel(QObject* parent) : QAbstractItemModel(parent) {
 	rootItem = new TreeItem({tr("Name"), tr("Visibility"), tr("Highlight")});
 }
 
+// NOLINTNEXTLINE(google-default-arguments)
 int TreeModel::columnCount(const QModelIndex& parent) const {
 	if (parent.isValid())
 		return static_cast<TreeItem*>(parent.internalPointer())->column_count();
@@ -63,10 +60,10 @@ int TreeModel::columnCount(const QModelIndex& parent) const {
 
 QVariant TreeModel::data(const QModelIndex& index, int role) const {
 	if (!index.isValid())
-		return QVariant();
+		return {};
 	if (role != Qt::DisplayRole)
-		return QVariant();
-	TreeItem* item = static_cast<TreeItem*>(index.internalPointer());
+		return {};
+	auto* item = static_cast<TreeItem*>(index.internalPointer());
 	return item->data(index.column());
 }
 
@@ -74,18 +71,20 @@ Qt::ItemFlags TreeModel::flags(const QModelIndex& index) const {
 	return !index.isValid() ? QAbstractItemModel::flags(index) : Qt::NoItemFlags;
 }
 
+// NOLINTNEXTLINE(google-default-arguments)
 QVariant TreeModel::headerData(int section, Qt::Orientation orientation,
                                int role) const {
 	if (orientation == Qt::Horizontal && role == Qt::DisplayRole)
 		return rootItem->data(section);
-	return QVariant();
+	return {};
 }
 
+// NOLINTNEXTLINE(google-default-arguments)
 QModelIndex TreeModel::index(int row, int column,
                              const QModelIndex& parent) const {
 	if (!hasIndex(row, column, parent))
-		return QModelIndex();
-	TreeItem* parentItem;
+		return {};
+	TreeItem* parentItem = nullptr;
 	if (!parent.isValid())
 		parentItem = rootItem;
 	else
@@ -93,23 +92,24 @@ QModelIndex TreeModel::index(int row, int column,
 	TreeItem* childItem = parentItem->child(row);
 	if (childItem)
 		return createIndex(row, column, childItem);
-	return QModelIndex();
+	return {};
 }
 
 QModelIndex TreeModel::parent(const QModelIndex& index) const {
 	if (!index.isValid())
-		return QModelIndex();
-	TreeItem* childItem = static_cast<TreeItem*>(index.internalPointer());
+		return {};
+	auto* childItem      = static_cast<TreeItem*>(index.internalPointer());
 	TreeItem* parentItem = childItem->parentItem();
 	if (parentItem == rootItem)
-		return QModelIndex();
+		return {};
 	return createIndex(parentItem->row(), 0, parentItem);
 }
 
+// NOLINTNEXTLINE(google-default-arguments)
 int TreeModel::rowCount(const QModelIndex& parent) const {
 	if (parent.column() > 0)
 		return 0;
-	TreeItem* parentItem;
+	TreeItem* parentItem = nullptr;
 	if (!parent.isValid())
 		parentItem = rootItem;
 	else
@@ -124,7 +124,6 @@ void TreeModel::TestFillWithTxtFile(const QString& file_path) {
 	QString raw_data = file.readAll();
 	QStringList lines = raw_data.split('\n');
 	file.close();
-
 
 	QVector<TreeItem*> parents;
 	QVector<int> indentations;

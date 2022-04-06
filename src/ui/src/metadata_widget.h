@@ -11,7 +11,6 @@ class MetadataWidget : public QTableWidget {
 
  public:
 	explicit MetadataWidget(QWidget* parent = nullptr);
-	~MetadataWidget() = default;
 	void Test();
  public slots:
 	void OnShowMetadata(const MetadataPack& pack);

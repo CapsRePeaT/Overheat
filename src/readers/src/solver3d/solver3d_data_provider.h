@@ -25,4 +25,4 @@ class Solver3dDataProvider : public IDataProvider {
 	HeatmapStorage heatmap_{};
 	MetadataStorage metadata_{};
 };
-}  // namespace Readers
+}  // namespace Readers::Solver3d

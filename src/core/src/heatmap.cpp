@@ -1,5 +1,6 @@
 #include "heatmap.h"
 
-Heatmap::Heatmap(std::vector<float> temperature) : temperature_(temperature) {
+#include <utility>
 
-}
+Heatmap::Heatmap(std::vector<float> temperature_mv)
+		: temperature_(std::move(temperature_mv)) {}

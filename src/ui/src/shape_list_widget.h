@@ -1,12 +1,13 @@
 #pragma once
 
-#include <QDockWidget>
 #include <QAbstractItemModel>
+#include <QDockWidget>
 #include <QModelIndex>
+#include <QTreeView>
 #include <QVariant>
 #include <QVector>
-#include <QTreeView>
 
+// TODO: remake with smart_ptrs
 
 class TreeModel;
 
@@ -16,30 +17,30 @@ class ShapeListWidget : public QDockWidget {
 
  public:
 	explicit ShapeListWidget(QWidget* parent = nullptr);
-	~ShapeListWidget() = default;
 
  private:
 	void Test();
 	TreeModel* model_ = nullptr;
-	QTreeView* view_ = nullptr;
+	QTreeView* view_  = nullptr;
 };
 
-class TreeItem
-{
-public:
-    explicit TreeItem(const QVector<QVariant> &data, TreeItem *parentItem = nullptr);
-		~TreeItem() { qDeleteAll(m_childItems); }
-    void append_child(TreeItem* item) { m_childItems.append(item); }
-    TreeItem *child(int row);
-		int child_count() const { return m_childItems.count(); }
-		int column_count() const { return m_itemData.count(); }
-    QVariant data(int column) const;
-    int row() const;
-		TreeItem* parentItem() { return m_parentItem; }
-	 private:
-    QVector<TreeItem*> m_childItems;
-    QVector<QVariant> m_itemData;
-    TreeItem *m_parentItem;
+class TreeItem {
+ public:
+	explicit TreeItem(const QVector<QVariant>& data,
+	                  TreeItem* parentItem = nullptr);
+	~TreeItem() { qDeleteAll(child_items_); }
+	void append_child(TreeItem* item) { child_items_.append(item); }
+	TreeItem* child(int row);
+	[[nodiscard]] int child_count() const { return child_items_.count(); }
+	[[nodiscard]] int column_count() const { return item_data_.count(); }
+	[[nodiscard]] QVariant data(int column) const;
+	[[nodiscard]] int row() const;
+	TreeItem* parentItem() { return parent_item_; }
+
+ private:
+	QVector<TreeItem*> child_items_;
+	QVector<QVariant> item_data_;
+	TreeItem* parent_item_;
 };
 
 class TreeModel : public QAbstractItemModel {
@@ -47,21 +48,31 @@ class TreeModel : public QAbstractItemModel {
 
  public:
 	explicit TreeModel(QObject* parent = nullptr);
-	~TreeModel() { delete rootItem; }
+	~TreeModel() override { delete rootItem; }
 
-	QVariant data(const QModelIndex& index, int role) const override;
-	Qt::ItemFlags flags(const QModelIndex& index) const override;
-	QVariant headerData(int section, Qt::Orientation orientation,
-	                    int role = Qt::DisplayRole) const override;
-	QModelIndex index(int row, int column,
-	                  const QModelIndex& parent = QModelIndex()) const override;
-	QModelIndex parent(const QModelIndex& index) const override;
-	int rowCount(const QModelIndex& parent = QModelIndex()) const override;
-	int columnCount(const QModelIndex& parent = QModelIndex()) const override;
+	[[nodiscard]] QVariant data(const QModelIndex& index,
+	                            int role) const override;
+	[[nodiscard]] Qt::ItemFlags flags(const QModelIndex& index) const override;
+
+	// until clang-tidy 14 there is no way to unlint several lines at once :(
+	// NOLINTNEXTLINE(google-default-arguments)
+	[[nodiscard]] QVariant headerData(int section, Qt::Orientation orientation,
+	                                  int role = Qt::DisplayRole) const override;
+	// NOLINTNEXTLINE(google-default-arguments)
+	[[nodiscard]] QModelIndex index(
+			int row, int column,
+			const QModelIndex& parent = QModelIndex()) const override;
+	// NOLINTNEXTLINE(google-default-arguments)
+	[[nodiscard]] QModelIndex parent(const QModelIndex& index) const override;
+	// NOLINTNEXTLINE(google-default-arguments)
+	[[nodiscard]] int rowCount(
+			const QModelIndex& parent = QModelIndex()) const override;
+	// NOLINTNEXTLINE(google-default-arguments)
+	[[nodiscard]] int columnCount(
+			const QModelIndex& parent = QModelIndex()) const override;
 
 	void TestFillWithTxtFile(const QString& file_path);
- private:
 
+ private:
 	TreeItem* rootItem;
 };
-

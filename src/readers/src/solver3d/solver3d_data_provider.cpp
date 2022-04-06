@@ -1,7 +1,7 @@
 #include "solver3d_data_provider.h"
 
 namespace {
-Box3D liftBox(const Box3D box, float offset) {
+Box3D liftBox(const Box3D& box, float offset) {
 	auto coordinates = box.coordinates();
 	coordinates.back().first += offset;
 	coordinates.back().second += offset;
@@ -24,10 +24,10 @@ void Solver3dDataProvider::load_geometry(const Solver3d_TRM& data) {
 	geometry_.Clear();
 	for (const auto& [position, layers] : data.layers_groups_) {
 		for (const auto& layer : layers) {
-			const auto shapes = layer->geometry().get_all_shapes();
+			const auto shapes = layer->geometry().shapes();
 			for (const auto& shape : shapes) {
 				geometry_.AddShape(std::make_unique<BasicShape>(
-						ShapeId(0, box_counter_++), layer_counter_,
+						GlobalShapeId(0, box_counter_++), layer_counter_,
 						liftBox(shape->bbox(), offset)));
 			}
 			++layer_counter_;

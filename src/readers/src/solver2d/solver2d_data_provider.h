@@ -9,7 +9,7 @@ namespace Readers::Solver2d {
 // FIXME we should return one instance FileRepresentation only
 class Solver2dDataProvider : public IDataProvider {
  public:
-  Solver2dDataProvider(const Solver2d_TRM& geom);
+  explicit Solver2dDataProvider(const Solver2d_TRM& geom);
 
 	GeomStorage<BasicShape> geometry() override { return geometry_; };
 	HeatmapStorage heatmaps() override { return heatmap_; }
@@ -23,4 +23,4 @@ class Solver2dDataProvider : public IDataProvider {
   HeatmapStorage heatmap_{};
 	MetadataStorage metadata_{};
 };
-}  // namespace Readers
+}  // namespace Readers::Solver2d

@@ -3,8 +3,8 @@
 #include <QApplication>
 #include <QLabel>
 
-#include "mainwindow.h"
 #include "log.h"
+#include "mainwindow.h"
 
 int main(int argc, char** argv) {
 	spdlog::set_level(spdlog::level::debug);

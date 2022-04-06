@@ -96,8 +96,9 @@ Solver3d_TRM read_geometry(const std::string& content) {
 
 	return data;
 }
+
 Solver3d_T2D read_heatmap(std::ifstream& istream) {
-  Solver3d_T2D t2d;
+	Solver3d_T2D t2d;
 	istream >> t2d;
 	return t2d;
 }

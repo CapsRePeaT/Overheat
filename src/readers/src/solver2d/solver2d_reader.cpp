@@ -31,4 +31,4 @@ Solver2d_TRM Solver2dReader::load_geometry() {
 	return read_geometry(content);
 }
 
-}  // namespace Readers::Solver2D
+}  // namespace Readers::Solver2d

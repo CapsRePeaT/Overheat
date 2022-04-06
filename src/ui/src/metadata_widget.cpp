@@ -9,12 +9,12 @@ MetadataWidget::MetadataWidget(QWidget* parent)
 }
 
 void MetadataWidget::OnShowMetadata(const MetadataPack& pack) {
-	setRowCount(pack.size());
-	size_t row_counter = 0;
-	for (const auto metadata : pack) {
-		QTableWidgetItem* meaning = new QTableWidgetItem(
+	setRowCount(static_cast<int>(pack.size()));
+	int row_counter = 0;
+	for (const auto& metadata : pack) {
+		auto* meaning = new QTableWidgetItem(
 			QString::fromStdString(metadata.meaning()));
-		QTableWidgetItem* value =
+		auto* value =
 				new QTableWidgetItem(QString::fromStdString(metadata.value()));
 		setItem(row_counter, 0, meaning);
 		setItem(row_counter, 1, value);
@@ -27,7 +27,7 @@ void MetadataWidget::Test() {
 	// QTableWidgetItem puts data into each cell. Just an example
 	for (int i = 0; i < 20; ++i) {
 		for (int j = 0; j < 2; ++j) {
-			QTableWidgetItem* item = new QTableWidgetItem(tr("%1").arg(pow(i, j + 1)));
+			auto* item = new QTableWidgetItem(tr("%1").arg(pow(i, j + 1)));
 			setItem(i, j, item);
 		}
 	}

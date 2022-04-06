@@ -1,6 +1,7 @@
 #pragma once
 #include <filesystem>
 #include <fstream>
+#include <vector>
 
 namespace fs = std::filesystem;
 
@@ -27,22 +28,22 @@ class SerializableVec {
 
  private:
   size_t elem_count_ = 0;
-  std::vector<T> data_;
+  std::vector<T> data_{};
 };
 
 struct Coordinates {
-  float x1_;
-  float x2_;
-  float y1_;
-  float y2_;
+  float x1_{};
+  float x2_{};
+  float y1_{};
+  float y2_{};
 };
 
 inline std::string stream_to_string(std::ifstream& stream) {
-  return std::string{std::istreambuf_iterator<char>(stream), {}};
+  return {std::istreambuf_iterator<char>(stream), {}};
 }
 
 inline std::string validate_and_get_content(const fs::path& path) {
-  std::ifstream ifs{path};
+  std::ifstream ifs(path);
   if (!ifs.good()) {
     throw std::runtime_error("Stream state is not good");
   }

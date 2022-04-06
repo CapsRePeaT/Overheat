@@ -10,29 +10,28 @@
 MainWindow::MainWindow(QWidget* parent)
 		: QMainWindow(parent),
 			scene_(std::make_shared<Scene>()),
+			render_widget_(new RendererWidget(this, scene_)),
+			visualization_options_(new VisualizationOptionsWidget(this)),
+			metadata_widget_(new MetadataWidget(this)),
+			shape_list_widget_(new ShapeListWidget(this)),
 			ui_(new Ui::MainWindow) {
 	ui_->setupUi(this);
 	setWindowTitle(tr("OVERHEAT application"));
 	// renderer widget
-	render_widget_ = new RendererWidget(this, scene_);
 	setCentralWidget(render_widget_);
 	render_widget_->showMaximized();
 	// shape widget
-	shape_list_widget_ = new ShapeListWidget(this);
 	addDockWidget(Qt::LeftDockWidgetArea, shape_list_widget_);
-	shape_list_widget_->setWindowTitle("Shapes");
+	shape_list_widget_->setWindowTitle(tr("Shapes"));
 	// metadata widget
-	metadata_widget_           = new MetadataWidget(this);
-	QDockWidget* metadata_dock = new QDockWidget(tr("Metadata"), this);
+	auto* metadata_dock = new QDockWidget(tr("Metadata"), this);
 	metadata_dock->setWidget(metadata_widget_);
 	addDockWidget(Qt::LeftDockWidgetArea, metadata_dock);
 	connect(this, &MainWindow::ShowMetadata, metadata_widget_,
 	        &MetadataWidget::OnShowMetadata);
-
 	// options widget
-	visualization_options_ = new VisualizationOptionsWidget(this);
 	addDockWidget(Qt::LeftDockWidgetArea, visualization_options_);
-	visualization_options_->setWindowTitle("Options");
+	visualization_options_->setWindowTitle(tr("Options"));
 	// signals and slots connection
 	connect(ui_->load_file_btn, &QAction::triggered, this,
 	        &MainWindow::OnLoadFileBtnPressed);
@@ -41,12 +40,12 @@ MainWindow::MainWindow(QWidget* parent)
 	        render_widget_, &RendererWidget::onVisualizationOptionsChanged);
 }
 
-MainWindow::~MainWindow() { delete ui_; }
+MainWindow::~MainWindow() = default;
 
-void MainWindow::LoadFile(const std::string& trm_file,
-                          const std::string& t2d_file) {
-	core().LoadGeometry(trm_file, t2d_file);
-	const auto loaded_shapes = core().GetFirstFile().GetShapes();
+void MainWindow::LoadFile(std::string trm_file_path,
+                          std::string t2d_file_path) {
+	core().LoadGeometry(trm_file_path, std::move(t2d_file_path));
+	const auto loaded_shapes   = core().GetFirstFile().GetShapes();
 	const auto loaded_heatmaps = core().GetFirstFile().heatmaps();
 	// Do we really need this assert?
 	// assert(!loaded_shapes.empty() && "no shapes received");
@@ -59,7 +58,7 @@ void MainWindow::LoadFile(const std::string& trm_file,
 		scene_->AddHeatmaps(loaded_heatmaps);
 		render_widget_->doneCurrent();
 	} else {
-		LOG_WARN("No shaped received from file {}", trm_file);
+		LOG_WARN("No shaped received from file {}", trm_file_path);
 	}
 }
 
@@ -75,19 +74,15 @@ void MainWindow::OnLoadFileBtnPressed() {
 		try {
 			LoadFile(trm_file.toStdString(), t2d_file.toStdString());
 		} catch (...) {
-			QMessageBox messageBox;
-			messageBox.critical(
-					0, "Error",
+			QMessageBox::critical(
+					nullptr, "Error",
 					"Unknown error. File cannot be parsed, please check file format.");
-			messageBox.setFixedSize(500, 200);
 		}
 	}
 }
 
-void MainWindow::OnShapeSelected(const ShapeIds& shape_ids) {
-	// [Saiel] check equality of vectors? Are you sure?
-	// [Saiel] btw, this is not working with private inheritance from std::pair.
-	//   			 maybe composition is better?
+void MainWindow::OnShapeSelected(const GlobalShapeIds& shape_ids) {
+	// TODO: Needed to rework algorithm because it obviously is not optimal
 	if (shape_ids == selected_shape_ids_) {
 		++selected_shape_index_;
 		if (selected_shape_index_ >= shape_ids.size())

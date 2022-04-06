@@ -34,7 +34,7 @@ inline bool isBS(LayerType type) {
 
 class BaseLayer {
  public:
-	BaseLayer(LayerType type) { type_ = type; }
+	explicit BaseLayer(LayerType type) : type_(type) {}
 	// getters
 	[[nodiscard]] LayerType type() const;
 	[[nodiscard]] std::string_view type_tag() const;
@@ -48,27 +48,27 @@ class BaseLayer {
 	~BaseLayer() = default;
 
  protected:
-	std::string raw_type_tag_;
+	std::string raw_type_tag_{};
 	LayerType type_ = LayerType::UNDEFINED;
-	float thermal_conductivity_;
-	float thickness_;
+	float thermal_conductivity_{};
+	float thickness_{};
 };
 
 class HPU : public BaseLayer {
  public:
-	HPU(LayerType type) : BaseLayer(type){};
+	explicit HPU(LayerType type) : BaseLayer(type){};
 	std::istream& read(std::istream& in) override;
 	GeomStorage<BasicShape> geometry() override;
 
  private:
-	float env_thermal_conductivity_;
-	Coordinates coordinates_;
+	float env_thermal_conductivity_{};
+	Coordinates coordinates_{};
 };
 
 class BS : public BaseLayer {
  public:
-  BS(LayerType type) : BaseLayer(type){};
-  std::istream& read(std::istream& in) override;
+	BS(LayerType type) : BaseLayer(type){};
+	std::istream& read(std::istream& in) override;
 	GeomStorage<BasicShape> geometry() override;
 
  private:
@@ -85,8 +85,8 @@ class BS : public BaseLayer {
 
 class D : public BaseLayer {
  public:
-  D(LayerType type) : BaseLayer(type){};
-  std::istream& read(std::istream& in) override;
+	D(LayerType type) : BaseLayer(type){};
+	std::istream& read(std::istream& in) override;
 	GeomStorage<BasicShape> geometry() override;
 
  private:
@@ -112,4 +112,4 @@ struct Solver3d_TRM {
 	LayersGroups layers_groups_;
 };
 
-}  // namespace Readers
+}  // namespace Readers::Solver3d

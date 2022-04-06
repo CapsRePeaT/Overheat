@@ -13,7 +13,7 @@ class GeomStorage {
 	using Shapes   = std::vector<ShapePtr>;
 	GeomStorage()  = default;
 	void AddShape(ShapePtr shape) { shapes_.emplace_back(std::move(shape)); }
-	const Shapes& get_all_shapes() const { return shapes_; }
+	[[nodiscard]] const Shapes& shapes() const { return shapes_; }
 	void Clear() { shapes_.clear(); }
 
  private:
@@ -26,9 +26,9 @@ class Layer {
 	Layer() = default;
 
  private:
-	size_t id_;
-	size_t top_heatmap_id_;
-	size_t bottom_heatmap_id_;
+	LayerId id_;
+	HeatmapId top_heatmap_id_;
+	HeatmapId bottom_heatmap_id_;
 };
 
 // class with net and temperatures
@@ -40,10 +40,9 @@ class HeatmapStorage {
 	HeatmapStorage(std::vector<float> x_steps_mv, std::vector<float> y_steps_mv,
 	               const std::vector<float>& temperature);
 
-	// NH MH - size of layer
 	size_t layers_count_ = 0;  // IST in T2D file
-	std::vector<float> x_steps_mv_;
-	std::vector<float> y_steps_mv_;
+	std::vector<float> x_steps_;
+	std::vector<float> y_steps_;
 	Heatmaps heatmaps_;
 };
 
@@ -56,16 +55,24 @@ class FileRepresentation {
  public:
 	using Layers = std::vector<Layer>;
 	using Shapes = GeomStorage<BasicShape>::Shapes;
-	FileRepresentation(RepresentationId id) : id_(id) {}
+	FileRepresentation() : id_(id_counter++) {}
+	FileRepresentation(FileRepresentation&&) = default;
+	~FileRepresentation() = default;
+	FileRepresentation(const FileRepresentation&) = delete;
+	FileRepresentation& operator=(const FileRepresentation&) = delete;
+	FileRepresentation& operator=(FileRepresentation&&) = delete; // id_ is const
+
 	// FIXME implement geom search, now we return all shapes
-	const Shapes& GetShapes(const Box3D& area = Box3D()) const;
-	MetadataPack GetShapeMetadata(Id id) const;
-	const Box3D design_borders() const { return design_borders_; }
-	RepresentationId id() const { return id_; }
+	[[nodiscard]] const Shapes& GetShapes(const Box3D& area = Box3D()) const;
+	[[nodiscard]] MetadataPack GetShapeMetadata(ShapeId id) const;
+	[[nodiscard]] Box3D design_borders() const { return design_borders_; }
+	[[nodiscard]] RepresentationId id() const { return id_; }
 	// needed for geometry loading
 	GeomStorage<BasicShape>& geom_storage() { return geom_storage_; }
 	HeatmapStorage& heatmaps() { return heatmaps_; }
  private:
+	inline static RepresentationId id_counter = 0;
+
 	const RepresentationId id_;
 	GeomStorage<BasicShape> geom_storage_;
 	Layers layers_;

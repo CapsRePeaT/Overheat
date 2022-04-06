@@ -1,7 +1,7 @@
 #pragma once
 
-#include <string>
 #include <cassert>
+#include <string>
 
 #include "common.h"
 #include "databases.h"
@@ -15,21 +15,21 @@ class Core {
 		static Core instance;
 		return instance;
 	}
-	void LoadHeatmap(const std::string& file_name) {}
-	void LoadGeometry(const std::string& trm_file, 
-									  const std::string& t2d_file);
+	void LoadHeatmap(std::string file_path_mv) {}
+	void LoadGeometry(std::string trm_file_path_mv, std::string t2d_file_path_mv);
 	// for now we have only one file loaded
 	FileRepresentation& GetFirstFile() {
-		assert(representations_.size() && "any representations available");
+		assert(!representations_.empty() && "any representations available");
 		return representations_[0];
 	}
-	MetadataPack const GetShapeMetadata(const ShapeId id) { 
-		GetRepresentation(id.design_id()).GetShapeMetadata(id.id());
-		return {};
+	[[nodiscard]] MetadataPack GetShapeMetadata(const GlobalShapeId id) const {
+		return GetRepresentation(id.representation_id()).GetShapeMetadata(id.id());
 	}
+
  private:
 	Core() = default;
-	const FileRepresentation& GetRepresentation(RepresentationId const id) const {
+	[[nodiscard]] const FileRepresentation& GetRepresentation(
+			const RepresentationId id) const {
 		// in the future there might be another connection with id and container
 		return representations_.at(id);
 	}

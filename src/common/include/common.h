@@ -2,8 +2,8 @@
 
 #include <array>
 #include <limits>
-#include <string>
 #include <set>
+#include <string>
 
 enum class DrawMode { Gradient, Stratified };
 enum class ShapeType { Undefined, Box, Sphere };
@@ -42,17 +42,26 @@ constexpr typename Box<dim>::Values Box<dim>::DefaultCoordinates() {
 	return default_values;
 };
 
-class PreparedMetadata : public std::pair<std::string, std::string> {
+class PreparedMetadata {
  public:
-	PreparedMetadata(const std::string& meaning, const std::string& value)
-			: std::pair<std::string, std::string>(meaning, value) {}
-	const std::string& meaning() const { return first; }
-	const std::string& value() const { return second; }
+	PreparedMetadata(std::string meaning_mv, std::string value_mv)
+			: meaning_(std::move(meaning_mv)), value_(std::move(value_mv)) {}
+	[[nodiscard]] const std::string& meaning() const { return meaning_; }
+	[[nodiscard]] const std::string& value() const { return value_; }
+
+ private:
+	std::string meaning_;
+	std::string value_;
 };
 
+constexpr size_t UndefinedSizeT = std::numeric_limits<size_t>::max();
+constexpr size_t UndefinedId    = UndefinedSizeT;
 
-inline constexpr size_t UndefinedSizeT = std::numeric_limits<size_t>::max();
-using Box3D = Box<3>;
-using Box2D = Box<2>;
+using Box3D            = Box<3>;
+using Box2D            = Box<2>;
+using ShapeId          = size_t;
 using RepresentationId = size_t;
+using LayerId          = size_t;
+using HeatmapId        = size_t;
+// Why is not unordered_set?
 using MetadataPack = std::set<PreparedMetadata>;
