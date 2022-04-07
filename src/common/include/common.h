@@ -2,6 +2,8 @@
 
 #include <array>
 #include <limits>
+#include <set>
+#include <string>
 
 enum class DrawMode { Gradient, Stratified };
 enum class ShapeType { Undefined, Box, Sphere };
@@ -40,5 +42,26 @@ constexpr typename Box<dim>::Values Box<dim>::DefaultCoordinates() {
 	return default_values;
 };
 
-using Box3D = Box<3>;
-using Box2D = Box<2>;
+class PreparedMetadata {
+ public:
+	PreparedMetadata(std::string meaning_mv, std::string value_mv)
+			: meaning_(std::move(meaning_mv)), value_(std::move(value_mv)) {}
+	[[nodiscard]] const std::string& meaning() const { return meaning_; }
+	[[nodiscard]] const std::string& value() const { return value_; }
+
+ private:
+	std::string meaning_;
+	std::string value_;
+};
+
+constexpr size_t UndefinedSizeT = std::numeric_limits<size_t>::max();
+constexpr size_t UndefinedId    = UndefinedSizeT;
+
+using Box3D            = Box<3>;
+using Box2D            = Box<2>;
+using ShapeId          = size_t;
+using RepresentationId = size_t;
+using LayerId          = size_t;
+using HeatmapId        = size_t;
+// Why is not unordered_set?
+using MetadataPack = std::set<PreparedMetadata>;

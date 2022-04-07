@@ -5,6 +5,31 @@
 
 #include <string_view>
 
+#include "renderer/renderer_api.h"
+
+namespace {
+
+inline decltype(GL_TRIANGLES) PrimitiveTypeToGL(const PrimitiveType draw_as) {
+	switch (draw_as) {
+		case PrimitiveType::POINTS:
+			return GL_POINTS;
+		case PrimitiveType::LINES:
+			return GL_LINES;
+		case PrimitiveType::LINE_STRIP:
+			return GL_LINE_STRIP;
+		case PrimitiveType::LINE_LOOP:
+			return GL_LINE_LOOP;
+		case PrimitiveType::TRIANGLES:
+			return GL_TRIANGLES;
+		case PrimitiveType::TRIANGLE_STRIP:
+			return GL_TRIANGLE_STRIP;
+		case PrimitiveType::TRIANGLE_FAN:
+			return GL_TRIANGLE_FAN;
+		default:
+			assert(false && "Unkown primitive type");
+	}
+}
+
 // Signature from
 // https://www.khronos.org/opengl/wiki/Debug_Output#Getting_messages
 void OpenGLMessageCallback(GLenum source, GLenum type, GLuint id,
@@ -27,6 +52,8 @@ void OpenGLMessageCallback(GLenum source, GLenum type, GLuint id,
 			assert(false && "Unknown severity level!");
 	}
 }
+
+}  // namespace
 
 void OpenGLRendererAPI::Init() {
 #ifndef NDEBUG
@@ -57,9 +84,12 @@ void OpenGLRendererAPI::Clear() {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 }
 
-void OpenGLRendererAPI::DrawIndexed(const VertexArray& va,
-                                    const IndexBuffer& ib) {
+void OpenGLRendererAPI::DrawIndexedImpl(const VertexArray& va,
+                                        const IndexBuffer& ib,
+                                        const PrimitiveType draw_as) {
 	va.Bind();
-	glDrawElements(GL_TRIANGLES, ib.elements_count(), GL_UNSIGNED_INT,
-	               nullptr);  // NOLINT(cppcoreguidelines-narrowing-conversions)
+	glDrawElements(
+			PrimitiveTypeToGL(draw_as), ib.elements_count(),
+			GL_UNSIGNED_INT,  // NOLINT(cppcoreguidelines-narrowing-conversions)
+			nullptr);
 }

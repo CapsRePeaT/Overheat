@@ -1,15 +1,16 @@
 option(USE_CONAN "Install dependencies with conan" ON)
 macro(config_conan)
-# List of packages to install
+    # List of packages to install
     option(QT_FROM_CONAN "Install Qt as dependency from conan" ON)
     set(CONAN_DEPS
-#        boost/1.77.0
+        # boost/1.77.0
         glad/0.1.34
         glm/0.9.9.8
         stb/20200203
         spdlog/1.9.2
+        magic_enum/0.7.3
     )
-    if (QT_FROM_CONAN)
+    if(QT_FROM_CONAN)
         list(APPEND CONAN_DEPS
             qt/6.2.2
         )
@@ -25,10 +26,10 @@ macro(config_conan)
         glad:gl_version=4.4
         glad:gl_profile=core
     )
-    if (QT_FROM_CONAN)
+    if(QT_FROM_CONAN)
         list(APPEND CONAN_OPTIONS
             qt:shared=True
-    )
+        )
     endif()
 
     # Path to place conan.cmake file
