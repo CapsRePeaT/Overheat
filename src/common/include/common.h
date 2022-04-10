@@ -5,9 +5,31 @@
 #include <set>
 #include <string>
 
-enum class DrawMode { Gradient, Stratified };
-enum class ShapeType { Undefined, Box, Sphere };
-enum Axis { X, Y, Z };
+enum class DrawMode { 
+	Gradient = 0, 
+	Stratified 
+};
+
+enum class ShapeType { 
+	Box = 0, 
+	Sphere, 
+	count,
+	Undefined = count
+};
+
+enum class GeometryType { 
+	D3 = 0, 
+	D2, 
+	Undefined
+};
+
+enum Axis { 
+	X = 0, 
+	Y, 
+	Z, 
+	count, 
+	Undefined = count 
+};
 
 // represents 3d box //should we use dimension as template parameter?
 // array of min and max cords by dimension, by default values from numeric
