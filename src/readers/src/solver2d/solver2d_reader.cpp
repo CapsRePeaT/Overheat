@@ -16,7 +16,7 @@ Solver2d_TRM read_geometry(std::string& content) {
 		throw std::runtime_error("Wrong file format.");
 	content.shrink_to_fit();
 
-  Solver2d_TRM trm;
+	Solver2d_TRM trm;
 	std::stringstream ss{content};
 
 	ss >> trm;

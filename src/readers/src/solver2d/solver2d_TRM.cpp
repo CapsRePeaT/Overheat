@@ -1,9 +1,9 @@
+#include "solver2d_TRM.h"
+
 #include <magic_enum.hpp>
 
 #include <any>
 #include <regex>
-
-#include "solver2d_TRM.h"
 
 using namespace magic_enum;
 
