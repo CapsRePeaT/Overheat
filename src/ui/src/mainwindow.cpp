@@ -81,9 +81,9 @@ void MainWindow::GetFilesAndLoad(const GeometryType type) {
 		return;
 	QDir trm_dir = QFileInfo(trm_file).absoluteDir();
 	QString absolute_trm_dir = trm_dir.absolutePath();
-	const QString t2d_file =
-			QFileDialog::getOpenFileName(this, tr("Open T2D File"), absolute_trm_dir,
-	                                 tr("geom (*.txt *.T2D);; ALL (*.*)"));
+	const QString t2d_file = QFileDialog::getOpenFileName(this, tr("Open T2D File"),
+																												absolute_trm_dir,
+																											  tr("geom (*.txt *.T2D);; ALL (*.*)"));
 	if (trm_file.length() && t2d_file.length()) {
 		try {
 			LoadFile(trm_file.toStdString(), t2d_file.toStdString(), type);

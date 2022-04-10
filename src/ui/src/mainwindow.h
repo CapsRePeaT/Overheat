@@ -20,7 +20,7 @@ class MainWindow final : public QMainWindow {
 	explicit MainWindow(QWidget* parent = nullptr);
 	~MainWindow() override;
 	void LoadFile(std::string trm_file_path, 
-								std::string t2d_file_path,
+	              std::string t2d_file_path,
 	              GeometryType type);
  signals:
 	// todo

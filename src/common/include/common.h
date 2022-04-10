@@ -13,8 +13,8 @@ enum class DrawMode {
 enum class ShapeType { 
 	Box = 0, 
 	Sphere, 
-	count,
-	Undefined = count
+	Count, 
+	Undefined = Count
 };
 
 enum class GeometryType { 
@@ -27,8 +27,8 @@ enum Axis {
 	X = 0, 
 	Y, 
 	Z, 
-	count, 
-	Undefined = count 
+	Count, 
+	Undefined = Count
 };
 
 // represents 3d box //should we use dimension as template parameter?

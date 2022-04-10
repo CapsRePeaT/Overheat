@@ -17,7 +17,7 @@ class Core {
 	}
 	void LoadHeatmap(std::string file_path_mv) {}
 	void LoadGeometry(std::string trm_file_path_mv, 
-									  std::string t2d_file_path_mv,
+	                  std::string t2d_file_path_mv,
 	                  GeometryType type);
 	// for now we have only one file loaded
 	FileRepresentation& GetFirstFile() {

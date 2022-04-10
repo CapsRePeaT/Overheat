@@ -7,7 +7,7 @@
 
 void Core::LoadGeometry(std::string trm_file_path_mv,
                         std::string t2d_file_path_mv, 
-												const GeometryType type) {
+	                      const GeometryType type) {
 	// TODO make proper interface class usage
 	FileRepresentation new_representation;
 	auto FillRepresentation = [&new_representation](auto& reader) {
@@ -37,7 +37,5 @@ void Core::LoadGeometry(std::string trm_file_path_mv,
 	//  1. We need setter for this operation
 	//  2. Copy of 2 huge objects. Should be using pointers/references 
 	//     or anything else to avoid it
-	//new_representation.geom_storage() = reader.geometry();
-	//new_representation.heatmaps()     = reader.heatmaps();
 	representations_.emplace_back(std::move(new_representation));
 }
