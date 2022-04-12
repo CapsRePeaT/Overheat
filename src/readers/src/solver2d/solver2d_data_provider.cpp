@@ -19,8 +19,10 @@ void build_layers_shapes(const float width, const float length,
 }  // namespace
 
 namespace Readers::Solver2d {
-Solver2dDataProvider::Solver2dDataProvider(const Solver2d_TRM& geom) {
+Solver2dDataProvider::Solver2dDataProvider(const Solver2d_TRM& geom,
+                                           const Solver2d_T2D& heat) {
 	load_geometry(geom);
+	load_heatmap(heat);
 }
 
 void Solver2dDataProvider::load_geometry(const Solver2d_TRM& data) {
@@ -35,8 +37,12 @@ void Solver2dDataProvider::load_geometry(const Solver2d_TRM& data) {
 		Box3D box{{{coordinates.x1_, coordinates.x2_},
 		           {coordinates.y1_, coordinates.y2_},
 		           {thickness_2d, thickness_2d}}};
-		geometry_.AddShape(std::make_unique<BasicShape>(GlobalShapeId(0, 0), 0, box));
+		geometry_.AddShape(
+				std::make_unique<BasicShape>(GlobalShapeId(0, 0), 0, box));
 	}
 }
 
+void Solver2dDataProvider::load_heatmap(const Solver2d_T2D& heat) {
+	heatmap_ = HeatmapStorage(heat.net_x(), heat.net_y(), heat.temperatures());
+}
 }  // namespace Readers::Solver2d

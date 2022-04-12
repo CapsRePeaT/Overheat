@@ -28,7 +28,7 @@ std::string sample =
 
 }
 
-TEST(Solver2d, read_file) {
+TEST(Solver2d, read_geom_and_heatmap) {
 	fs::path trm = fs::current_path().parent_path().parent_path() / "src" /
 	               "readers" / "tests" / "en9.trm";
 	fs::path t2d = fs::current_path().parent_path().parent_path() / "src" /

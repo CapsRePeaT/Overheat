@@ -23,12 +23,25 @@ Solver2d_TRM read_geometry(std::string& content) {
 	return trm;
 }
 
+Solver2d_T2D read_heatmap(std::string& content) {
+	Solver2d_T2D t2d;
+	std::stringstream ss{content};
+	ss >> t2d;
+	return t2d;
+}
+
 void Solver2dReader::load() {
-	data_provider_ = std::make_unique<Solver2dDataProvider>(load_geometry());
+	data_provider_ =
+			std::make_unique<Solver2dDataProvider>(load_geometry(), load_heatmap());
 }
 Solver2d_TRM Solver2dReader::load_geometry() {
 	auto content = validate_and_get_content(trm_file_);
 	return read_geometry(content);
+}
+
+Solver2d_T2D Solver2dReader::load_heatmap() {
+	auto content = validate_and_get_content(t2d_file_);
+	return read_heatmap(content);
 }
 
 }  // namespace Readers::Solver2d
