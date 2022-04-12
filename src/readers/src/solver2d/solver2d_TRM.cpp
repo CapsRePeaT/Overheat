@@ -26,7 +26,7 @@ void init_vars_from_raw(std::unordered_map<Key, Val>& vars,
                         const std::string& raw_vars) {
 	// split strings to variables names and values (VarName)=(VarValue)
 	// example: &СP NBAUND=2,M=6,N=6,NBB=2,LAYER1=2,LAYER2=3
-	std::regex rgx(R"rgx(([a-zA-z1-9]+)[=\s]+([[0-9]*[.]*]*[0-9]+))rgx",
+	std::regex rgx(R"rgx(([a-zA-z1-9]+)[= ]+([[0-9]*[.]*]*[0-9]+))rgx",
 	               std::regex::extended);
 	std::smatch match;
 	bool keep_search = true;

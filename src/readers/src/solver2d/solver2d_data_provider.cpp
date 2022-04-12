@@ -1,7 +1,5 @@
 #include "solver2d_data_provider.h"
 
-#include "solver2d_TRM.h"
-
 namespace {
 
 void build_layers_shapes(const float width, const float length,
@@ -12,7 +10,7 @@ void build_layers_shapes(const float width, const float length,
 		Box3D box{{{0.f, width},
 		           {0.f, length},  // need to clarify order
 		           {offset, layer_thickness}}};
-		storage.AddShape(std::make_unique<BasicShape>(ShapeId(0, 0), 0, box));
+		storage.AddShape(std::make_unique<BasicShape>(GlobalShapeId(0, 0), 0, box));
 		offset += layer.position == Readers::Solver2d::Position::Upper
 		              ? layer_thickness
 		              : -layer_thickness;
@@ -37,7 +35,7 @@ void Solver2dDataProvider::load_geometry(const Solver2d_TRM& data) {
 		Box3D box{{{coordinates.x1_, coordinates.x2_},
 		           {coordinates.y1_, coordinates.y2_},
 		           {thickness_2d, thickness_2d}}};
-		geometry_.AddShape(std::make_unique<BasicShape>(ShapeId(0, 0), 0, box));
+		geometry_.AddShape(std::make_unique<BasicShape>(GlobalShapeId(0, 0), 0, box));
 	}
 }
 

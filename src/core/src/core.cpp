@@ -2,12 +2,12 @@
 
 #include <iostream>
 
-#include "../../readers/src/solver3d/solver3d_reader.h"
+#include "../../readers/src/solver2d/solver2d_reader.h"
 
 void Core::LoadGeometry(std::string trm_file_path_mv,
                         std::string t2d_file_path_mv) {
 	// TODO make proper interface class usage
-	Readers::Solver3d::Solver3dReader reader(std::move(trm_file_path_mv),
+	Readers::Solver2d::Solver2dReader reader(std::move(trm_file_path_mv),
 	                                         std::move(t2d_file_path_mv));
 	FileRepresentation new_representation;
 	// TODO: If we create new file representation here,
