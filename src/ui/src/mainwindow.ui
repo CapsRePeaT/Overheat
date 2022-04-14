@@ -20,23 +20,24 @@
      <x>0</x>
      <y>0</y>
      <width>800</width>
-     <height>20</height>
+     <height>22</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuMenu">
     <property name="title">
      <string>Menu</string>
     </property>
-    <addaction name="load_file_btn"/>
+    <addaction name="load_file_3d_btn"/>
+    <addaction name="load_file_2d_btn"/>
     <addaction name="separator"/>
     <addaction name="actionRun_Computation"/>
    </widget>
    <addaction name="menuMenu"/>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
-  <action name="load_file_btn">
+  <action name="load_file_3d_btn">
    <property name="text">
-    <string>Load...</string>
+    <string>Load 3D...</string>
    </property>
   </action>
   <action name="actionRun_Computation">
@@ -45,6 +46,11 @@
    </property>
    <property name="text">
     <string>Run Computation</string>
+   </property>
+  </action>
+  <action name="load_file_2d_btn">
+   <property name="text">
+    <string>Load 2D...</string>
    </property>
   </action>
  </widget>

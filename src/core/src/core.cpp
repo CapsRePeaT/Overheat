@@ -1,42 +1,41 @@
 #include "core.h"
+
 #include <iostream>
 
-// TODO delete after proper reader implementation (or leave for testing, TBD)
-// TODO 2 add proper logging
-class DummyReader {
- public:
-	bool LoadGeometry(const std::string& filename,
-	                  GeomStorage<BasicShape>& geom_storage) {
-		std::cout << "file to load shapes from:" << filename << std::endl;
-		geom_storage.AddShape(std::make_shared<BasicShape>(
-				42, Box3D({{0.0f, 10.0f}, {0.0f, 10.0f}, {-0.25f, 0.25f}})));
-		geom_storage.AddShape(std::make_shared<BasicShape>(
-				43, Box3D({{-15.0f, -8.0f}, {-9.0f, 1.0f}, {0.0f, 0.2f}})));
-		geom_storage.AddShape(std::make_shared<BasicShape>(
-				44, Box3D({{-3.0f, 8.0f}, {-15.0f, -7.0f}, {0.0f, 0.2f}})));
-		return true;
-	}
-	// Сan we use std::ostream instead?
-	bool LoadHeatmap(const std::string& filename,
-	                 HeatmapStorage& heatmap_storage) {
-		std::cout << "heatmap loading..." << std::endl;
-		return true;
-	}
-	bool LoadMetadata(const std::string& filename,
-	                  MetadataStorage& metadata_storage) {
-		std::cout << "metadata loading..." << std::endl;
-		return true;
-	}
-};
+#include "../../readers/src/solver3d/solver3d_reader.h"
+#include "../../readers/src/solver2d/solver2d_reader.h"
 
-
-const Core::Shapes& Core::GetShapes(const Box3D& area) const {
-  return geom_storage_.get_all_shapes();
-}
-
-void Core::LoadGeometry(const std::string& file_name) {
-  // TODO make proper interface class usage
-  DummyReader reader;
-	geom_storage_.Clear();
-  reader.LoadGeometry(file_name, geom_storage_);
+void Core::LoadGeometry(std::string trm_file_path_mv,
+                        std::string t2d_file_path_mv, 
+	                      const GeometryType type) {
+	// TODO make proper interface class usage
+	FileRepresentation new_representation;
+	auto FillRepresentation = [&new_representation](auto& reader) {
+		new_representation.geom_storage() = reader.geometry();
+		new_representation.heatmaps()     = reader.heatmaps();
+	};
+	switch (type) {
+		case GeometryType::D3: {
+		  Readers::Solver3d::Solver3dReader reader_3d(std::move(trm_file_path_mv),
+	                                                std::move(t2d_file_path_mv));
+			FillRepresentation(reader_3d);
+			break;
+		}
+		case GeometryType::D2: {
+			Readers::Solver2d::Solver2dReader reader_2d(std::move(trm_file_path_mv),
+	                                                std::move(t2d_file_path_mv));
+			FillRepresentation(reader_2d);
+			break;
+		}
+		default:
+			assert(false && "undefined geom type");
+	}
+	
+	// TODO: If we create new file representation here,
+	// how can reader set its id to shapes?
+	// TODO: BTW, we assign objects to getters here.
+	//  1. We need setter for this operation
+	//  2. Copy of 2 huge objects. Should be using pointers/references 
+	//     or anything else to avoid it
+	representations_.emplace_back(std::move(new_representation));
 }

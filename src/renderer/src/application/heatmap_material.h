@@ -3,7 +3,7 @@
 #include <glm/glm.hpp>
 #include <memory>
 
-#include "i_renderer.h"
+#include "i_scene_viewport.h"
 #include "renderer/shaderprogram.h"
 
 class HeatmapMaterial {
@@ -18,7 +18,7 @@ class HeatmapMaterial {
 		color_range_[1] = max;
 	}
 	void SetShader(std::shared_ptr<ShaderProgram> shader) {
-		// Taking by-value and std::move to shader_ for explicity fo
+		// Taking by-value and std::move to shader_ for explicity for
 		// client code, that there will be ref count incrementing and to allow for
 		// std::move for avoiding that
 		shader_ = std::move(shader);

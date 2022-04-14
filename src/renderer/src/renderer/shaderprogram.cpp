@@ -8,7 +8,7 @@
 #include <fstream>
 #include <sstream>
 
-#include "platform/opengl/constants.h"
+#include "constants.h"
 
 uint32_t ShaderProgram::using_id_;
 bool CreateShader(const ShaderProgram::Path& source, GLenum shader_type,
@@ -50,7 +50,7 @@ template <GLenum ptype>
 	static_assert(ptype == GL_LINK_STATUS || ptype == GL_COMPILE_STATUS,
 	              "Call for GetCompileLinkSuccess is permitted with only  with"
 	              "GL_LINK_STATUS or GL_COMPILE_STATUS");
-	int32_t success;
+	int32_t success = 0;
 	if constexpr (ptype == GL_LINK_STATUS)
 		glGetProgramiv(id, ptype, &success);
 	else if constexpr (ptype == GL_COMPILE_STATUS)
@@ -114,7 +114,7 @@ bool CreateShader(const ShaderProgram::Path& file_path,
 	std::ifstream file_stream;
 	file_stream.open(file_path, std::ios::in | std::ios::binary);
 	if (!file_stream.is_open()) {
-		spdlog::error("SHADER: Failed to open file: {}", file_path);
+		spdlog::error("SHADER: Failed to open file: {}", file_path.string());
 		return false;
 	}
 	std::stringstream buff;
@@ -127,7 +127,7 @@ bool CreateShader(const ShaderProgram::Path& file_path,
 	               /*length=*/nullptr);
 	glCompileShader(shader_id);
 	bool success = CheckSuccessAndLogError<GL_COMPILE_STATUS>(
-			shader_id, "SHADER: Compile time error in {}", file_path);
+			shader_id, "SHADER: Compile time error in {}", file_path.string());
 	if (!success)
 		glDeleteShader(shader_id);
 	return success;

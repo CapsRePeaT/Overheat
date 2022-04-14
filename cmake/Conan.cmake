@@ -1,21 +1,22 @@
 option(USE_CONAN "Install dependencies with conan" ON)
 macro(config_conan)
-# List of packages to install
+    # List of packages to install
     option(QT_FROM_CONAN "Install Qt as dependency from conan" ON)
     set(CONAN_DEPS
-#        boost/1.77.0
+        # boost/1.77.0
         glad/0.1.34
         glm/0.9.9.8
         stb/20200203
         spdlog/1.9.2
+        magic_enum/0.7.3
     )
-    if (QT_FROM_CONAN)
+    if(QT_FROM_CONAN)
         list(APPEND CONAN_DEPS
             qt/6.2.2
         )
     endif()
     if(UNIX)
-        list(APPEND CONAN_DEPS 
+        list(APPEND CONAN_DEPS
             expat/2.4.2
         )
     endif()
@@ -25,10 +26,10 @@ macro(config_conan)
         glad:gl_version=4.4
         glad:gl_profile=core
     )
-    if (QT_FROM_CONAN)
+    if(QT_FROM_CONAN)
         list(APPEND CONAN_OPTIONS
             qt:shared=True
-    )
+        )
     endif()
 
     # Path to place conan.cmake file
@@ -52,13 +53,13 @@ macro(run_conan)
             )
         endif()  # NOT EXISTS ${CONAN_CMAKE_PATH}
         include(${CONAN_CMAKE_PATH})
-        
+
         # Set import variables
         if(WIN32)
             STRING(CONCAT IMPORT_DLL_FILES "bin, *.dll -> " ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})
             STRING(CONCAT IMPORT_RES_DLL_FILES "res/archdatadir/plugins, * -> " ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})
         endif()  # WIN32
-        
+
         # Setup configuration
         conan_cmake_configure(
                 REQUIRES ${CONAN_DEPS}
@@ -67,7 +68,7 @@ macro(run_conan)
                 IMPORTS ${IMPORT_DLL_FILES}
                 IMPORTS ${IMPORT_RES_DLL_FILES}
         )
-        include(${CONAN_INSTALL_DIR}/conan_paths.cmake)
+
         # Install libraries from conan with considering of build type
         get_property(isMultiConfig GLOBAL PROPERTY GENERATOR_IS_MULTI_CONFIG)
         if(isMultiConfig)
@@ -91,5 +92,8 @@ macro(run_conan)
                 INSTALL_FOLDER ${CONAN_INSTALL_DIR}
             )
         endif()  # isMultiConfig
+
+        include(${CONAN_INSTALL_DIR}/conan_paths.cmake)
+
     endif()  # USE_CONAN
 endmacro()  # run_conan
