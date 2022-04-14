@@ -23,6 +23,7 @@ jobs:
       uses: turtlebrowser/get-conan@v1.0
 
     - name: Create Build Environment
+      shell: bash
       run: cmake -E make_directory ${{env.builddir}}
 
     - name: Configure CMake
