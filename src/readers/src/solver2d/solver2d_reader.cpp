@@ -23,7 +23,7 @@ Solver2d_TRM read_geometry(std::string& content) {
 	return trm;
 }
 
-Solver2d_T2D read_heatmap(std::string& content) {
+Solver2d_T2D read_heatmap(const std::string& content) {
 	Solver2d_T2D t2d;
 	std::stringstream ss{content};
 	ss >> t2d;

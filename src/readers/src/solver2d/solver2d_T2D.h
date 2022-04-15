@@ -20,16 +20,13 @@ struct Net {
 
 namespace {
 
-enum Index{
-	X = 0,
-	Y = 1
-};
+enum Index { X = 0, Y = 1 };
 
-std::vector<float> get_steps(const std::vector<Net>& net, Index index) {
+std::vector<float> get_steps(const std::vector<Net>& net, const Index index) {
 	std::vector<float> steps{};
 	std::transform(net.begin(), net.end(), std::back_inserter(steps),
-	               [index](auto node) {
-									 auto coords = node.box.coordinates();
+	               [index](const auto node) {
+									 const auto coords = node.box.coordinates();
 									 return coords[index].first - coords[index].second;
 								 });
 	return steps;
@@ -62,7 +59,6 @@ class Solver2d_T2D {
 	}
 
  private:
-	//имя программы
 	std::string program_name_{};
 
 	// MO,NO - количество узлов по x и y, соответственно.
