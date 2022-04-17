@@ -37,8 +37,7 @@ void Solver2dDataProvider::load_geometry(const Solver2d_TRM& data) {
 		Box3D box{{{coordinates.x1_, coordinates.x2_},
 		           {coordinates.y1_, coordinates.y2_},
 		           {thickness_2d, thickness_2d}}};
-		geometry_.AddShape(
-				std::make_unique<BasicShape>(GlobalShapeId(0, 0), 0, box));
+		geometry_.AddShape(std::make_unique<BasicShape>(GlobalShapeId(0, 0), 0, box));
 	}
 }
 
