@@ -2,9 +2,9 @@
 
 #include "../src/solver2d/solver2d_reader.h"
 
-
 namespace {
-std::string sample = " OPERATIONAL AMPLIFIER\n"
+std::string sample =
+		" OPERATIONAL AMPLIFIER\n"
 		" &CP LAYER2=3 M=6 N=6 NBB=1  /\n"
 		"    1.    1.\n"
 		" 300. 0. 0.\n"
@@ -28,7 +28,18 @@ std::string sample = " OPERATIONAL AMPLIFIER\n"
 
 }
 
+TEST(Solver2d, read_geom_and_heatmap) {
+	fs::path trm = fs::current_path().parent_path().parent_path() / "src" /
+	               "readers" / "tests" / "en9.trm";
+	fs::path t2d = fs::current_path().parent_path().parent_path() / "src" /
+	               "readers" / "tests" / "en9.T2D";
+	auto trm_ex = exists(trm);
+	auto t2d_ex = exists(t2d);
+	Readers::Solver2d::Solver2dReader(trm, t2d);
+	EXPECT_TRUE(true);
+}
+
 TEST(Solver2d, read_geometry) {
-  Readers::Solver2d::read_geometry(sample);
+	Readers::Solver2d::read_geometry(sample);
 	EXPECT_TRUE(true);
 }

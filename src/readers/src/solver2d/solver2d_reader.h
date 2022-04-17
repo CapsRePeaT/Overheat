@@ -3,6 +3,7 @@
 #include <filesystem>
 
 #include "../../../core/include/ireader.h"
+#include "solver2d_T2D.h"
 #include "solver2d_TRM.h"
 
 namespace fs = std::filesystem;
@@ -26,6 +27,7 @@ class Solver2dReader : public IReader {
 
  private:
 	Solver2d_TRM load_geometry();
+	Solver2d_T2D load_heatmap();
 
 	fs::path trm_file_;
 	fs::path t2d_file_;

@@ -1,7 +1,5 @@
 #include "solver2d_data_provider.h"
 
-#include "solver2d_TRM.h"
-
 namespace {
 
 void build_layers_shapes(const float width, const float length,
@@ -21,8 +19,10 @@ void build_layers_shapes(const float width, const float length,
 }  // namespace
 
 namespace Readers::Solver2d {
-Solver2dDataProvider::Solver2dDataProvider(const Solver2d_TRM& geom) {
+Solver2dDataProvider::Solver2dDataProvider(const Solver2d_TRM& geom,
+                                           const Solver2d_T2D& heat) {
 	load_geometry(geom);
+	load_heatmap(heat);
 }
 
 void Solver2dDataProvider::load_geometry(const Solver2d_TRM& data) {
@@ -41,4 +41,7 @@ void Solver2dDataProvider::load_geometry(const Solver2d_TRM& data) {
 	}
 }
 
+void Solver2dDataProvider::load_heatmap(const Solver2d_T2D& heat) {
+	heatmap_ = HeatmapStorage(heat.net_x(), heat.net_y(), heat.temperatures());
+}
 }  // namespace Readers::Solver2d
