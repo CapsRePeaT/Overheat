@@ -7,6 +7,9 @@
 #include "databases.h"
 #include "shapes.h"
 
+using NameAndId = std::pair<std::string, GlobalId>;
+using NameAndIds = std::vector<NameAndId>;
+
 class Core {
  public:
 	using Shapes = FileRepresentation::Shapes;
@@ -24,9 +27,14 @@ class Core {
 		assert(!representations_.empty() && "any representations available");
 		return representations_[0];
 	}
-	[[nodiscard]] MetadataPack GetShapeMetadata(const GlobalShapeId id) const {
+	[[nodiscard]] MetadataPack GetShapeMetadata(const GlobalId id) const {
 		return GetRepresentation(id.representation_id()).GetShapeMetadata(id.id());
 	}
+	
+	/// For filling side widgets
+	NameAndIds GetRepresentationsData() const;
+	NameAndIds GetLayersData(GlobalId representation_id) const;
+	NameAndIds GetShapesData(GlobalId layer_id) const;
 
  private:
 	Core() = default;

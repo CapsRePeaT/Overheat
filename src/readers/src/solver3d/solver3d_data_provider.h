@@ -14,7 +14,7 @@ class Solver3dDataProvider : public IDataProvider {
 
 	GeomStorage<BasicShape> geometry() override { return geometry_; };
 	HeatmapStorage heatmaps() override { return heatmap_; }
-	MetadataStorage metadata() override { return metadata_; };
+	DefaultMetadataStorage metadata() override { return metadata_; };
 
  private:
 	void load_geometry(const Solver3d_TRM& data);
@@ -23,6 +23,6 @@ class Solver3dDataProvider : public IDataProvider {
 
 	GeomStorage<BasicShape> geometry_{};
 	HeatmapStorage heatmap_{};
-	MetadataStorage metadata_{};
+	DefaultMetadataStorage metadata_{};
 };
 }  // namespace Readers::Solver3d

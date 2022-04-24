@@ -68,7 +68,8 @@ void GLSceneViewport::DebugInit(const int /*w*/, const int /*h*/) {
 	data_->axes->ApplyScale(4);
 	const Core::Shapes shapes = {
 			std::make_shared<BasicShape>(
-					GlobalShapeId(0, 0), 0, Box3D({{0.0f, 1.0f}, {0.0f, 2.0f}, {0.0f, 3.0f}}
+			GlobalId(InstanceType::Shape, 0, 0), 0,
+			Box3D({{0.0f, 1.0f}, {0.0f, 2.0f}, {0.0f, 3.0f}}
              ))
   };
 	scene_->AddShapes(shapes);
