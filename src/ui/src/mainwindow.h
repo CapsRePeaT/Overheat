@@ -30,9 +30,6 @@ class MainWindow final : public QMainWindow {
 	void OnLoadFile2DBtnPressed();
 	void OnShapeSelected(const GlobalShapeIds& shape_ids);
 
-	// private slots:
-	//  void OnActionAddWindowTriggered();
-
  private:
 	void GetFilesAndLoad(GeometryType type);
 	Core& core() { return Core::instance(); }
