@@ -47,4 +47,5 @@ void Solver2dDataProvider::load_heatmap(const Solver2d_T2D& heat) {
 	heatmap_ = HeatmapStorage(heat.net_x(), heat.net_y(), heat.temperatures(),
 	                          heat.design_borders());
 }
+
 }  // namespace Readers::Solver2d

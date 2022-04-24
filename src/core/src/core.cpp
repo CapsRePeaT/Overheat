@@ -8,8 +8,8 @@
 NameAndIds Core::GetRepresentationsData() const { 
 	NameAndIds result; 
 	for (const auto& representation : representations_)
-		result.push_back({std::move(representation.GetName(representation.id())),
-		                  representation.id()});
+		result.emplace_back(std::move(representation.GetName(representation.id())),
+		                    representation.id());
 	return result;
 
 }
@@ -20,7 +20,7 @@ NameAndIds Core::GetLayersData(GlobalId representation_id) const {
 			GetRepresentation(representation_id.representation_id());
 	NameAndIds result;
 	for (const auto& id : representation.GetAllLayerIds())
-		result.push_back({representation.GetName(id), id});
+		result.emplace_back(std::move(representation.GetName(id)), id);
 	return result;
 }
 
@@ -29,7 +29,7 @@ NameAndIds Core::GetShapesData(GlobalId layer_id) const {
 	const auto& representation = GetRepresentation(layer_id.representation_id());
 	NameAndIds result;
 	for (const auto& id : representation.GetAllShapeIdsOfLayer(layer_id))
-		result.push_back({representation.GetName(id), id});
+		result.emplace_back(std::move(representation.GetName(id)), id);
 	return result;
 }
 

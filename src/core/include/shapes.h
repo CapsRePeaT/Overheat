@@ -9,9 +9,9 @@
 
 enum class HilightSetup {
 	none = 0,
-	basic,
-	stack_hilight,
-	main_hilight
+	basic, // just black thin line
+	stack_hilight, // when selected in side widget or clicked on stack
+	main_hilight // for this shape we show metadata 
 };
 
 class VisualisationOptions {

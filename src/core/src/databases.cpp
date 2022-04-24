@@ -1,5 +1,6 @@
 #include "databases.h"
 
+#include <algorithm>
 #include <cassert>
 #include <utility>
 
@@ -33,10 +34,10 @@ GobalIds FileRepresentation::GetAllShapeIdsOfLayer(GlobalId layer_id) const {
 HeatmapStorage::HeatmapStorage(std::vector<float> x_steps_mv,
                                std::vector<float> y_steps_mv,
                                const std::vector<float>& temperature,
-                               Box3D design_borders)
+                               Box3D design_borders_mv)
 		: x_steps_(std::move(x_steps_mv)),
 			y_steps_(std::move(y_steps_mv)), 
-		  design_borders_(std::move(design_borders)) {
+		  representation_borders_(std::move(design_borders_mv)) {
 	const size_t heatmap_resolution = x_steps_.size() * y_steps_.size();
 	
 	layers_count_ = temperature.size() / heatmap_resolution;
@@ -49,4 +50,9 @@ HeatmapStorage::HeatmapStorage(std::vector<float> x_steps_mv,
 				heatmap_resolution * ++i);  // NOLINT(bugprone-narrowing-conversions)
 		heatmaps_.emplace_back(std::vector<float>(first, last));
 	}
+}
+
+float HeatmapStorage::MinStep() const {
+	return std::min(*std::min_element(x_steps_.begin(), x_steps_.end()),
+	                *std::min_element(y_steps_.begin(), y_steps_.end()));
 }

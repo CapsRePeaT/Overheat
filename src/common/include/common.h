@@ -48,8 +48,7 @@ class GlobalId {
 	[[nodiscard]] constexpr RepresentationId representation_id() const {
 		return representation_id_;
 	}
-	[[nodiscard]] constexpr InstanceType type()
-			const {
+	[[nodiscard]] constexpr InstanceType type() const {
 		return type_;
 	}
  private:
