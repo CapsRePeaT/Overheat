@@ -6,7 +6,6 @@
 
 #include "../common.h"
 
-
 struct BodySize {
 	float x{}, y{}, z{};  //размеры корпуса по осям x, y, z:
 
@@ -80,9 +79,8 @@ struct SpheresGroup {
 	std::vector<Spheres> spheres_groups_{};
 };
 
-// class with heatmap and data about layers
-class Solver3d_T2D {
- public:
+// struct with heatmap and data about layers
+struct Solver3d_T2D {
 	[[nodiscard]] Box3D design_borders() const {
 		return {{{0, body_size_.x}, {0, body_size_.y}, {0, body_size_.z}}};
 	}
@@ -96,6 +94,7 @@ class Solver3d_T2D {
 	[[nodiscard]] const std::vector<float>& temperatures() const {
 		return temperature_.data();
 	}
+
 	friend std::istream& operator>>(std::istream& istream, Solver3d_T2D& t2d) {
 		istream >> t2d.program_name_;
 		istream >> t2d.body_size_;
@@ -133,7 +132,6 @@ class Solver3d_T2D {
 		return istream;
 	}
 
- private:
 	//имя программы
 	std::string program_name_{};
 	//размер бокса
@@ -141,11 +139,11 @@ class Solver3d_T2D {
 	size_t IST_{};  //– общее число слоев в корпусе,
 	size_t IH_{};   // – число однородных слоев,
 	size_t ID_{};   // – число слоев кристаллов ИС,
-	size_t IB_{};   // – число слоев шариковых выводов,
-	size_t IV_{};   // – число слоев межсоединений
-	size_t IP_{};   // – число боксов
-	size_t NH_{};   // – число узлов сетки по оси x,
-	size_t MH_{};   // – число узлов сетки по оси y
+	size_t IB_{};  // – число слоев шариковых выводов,
+	size_t IV_{};  // – число слоев межсоединений
+	size_t IP_{};  // – число боксов
+	size_t NH_{};  // – число узлов сетки по оси x,
+	size_t MH_{};  // – число узлов сетки по оси y
 	std::string raw_layers_{};  // string with char representation of layers
 	size_t num_crystals_in_crystal_layer_{};  //количество кристаллов в слое
 	                                          //кристаллов,

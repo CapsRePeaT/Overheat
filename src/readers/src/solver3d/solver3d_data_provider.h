@@ -19,7 +19,7 @@ class Solver3dDataProvider : public IDataProvider {
  private:
 	void load_geometry(const Solver3d_TRM& data);
 	void load_heatmap(const Solver3d_T2D& data);
-	void load_metadata(){};
+	void load_metadata(const Solver3d_TRM& trm, const Solver3d_T2D& t2d);
 
 	GeomStorage<BasicShape> geometry_{};
 	HeatmapStorage heatmap_{};

@@ -14,7 +14,7 @@ Solver3dDataProvider::Solver3dDataProvider(const Solver3d_TRM& geom,
                                            const Solver3d_T2D& heat) {
 	load_geometry(geom);
 	load_heatmap(heat);
-	load_metadata();
+	load_metadata(geom,heat);
 }
 
 void Solver3dDataProvider::load_geometry(const Solver3d_TRM& data) {
@@ -41,6 +41,11 @@ void Solver3dDataProvider::load_geometry(const Solver3d_TRM& data) {
 void Solver3dDataProvider::load_heatmap(const Solver3d_T2D& data) {
 	heatmap_ = HeatmapStorage(data.net_x(), data.net_y(), 
 	                          data.temperatures(), data.design_borders());
+}
+void Solver3dDataProvider::load_metadata(const Solver3d_TRM& trm,
+                                         const Solver3d_T2D& t2d) {
+	// 1000 cause we currently don't know id of global data
+	metadata_.AddData(1000,"Env temp", t2d.env_temp_);
 }
 
 }  // namespace Readers::Solver3d
