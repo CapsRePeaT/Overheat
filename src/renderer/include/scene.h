@@ -12,8 +12,8 @@ class SceneShape;
 class Scene {
  public:
 	Scene();
-	Scene(Scene&& other) noexcept;
-	Scene& operator=(Scene&& other) noexcept;
+	Scene(Scene&& other) noexcept = default;
+	Scene& operator=(Scene&& other) noexcept = default;
 	~Scene();
 	Scene(const Scene&) = delete;
 	Scene& operator=(Scene&) = delete;
@@ -31,7 +31,7 @@ class Scene {
 	void AddShape(const std::shared_ptr<BasicShape>& shape);
 
 	// Idk why, but unique_ptr is not working
-	SceneImpl* impl_;
+	std::unique_ptr<SceneImpl> impl_;
 };
 
 }  // namespace renderer
