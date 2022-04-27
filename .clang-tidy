@@ -25,6 +25,7 @@ Checks: '-*,
     -cppcoreguidelines-pro-type-union-access,
     -cppcoreguidelines-owning-memory,
     -cppcoreguidelines-narrowing-conversions,
+    -cppcoreguidelines-pro-bounds-pointer-arithmetic,
     
     -*-braces-around-statements,
 		-*-non-private-member-variables-in-classes,
