@@ -18,7 +18,7 @@ class GeomStorage {
 	void Clear() { shapes_.clear(); }
 
  private:
-	// we assume that shape id equual to plase of shape in the array.
+	// we assume that shape id equal to place of shape in the array.
 	Shapes shapes_;
 };
 
@@ -38,21 +38,22 @@ class Layer {
 // TODO: Fix it in future to make handy
 class HeatmapStorage {
  public:
-	using Heatmaps   = std::vector<Heatmap>;
 	HeatmapStorage() = default;
 	HeatmapStorage(std::vector<float> x_steps_mv, std::vector<float> y_steps_mv,
 	               const std::vector<float>& temperature, Box3D design_borders);
 	[[nodiscard]] Box3D representation_borders() const {
 		return representation_borders_;
 	}
+	[[nodiscard]] float x_size() const { return representation_borders_.coordinates()[0].second; }
+	[[nodiscard]] float y_size() const { return representation_borders_.coordinates()[1].second; }
 	[[nodiscard]] float MinStep() const;
 	[[nodiscard]] const Heatmaps& heatmaps() const { return heatmaps_; }
-	[[nodiscard]] const std::vector<float>& x_steps() const { return x_steps_; }
-	[[nodiscard]] const std::vector<float>& y_steps() const { return y_steps_; }
+	[[nodiscard]] const Floats& x_steps() const { return x_steps_; }
+	[[nodiscard]] const Floats& y_steps() const { return y_steps_; }
  private:
 	size_t layers_count_ = 0;  // IST in T2D file
-	std::vector<float> x_steps_;
-	std::vector<float> y_steps_;
+	Floats x_steps_;
+	Floats y_steps_;
 	Box3D representation_borders_;
 	// we duplicate borders here to make manipulation 
 	// with heatmap handier, borders needed for proper heatmap interpolation
@@ -72,8 +73,8 @@ class FileRepresentation {
 	FileRepresentation& operator=(const FileRepresentation&) = delete;
 	FileRepresentation& operator=(FileRepresentation&&) = delete; // id_ is const
 	// for side widgets
-	GobalIds GetAllLayerIds() const;
-	GobalIds GetAllShapeIdsOfLayer(GlobalId layer_id) const;
+	[[nodiscard]] GobalIds GetAllLayerIds() const;
+	[[nodiscard]] GobalIds GetAllShapeIdsOfLayer(GlobalId layer_id) const;
 
 	// FIXME implement geom search, now we return all shapes
 	[[nodiscard]] const Shapes& GetShapes(const Box3D& area = Box3D()) const;

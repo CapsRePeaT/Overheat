@@ -15,6 +15,8 @@ using LayerId          = size_t;
 using HeatmapId        = size_t;
 using RepresentationId = size_t;
 
+using Floats = std::vector<float>;
+
 enum class DrawMode { 
 	Gradient = 0, 
 	Stratified 
