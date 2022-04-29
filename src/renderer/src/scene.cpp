@@ -1,7 +1,6 @@
 #include "scene.h"
 
 #include <algorithm>
-#include <iterator>
 #include <vector>
 
 #include "application/scene_shape.h"
@@ -13,7 +12,7 @@ namespace renderer {
 struct Scene::SceneImpl {
 	std::vector<std::shared_ptr<SceneShape>> scene_shapes;
 	std::unique_ptr<OrthographicCamera> camera;
-	std::vector<Floats> heatmaps;
+	std::vector<Heatmap> heatmaps;
 };
 
 Scene::Scene() : impl_(std::make_unique<SceneImpl>()) {}
@@ -33,8 +32,11 @@ void Scene::AddHeatmaps(const HeatmapStorage& heatmaps_storage) {
 	impl_->heatmaps.reserve(heatmaps.size());
 	std::ranges::transform(
 			heatmaps, std::back_inserter(impl_->heatmaps),
-			// Possible copying of vectors 
-			[&normalizer](const auto& h) { return normalizer.Normalize(h); });
+			// Possible copying of vectors
+			[&normalizer](const auto& h) {
+				auto denormalized_heatmap = normalizer.BilinearInterpolate(h);
+				return normalizer.Normalize(std::move(denormalized_heatmap));
+			});
 }
 
 const std::vector<std::shared_ptr<SceneShape>>& Scene::shapes() const {
