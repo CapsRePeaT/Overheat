@@ -26,7 +26,7 @@ static_assert(sizeof(glm::vec3) == sizeof(float) * 3 &&
 static_assert(sizeof(glm::vec2) == sizeof(float) * 2 &&
               "All data in vertex struct must be contigious");
 
-SceneShape::SceneShape(const BasicShape& shape) : id_(shape.id().id()) {
+SceneShape::SceneShape(const BasicShape& shape) : core_shape_(shape) {
 	// (minX, maxX), (minY, maxY), (minZ, maxZ)
 	const auto bounds = shape.bbox().coordinates();
 
