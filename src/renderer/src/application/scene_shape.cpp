@@ -72,7 +72,7 @@ SceneShape::SceneShape(const BasicShape& shape) : core_shape_(shape) {
 	auto&& layout = std::make_unique<VertexBufferLayout>();
 	layout->Push<float>(3);
 	layout->Push<float>(2);
-	auto& factory = RendererAPI::instance().factory();
+	auto& factory = RendererAPI::factory();
 	auto&& vbo = factory.NewVertexBuffer(vertices, std::move(layout));
 	auto&& ibo = factory.NewIndexBuffer(raw_ibo);
 	vao_ = factory.NewVertexArray(std::move(vbo), std::move(ibo));
