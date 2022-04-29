@@ -1,7 +1,9 @@
 #pragma once
 
 #include <memory>
+#include <optional>
 
+#include "application/heatmap_material.h"
 #include "renderer/debug/debug_heatmap_material.h"
 #include "camera_controller.h"
 #include "core.h"
@@ -33,7 +35,7 @@ class GLSceneViewport final : public ISceneViewport {
 	void OpenGlInit(int w, int h);
 	void ApplicationInit(int w, int h);
 	void DebugInit(int w, int h);
-	std::unique_ptr<DebugHeatmapMaterial> heatmap_material_;
+	std::optional<std::vector<HeatmapMaterial>> heatmap_materials_;
 	std::unique_ptr<SphericalCameraController> camera_controller_;
 	std::shared_ptr<Scene> scene_;
 

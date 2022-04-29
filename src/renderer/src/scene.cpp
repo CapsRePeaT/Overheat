@@ -12,7 +12,7 @@ namespace renderer {
 struct Scene::SceneImpl {
 	std::vector<std::shared_ptr<SceneShape>> scene_shapes;
 	std::unique_ptr<OrthographicCamera> camera;
-	std::vector<Heatmap> heatmaps;
+	Heatmaps heatmaps;
 };
 
 Scene::Scene() : impl_(std::make_unique<SceneImpl>()) {}
@@ -41,6 +41,10 @@ void Scene::AddHeatmaps(const HeatmapStorage& heatmaps_storage) {
 
 const std::vector<std::shared_ptr<SceneShape>>& Scene::shapes() const {
 	return impl_->scene_shapes;
+}
+
+const Heatmaps& Scene::heatmaps() const {
+	return impl_->heatmaps;
 }
 
 void Scene::Clear() { impl_->scene_shapes.clear(); }
