@@ -1,4 +1,4 @@
-#version 430
+#version 440
 
 in vec2 frag_UVCoordinates;
 out vec4 out_Color;
@@ -12,7 +12,6 @@ float parabolicDome(float x, float y) {
 	float maxTemp = 400;
 	float a = 400;
 	return maxTemp - a * (sqr(x-0.5f) + sqr(y-0.5f));
-
 }
 
 float parabolicDome(vec2 xy) {
