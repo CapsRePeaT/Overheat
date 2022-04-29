@@ -1,7 +1,5 @@
 #include "heatmap.h"
 
-#include <bits/ranges_algo.h>
-
 Heatmap::Heatmap(Floats temperature_mv, const size_t x_resolution,
                  const size_t y_resolution,
                  const std::ranges::min_max_result<float>& temp_range)

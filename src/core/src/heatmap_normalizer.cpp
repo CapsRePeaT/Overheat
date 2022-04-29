@@ -1,7 +1,5 @@
 #include "heatmap_normalizer.h"
 
-#include <bits/ranges_algo.h>
-
 #include <algorithm>
 #include <cmath>
 #include <iterator>
