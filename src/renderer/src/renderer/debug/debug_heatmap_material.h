@@ -7,11 +7,11 @@
 #include "i_scene_viewport.h"
 #include "renderer/shaderprogram.h"
 
-namespace renderer {
+namespace renderer::debug {
 
-class HeatmapMaterial {
+class DebugHeatmapMaterial {
  public:
-	HeatmapMaterial();
+	DebugHeatmapMaterial();
 	void SetTemperatureRange(float min, float max) {
 		temperature_range_[0] = min;
 		temperature_range_[1] = max;
@@ -37,12 +37,12 @@ class HeatmapMaterial {
  private:
 	std::shared_ptr<ShaderProgram> shader_;
 	glm::vec2 temperature_range_ = {300.0f, 400.0f};
-	glm::mat2x3 color_range_ = {{0.0f, 0.0f, 1.0f}, {1.0f, 0.0f, 0.0f}};
+	glm::mat2x3 color_range_     = {{0.0f, 0.0f, 1.0f}, {1.0f, 0.0f, 0.0f}};
 	// TODO: move to templated base class
 	const char* temperature_range_shader_var_ = "u_TemperatureRange";
-	const char* color_range_shader_var_ = "u_ColorRange";
-	const char* view_proj_shader_var_ = "u_ViewProjection";
-	const char* transform_shader_var_ = "u_ModelTransform";
+	const char* color_range_shader_var_       = "u_ColorRange";
+	const char* view_proj_shader_var_         = "u_ViewProjection";
+	const char* transform_shader_var_         = "u_ModelTransform";
 };
 
-}  // namespace renderer
+}  // namespace renderer::debug

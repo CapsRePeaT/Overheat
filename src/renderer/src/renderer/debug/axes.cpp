@@ -7,8 +7,7 @@
 #include "renderer/scene_object.h"
 #include "renderer/vertexbufferlayout.h"
 
-namespace renderer {
-
+namespace renderer::debug {
 namespace {
 
 struct Vertex {
@@ -17,8 +16,6 @@ struct Vertex {
 };
 
 }  // namespace
-
-namespace debug {
 
 Axes::Axes() {
 	//
@@ -44,10 +41,9 @@ Axes::Axes() {
 	layout->Push<float>(3);
 	layout->Push<float>(3);
 	auto& factory = RendererAPI::instance().factory();
-	auto&& vbo = factory.NewVertexBuffer(vertices, std::move(layout));
-	auto&& ibo = factory.NewIndexBuffer(raw_ibo);
-	vao_ = factory.NewVertexArray(std::move(vbo), std::move(ibo));
+	auto&& vbo    = factory.NewVertexBuffer(vertices, std::move(layout));
+	auto&& ibo    = factory.NewIndexBuffer(raw_ibo);
+	vao_          = factory.NewVertexArray(std::move(vbo), std::move(ibo));
 }
 
-}  // namespace debug
-}  // namespace renderer
+}  // namespace renderer::debug

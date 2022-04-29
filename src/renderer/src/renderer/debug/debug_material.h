@@ -7,8 +7,7 @@
 #include "i_scene_viewport.h"
 #include "renderer/shaderprogram.h"
 
-namespace renderer {
-namespace debug {
+namespace renderer::debug {
 
 class DebugMaterial {
  public:
@@ -24,10 +23,9 @@ class DebugMaterial {
  private:
 	std::shared_ptr<ShaderProgram> shader_;
 	// TODO: move to templated base class
-	const char* alpha_shader_var = "u_Alpha";
+	const char* alpha_shader_var      = "u_Alpha";
 	const char* view_proj_shader_var_ = "u_ViewProjection";
 	const char* transform_shader_var_ = "u_ModelTransform";
 };
 
-}  // namespace debug
-}  // namespace renderer
+}  // namespace renderer::debug

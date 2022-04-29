@@ -12,6 +12,7 @@
 #include "log.h"
 #include "misc/formatters.h"
 #include "renderer/debug/axes.h"
+#include "renderer/debug/debug_heatmap_material.h"
 #include "renderer/debug/debug_material.h"
 #include "renderer/i_camera.h"
 #include "renderer/orthographic_camera.h"
@@ -61,7 +62,7 @@ void GLSceneViewport::ApplicationInit(const int w, const int h) {
 			aspect_ratio, consts::init::zoom, consts::init::near_far_bounds);
 	camera_controller_ = std::make_unique<SphericalCameraController>(
 			std::move(camera), 100.0f, glm::pi<float>());
-	heatmap_material_ = std::make_unique<HeatmapMaterial>();
+	heatmap_material_ = std::make_unique<DebugHeatmapMaterial>();
 }
 
 void GLSceneViewport::DebugInit(const int /*w*/, const int /*h*/) {
