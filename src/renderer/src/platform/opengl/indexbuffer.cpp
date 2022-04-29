@@ -4,8 +4,7 @@
 
 #include "constants.h"
 
-namespace renderer {
-namespace gl {
+namespace renderer::gl {
 
 IndexBuffer::IndexBuffer(const uint32_t* data, const size_t count)
 		: count_(count) {
@@ -27,10 +26,10 @@ IndexBuffer& IndexBuffer::operator=(IndexBuffer&& other) noexcept {
 	// Delete owned buffer
 	glDeleteBuffers(consts::buffer_count_one, &id_);
 	// Assign moving buffer data
-	id_ = other.id_;
+	id_    = other.id_;
 	count_ = other.count_;
 	// Invalidate moving buffer
-	other.id_ = 0;
+	other.id_    = 0;
 	other.count_ = 0;
 	return *this;
 }
@@ -39,5 +38,4 @@ void IndexBuffer::Bind() const { glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, id_); }
 
 void IndexBuffer::Unbind() const { glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0); }
 
-}  // namespace gl
-}  // namespace renderer
+}  // namespace renderer::gl

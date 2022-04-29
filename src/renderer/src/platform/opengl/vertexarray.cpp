@@ -5,8 +5,7 @@
 #include "constants.h"
 #include "renderer/vertexbuffer.h"
 
-namespace renderer {
-namespace gl {
+namespace renderer::gl {
 
 VertexArray::VertexArray(std::unique_ptr<VertexBuffer>&& vb,
                          std::unique_ptr<IndexBuffer>&& ib) {
@@ -63,5 +62,4 @@ void VertexArray::Bind() const { glBindVertexArray(id_); }
 
 void VertexArray::Unbind() const { glBindVertexArray(0); }
 
-}  // namespace gl
-}  // namespace renderer
+}  // namespace renderer::gl

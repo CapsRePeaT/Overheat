@@ -8,8 +8,7 @@
 #include "constants.h"
 #include "renderer/vertexbufferlayout.h"
 
-namespace renderer {
-namespace gl {
+namespace renderer::gl {
 
 namespace {
 
@@ -46,7 +45,7 @@ VertexBuffer& VertexBuffer::operator=(VertexBuffer&& other) noexcept {
 	// Delete owned buffer
 	glDeleteBuffers(consts::buffer_count_one, &id_);
 	// Assign moving buffer data
-	id_ = other.id_;
+	id_     = other.id_;
 	layout_ = std::move(other.layout_);
 	// Invalidate moving buffer
 	other.id_ = 0;
@@ -65,5 +64,4 @@ void VertexBuffer::SetData(const void* data, const size_t size,
 	layout_ = std::move(layout);
 }
 
-}  // namespace gl
-}  // namespace renderer
+}  // namespace renderer::gl

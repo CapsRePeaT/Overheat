@@ -4,8 +4,7 @@
 
 #include "renderer/vertexarray.h"
 
-namespace renderer {
-namespace gl {
+namespace renderer::gl {
 
 class VertexArray final : public renderer::VertexArray {
  public:
@@ -31,5 +30,4 @@ class VertexArray final : public renderer::VertexArray {
 	std::unique_ptr<renderer::IndexBuffer> ibo_;
 };
 
-}  // namespace gl
-}  // namespace renderer
+}  // namespace renderer::gl

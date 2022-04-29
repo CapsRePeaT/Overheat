@@ -7,7 +7,7 @@
 
 #include "renderer/renderer_api.h"
 
-namespace renderer {
+namespace renderer::gl {
 namespace {
 
 inline decltype(GL_TRIANGLES) PrimitiveTypeToGL(const PrimitiveType draw_as) {
@@ -56,8 +56,6 @@ void OpenGLMessageCallback(GLenum source, GLenum type, GLuint id,
 
 }  // namespace
 
-namespace gl {
-
 void RendererAPI::InitImpl() {
 #ifndef NDEBUG
 	spdlog::info("Setting debug opengl context..");
@@ -96,5 +94,4 @@ void RendererAPI::DrawIndexedImpl(const VertexArray& va, const IndexBuffer& ib,
 			nullptr);
 }
 
-}  // namespace gl
-}  // namespace renderer
+}  // namespace renderer::gl

@@ -4,8 +4,7 @@
 
 #include "renderer/vertexbuffer.h"
 
-namespace renderer {
-namespace gl {
+namespace renderer::gl {
 
 class VertexBuffer : public renderer::VertexBuffer {
  public:
@@ -36,5 +35,4 @@ class VertexBuffer : public renderer::VertexBuffer {
 	std::unique_ptr<VertexBufferLayout> layout_;
 };
 
-}  // namespace gl
-}  // namespace renderer
+}  // namespace renderer::gl

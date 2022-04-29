@@ -2,8 +2,7 @@
 
 #include "renderer/renderer_api.h"
 
-namespace renderer {
-namespace gl {
+namespace renderer::gl {
 
 class RendererAPI final : public renderer::RendererAPI {
  public:
@@ -16,5 +15,4 @@ class RendererAPI final : public renderer::RendererAPI {
 	void InitImpl() final;
 };
 
-}  // namespace gl
-}  // namespace renderer
+}  // namespace renderer::gl

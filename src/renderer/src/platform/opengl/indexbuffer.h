@@ -1,10 +1,10 @@
 #pragma once
 
 #include <cstddef>
+
 #include "renderer/indexbuffer.h"
 
-namespace renderer {
-namespace gl {
+namespace renderer::gl {
 
 class IndexBuffer final : public renderer::IndexBuffer {
  public:
@@ -15,7 +15,7 @@ class IndexBuffer final : public renderer::IndexBuffer {
 	IndexBuffer(IndexBuffer&& other) noexcept;
 	IndexBuffer& operator=(IndexBuffer&& other) noexcept;
 	~IndexBuffer() override;
-	IndexBuffer() = delete;
+	IndexBuffer()                   = delete;
 	IndexBuffer(const IndexBuffer&) = delete;
 	IndexBuffer& operator=(const IndexBuffer&) = delete;
 	void Bind() const final;
@@ -23,9 +23,8 @@ class IndexBuffer final : public renderer::IndexBuffer {
 	[[nodiscard]] uint32_t elements_count() const final { return count_; }
 
  private:
-	uint32_t id_ = 0;
+	uint32_t id_    = 0;
 	uint32_t count_ = 0;
 };
 
-}  // namespace gl
-}  // namespace renderer
+}  // namespace renderer::gl

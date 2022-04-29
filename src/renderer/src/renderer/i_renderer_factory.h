@@ -4,13 +4,14 @@
 #include <memory>
 
 #include "renderer/indexbuffer.h"
+#include "renderer/texture2d.h"
 #include "renderer/vertexarray.h"
 
 namespace renderer {
 
 class IRendererFactory {
  public:
-	virtual ~IRendererFactory() = default;
+	virtual ~IRendererFactory()                                      = default;
 	virtual std::unique_ptr<IndexBuffer> NewIndexBuffer(const uint32_t* data,
 	                                                    size_t size) = 0;
 	template <size_t size>
@@ -37,6 +38,11 @@ class IRendererFactory {
 			std::unique_ptr<VertexBufferLayout>&& layout) {
 		return NewVertexBuffer(data.data(), size * sizeof(T), std::move(layout));
 	}
+	virtual std::unique_ptr<Texture2D> NewTexture2D(
+			int width, int height, const void* data, int channels = 4,
+			FilterMode filter    = FilterMode::LINEAR,
+			WrapMode wrap_mode   = WrapMode::CLAMP_TO_EDGE,
+			bool generate_bitmap = false) = 0;
 };
 
 }  // namespace renderer
