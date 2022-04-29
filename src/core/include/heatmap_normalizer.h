@@ -9,7 +9,8 @@ class HeatmapNormalizer {
 	HeatmapNormalizer(float min_step, float x_size, float y_size,
 	                  size_t max_resolution, const Floats& x_steps,
 	                  const Floats& y_steps);
-	Floats Normalize(const Heatmap& heatmap);
+	Heatmap BilinearInterpolate(const Heatmap& heatmap);
+	Heatmap Normalize(Heatmap heatmap_mv);
 
  private:
 	const size_t resolution_;

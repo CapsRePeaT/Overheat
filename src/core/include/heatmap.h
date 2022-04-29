@@ -1,5 +1,6 @@
 #pragma once
 
+#include <algorithm>
 #include <limits>
 #include <span>
 #include <vector>
@@ -8,10 +9,14 @@
 
 class Heatmap {
  public:
-	explicit Heatmap(Floats temperature_mv, size_t x_resolution,
-	                 size_t y_resolution);
+	explicit Heatmap(
+			Floats temperature_mv, size_t x_resolution, size_t y_resolution,
+			const std::ranges::min_max_result<float>& temp_range = min_max_floats);
 	// TBD: <some_type> operator[](std::size_t idx); ?
 	[[nodiscard]] inline std::span<const float> row(size_t i) const {
+		return {temperatures_.begin() + i * x_resolution_, x_resolution_};
+	}
+	[[nodiscard]] inline std::span<float> row(size_t i) {
 		return {temperatures_.begin() + i * x_resolution_, x_resolution_};
 	}
 	[[nodiscard]] inline auto temperatures() const { return temperatures_; }
@@ -23,11 +28,14 @@ class Heatmap {
  private:
 	// for alexey purposes we want to use single mem array, so we implement 2d
 	// array access on out own
-	const Floats temperatures_;
+	Floats temperatures_;
 	const size_t x_resolution_;
 	const size_t y_resolution_;
 	float max_temp_ = std::numeric_limits<float>::min();
 	float min_temp_ = std::numeric_limits<float>::max();
+
+	constexpr static std::ranges::minmax_result<float> min_max_floats = {
+			std::numeric_limits<float>::min(), std::numeric_limits<float>::max()};
 };
 
 using Heatmaps = std::vector<Heatmap>;
