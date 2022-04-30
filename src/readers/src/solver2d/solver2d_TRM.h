@@ -34,10 +34,10 @@ struct PRT {
 enum class Position { Upper, Lower };
 struct LayerType {
 	Position position;
-	SerializableVec<float> zc_;
-	SerializableVec<float> vc_;
-	SerializableVec<float> cc_;
-	SerializableVec<float> rc_;
+	SerializableVec<float> zc_{};
+	SerializableVec<float> vc_{};
+	SerializableVec<float> cc_{};
+	SerializableVec<float> rc_{};
 
 	void set_size(const size_t size) {
 		zc_.set_size(size);
