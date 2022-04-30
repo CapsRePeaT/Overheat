@@ -12,7 +12,6 @@ add_custom_command(TARGET ${MODULE_NAME} POST_BUILD
         ${CMAKE_CURRENT_SOURCE_DIR}/tests ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/tests)
 
 add_executable(reader-test tests/solver3d_test.cpp tests/solver2d_test.cpp src/common.h)
-target_link_libraries(reader-test gtest_main ${MODULE_NAME})
 
 include(GoogleTest)
 gtest_discover_tests(reader-test)

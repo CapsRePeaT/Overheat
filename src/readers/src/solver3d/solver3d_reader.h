@@ -3,7 +3,7 @@
 #include <filesystem>
 #include <optional>
 
-#include "../../../core/include/ireader.h"
+#include "ireader.h"
 #include "solver3d_T2D.h"
 #include "solver3d_TRM.h"
 namespace fs = std::filesystem;
