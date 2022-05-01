@@ -5,7 +5,7 @@
 #include <tuple>
 #include <vector>
 
-#include "../../common/include/common.h"
+#include "common.h"
 
 // TODO: we need data description
 // followed structure should be like this:
