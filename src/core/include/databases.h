@@ -40,7 +40,7 @@ class HeatmapStorage {
  public:
 	HeatmapStorage() = default;
 	HeatmapStorage(std::vector<float> x_steps_mv, std::vector<float> y_steps_mv,
-	               const std::vector<float>& temperature, Box3D design_borders);
+	               const std::vector<float>& temperature, Box3D representation_borders);
 	[[nodiscard]] Box3D representation_borders() const {
 		return representation_borders_;
 	}

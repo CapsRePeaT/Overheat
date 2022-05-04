@@ -1,8 +1,12 @@
 #include "databases.h"
 
-#include <algorithm>
 #include <cassert>
+#include <numeric>
+#include <ranges>
 #include <utility>
+
+#include "heatmap.h"
+#include "log.h"
 
 const FileRepresentation::Shapes& FileRepresentation::GetShapes(
 		const Box3D& /*area*/) const {
@@ -33,17 +37,24 @@ GobalIds FileRepresentation::GetAllShapeIdsOfLayer(GlobalId layer_id) const {
 HeatmapStorage::HeatmapStorage(std::vector<float> x_steps_mv,
                                std::vector<float> y_steps_mv,
                                const std::vector<float>& temperature,
-                               Box3D design_borders_mv)
+                               Box3D representation_borders_mv)
 		: x_steps_(std::move(x_steps_mv)),
 			y_steps_(std::move(y_steps_mv)),
-			representation_borders_(std::move(design_borders_mv)) {
-	// Steps are distance between heatmap nodes. Hence, their count is
-	// dimension_node_count - 1. So, we add 1 to each steps count for each
-	// dimension to calculate real resolution
-	const size_t heatmap_resolution =
-			(x_steps_.size() + 1) * (y_steps_.size() + 1);
+			representation_borders_(std::move(representation_borders_mv)) {
+	const size_t heatmap_resolution = (x_steps_.size()) * (y_steps_.size());
 
+	LOG_DEBUG("Design borders: {} {}",
+	          representation_borders_.coordinates()[0].second,
+	          representation_borders_.coordinates()[1].second);
+	LOG_DEBUG("Sum of x_steps: {}",
+	          std::accumulate(x_steps_.begin(), x_steps_.end(), 0.0f));
+	LOG_DEBUG("Sum of y_steps: {}",
+	          std::accumulate(y_steps_.begin(), y_steps_.end(), 0.0f));
+
+	assert(temperature.size() % heatmap_resolution == 0 &&
+	       "Not interger layers_count");
 	layers_count_ = temperature.size() / heatmap_resolution;
+	LOG_DEBUG("Got {} layers", layers_count_);
 	for (size_t i = 0; i < layers_count_;) {
 		auto first = std::next(
 				temperature.cbegin(),
@@ -51,12 +62,12 @@ HeatmapStorage::HeatmapStorage(std::vector<float> x_steps_mv,
 		auto last = std::next(
 				temperature.cbegin(),
 				heatmap_resolution * ++i);  // NOLINT(bugprone-narrowing-conversions)
-		heatmaps_.emplace_back(std::vector<float>(first, last), x_steps_.size() + 1,
-		                       y_steps_.size() + 1);
+		heatmaps_.emplace(heatmaps_.begin(), std::vector<float>(first, last),
+		                  x_steps_.size(), y_steps_.size());
 	}
 }
 
 float HeatmapStorage::MinStep() const {
-	return std::min(*std::min_element(x_steps_.begin(), x_steps_.end()),
-	                *std::min_element(y_steps_.begin(), y_steps_.end()));
+	return std::min(*std::ranges::min_element(x_steps_),
+	                *std::ranges::min_element(y_steps_));
 }
