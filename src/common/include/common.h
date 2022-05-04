@@ -59,7 +59,7 @@ class GlobalId {
 	RepresentationId representation_id_ = UndefinedId;
 };
 
-using GobalIds = std::vector<GlobalId>;
+using GlobalIds = std::vector<GlobalId>;
 
 enum class GeometryType { 
 	D3 = 0, 

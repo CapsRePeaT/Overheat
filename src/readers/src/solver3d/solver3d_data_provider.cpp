@@ -39,8 +39,8 @@ void Solver3dDataProvider::load_geometry(const Solver3d_TRM& data) {
 }
 
 void Solver3dDataProvider::load_heatmap(const Solver3d_T2D& data) {
-	heatmap_ = HeatmapStorage(data.net_x(), data.net_y(), 
-	                          data.temperatures(), data.design_borders());
+	heatmap_ = HeatmapStorage(data.net_x(), data.net_y(), data.temperatures(),
+	                          data.env_temp(), data.design_borders());
 }
 
 }  // namespace Readers::Solver3d

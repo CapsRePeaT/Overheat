@@ -1,9 +1,8 @@
 #include "databases.h"
 
-#include <cassert>
+#include <cmath>
 #include <numeric>
 #include <ranges>
-#include <utility>
 
 #include "heatmap.h"
 #include "log.h"
@@ -19,15 +18,15 @@ MetadataPack FileRepresentation::GetShapeMetadata(const ShapeId /*id*/) const {
 	return result;
 }
 
-GobalIds FileRepresentation::GetAllLayerIds() const {
-	GobalIds result;
+GlobalIds FileRepresentation::GetAllLayerIds() const {
+	GlobalIds result;
 	for (const auto& layer : layers_) result.push_back(layer.id());
 	return result;
 }
 
-GobalIds FileRepresentation::GetAllShapeIdsOfLayer(GlobalId layer_id) const {
+GlobalIds FileRepresentation::GetAllShapeIdsOfLayer(GlobalId layer_id) const {
 	assert(layer_id.type() == InstanceType::Layer);
-	GobalIds result;
+	GlobalIds result;
 	for (const auto& shape : geom_storage_.shapes())
 		if (layer_id.id() == shape->layer_id())
 			result.push_back(shape->id());
@@ -37,8 +36,10 @@ GobalIds FileRepresentation::GetAllShapeIdsOfLayer(GlobalId layer_id) const {
 HeatmapStorage::HeatmapStorage(std::vector<float> x_steps_mv,
                                std::vector<float> y_steps_mv,
                                const std::vector<float>& temperature,
+															 const float environment_temperature,
                                Box3D representation_borders_mv)
-		: x_steps_(std::move(x_steps_mv)),
+		: environment_temperature_(environment_temperature),
+			x_steps_(std::move(x_steps_mv)),
 			y_steps_(std::move(y_steps_mv)),
 			representation_borders_(std::move(representation_borders_mv)) {
 	const size_t heatmap_resolution = (x_steps_.size()) * (y_steps_.size());
@@ -70,4 +71,23 @@ HeatmapStorage::HeatmapStorage(std::vector<float> x_steps_mv,
 float HeatmapStorage::MinStep() const {
 	return std::min(*std::ranges::min_element(x_steps_),
 	                *std::ranges::min_element(y_steps_));
+}
+
+float HeatmapStorage::max_temp() const {
+	if (std::isnan(max_temp_cache_))
+		SetMinMaxTempCaches();
+	return max_temp_cache_;
+}
+
+float HeatmapStorage::min_temp() const {
+	if (std::isnan(min_temp_cache_))
+		SetMinMaxTempCaches();
+	return min_temp_cache_;
+}
+
+void HeatmapStorage::SetMinMaxTempCaches() const {
+	for (const auto& heatmap : heatmaps_) {
+		min_temp_cache_ = std::min(heatmap.min_temp(), min_temp_cache_);
+		max_temp_cache_ = std::max(heatmap.max_temp(), max_temp_cache_);
+	}
 }
