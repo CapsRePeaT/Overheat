@@ -27,7 +27,7 @@ void Solver3dDataProvider::load_geometry(const Solver3d_TRM& data) {
 			const auto shapes = layer->geometry().shapes();
 			for (const auto& shape : shapes) {
 				geometry_.AddShape(std::make_unique<BasicShape>(
-						GlobalId(InstanceType::Shape, 0, box_counter_++), layer_counter_,
+						GlobalId(InstanceType::Shape, box_counter_++, 0), layer_counter_,
 						liftBox(shape->bbox(), offset)));
 			}
 			++layer_counter_;
