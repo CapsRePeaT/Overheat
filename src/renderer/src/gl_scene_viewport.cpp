@@ -3,8 +3,10 @@
 #include <glad/glad.h>
 #include <spdlog/spdlog.h>
 
+#include <algorithm>
 #include <memory>
 #include <utility>
+#include <vector>
 
 // TODO: maybe rename inner *renderer* folder to *primitives* or smth similar
 #include "application/heatmap_material.h"
@@ -19,6 +21,7 @@
 #include "renderer/i_camera.h"
 #include "renderer/orthographic_camera.h"
 #include "renderer/renderer_api.h"
+#include "renderer/texture2d.h"
 #include "scene.h"
 
 namespace renderer {
@@ -26,6 +29,8 @@ namespace renderer {
 struct GLSceneViewport::Impl {
 	std::unique_ptr<debug::DebugMaterial> debug_material =
 			std::make_unique<debug::DebugMaterial>();
+	std::unique_ptr<debug::DebugHeatmapMaterial> debug_heatmap_material =
+			std::make_unique<debug::DebugHeatmapMaterial>();
 	std::unique_ptr<debug::Axes> axes = std::make_unique<debug::Axes>();
 };
 
@@ -38,7 +43,7 @@ void GLSceneViewport::Initialize(const int w, const int h) {
 	OpenGlInit(w, h);
 	ApplicationInit(w, h);
 	//#ifndef NDEBUG
-	//	DebugInit(w, h);
+	//  DebugInit(w, h);
 	//#endif
 
 	is_initialized_ = true;
@@ -95,12 +100,12 @@ void GLSceneViewport::RenderFrame() {
 	const ICamera& camera = camera_controller_->camera();
 
 	if (!heatmap_materials_ && !scene_->heatmaps().empty()) {
-		auto heatmaps = scene_->heatmaps();
-		std::vector<HeatmapMaterial> materials;
-		materials.reserve(heatmaps.size() - 1);
+		auto heatmaps      = scene_->heatmaps();
+		heatmap_materials_ = std::vector<HeatmapMaterial>();
+		heatmap_materials_->reserve(heatmaps.size() - 1);
 		auto& factory = RendererAPI::factory();
 		for (size_t i = 0; i < heatmaps.size() - 1; ++i) {
-			auto side_resolution    = heatmaps[i].x_resolution();
+			int side_resolution     = heatmaps[i].x_resolution();
 			const auto& bot_heatmap = heatmaps[i];
 			const auto& top_heatmap = heatmaps[i + 1];
 			auto heatmap_bottom_texture =
@@ -110,20 +115,27 @@ void GLSceneViewport::RenderFrame() {
 					factory.NewTexture2D(side_resolution, side_resolution,
 			                         top_heatmap.temperatures().data(), 1);
 
-			auto texture_pair     = std::make_pair(std::move(heatmap_bottom_texture),
-			                                       std::move(heatmap_top_texture));
+			auto texture_pair =
+					std::pair<std::unique_ptr<Texture2D>, std::unique_ptr<Texture2D>>(
+							std::move(heatmap_bottom_texture),
+							std::move(heatmap_top_texture));
 			auto temp_ranges_pair = std::pair<glm::vec2, glm::vec2>(
 					{bot_heatmap.min_temp(), bot_heatmap.max_temp()},
 					{top_heatmap.min_temp(), top_heatmap.max_temp()});
 
-			materials.emplace_back(std::move(texture_pair), temp_ranges_pair);
+			heatmap_materials_->emplace_back(std::move(texture_pair),
+			                                 temp_ranges_pair);
 		}
 	}
 
 	if (heatmap_materials_)
 		for (const auto& shape : scene_->shapes()) {
+			// LOG_TRACE("Render shape: id {}, layer {}", shape->id().id(),
+			// shape->layer_id());
+			const auto& bbox = shape->core_shape().bbox().coordinates();
+			const glm::mat2 bounds = {{bbox[0].first, bbox[1].first}, {bbox[0].second, bbox[1].second}};
 			(*heatmap_materials_)[shape->core_shape().layer_id()].Use(
-					shape->transform(), camera.viewProjectionMatrix());
+					shape->transform(), camera.viewProjectionMatrix(), bounds);
 			api.DrawIndexed(shape->vertex_array());
 		}
 
@@ -153,7 +165,7 @@ void GLSceneViewport::SetColorRange(const ISceneViewport::Color min,
 	if (heatmap_materials_)
 		std::ranges::for_each(*heatmap_materials_, [&min, &max](auto& material) {
 			material.SetColorRange({min[0], min[1], min[2]},
-			                        {max[0], max[1], max[2]});
+			                       {max[0], max[1], max[2]});
 		});
 }
 

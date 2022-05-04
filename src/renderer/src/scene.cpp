@@ -5,6 +5,7 @@
 
 #include "application/scene_shape.h"
 #include "heatmap_normalizer.h"
+#include "log.h"
 #include "renderer/orthographic_camera.h"
 
 namespace renderer {
@@ -37,15 +38,15 @@ void Scene::AddHeatmaps(const HeatmapStorage& heatmaps_storage) {
 				auto denormalized_heatmap = normalizer.BilinearInterpolate(h);
 				return normalizer.Normalize(std::move(denormalized_heatmap));
 			});
+	LOG_TRACE("Added {} heatmaps", impl_->heatmaps.size());
+	LOG_TRACE("Current scene_shape count: {}", impl_->scene_shapes.size());
 }
 
 const std::vector<std::shared_ptr<SceneShape>>& Scene::shapes() const {
 	return impl_->scene_shapes;
 }
 
-const Heatmaps& Scene::heatmaps() const {
-	return impl_->heatmaps;
-}
+const Heatmaps& Scene::heatmaps() const { return impl_->heatmaps; }
 
 void Scene::Clear() { impl_->scene_shapes.clear(); }
 

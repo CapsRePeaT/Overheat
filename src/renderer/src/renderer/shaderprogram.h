@@ -30,6 +30,7 @@ class ShaderProgram {
 	void SetVec3(const char* name, glm::vec3 value) const;
 	void SetMat4(const char* name, const glm::mat4& value) const;
 	void SetMat2x3(const char* name, glm::mat2x3 value) const;
+	void SetMat2(const char* name, glm::mat2 value) const;
 
  private:
 	[[nodiscard]] int32_t getUniformLocation(const char* name) const;

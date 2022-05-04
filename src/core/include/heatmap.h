@@ -25,12 +25,14 @@ class Heatmap {
 	[[nodiscard]] inline float min_temp() const { return min_temp_; }
 	[[nodiscard]] inline float max_temp() const { return max_temp_; }
 
+	void DebugPrint();
+
  private:
 	// for alexey purposes we want to use single mem array, so we implement 2d
 	// array access on out own
 	Floats temperatures_;
-	const size_t x_resolution_;
-	const size_t y_resolution_;
+	size_t x_resolution_;
+	size_t y_resolution_;
 	float max_temp_ = std::numeric_limits<float>::min();
 	float min_temp_ = std::numeric_limits<float>::max();
 

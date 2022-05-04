@@ -1,4 +1,6 @@
 #include "heatmap.h"
+#include <iostream>
+#include <iomanip>
 
 Heatmap::Heatmap(Floats temperature_mv, const size_t x_resolution,
                  const size_t y_resolution,
@@ -13,5 +15,23 @@ Heatmap::Heatmap(Floats temperature_mv, const size_t x_resolution,
 
 		min_temp_ = temperature_range.min;
 		max_temp_ = temperature_range.max;
+	}
+}
+
+
+void Heatmap::DebugPrint() {
+	std::cout << "x_resolution: " << x_resolution_ << " y_resolution: " <<  y_resolution_ << '\n';
+	for (size_t i = 0; i < y_resolution_; ++i) {
+		for (auto j : row(i)) {
+			std::cout << std::setprecision(3) << j << '\t';
+		}
+		std::cout << '\n';
+	}
+	if (temperatures_.size() > x_resolution_ * y_resolution_) {
+		std::cout << "Extra: " << '\n';
+		for (size_t i = x_resolution_ * y_resolution_; i < temperatures_.size(); ++i) {
+			std::cout << std::setprecision(3) << temperatures_[i] << '\t';
+		}
+		std::cout << '\n';
 	}
 }

@@ -16,6 +16,8 @@ class SceneShape : public SceneObject {
 		return core_shape_;
 	}
 	[[nodiscard]] const VertexArray& vertex_array() const { return *vao_; }
+	[[nodiscard]] GlobalId id() const { return core_shape_.id(); }
+	[[nodiscard]] LayerId layer_id() const { return core_shape_.layer_id(); }
 
  private:
 	const BasicShape& core_shape_;

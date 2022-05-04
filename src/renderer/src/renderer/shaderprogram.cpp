@@ -161,6 +161,10 @@ void ShaderProgram::SetMat2x3(const char* name, const glm::mat2x3 value) const {
 	glUniformMatrix2x3fv(getUniformLocation(name), 1, GL_FALSE,
 	                     glm::value_ptr(value));
 }
+void ShaderProgram::SetMat2(const char* name, const glm::mat2 value) const {
+	glUniformMatrix2fv(getUniformLocation(name), 1, GL_FALSE,
+	                   glm::value_ptr(value));
+}
 
 void ShaderProgram::Use() const {
 	if (!is_compiled_)

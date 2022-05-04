@@ -37,6 +37,7 @@ target_link_libraries(core PRIVATE readers common)
 target_link_libraries(core PUBLIC reader-interface)
 
 target_link_libraries(renderer PRIVATE core common glm::glm stb::stb glad::glad)
+target_link_libraries(renderer-test gtest_main core common glm::glm stb::stb glad::glad renderer)
 
 target_link_libraries(common PUBLIC spdlog::spdlog)
 target_link_libraries(common PUBLIC magic_enum::magic_enum)
