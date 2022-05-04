@@ -19,7 +19,7 @@ class Log {
 //   prints "The answer is 42."
 // 2. LOG_DEBUG("I'd rather be {1} than {0}.", "right", "happy")
 //   prints "I'd rather be happy than right."
-// More: 
+// More:
 //   https://github.com/fmtlib/fmt#examples
 //   https://github.com/gabime/spdlog#usage-samples
 //
@@ -34,3 +34,22 @@ class Log {
 		Log::GetLogger()->critical(__VA_ARGS__);                          \
 		std::abort();                                                     \
 	}
+
+template <typename T>
+struct fmt::formatter<std::vector<T>> {
+	static constexpr auto parse(format_parse_context& ctx)
+			-> decltype(ctx.begin()) {
+		return ctx.end();
+	}
+	template <typename FormatContext>
+	auto format(const std::vector<T>& v, FormatContext& ctx)
+			-> decltype(ctx.out()) {
+		auto out = format_to(ctx.out(), "vec{{");
+		for (auto it = v.cbegin(); it < v.cend(); ++it) {
+			out = format_to(out, "{}", *it);
+			if (it != v.cend() - 1)
+				out = format_to(out, ", ");
+		}
+		return format_to(out, "}}");
+	}
+};
