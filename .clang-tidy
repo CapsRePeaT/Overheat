@@ -26,6 +26,7 @@ Checks: '-*,
     -cppcoreguidelines-owning-memory,
     -cppcoreguidelines-narrowing-conversions,
     -cppcoreguidelines-pro-bounds-pointer-arithmetic,
+    -cppcoreguidelines-pro-bounds-array-to-pointer-decay,
     
     -*-braces-around-statements,
 		-*-non-private-member-variables-in-classes,
