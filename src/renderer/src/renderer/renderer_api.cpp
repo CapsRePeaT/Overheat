@@ -32,10 +32,10 @@ std::unique_ptr<RendererAPI> RendererAPI::createInstance() {
 
 RendererAPI& RendererAPI::Init(API api) {
 	thread_local bool is_inited = false;
-	is_inited = true;
 	using_api = api;
 	auto& inst = instance();
 	if (!is_inited) {
+		is_inited = true;
 		inst.InitImpl();
 	}
 	return inst;
