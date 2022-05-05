@@ -25,17 +25,14 @@ void Scene::AddShape(const std::shared_ptr<BasicShape>& shape) {
 }
 
 void Scene::AddHeatmaps(const HeatmapStorage& heatmaps_storage) {
-	HeatmapNormalizer normalizer(
-			heatmaps_storage.MinStep(), heatmaps_storage.x_size(),
-			heatmaps_storage.y_size(), 16384, heatmaps_storage.x_steps(),
-			heatmaps_storage.y_steps());
+	HeatmapNormalizer normalizer(heatmaps_storage, 16384);
 	const auto& heatmaps = heatmaps_storage.heatmaps();
 	impl_->heatmaps.reserve(heatmaps.size());
 	std::ranges::transform(
 			heatmaps, std::back_inserter(impl_->heatmaps),
 			// Possible copying of vectors
 			[&normalizer](const auto& h) {
-				auto denormalized_heatmap = normalizer.BilinearInterpolate(h);
+				auto denormalized_heatmap = normalizer.BilinearInterpolateSlow(h);
 				return normalizer.Normalize(std::move(denormalized_heatmap));
 			});
 	LOG_TRACE("Added {} heatmaps", impl_->heatmaps.size());

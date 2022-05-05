@@ -25,7 +25,7 @@ class Heatmap {
 	[[nodiscard]] inline float min_temp() const { return min_temp_; }
 	[[nodiscard]] inline float max_temp() const { return max_temp_; }
 
-	void DebugPrint();
+	void DebugPrint(size_t step = 1) const;
 
  private:
 	// for alexey purposes we want to use single mem array, so we implement 2d

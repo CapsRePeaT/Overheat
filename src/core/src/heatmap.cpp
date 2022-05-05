@@ -19,11 +19,12 @@ Heatmap::Heatmap(Floats temperature_mv, const size_t x_resolution,
 }
 
 
-void Heatmap::DebugPrint() {
+void Heatmap::DebugPrint(size_t step) const {
 	std::cout << "x_resolution: " << x_resolution_ << " y_resolution: " <<  y_resolution_ << '\n';
-	for (size_t i = 0; i < y_resolution_; ++i) {
-		for (auto j : row(i)) {
-			std::cout << std::setprecision(3) << j << '\t';
+	for (size_t i = 0; i < y_resolution_; i += step) {
+		auto r = row(i);
+		for (size_t j = 0; j < r.size(); j += step){
+			std::cout << std::setprecision(3) << r[j] << '\t';
 		}
 		std::cout << '\n';
 	}

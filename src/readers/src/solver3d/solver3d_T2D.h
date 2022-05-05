@@ -131,6 +131,8 @@ class Solver3d_T2D {
 		istream >> t2d.env_temp_;
 		istream >> t2d.temperature_.set_size(t2d.IST_ * t2d.NH_ * t2d.MH_);
 
+		assert(t2d.temperature_.data().size() == t2d.temperature_.data().capacity());
+
 		return istream;
 	}
 

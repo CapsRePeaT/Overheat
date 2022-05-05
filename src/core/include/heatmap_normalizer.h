@@ -1,6 +1,8 @@
 #pragma once
 
+#include <cstddef>
 #include <iterator>
+#include <utility>
 
 #include "common.h"
 #include "databases.h"
@@ -9,10 +11,26 @@
 
 class HeatmapNormalizer {
  public:
-	HeatmapNormalizer(float min_step, float x_size, float y_size,
-	                  size_t max_resolution, const Floats& x_steps,
-	                  const Floats& y_steps);
+	HeatmapNormalizer(const HeatmapStorage& heatmap_storage,
+	                  size_t max_resolution);
+	using FloatPair = std::pair<float, float>;
+	using SizeTPair = std::pair<size_t, size_t>;
 	Heatmap BilinearInterpolate(const Heatmap& heatmap);
+	Heatmap BilinearInterpolateSlow(const Heatmap& heatmap);
+
+	struct Cell {
+
+		// {{left_x, right_x}, {upper_y, lower_y}}
+		FloatPair x_bounds;
+		FloatPair y_bounds;
+		// {{upper_left, upper_right}, {lower_left, lower_right}}
+		FloatPair upper_values;
+		FloatPair lower_values;
+	};
+	[[nodiscard]] static Cell FindBilinearInterpolationCell(
+			const Heatmap& heatmap, const Floats& x_coords, const Floats& y_coords,
+			FloatPair search_coords, float env_temp);
+
 	Heatmap Normalize(Heatmap heatmap_mv);
 
 	/**
@@ -102,7 +120,11 @@ class HeatmapNormalizer {
 	const float y_new_step_;
 	const Floats& x_steps_;
 	const Floats& y_steps_;
+	Floats x_old_coords_;
+	Floats y_old_coords_;
+	const float x_representation_size_;
 	const float y_representation_size_;
+	const float env_temp_;
 };
 
 template <typename OutputIt>
@@ -119,7 +141,8 @@ OutputIt HeatmapNormalizer::BatchLerp(
 		// 	return d_first;
 
 		// by STL style
-		LOG_TRACE("{}: bound_coords: {{{}, {}}}, start_coord: {}", ++i, bound_coords.first, bound_coords.second, start_coord);
+		LOG_TRACE("{}: bound_coords: {{{}, {}}}, start_coord: {}", ++i,
+		          bound_coords.first, bound_coords.second, start_coord);
 		*d_first++ = Lerp(bound_coords, values, start_coord);
 		start_coord += step_size;
 	}
@@ -130,7 +153,7 @@ template <typename OutputIt>
 OutputIt HeatmapNormalizer::InterpolateRow(std::span<const float> row,
                                            const Floats& steps, float step_size,
                                            OutputIt d_first) {
-	float new_coord                = 0.0f;
+	float new_coord = 0.0f;
 
 	std::pair<float, float> bounds = {0.0f, 0.0f};
 

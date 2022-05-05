@@ -1,5 +1,6 @@
 #include "heatmap_normalizer.h"
 
+#include <bits/ranges_algo.h>
 #include <sys/ucontext.h>
 
 #include <algorithm>
@@ -9,6 +10,7 @@
 #include <numeric>
 #include <ranges>
 #include <span>
+#include <utility>
 
 #include "common.h"
 #include "heatmap.h"
@@ -18,18 +20,124 @@ bool HeatmapNormalizer::float_eq(const float a, const float b) {
 	return std::abs(a - b) < eps;
 }
 
-HeatmapNormalizer::HeatmapNormalizer(const float min_step, const float x_size,
-                                     const float y_size,
-                                     const size_t max_resolution,
-                                     const Floats& x_steps,
-                                     const Floats& y_steps)
-		: resolution_(FindOptimalResolution(min_step, std::max(x_size, y_size),
-                                        max_resolution)),
-			x_new_step_(x_size / (resolution_ - 1)),
-			y_new_step_(y_size / (resolution_ - 1)),
-			x_steps_(x_steps),
-			y_steps_(y_steps),
-			y_representation_size_(y_size) {}
+HeatmapNormalizer::HeatmapNormalizer(const HeatmapStorage& heatmap_storage,
+                                     const size_t max_resolution)
+		: resolution_(FindOptimalResolution(
+					heatmap_storage.MinStep(),
+					std::max(heatmap_storage.x_size(), heatmap_storage.y_size()),
+					max_resolution)),
+			x_new_step_(heatmap_storage.x_size() / (resolution_ - 1)),
+			y_new_step_(heatmap_storage.y_size() / (resolution_ - 1)),
+			x_steps_(heatmap_storage.x_steps()),
+			y_steps_(heatmap_storage.y_steps()),
+			x_representation_size_(heatmap_storage.x_size()),
+			y_representation_size_(heatmap_storage.y_size()),
+			env_temp_(heatmap_storage.environment_temperature()) {
+	// store coordinates of the temperatures
+	x_old_coords_.reserve(x_steps_.size() + 2);
+	y_old_coords_.reserve(y_steps_.size() + 2);
+	x_old_coords_.push_back(0.0f);
+	y_old_coords_.push_back(0.0f);
+
+	std::inclusive_scan(x_steps_.begin(), x_steps_.end(),
+	                    std::back_inserter(x_old_coords_));
+	std::inclusive_scan(y_steps_.begin(), y_steps_.end(),
+	                    std::back_inserter(y_old_coords_));
+
+	x_old_coords_.push_back(heatmap_storage.x_size());
+	y_old_coords_.push_back(heatmap_storage.y_size());
+
+	// check for correctness
+	// assert(float_eq(x_old_coords_.back(), x_representation_size_) &&
+	//        "Error in x_steps");
+	// assert(float_eq(y_old_coords_.back(), y_representation_size_) &&
+	//        "Error in y_steps");
+	assert(x_old_coords_.size() == x_steps_.size() + 2);
+	assert(y_old_coords_.size() == y_steps_.size() + 2);
+}
+
+Heatmap HeatmapNormalizer::BilinearInterpolateSlow(const Heatmap& heatmap) {
+	Floats result;
+	result.reserve(resolution_ * resolution_);
+	for (size_t i = 0; i < resolution_; ++i) {
+		for (size_t j = 0; j < resolution_; ++j) {
+			float x_coord = j * x_new_step_;
+			float y_coord = i * y_new_step_;
+			auto [x_bounds, y_bounds, upper_values, lower_values] =
+					FindBilinearInterpolationCell(heatmap, x_old_coords_, y_old_coords_,
+			                                  {x_coord, y_coord}, env_temp_);
+			//         r1
+			// |--------------|
+			// |       |      |
+			// |       |      |
+			// |       |      |
+			// |-----result---|      |--->
+			// |       |      |      |   x
+			// |       |      |      |
+			// |--------------|      ∨ y
+			//         r2
+			auto r1 = Lerp(x_bounds, upper_values, x_coord);
+			auto r2 = Lerp(x_bounds, lower_values, x_coord);
+			result.push_back(Lerp(y_bounds, {r1, r2}, y_coord));
+		}
+	}
+	return Heatmap(std::move(result), resolution_, resolution_);
+}
+
+HeatmapNormalizer::Cell HeatmapNormalizer::FindBilinearInterpolationCell(
+		const Heatmap& heatmap, const Floats& x_coords, const Floats& y_coords,
+		FloatPair search_coords, float env_temp) {
+	namespace ranges = std::ranges;
+
+	assert(search_coords.first >= x_coords.front());
+	assert(search_coords.second >= y_coords.front());
+	// upper_bound searches for an element, that is greater than given value. So
+	// we always get [begin() + 1, end()) from it here that is good as right/lower
+	// side of cell.
+	auto lower_coord_it = ranges::upper_bound(y_coords, search_coords.second);
+	if (lower_coord_it == y_coords.end())
+		lower_coord_it = y_coords.end() - 1;
+	auto upper_coord_it = lower_coord_it - 1;
+
+	auto right_coord_it = ranges::upper_bound(x_coords, search_coords.first);
+	if (right_coord_it == x_coords.end())
+		right_coord_it = x_coords.end() - 1;
+	auto left_coord_it  = right_coord_it - 1;
+
+
+	// if `upper_coord_it == y_coords.begin()`, it is an edge, and should be
+	// treated differently
+	auto upper_row_idx    = std::distance(y_coords.begin() + 1, upper_coord_it);
+	auto lower_row_idx    = std::distance(y_coords.begin() + 1, lower_coord_it);
+	auto left_column_idx  = std::distance(x_coords.begin() + 1, left_coord_it);
+	auto right_column_idx = std::distance(x_coords.begin() + 1, right_coord_it);
+
+	assert(upper_row_idx == lower_row_idx - 1);
+	assert(left_column_idx == right_column_idx - 1);
+
+	// maybe get row(-1) is at least UB, but 
+	auto upper_row = heatmap.row(upper_row_idx);
+	auto lower_row = heatmap.row(lower_row_idx);
+
+	FloatPair upper_values = {upper_row[left_column_idx], upper_row[right_column_idx]};
+	FloatPair lower_values = {lower_row[left_column_idx], lower_row[right_column_idx]};
+	
+	if (upper_coord_it == y_coords.begin()) 
+		upper_values = {env_temp, env_temp};
+	if (lower_coord_it == y_coords.end() - 1)
+		lower_values = {env_temp, env_temp};
+	if (left_coord_it == x_coords.begin())
+		upper_values.first = env_temp, lower_values.first = env_temp;
+	if (right_coord_it == x_coords.end() - 1)
+		upper_values.second = env_temp, lower_values.second = env_temp;
+
+	return {
+			.x_bounds     = {*left_coord_it, *right_coord_it},
+			.y_bounds     = {*upper_coord_it, *lower_coord_it},
+			.upper_values = upper_values,
+			.lower_values = lower_values,
+	};
+}
 
 // Unifies heatmap net via bilinear interpolation
 Heatmap HeatmapNormalizer::BilinearInterpolate(const Heatmap& heatmap) {
@@ -98,9 +206,9 @@ Heatmap HeatmapNormalizer::BilinearInterpolate(const Heatmap& heatmap) {
 // Normalizes heatmap values to range [0; 1] without lossing min/max temperature
 // information
 Heatmap HeatmapNormalizer::Normalize(Heatmap heatmap_mv) {
+	auto min_max_diff = heatmap_mv.max_temp() - heatmap_mv.min_temp();
 	for (size_t i = 0; i < heatmap_mv.y_resolution(); ++i)
 		for (auto& temperature : heatmap_mv.row(i)) {
-			auto min_max_diff = heatmap_mv.max_temp() - heatmap_mv.min_temp();
 			temperature       = (temperature - heatmap_mv.min_temp()) / min_max_diff;
 		}
 	return heatmap_mv;
@@ -133,7 +241,9 @@ float HeatmapNormalizer::Lerp(const std::pair<float, float> bound_coords,
                               const float interpolation_coord) {
 	const float overall_distance = bound_coords.second - bound_coords.first;
 
-	assert(std::abs(overall_distance) > eps);
+	// assert(std::abs(overall_distance) > eps);
+	if (std::abs(overall_distance) < eps)
+		return values.first;
 	assert(interpolation_coord > bound_coords.first ||
 	       float_eq(interpolation_coord, bound_coords.first));
 
