@@ -1,6 +1,6 @@
 #include "heatmap.h"
-#include <iostream>
-#include <iomanip>
+
+#include "log.h"
 
 Heatmap::Heatmap(Floats temperature_mv, const size_t x_resolution,
                  const size_t y_resolution,
@@ -20,19 +20,21 @@ Heatmap::Heatmap(Floats temperature_mv, const size_t x_resolution,
 
 
 void Heatmap::DebugPrint(size_t step) const {
-	std::cout << "x_resolution: " << x_resolution_ << " y_resolution: " <<  y_resolution_ << '\n';
+	LOG_DEBUG("x_resolution: {}, y_resolution: {}", x_resolution_, y_resolution_);
 	for (size_t i = 0; i < y_resolution_; i += step) {
 		auto r = row(i);
-		for (size_t j = 0; j < r.size(); j += step){
-			std::cout << std::setprecision(3) << r[j] << '\t';
+		std::string res;
+		for (size_t j = 0; j < r.size(); j += step) {
+			res += fmt::format("{:.2}\t", r[j]);
 		}
-		std::cout << '\n';
+		LOG_DEBUG(res);
 	}
 	if (temperatures_.size() > x_resolution_ * y_resolution_) {
-		std::cout << "Extra: " << '\n';
+		LOG_DEBUG("Extra: ");
+		std::string res;
 		for (size_t i = x_resolution_ * y_resolution_; i < temperatures_.size(); ++i) {
-			std::cout << std::setprecision(3) << temperatures_[i] << '\t';
+			res += fmt::format("{:.2}\t", temperatures_[i]);
 		}
-		std::cout << '\n';
+		LOG_DEBUG(res);
 	}
 }

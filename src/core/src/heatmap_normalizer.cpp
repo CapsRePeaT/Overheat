@@ -1,8 +1,5 @@
 #include "heatmap_normalizer.h"
 
-#include <bits/ranges_algo.h>
-#include <sys/ucontext.h>
-
 #include <algorithm>
 #include <cassert>
 #include <cmath>
@@ -34,8 +31,9 @@ HeatmapNormalizer::HeatmapNormalizer(const HeatmapStorage& heatmap_storage,
 			y_representation_size_(heatmap_storage.y_size()),
 			env_temp_(heatmap_storage.environment_temperature()) {
 	// store coordinates of the temperatures
-	x_old_coords_.reserve(x_steps_.size() + 2);
-	y_old_coords_.reserve(y_steps_.size() + 2);
+	static constexpr size_t size_adjustment = 2;
+	x_old_coords_.reserve(x_steps_.size() + size_adjustment);
+	y_old_coords_.reserve(y_steps_.size() + size_adjustment);
 	x_old_coords_.push_back(0.0f);
 	y_old_coords_.push_back(0.0f);
 
@@ -52,8 +50,8 @@ HeatmapNormalizer::HeatmapNormalizer(const HeatmapStorage& heatmap_storage,
 	//        "Error in x_steps");
 	// assert(float_eq(y_old_coords_.back(), y_representation_size_) &&
 	//        "Error in y_steps");
-	assert(x_old_coords_.size() == x_steps_.size() + 2);
-	assert(y_old_coords_.size() == y_steps_.size() + 2);
+	assert(x_old_coords_.size() == x_steps_.size() + size_adjustment);
+	assert(y_old_coords_.size() == y_steps_.size() + size_adjustment);
 }
 
 Heatmap HeatmapNormalizer::BilinearInterpolateSlow(const Heatmap& heatmap) {
@@ -92,8 +90,8 @@ HeatmapNormalizer::Cell HeatmapNormalizer::FindBilinearInterpolationCell(
 	assert(search_coords.first >= x_coords.front());
 	assert(search_coords.second >= y_coords.front());
 	// upper_bound searches for an element, that is greater than given value. So
-	// we always get [begin() + 1, end()) from it here that is good as right/lower
-	// side of cell.
+	// we always get [begin() + 1, end()) from it here, that is good as
+	// right/lower side of cell.
 	auto lower_coord_it = ranges::upper_bound(y_coords, search_coords.second);
 	if (lower_coord_it == y_coords.end())
 		lower_coord_it = y_coords.end() - 1;
@@ -102,8 +100,7 @@ HeatmapNormalizer::Cell HeatmapNormalizer::FindBilinearInterpolationCell(
 	auto right_coord_it = ranges::upper_bound(x_coords, search_coords.first);
 	if (right_coord_it == x_coords.end())
 		right_coord_it = x_coords.end() - 1;
-	auto left_coord_it  = right_coord_it - 1;
-
+	auto left_coord_it = right_coord_it - 1;
 
 	// if `upper_coord_it == y_coords.begin()`, it is an edge, and should be
 	// treated differently
@@ -115,14 +112,16 @@ HeatmapNormalizer::Cell HeatmapNormalizer::FindBilinearInterpolationCell(
 	assert(upper_row_idx == lower_row_idx - 1);
 	assert(left_column_idx == right_column_idx - 1);
 
-	// maybe get row(-1) is at least UB, but 
+	// `heatmap.row(-1)` probably UB, but in this case we reassign results
 	auto upper_row = heatmap.row(upper_row_idx);
 	auto lower_row = heatmap.row(lower_row_idx);
 
-	FloatPair upper_values = {upper_row[left_column_idx], upper_row[right_column_idx]};
-	FloatPair lower_values = {lower_row[left_column_idx], lower_row[right_column_idx]};
-	
-	if (upper_coord_it == y_coords.begin()) 
+	FloatPair upper_values = {upper_row[left_column_idx],
+	                          upper_row[right_column_idx]};
+	FloatPair lower_values = {lower_row[left_column_idx],
+	                          lower_row[right_column_idx]};
+
+	if (upper_coord_it == y_coords.begin())
 		upper_values = {env_temp, env_temp};
 	if (lower_coord_it == y_coords.end() - 1)
 		lower_values = {env_temp, env_temp};
@@ -205,13 +204,15 @@ Heatmap HeatmapNormalizer::BilinearInterpolate(const Heatmap& heatmap) {
 
 // Normalizes heatmap values to range [0; 1] without lossing min/max temperature
 // information
-Heatmap HeatmapNormalizer::Normalize(Heatmap heatmap_mv) {
-	auto min_max_diff = heatmap_mv.max_temp() - heatmap_mv.min_temp();
-	for (size_t i = 0; i < heatmap_mv.y_resolution(); ++i)
-		for (auto& temperature : heatmap_mv.row(i)) {
-			temperature       = (temperature - heatmap_mv.min_temp()) / min_max_diff;
-		}
-	return heatmap_mv;
+void HeatmapNormalizer::Normalize(Heatmap& heatmap) {
+	auto min_max_diff = heatmap.max_temp() - heatmap.min_temp();
+	for (size_t i = 0; i < heatmap.y_resolution(); ++i) {
+		auto row = heatmap.row(i);
+		std::ranges::transform(row, row.begin(),
+		                       [&heatmap, min_max_diff](auto temp) {
+														 return (temp - heatmap.min_temp()) / min_max_diff;
+													 });
+	}
 }
 
 size_t HeatmapNormalizer::FindOptimalResolution(const float min_old_step,
@@ -224,7 +225,7 @@ size_t HeatmapNormalizer::FindOptimalResolution(const float min_old_step,
 	// Minimal meanfull resolution for real heatmaps.
 	static constexpr size_t min_resolution = 512;
 	// Max resolution should be passed from renderer api restriction, but may be
-	// less than minimal for test so it should be using in this case.
+	// less than min_resolution for tests and should be using in this case.
 	size_t heatmap_resolution = std::min(min_resolution, max_resolution);
 	while (heatmap_resolution < old_max_resolution &&
 	       heatmap_resolution < max_resolution) {
@@ -267,9 +268,6 @@ size_t HeatmapNormalizer::CalculateBatchSize(const float right_coord,
 	// So we check if we got result, which may include right_coord with
 	// incrementing, we are incrementing it.
 	//
-	auto r1    = right_coord - start_coord;
-	auto r2    = r1 / step_size;
-	auto r3    = static_cast<size_t>(r2);
 	size_t res = 1 + static_cast<size_t>((right_coord - start_coord) / step_size);
 	if (std::abs((res + 1) * step_size - right_coord) < eps)
 		++res;

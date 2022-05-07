@@ -6,6 +6,7 @@
 
 #include "heatmap.h"
 #include "log.h"
+#include "heatmap_normalizer.h"
 
 const FileRepresentation::Shapes& FileRepresentation::GetShapes(
 		const Box3D& /*area*/) const {
@@ -66,6 +67,9 @@ HeatmapStorage::HeatmapStorage(std::vector<float> x_steps_mv,
 		heatmaps_.emplace(heatmaps_.begin(), std::vector<float>(first, last),
 		                  x_steps_.size(), y_steps_.size());
 	}
+	// HeatmapNormalizer normalizer(*this, 16000);
+	// Heatmap test = normalizer.Normalize(heatmaps_[6]);
+	// test.DebugPrint();
 }
 
 float HeatmapStorage::MinStep() const {

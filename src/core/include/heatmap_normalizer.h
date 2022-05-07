@@ -19,7 +19,6 @@ class HeatmapNormalizer {
 	Heatmap BilinearInterpolateSlow(const Heatmap& heatmap);
 
 	struct Cell {
-
 		// {{left_x, right_x}, {upper_y, lower_y}}
 		FloatPair x_bounds;
 		FloatPair y_bounds;
@@ -31,7 +30,7 @@ class HeatmapNormalizer {
 			const Heatmap& heatmap, const Floats& x_coords, const Floats& y_coords,
 			FloatPair search_coords, float env_temp);
 
-	Heatmap Normalize(Heatmap heatmap_mv);
+	void Normalize(Heatmap& heatmap);
 
 	/**
 	 * @brief Finds minimal resolution, that would be a power of 2 and all cells

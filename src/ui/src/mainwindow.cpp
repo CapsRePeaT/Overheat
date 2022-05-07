@@ -85,13 +85,13 @@ void MainWindow::GetFilesAndLoad(const GeometryType type) {
 	                                                      absolute_trm_dir,
 		                                                    tr("geom (*.txt *.T2D);; ALL (*.*)"));
 	if (trm_file.length() && t2d_file.length()) {
-		try {
+//		try {
 			LoadFile(trm_file.toStdString(), t2d_file.toStdString(), type);
-		} catch (...) {
-			QMessageBox::critical(
-					nullptr, "Error",
-					"Unknown error. File cannot be parsed, please check file format.");
-		}
+//		} catch (...) {
+//			QMessageBox::critical(
+//					nullptr, "Error",
+//					"Unknown error. File cannot be parsed, please check file format.");
+//		}
 	}
 }
 

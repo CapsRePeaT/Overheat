@@ -109,11 +109,11 @@ void GLSceneViewport::RenderFrame() {
 			const auto& bot_heatmap = heatmaps[i];
 			const auto& top_heatmap = heatmaps[i + 1];
 
-			static bool is_printed = false;
-			if (!is_printed && i == 6) {
-				is_printed = true;
-				bot_heatmap.DebugPrint(39);
-			}
+			// static bool is_printed = true;
+			// if (!is_printed && i == 6) {
+			// 	is_printed = true;
+			// 	bot_heatmap.DebugPrint(39);
+			// }
 			
 			auto heatmap_bottom_texture =
 					factory.NewTexture2D(side_resolution, side_resolution,

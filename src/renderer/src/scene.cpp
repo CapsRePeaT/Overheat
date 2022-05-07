@@ -25,16 +25,19 @@ void Scene::AddShape(const std::shared_ptr<BasicShape>& shape) {
 }
 
 void Scene::AddHeatmaps(const HeatmapStorage& heatmaps_storage) {
-	HeatmapNormalizer normalizer(heatmaps_storage, 16384);
+	// TODO: get max_resolution from renderer API (but may be leaved as it is
+	// because we are in scene and do not know which renderer api to call)
+	static constexpr size_t max_renderer_api_resolution = 16384;
+	HeatmapNormalizer normalizer(heatmaps_storage, max_renderer_api_resolution);
 	const auto& heatmaps = heatmaps_storage.heatmaps();
 	impl_->heatmaps.reserve(heatmaps.size());
-	std::ranges::transform(
-			heatmaps, std::back_inserter(impl_->heatmaps),
-			// Possible copying of vectors
-			[&normalizer](const auto& h) {
-				auto denormalized_heatmap = normalizer.BilinearInterpolateSlow(h);
-				return normalizer.Normalize(std::move(denormalized_heatmap));
-			});
+	std::ranges::transform(heatmaps, std::back_inserter(impl_->heatmaps),
+	                       // Possible copying of vectors
+	                       [&normalizer](const auto& h) {
+													 auto heatmap = normalizer.BilinearInterpolateSlow(h);
+													 normalizer.Normalize(heatmap);
+													 return heatmap;
+												 });
 	LOG_TRACE("Added {} heatmaps", impl_->heatmaps.size());
 	LOG_TRACE("Current scene_shape count: {}", impl_->scene_shapes.size());
 }
