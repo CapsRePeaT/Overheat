@@ -1,9 +1,9 @@
 #include "solver3d_reader.h"
 
 #include <magic_enum.hpp>
+#include <boost/regex.hpp>
 
 #include <fstream>
-#include <regex>
 #include <string_view>
 #include <unordered_map>
 
@@ -11,10 +11,10 @@
 
 namespace {
 
-std::vector<std::string> split(const std::string& str, const std::regex& regex,
+std::vector<std::string> split(const std::string& str, const boost::regex& regex,
                                int submatch = 0) {
 	std::vector<std::string> retval{
-			std::sregex_token_iterator(str.begin(), str.end(), regex, submatch), {}};
+			boost::sregex_token_iterator(str.begin(), str.end(), regex, submatch), {}};
 
 	retval.erase(std::remove_if(retval.begin(), retval.end(),
 	                            [](const auto& str) { return str.empty(); }),
@@ -70,7 +70,7 @@ Solver3d_TRM Solver3dReader::load_geometry() {
 Solver3d_TRM read_geometry(const std::string& content) {
 	// splits layers for groups (inside/outside box)
 	const auto groups =
-			split(content, std::regex{"^([A-Za-z]\\n[^#]*(?=\\n#))$"});
+			split(content, boost::regex{"^([A-Za-z]\\n[^#]*(?=\\n#))$"});
 
 	if (groups.size() < 2)
 		throw std::runtime_error("File has wrong format.");
@@ -79,7 +79,7 @@ Solver3d_TRM read_geometry(const std::string& content) {
 	read_general_info(content, data);
 
 	// read layers
-	const std::regex layers_regex{"^([A-Z])\\n"};
+	const boost::regex layers_regex{"^([A-Z])\\n"};
 	std::transform(
 			groups.begin(), groups.end(),
 			std::inserter(data.layers_groups_, data.layers_groups_.end()),

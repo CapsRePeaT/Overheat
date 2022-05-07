@@ -33,8 +33,10 @@ MainWindow::MainWindow(QWidget* parent)
 	addDockWidget(Qt::LeftDockWidgetArea, visualization_options_);
 	visualization_options_->setWindowTitle(tr("Options"));
 	// signals and slots connection
-	connect(ui_->load_file_btn, &QAction::triggered, this,
-	        &MainWindow::OnLoadFileBtnPressed);
+	connect(ui_->load_file_3d_btn, &QAction::triggered, this,
+	        &MainWindow::OnLoadFile3DBtnPressed);
+	connect(ui_->load_file_2d_btn, &QAction::triggered, this,
+	        &MainWindow::OnLoadFile2DBtnPressed);
 	connect(visualization_options_,
 	        &VisualizationOptionsWidget::VisualizationOptionsChanged,
 	        render_widget_, &RendererWidget::onVisualizationOptionsChanged);
@@ -43,8 +45,9 @@ MainWindow::MainWindow(QWidget* parent)
 MainWindow::~MainWindow() = default;
 
 void MainWindow::LoadFile(std::string trm_file_path,
-                          std::string t2d_file_path) {
-	core().LoadGeometry(trm_file_path, std::move(t2d_file_path));
+                          std::string t2d_file_path,
+                          const GeometryType type) {
+	core().LoadGeometry(trm_file_path, std::move(t2d_file_path), type);
 	const auto loaded_shapes   = core().GetFirstFile().GetShapes();
 	const auto loaded_heatmaps = core().GetFirstFile().heatmaps();
 	// Do we really need this assert?
@@ -62,17 +65,28 @@ void MainWindow::LoadFile(std::string trm_file_path,
 	}
 }
 
-void MainWindow::OnLoadFileBtnPressed() {
+void MainWindow::OnLoadFile3DBtnPressed() {
+	GetFilesAndLoad(GeometryType::D3);
+}
+
+void MainWindow::OnLoadFile2DBtnPressed() { 
+	GetFilesAndLoad(GeometryType::D2); 
+}
+
+void MainWindow::GetFilesAndLoad(const GeometryType type) {
 	const QString trm_file = QFileDialog::getOpenFileName(
 			this, tr("Open trm File"), QDir::currentPath(),
 			tr("geom (*.txt *.TRM);; ALL (*.*)"));
-	const QString t2d_file = QFileDialog::getOpenFileName(
-			this, tr("Open T2D File"), QDir::currentPath(),
-			tr("geom (*.txt *.T2D);; ALL (*.*)"));
-	// TODO: check if file_name is empty (on cancel)
+	if (trm_file.isEmpty())
+		return;
+	QDir trm_dir = QFileInfo(trm_file).absoluteDir();
+	QString absolute_trm_dir = trm_dir.absolutePath();
+	const QString t2d_file = QFileDialog::getOpenFileName(this, tr("Open T2D File"),
+	                                                      absolute_trm_dir,
+		                                                    tr("geom (*.txt *.T2D);; ALL (*.*)"));
 	if (trm_file.length() && t2d_file.length()) {
 		try {
-			LoadFile(trm_file.toStdString(), t2d_file.toStdString());
+			LoadFile(trm_file.toStdString(), t2d_file.toStdString(), type);
 		} catch (...) {
 			QMessageBox::critical(
 					nullptr, "Error",

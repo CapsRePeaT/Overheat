@@ -83,6 +83,9 @@ struct SpheresGroup {
 // class with heatmap and data about layers
 class Solver3d_T2D {
  public:
+	[[nodiscard]] Box3D design_borders() const {
+		return {{{0, body_size_.x}, {0, body_size_.y}, {0, body_size_.z}}};
+	}
 	[[nodiscard]] size_t layers_count() const { return IST_; }
 	[[nodiscard]] const std::vector<float>& net_x() const {
 		return net_x_coords.data();

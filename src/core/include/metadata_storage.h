@@ -5,7 +5,7 @@
 #include <tuple>
 #include <vector>
 
-#include "../../common/include/common.h"
+#include "common.h"
 
 // TODO: we need data description
 // followed structure should be like this:
@@ -51,6 +51,11 @@ class MetadataStorage {
 		AddData(shape_id, std::forward<std::string>(description),
 		        std::forward<Args>(args)...);
 	}
+	std::string GetInstanceName(const GlobalId global_id) const {
+		std::string result = "Instanse ";
+		result += global_id.id();
+		return result;
+	}
 	MetadataStorage()  = default;
 	~MetadataStorage() = default;
 
@@ -60,6 +65,8 @@ class MetadataStorage {
 	std::tuple<std::map<std::string, std::map<size_t, Data>>...> data_;
 	std::map<size_t, std::vector<MetadataID>> shape_id2metadata_id_;
 };
+
+using DefaultMetadataStorage = MetadataStorage<int, float, std::string>;
 
 template <size_t I, typename T, typename Tuple_t>
 constexpr size_t index_in_tuple_fn() {

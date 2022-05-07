@@ -36,6 +36,11 @@ std::vector<float> get_steps(const std::vector<Net>& net, const Index index) {
 // class with heatmap and data about layers
 class Solver2d_T2D {
  public:
+	[[nodiscard]] Box3D design_borders() const {
+		// FIXME we don't have z coords in 2d geometry, 
+		//so put some default value
+		return {{{0, xsub_}, {0, ysub_}, {0, 1}}};
+	}
 	[[nodiscard]] std::vector<float> net_x() const {
 		return get_steps(net_.data(), Index::X);
 	}

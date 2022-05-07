@@ -6,8 +6,8 @@
 #include <memory>
 #include <vector>
 
-#include "../../../core/include/databases.h"
-#include "../../../core/include/shapes.h"
+#include "databases.h"
+#include "shapes.h"
 #include "../common.h"
 
 namespace Readers::Solver3d {

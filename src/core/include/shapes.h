@@ -3,39 +3,47 @@
 #include <memory>
 #include <vector>
 
-#include "../../common/include/common.h"
+#include "common.h"
 
-class GlobalShapeId {
- public:
-	constexpr GlobalShapeId(const ShapeId id, const RepresentationId design_id)
-			: id_(id), representation_id_(design_id) {}
-	[[nodiscard]] bool operator==(const GlobalShapeId& other) const = default;
-	[[nodiscard]] constexpr ShapeId id() const { return id_; }
-	[[nodiscard]] constexpr RepresentationId representation_id() const {
-		return representation_id_;
-	}
 
- private:
-	ShapeId id_                         = UndefinedId;
-	RepresentationId representation_id_ = UndefinedId;
+
+enum class HilightSetup {
+	none = 0,
+	basic, // just black thin line
+	stack_hilight, // when selected in side widget or clicked on stack
+	main_hilight // for this shape we show metadata 
 };
 
-using GlobalShapeIds = std::vector<GlobalShapeId>;
+class VisualisationOptions {
+	bool is_visible() { return is_visible_; }
+	void set_visibility(bool is_visible) { is_visible_ = is_visible; }
+	HilightSetup hilight() { return hilight_; }
+	void set_hilight(HilightSetup hilight) { hilight_ = hilight; }
+ private:
+	bool is_visible_ = true;
+	HilightSetup hilight_ = HilightSetup::basic;
+};
+
+using GlobalShapeIds = std::vector<GlobalId>;
 
 class BasicShape {
  public:
-	explicit BasicShape(const GlobalShapeId id) : id_(id) {}
-	BasicShape(const GlobalShapeId id, const LayerId layer_id, Box3D bbox_mv)
+	explicit BasicShape(const GlobalId id) : id_(id) {}
+	BasicShape(const GlobalId id, const LayerId layer_id, Box3D bbox_mv)
 			: id_(id), layer_id_(layer_id), bbox_(std::move(bbox_mv)) {}
-	[[nodiscard]] GlobalShapeId id() const { return id_; }
+	[[nodiscard]] GlobalId id() const { return id_; }
 	[[nodiscard]] const Box3D& bbox() const { return bbox_; }
 	void setBox(Box3D box_mv) { bbox_ = std::move(box_mv); }
-
+	VisualisationOptions& visualisation_options() {
+		return visualisation_options_;
+	}
+	[[nodiscard]] LayerId layer_id() const { return layer_id_; }
  private:
-	const GlobalShapeId id_;
+	const GlobalId id_;
 	const LayerId layer_id_ = UndefinedId;
 	ShapeType shape_type_   = ShapeType::Undefined;
 	Box3D bbox_;
+	VisualisationOptions visualisation_options_;
 };
 
 using ShapePtr = std::shared_ptr<BasicShape>;

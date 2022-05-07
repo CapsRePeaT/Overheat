@@ -7,11 +7,11 @@
 #include "solver3d_TRM.h"
 
 namespace {
-GlobalShapeId getNewId() {
+GlobalId getNewShapeId() {
 	static size_t id = 0;
 	++id;
 	// TODO: pass disign_id
-	return {0, id};
+	return {InstanceType::Shape, 0, id};
 }
 
 std::pair<float, float> getSphereProjection(const float center,
@@ -73,7 +73,7 @@ GeomStorage<BasicShape> HPU::geometry() {
 	GeomStorage<BasicShape> storage;
 	//assert(false && "add proper layer id and parent");
 	const size_t dummy_layer = 0;
-	storage.AddShape(std::make_shared<BasicShape>(getNewId(), dummy_layer, box));
+	storage.AddShape(std::make_shared<BasicShape>(getNewShapeId(), dummy_layer, box));
 	return storage;
 }
 
@@ -91,7 +91,7 @@ GeomStorage<BasicShape> BS::geometry() {
 				Box3D box{vals};
 				//assert(false && "add proper layer id and parent");
 				const size_t dummy_layer = 0;
-				storage.AddShape(std::make_shared<BasicShape>(getNewId(), dummy_layer, box));
+				storage.AddShape(std::make_shared<BasicShape>(getNewShapeId(), dummy_layer, box));
 			}
 		}
 	}
@@ -107,7 +107,7 @@ GeomStorage<BasicShape> D::geometry() {
 		//assert(false && "add proper layer id and parent");
 		const size_t dummy_layer = 0;
 		storage.AddShape(
-				std::make_shared<BasicShape>(getNewId(), dummy_layer, box));
+				std::make_shared<BasicShape>(getNewShapeId(), dummy_layer, box));
 	}
 	return storage;
 }
