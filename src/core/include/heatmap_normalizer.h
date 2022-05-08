@@ -117,8 +117,8 @@ class HeatmapNormalizer {
 	const size_t resolution_;
 	const float x_new_step_;
 	const float y_new_step_;
-	const Floats& x_steps_;
-	const Floats& y_steps_;
+	const Floats& x_coords_;
+	const Floats& y_coords_;
 	Floats x_old_coords_;
 	Floats y_old_coords_;
 	const float x_representation_size_;

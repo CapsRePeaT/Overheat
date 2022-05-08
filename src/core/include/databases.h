@@ -39,7 +39,7 @@ class Layer {
 class HeatmapStorage {
  public:
 	HeatmapStorage() = default;
-	HeatmapStorage(std::vector<float> x_steps_mv, std::vector<float> y_steps_mv,
+	HeatmapStorage(std::vector<float> x_steps, std::vector<float> y_steps,
 	               const std::vector<float>& temperature,
 	               float environment_temperature, Box3D representation_borders);
 	[[nodiscard]] Box3D representation_borders() const {
@@ -55,18 +55,19 @@ class HeatmapStorage {
 	[[nodiscard]] float y_size() const {
 		return representation_borders_.coordinates()[1].second;
 	}
-	[[nodiscard]] float MinStep() const;
+	[[nodiscard]] float MinStep() const { return min_step_; }
 	[[nodiscard]] float max_temp() const;
 	[[nodiscard]] float min_temp() const;
 	[[nodiscard]] const Heatmaps& heatmaps() const { return heatmaps_; }
-	[[nodiscard]] const Floats& x_steps() const { return x_steps_; }
-	[[nodiscard]] const Floats& y_steps() const { return y_steps_; }
+	[[nodiscard]] const Floats& x_steps() const { return x_coords_; }
+	[[nodiscard]] const Floats& y_steps() const { return y_coords_; }
 
  private:
 	size_t layers_count_           = 0;  // IST in T2D file
 	float environment_temperature_ = 0.0f;
-	Floats x_steps_;
-	Floats y_steps_;
+	float min_step_;
+	Floats x_coords_;
+	Floats y_coords_;
 	Box3D representation_borders_;
 	// we duplicate borders here to make manipulation
 	// with heatmap handier, borders needed for proper heatmap interpolation

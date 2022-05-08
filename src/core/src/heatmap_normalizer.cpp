@@ -25,21 +25,21 @@ HeatmapNormalizer::HeatmapNormalizer(const HeatmapStorage& heatmap_storage,
 					max_resolution)),
 			x_new_step_(heatmap_storage.x_size() / (resolution_ - 1)),
 			y_new_step_(heatmap_storage.y_size() / (resolution_ - 1)),
-			x_steps_(heatmap_storage.x_steps()),
-			y_steps_(heatmap_storage.y_steps()),
+			x_coords_(heatmap_storage.x_steps()),
+			y_coords_(heatmap_storage.y_steps()),
 			x_representation_size_(heatmap_storage.x_size()),
 			y_representation_size_(heatmap_storage.y_size()),
 			env_temp_(heatmap_storage.environment_temperature()) {
 	// store coordinates of the temperatures
 	static constexpr size_t size_adjustment = 2;
-	x_old_coords_.reserve(x_steps_.size() + size_adjustment);
-	y_old_coords_.reserve(y_steps_.size() + size_adjustment);
+	x_old_coords_.reserve(x_coords_.size() + size_adjustment);
+	y_old_coords_.reserve(y_coords_.size() + size_adjustment);
 	x_old_coords_.push_back(0.0f);
 	y_old_coords_.push_back(0.0f);
 
-	std::inclusive_scan(x_steps_.begin(), x_steps_.end(),
+	std::inclusive_scan(x_coords_.begin(), x_coords_.end(),
 	                    std::back_inserter(x_old_coords_));
-	std::inclusive_scan(y_steps_.begin(), y_steps_.end(),
+	std::inclusive_scan(y_coords_.begin(), y_coords_.end(),
 	                    std::back_inserter(y_old_coords_));
 
 	x_old_coords_.push_back(heatmap_storage.x_size());
@@ -50,8 +50,8 @@ HeatmapNormalizer::HeatmapNormalizer(const HeatmapStorage& heatmap_storage,
 	//        "Error in x_steps");
 	// assert(float_eq(y_old_coords_.back(), y_representation_size_) &&
 	//        "Error in y_steps");
-	assert(x_old_coords_.size() == x_steps_.size() + size_adjustment);
-	assert(y_old_coords_.size() == y_steps_.size() + size_adjustment);
+	assert(x_old_coords_.size() == x_coords_.size() + size_adjustment);
+	assert(y_old_coords_.size() == y_coords_.size() + size_adjustment);
 }
 
 Heatmap HeatmapNormalizer::BilinearInterpolateSlow(const Heatmap& heatmap) {
@@ -104,6 +104,10 @@ HeatmapNormalizer::Cell HeatmapNormalizer::FindBilinearInterpolationCell(
 
 	// if `upper_coord_it == y_coords.begin()`, it is an edge, and should be
 	// treated differently
+	//auto upper_row_idx    = std::distance(y_coords.begin() + 1, upper_coord_it);
+	//auto lower_row_idx    = std::distance(y_coords.begin() + 1, lower_coord_it);
+	//auto left_column_idx  = std::distance(x_coords.begin() + 1, left_coord_it);
+	//auto right_column_idx = std::distance(x_coords.begin() + 1, right_coord_it);
 	auto upper_row_idx    = std::distance(y_coords.begin() + 1, upper_coord_it);
 	auto lower_row_idx    = std::distance(y_coords.begin() + 1, lower_coord_it);
 	auto left_column_idx  = std::distance(x_coords.begin() + 1, left_coord_it);
@@ -121,14 +125,14 @@ HeatmapNormalizer::Cell HeatmapNormalizer::FindBilinearInterpolationCell(
 	FloatPair lower_values = {lower_row[left_column_idx],
 	                          lower_row[right_column_idx]};
 
-	if (upper_coord_it == y_coords.begin())
-		upper_values = {env_temp, env_temp};
-	if (lower_coord_it == y_coords.end() - 1)
-		lower_values = {env_temp, env_temp};
-	if (left_coord_it == x_coords.begin())
-		upper_values.first = env_temp, lower_values.first = env_temp;
-	if (right_coord_it == x_coords.end() - 1)
-		upper_values.second = env_temp, lower_values.second = env_temp;
+	//if (upper_coord_it == y_coords.begin())
+	//	upper_values = {env_temp, env_temp};
+	//if (lower_coord_it == y_coords.end() - 1)
+	//	lower_values = {env_temp, env_temp};
+	//if (left_coord_it == x_coords.begin())
+	//	upper_values.first = env_temp, lower_values.first = env_temp;
+	//if (right_coord_it == x_coords.end() - 1)
+	//	upper_values.second = env_temp, lower_values.second = env_temp;
 
 	return {
 			.x_bounds     = {*left_coord_it, *right_coord_it},
@@ -148,7 +152,7 @@ Heatmap HeatmapNormalizer::BilinearInterpolate(const Heatmap& heatmap) {
 
 	auto LerpRowHelper = [this, &result_iterator](auto row) {
 		result_iterator =
-				InterpolateRow(row, x_steps_, x_new_step_, result_iterator);
+				InterpolateRow(row, x_coords_, x_new_step_, result_iterator);
 	};
 
 	// First row
@@ -156,7 +160,7 @@ Heatmap HeatmapNormalizer::BilinearInterpolate(const Heatmap& heatmap) {
 	// assert(result.size() == resolution_);
 	size_t y_old_idx         = 0;
 	float y_old_top_coord    = 0.0f;
-	float y_old_bottom_coord = y_steps_[0];
+	float y_old_bottom_coord = y_coords_[0];
 	// float y_new_coord = 0;
 	// All non edge rows
 	for (float y_new_coord = y_new_step_;
@@ -165,7 +169,7 @@ Heatmap HeatmapNormalizer::BilinearInterpolate(const Heatmap& heatmap) {
 		// if iterated through current old node, update it
 		if (y_new_coord > y_old_bottom_coord) {
 			y_old_top_coord = y_old_bottom_coord;
-			y_old_bottom_coord += y_steps_[y_old_idx++];
+			y_old_bottom_coord += y_coords_[y_old_idx++];
 		}
 		auto top_old_row    = heatmap.row(y_old_idx);
 		auto bottom_old_row = heatmap.row(y_old_idx + 1);
@@ -232,7 +236,7 @@ size_t HeatmapNormalizer::FindOptimalResolution(const float min_old_step,
 		heatmap_resolution *= 2;
 	}
 
-	assert(max_dimension_size / heatmap_resolution < min_old_step);
+	//assert(max_dimension_size / heatmap_resolution < min_old_step);
 
 	return std::min(heatmap_resolution, max_resolution);
 }
