@@ -17,7 +17,8 @@ class HeatmapMaterial {
 	HeatmapMaterial(
 			std::pair<std::unique_ptr<Texture2D>, std::unique_ptr<Texture2D>>
 					heatmap_textures,
-			std::pair<glm::vec2, glm::vec2> bot_top_temp_ranges);
+			std::pair<glm::vec2, glm::vec2> bot_top_temp_ranges,
+			std::pair<float, float> bounds);
 
 	void SetTemperatureRange(float min, float max) {
 		temperature_range_[0] = min;
@@ -33,8 +34,7 @@ class HeatmapMaterial {
 		// std::move for avoiding that
 		shader_ = std::move(shader);
 	}
-	void Use(const glm::mat4& transform, const glm::mat4& view_projection,
-	         glm::mat2 bounds) {
+	void Use(const glm::mat4& transform, const glm::mat4& view_projection) {
 		assert(bot_heatmap_texture_ != nullptr);
 
 		bot_heatmap_texture_->Bind(0);
@@ -46,7 +46,7 @@ class HeatmapMaterial {
 		shader_->SetMat4(view_proj_shader_var_, view_projection);
 		shader_->SetVec2(bottom_temp_range_var_, bot_temp_range_);
 		shader_->SetVec2(top_temp_range_var_, top_temp_range_);
-		shader_->SetMat2(bounds_var_, bounds); 
+		shader_->SetMat2(bounds_var_, bounds_);
 	}
 
  private:
@@ -57,6 +57,7 @@ class HeatmapMaterial {
 	glm::vec2 top_temp_range_    = temperature_range_;
 	std::unique_ptr<Texture2D> bot_heatmap_texture_;
 	std::unique_ptr<Texture2D> top_heatmap_texture_;
+	glm::mat2 bounds_;
 
 	// TODO: move to templated base class
 	const char* view_proj_shader_var_         = "u_ViewProjection";

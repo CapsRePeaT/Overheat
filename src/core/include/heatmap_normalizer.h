@@ -15,6 +15,8 @@ class HeatmapNormalizer {
 	                  size_t max_resolution);
 	using FloatPair = std::pair<float, float>;
 	using SizeTPair = std::pair<size_t, size_t>;
+
+	// --DEV VERSION, DO NOT USE
 	Heatmap BilinearInterpolate(const Heatmap& heatmap);
 	Heatmap BilinearInterpolateSlow(const Heatmap& heatmap);
 
@@ -119,8 +121,6 @@ class HeatmapNormalizer {
 	const float y_new_step_;
 	const Floats& x_coords_;
 	const Floats& y_coords_;
-	Floats x_old_coords_;
-	Floats y_old_coords_;
 	const float x_representation_size_;
 	const float y_representation_size_;
 	const float env_temp_;

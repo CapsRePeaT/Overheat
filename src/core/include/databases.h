@@ -46,7 +46,7 @@ class HeatmapStorage {
 		return representation_borders_;
 	}
 	[[nodiscard]] float environment_temperature() const {
-		return environment_temperature_;
+		return env_temp_;
 	}
 
 	[[nodiscard]] float x_size() const {
@@ -59,12 +59,12 @@ class HeatmapStorage {
 	[[nodiscard]] float max_temp() const;
 	[[nodiscard]] float min_temp() const;
 	[[nodiscard]] const Heatmaps& heatmaps() const { return heatmaps_; }
-	[[nodiscard]] const Floats& x_steps() const { return x_coords_; }
-	[[nodiscard]] const Floats& y_steps() const { return y_coords_; }
+	[[nodiscard]] const Floats& x_coords() const { return x_coords_; }
+	[[nodiscard]] const Floats& y_coords() const { return y_coords_; }
 
  private:
 	size_t layers_count_           = 0;  // IST in T2D file
-	float environment_temperature_ = 0.0f;
+	float env_temp_ = 0.0f;
 	float min_step_;
 	Floats x_coords_;
 	Floats y_coords_;

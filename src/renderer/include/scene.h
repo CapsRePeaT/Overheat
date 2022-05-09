@@ -26,6 +26,7 @@ class Scene {
 	// Only for in-module usage (maybe will be removed and by-passed, TBT)
 	[[nodiscard]] const std::vector<std::shared_ptr<SceneShape>>& shapes() const;
 	[[nodiscard]] const Heatmaps& heatmaps() const;
+	[[nodiscard]] std::pair<float, float> bounds() const;
 
  private:
 	struct SceneImpl;

@@ -4,6 +4,7 @@
 
 namespace renderer::gl {
 
+// TODO: get data type as template parameter and set type for glTextImage2D by it
 Texture2D::Texture2D(const GLsizei width, GLsizei height,
                                  const void* data, const int channels,
                                  const int32_t filter, const int32_t wrap_mode,
@@ -28,7 +29,7 @@ Texture2D::Texture2D(const GLsizei width, GLsizei height,
 
 	glBindTexture(GL_TEXTURE_2D, id_);
 	glTexImage2D(GL_TEXTURE_2D, 0, mode_, width_, height_, 0, mode_,
-	             GL_UNSIGNED_BYTE, data);
+	             GL_FLOAT, data);
 
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, wrap_mode);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, wrap_mode);

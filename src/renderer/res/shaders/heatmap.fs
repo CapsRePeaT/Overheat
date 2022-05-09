@@ -25,6 +25,7 @@ float GetTopTemp() {
 	return GetTopOrBottomTemp(u_TopHeatmap, u_TopTemperatureRange);
 }
 
+// leaved for the future, when edges will be drawn itself
 float GetSideTemp() {
 	float botTemp = GetBotTemp();
 	float topTemp = GetTopTemp();
@@ -38,6 +39,7 @@ vec4 GetColorByTemp(float temp) {
 
 void main() {
 	const float eps = 0.001f;
+
 	// Top heatmap
 	if (abs(frag_Topness - 1.0f) < eps) {
 		out_Color = GetColorByTemp(GetTopTemp());
@@ -48,6 +50,7 @@ void main() {
 	}
 	// Side heatmap
 	else {
-		out_Color = GetColorByTemp(GetSideTemp());
+		// genius solution (crutch) for edges
+		out_Color = vec4(0, 0, 0, 1);
 	}
 }

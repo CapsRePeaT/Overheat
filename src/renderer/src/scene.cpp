@@ -14,6 +14,7 @@ struct Scene::SceneImpl {
 	std::vector<std::shared_ptr<SceneShape>> scene_shapes;
 	std::unique_ptr<OrthographicCamera> camera;
 	Heatmaps heatmaps;
+	std::pair<float, float> bounds;
 };
 
 Scene::Scene() : impl_(std::make_unique<SceneImpl>()) {}
@@ -25,10 +26,14 @@ void Scene::AddShape(const std::shared_ptr<BasicShape>& shape) {
 }
 
 void Scene::AddHeatmaps(const HeatmapStorage& heatmaps_storage) {
+	assert(impl_ && "SceneImpl is not initialized");
+	impl_->bounds = {heatmaps_storage.x_size(), heatmaps_storage.y_size()};
+
 	// TODO: get max_resolution from renderer API (but may be leaved as it is
 	// because we are in scene and do not know which renderer api to call)
-	static constexpr size_t max_renderer_api_resolution = 32; //16384;
+	static constexpr size_t max_renderer_api_resolution = 16384;
 	HeatmapNormalizer normalizer(heatmaps_storage, max_renderer_api_resolution);
+
 	const auto& heatmaps = heatmaps_storage.heatmaps();
 	impl_->heatmaps.reserve(heatmaps.size());
 	std::ranges::transform(heatmaps, std::back_inserter(impl_->heatmaps),
@@ -47,6 +52,8 @@ const std::vector<std::shared_ptr<SceneShape>>& Scene::shapes() const {
 }
 
 const Heatmaps& Scene::heatmaps() const { return impl_->heatmaps; }
+
+std::pair<float, float> Scene::bounds() const { return impl_->bounds; }
 
 void Scene::Clear() { impl_->scene_shapes.clear(); }
 

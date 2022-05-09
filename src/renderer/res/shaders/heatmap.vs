@@ -13,7 +13,7 @@ uniform mat2 u_Bounds;
 void main() {
 	vec4 worldLocation = u_ModelTransform * vec4(in_Position, 1.0);
 	gl_Position        = u_ViewProjection * worldLocation;
-	frag_UVCoordinates =
-			(in_Position.xy - u_Bounds[0]) / (u_Bounds[1] - u_Bounds[0]);
+	vec2 bounds_range  = u_Bounds[1] - u_Bounds[0];
+	frag_UVCoordinates = (in_Position.xy - u_Bounds[0]) / bounds_range;
 	frag_Topness = in_Topness;
 }

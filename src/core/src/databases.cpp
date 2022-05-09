@@ -1,12 +1,13 @@
 #include "databases.h"
 
 #include <cmath>
+#include <iterator>
 #include <numeric>
 #include <ranges>
 
 #include "heatmap.h"
-#include "log.h"
 #include "heatmap_normalizer.h"
+#include "log.h"
 
 const FileRepresentation::Shapes& FileRepresentation::GetShapes(
 		const Box3D& /*area*/) const {
@@ -37,70 +38,60 @@ GlobalIds FileRepresentation::GetAllShapeIdsOfLayer(GlobalId layer_id) const {
 HeatmapStorage::HeatmapStorage(std::vector<float> x_steps,
                                std::vector<float> y_steps,
                                const std::vector<float>& temperature,
-															 const float environment_temperature,
+                               const float environment_temperature,
                                Box3D representation_borders_mv)
-		: environment_temperature_(environment_temperature),
+		: env_temp_(environment_temperature),
+			min_step_(std::min(*std::ranges::min_element(x_steps),
+                         *std::ranges::min_element(y_steps))),
 			representation_borders_(std::move(representation_borders_mv)) {
-	min_step_ = std::min(*std::ranges::min_element(x_steps),
-	                     *std::ranges::min_element(y_steps));
 	// filling coords
-	auto FillCoords = [this]
-	                  (std::vector<float>& result,
-									   const std::vector<float>& steps, 
-		                 const Axis axis) {
+	auto FillCoords = [this](std::vector<float>& result,
+	                         const std::vector<float>& steps, const Axis axis) {
 		result.push_back(0);
-		for (const auto& step : steps) result.push_back(result.back() + step);
-		result.push_back(representation_borders_.coordinates()[Axis::X].second);
+		std::inclusive_scan(steps.begin(), steps.end(), std::back_inserter(result));
+		result.push_back(representation_borders_.coordinates()[axis].second);
 	};
 	FillCoords(x_coords_, x_steps, Axis::X);
 	FillCoords(y_coords_, y_steps, Axis::Y);
-	const size_t heatmap_resolution = (x_steps.size()) * (y_steps.size());
+
+	// initializing heatmaps with border temperatures as environment_temperature_
+	const size_t row_length         = x_steps.size();
+	const size_t rows_count         = y_steps.size();
+	const size_t heatmap_resolution = row_length * rows_count;
 	assert(temperature.size() % heatmap_resolution == 0 && "Not interger layers_count");
 	layers_count_ = temperature.size() / heatmap_resolution;
 
-	auto GetHitmapWithBorders = [this, &heatmap_resolution, &temperature,
-	                             &x_steps, &y_steps](const size_t layer_count) {
+	auto GetHitmapWithBorders = [this, row_length, rows_count, heatmap_resolution,
+	                             &temperature](const int current_layer) {
 		Floats result;
-		result.reserve(x_coords_.size() * y_coords_.size());
-		// fill first line
-		result.insert(result.end(), x_coords_.size(), environment_temperature_);
-		for (size_t i = 0; i < y_steps.size(); ++i) {
-			const size_t heatmap_start_index =
-					layer_count * heatmap_resolution + x_steps.size() * i;
-			result.push_back(environment_temperature_);
-			auto first = std::next(temperature.cbegin(), heatmap_start_index);
-			auto last =
-					std::next(temperature.cbegin(), heatmap_start_index + x_steps.size());
-			result.insert(result.end(), first, last);
-			result.push_back(environment_temperature_);
+		result.reserve(row_length * rows_count);
+
+		const auto heatmaps_start = temperature.begin() + current_layer * heatmap_resolution;
+		std::span<const float> raw_heatmap(heatmaps_start, heatmap_resolution);
+
+		// fill the first line
+		std::fill_n(std::back_inserter(result), row_length, env_temp_);
+
+		// Now this assert is ambiguous due to heatmap_resolution initialization,
+		// but god takes care of the safe
+		assert(raw_heatmap.size() % row_length == 0 && "Not integer rows count");
+		for (auto row_start = raw_heatmap.begin(),
+		          row_end   = raw_heatmap.begin() + row_length;
+		     row_start != raw_heatmap.end();
+		     row_start = row_end, row_end += row_length) {
+			result.push_back(env_temp_);
+			std::copy(row_start, row_end, std::back_inserter(result));
+			result.push_back(env_temp_);
 		}
-		result.insert(result.end(), x_coords_.size(), environment_temperature_);
+		// fill the last line
+		std::fill_n(std::back_inserter(result), row_length, env_temp_);
 		return result;
 	};
 
 	for (size_t i = 0; i < layers_count_; ++i)
-		heatmaps_.emplace(heatmaps_.begin(),
-			                GetHitmapWithBorders(i), 
-			                x_coords_.size(),
-		                  y_coords_.size());
-	// HeatmapNormalizer normalizer(*this, 16000);
-	// Heatmap test = normalizer.Normalize(heatmaps_[6]);
-	// test.DebugPrint();
+		heatmaps_.emplace(heatmaps_.begin(), GetHitmapWithBorders(i),
+		                  x_coords_.size(), y_coords_.size());
 }
-
-//float HeatmapStorage::MinStep() const {
-//	auto MinRange = [](const Floats& floats) {
-//		assert(floats.size() > 2);
-//		float result = floats[1] - floats[0];
-//		for (size_t i = 0; i < floats.size() - 1; ++i) {
-//			const float iteration_result = floats[i + 1] - floats[i];
-//			if (iteration_result < result)
-//				result = iteration_result;
-//		}
-//		return result;
-//	};
-//	return std::min(MinRange(x_coords_), MinRange(y_coords_));
-//}
 
 float HeatmapStorage::max_temp() const {
 	if (std::isnan(max_temp_cache_))

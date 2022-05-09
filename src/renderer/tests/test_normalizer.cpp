@@ -110,11 +110,11 @@ TEST(TrivialCase, LerpRow) {
 //                                    2.f, 2.f, 1.f, 0.f, 0.f, 2.f, 3.f, 3.f,
 //                                    2.f, 0.f, 0.f, 2.f, 3.f, 4.f, 2.f, 0.f,
 //                                    0.f, 0.f, 0.f, 0.f, 0.f, 0.f};
-// std::vector<float> x_steps      = {1.f, 3.f, 1.f, 3.f, 3.f};
-// std::vector<float> y_steps      = {1.f, 4.f, 1.f, 2.f};
+// std::vector<float> x_coords      = {1.f, 3.f, 1.f, 3.f, 3.f};
+// std::vector<float> y_coords      = {1.f, 4.f, 1.f, 2.f};
 // float min_step{1.f};
-// HeatmapNormalizer normalizer(min_step, 11.f, 8.f, 16, x_steps, y_steps);
-// Heatmap h(temperatures, x_steps.size() + 1, y_steps.size() + 1);
+// HeatmapNormalizer normalizer(min_step, 11.f, 8.f, 16, x_coords, y_coords);
+// Heatmap h(temperatures, x_coords.size() + 1, y_coords.size() + 1);
 // h.DebugPrint();
 
 // auto res_h = normalizer.BilinearInterpolate(h);

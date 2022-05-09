@@ -37,4 +37,5 @@ void Heatmap::DebugPrint(size_t step) const {
 		}
 		LOG_DEBUG(res);
 	}
+	LOG_DEBUG("min_temp: {}, max_temp: {}", min_temp_, max_temp_);
 }

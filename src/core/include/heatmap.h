@@ -19,7 +19,7 @@ class Heatmap {
 	[[nodiscard]] inline std::span<float> row(size_t i) {
 		return {temperatures_.begin() + i * x_resolution_, x_resolution_};
 	}
-	[[nodiscard]] inline auto temperatures() const { return temperatures_; }
+	[[nodiscard]] inline const Floats& temperatures() const { return temperatures_; }
 	[[nodiscard]] inline size_t x_resolution() const { return x_resolution_; }
 	[[nodiscard]] inline size_t y_resolution() const { return y_resolution_; }
 	[[nodiscard]] inline float min_temp() const { return min_temp_; }

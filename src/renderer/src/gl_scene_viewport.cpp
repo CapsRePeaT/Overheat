@@ -131,7 +131,7 @@ void GLSceneViewport::RenderFrame() {
 					{top_heatmap.min_temp(), top_heatmap.max_temp()});
 
 			heatmap_materials_->emplace_back(std::move(texture_pair),
-			                                 temp_ranges_pair);
+			                                 temp_ranges_pair, scene_->bounds());
 		}
 	}
 
@@ -139,10 +139,8 @@ void GLSceneViewport::RenderFrame() {
 		for (const auto& shape : scene_->shapes()) {
 			// LOG_TRACE("Render shape: id {}, layer {}", shape->id().id(),
 			// shape->layer_id());
-			const auto& bbox = shape->core_shape().bbox().coordinates();
-			const glm::mat2 bounds = {{bbox[0].first, bbox[1].first}, {bbox[0].second, bbox[1].second}};
 			(*heatmap_materials_)[shape->core_shape().layer_id()].Use(
-					shape->transform(), camera.viewProjectionMatrix(), bounds);
+					shape->transform(), camera.viewProjectionMatrix());
 			api.DrawIndexed(shape->vertex_array());
 		}
 
