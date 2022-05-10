@@ -23,7 +23,7 @@ namespace Readers::Solver2d {
 Solver2dDataProvider::Solver2dDataProvider(const Solver2d_TRM& geom,
                                            const Solver2d_T2D& heat) {
 	load_geometry(geom);
-	load_heatmap(heat);
+	load_heatmap(heat, geom.tc_);
 }
 
 void Solver2dDataProvider::load_geometry(const Solver2d_TRM& data) {
@@ -43,8 +43,8 @@ void Solver2dDataProvider::load_geometry(const Solver2d_TRM& data) {
 	}
 }
 
-void Solver2dDataProvider::load_heatmap(const Solver2d_T2D& heat) {
-	heatmap_ = HeatmapStorage(heat.net_x(), heat.net_y(), heat.temperatures(),
+void Solver2dDataProvider::load_heatmap(const Solver2d_T2D& heat, const float env_temp) {
+	heatmap_ = HeatmapStorage(heat.net_x(), heat.net_y(), heat.temperatures(), env_temp,
 	                          heat.design_borders());
 }
 

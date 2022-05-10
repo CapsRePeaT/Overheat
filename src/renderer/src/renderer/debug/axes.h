@@ -6,7 +6,7 @@
 #include "renderer/scene_object.h"
 #include "renderer/vertexarray.h"
 
-namespace debug {
+namespace renderer::debug {
 
 class Axes : public SceneObject {
  public:
@@ -17,4 +17,4 @@ class Axes : public SceneObject {
 	std::unique_ptr<VertexArray> vao_;
 };
 
-}  // namespace debug
+}  // namespace renderer::debug

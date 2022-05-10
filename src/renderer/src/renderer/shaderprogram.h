@@ -1,14 +1,18 @@
 #pragma once
 
 #include <glm/gtc/matrix_transform.hpp>
-#include <string>
+
 #include <filesystem>
+#include <string>
+
+namespace renderer {
 
 // TODO: abstract shader and make ShaderLibrary
 class ShaderProgram {
  public:
 	using Path = std::filesystem::path;
-	ShaderProgram(const Path& vertex_shader_path, const Path& fragment_shader_path);
+	ShaderProgram(const Path& vertex_shader_path,
+	              const Path& fragment_shader_path);
 	ShaderProgram(ShaderProgram&& other) noexcept;
 	ShaderProgram& operator=(ShaderProgram&& other) noexcept;
 	~ShaderProgram();
@@ -26,6 +30,7 @@ class ShaderProgram {
 	void SetVec3(const char* name, glm::vec3 value) const;
 	void SetMat4(const char* name, const glm::mat4& value) const;
 	void SetMat2x3(const char* name, glm::mat2x3 value) const;
+	void SetMat2(const char* name, glm::mat2 value) const;
 
  private:
 	[[nodiscard]] int32_t getUniformLocation(const char* name) const;
@@ -33,3 +38,5 @@ class ShaderProgram {
 	uint32_t id_ = 0;
 	static uint32_t using_id_;
 };
+
+}  // namespace renderer

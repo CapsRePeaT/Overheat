@@ -15,6 +15,8 @@ using LayerId          = size_t;
 using HeatmapId        = size_t;
 using RepresentationId = size_t;
 
+using Floats = std::vector<float>;
+
 enum class DrawMode { 
 	Gradient = 0, 
 	Stratified 
@@ -57,7 +59,7 @@ class GlobalId {
 	RepresentationId representation_id_ = UndefinedId;
 };
 
-using GobalIds = std::vector<GlobalId>;
+using GlobalIds = std::vector<GlobalId>;
 
 enum class GeometryType { 
 	D3 = 0, 

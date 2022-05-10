@@ -1,20 +1,55 @@
 #include "renderer_api.h"
 
+#include <memory>
+
+#include "platform/opengl/gl_factory.h"
 #include "platform/opengl/renderer_api.h"
 
-// Relatively temporary definition
-// Approach will be change on other apis implementation
-RendererAPI::API RendererAPI::api_ = API::OpenGL;
+namespace renderer {
 
-std::unique_ptr<RendererAPI> RendererAPI::instance() {
-	switch (api_) {
+namespace {
+
+thread_local std::unique_ptr<RendererAPI> inst = nullptr;
+thread_local API using_api = API::None;
+thread_local std::unique_ptr<IRendererFactory> using_factory = nullptr;
+const API& api_ref = using_api;
+
+}  // namespace
+
+std::unique_ptr<RendererAPI> RendererAPI::createInstance() {
+	switch (using_api) {
 		case API::None:
 			assert(false && "Renderer::API::None is not currently supported");
 			return nullptr;
 		case API::OpenGL:
-			return std::make_unique<OpenGLRendererAPI>();
+			using_factory = std::make_unique<gl::Factory>();
+			return std::make_unique<gl::RendererAPI>();
 		default:
 			assert(false && "Unknown Renderer::API");
 			return nullptr;
 	}
 }
+
+RendererAPI& RendererAPI::Init(API api) {
+	thread_local bool is_inited = false;
+	using_api = api;
+	auto& inst = instance();
+	if (!is_inited) {
+		is_inited = true;
+		inst.InitImpl();
+	}
+	return inst;
+}
+
+API RendererAPI::api() { return api_ref; }
+
+RendererAPI& RendererAPI::instance() {
+	thread_local std::unique_ptr<RendererAPI> inst = createInstance();
+	return *inst;
+}
+
+IRendererFactory& RendererAPI::factory() {
+	return *using_factory;
+}
+
+}  // namespace renderer

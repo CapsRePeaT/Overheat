@@ -8,6 +8,10 @@
 #include "constants.h"
 #include "renderer/vertexbufferlayout.h"
 
+namespace renderer::gl {
+
+namespace {
+
 uint32_t InitBuffer(const size_t size, const void* data, const int draw_type) {
 	if (!data && draw_type == GL_STATIC_DRAW)
 		spdlog::warn("Creating empty static vertex buffer");
@@ -18,30 +22,30 @@ uint32_t InitBuffer(const size_t size, const void* data, const int draw_type) {
 	return id;
 }
 
-OpenGLVertexBuffer::OpenGLVertexBuffer(const size_t size)
+}  // namespace
+
+VertexBuffer::VertexBuffer(const size_t size)
 		: id_(InitBuffer(size, nullptr, GL_DYNAMIC_DRAW)) {}
 
-OpenGLVertexBuffer::OpenGLVertexBuffer(
-		const void* data, const size_t size,
-		std::unique_ptr<VertexBufferLayout>&& layout)
+VertexBuffer::VertexBuffer(const void* data, const size_t size,
+                           std::unique_ptr<VertexBufferLayout>&& layout)
 		: id_(InitBuffer(size, data, GL_STATIC_DRAW)), layout_(std::move(layout)) {}
 
-OpenGLVertexBuffer::~OpenGLVertexBuffer() {
+VertexBuffer::~VertexBuffer() {
 	glDeleteBuffers(consts::buffer_count_one, &id_);
 }
 
-OpenGLVertexBuffer::OpenGLVertexBuffer(OpenGLVertexBuffer&& other) noexcept {
+VertexBuffer::VertexBuffer(VertexBuffer&& other) noexcept {
 	*this = std::move(other);
 }
 
-OpenGLVertexBuffer& OpenGLVertexBuffer::operator=(
-		OpenGLVertexBuffer&& other) noexcept {
+VertexBuffer& VertexBuffer::operator=(VertexBuffer&& other) noexcept {
 	if (this == &other)
 		return *this;
 	// Delete owned buffer
 	glDeleteBuffers(consts::buffer_count_one, &id_);
 	// Assign moving buffer data
-	id_ = other.id_;
+	id_     = other.id_;
 	layout_ = std::move(other.layout_);
 	// Invalidate moving buffer
 	other.id_ = 0;
@@ -49,13 +53,15 @@ OpenGLVertexBuffer& OpenGLVertexBuffer::operator=(
 	return *this;
 }
 
-void OpenGLVertexBuffer::Bind() const { glBindBuffer(GL_ARRAY_BUFFER, id_); }
+void VertexBuffer::Bind() const { glBindBuffer(GL_ARRAY_BUFFER, id_); }
 
-void OpenGLVertexBuffer::Unbind() const { glBindBuffer(GL_ARRAY_BUFFER, 0); }
+void VertexBuffer::Unbind() const { glBindBuffer(GL_ARRAY_BUFFER, 0); }
 
-void OpenGLVertexBuffer::SetData(const void* data, const size_t size,
-                                 std::unique_ptr<VertexBufferLayout>&& layout) {
+void VertexBuffer::SetData(const void* data, const size_t size,
+                           std::unique_ptr<VertexBufferLayout>&& layout) {
 	Bind();
 	glBufferSubData(GL_ARRAY_BUFFER, /*offset=*/0, size, data);
 	layout_ = std::move(layout);
 }
+
+}  // namespace renderer::gl

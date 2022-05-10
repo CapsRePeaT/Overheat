@@ -10,6 +10,8 @@
 
 #include "constants.h"
 
+namespace renderer {
+
 uint32_t ShaderProgram::using_id_;
 bool CreateShader(const ShaderProgram::Path& source, GLenum shader_type,
                   uint32_t& shader_id);
@@ -159,6 +161,10 @@ void ShaderProgram::SetMat2x3(const char* name, const glm::mat2x3 value) const {
 	glUniformMatrix2x3fv(getUniformLocation(name), 1, GL_FALSE,
 	                     glm::value_ptr(value));
 }
+void ShaderProgram::SetMat2(const char* name, const glm::mat2 value) const {
+	glUniformMatrix2fv(getUniformLocation(name), 1, GL_FALSE,
+	                   glm::value_ptr(value));
+}
 
 void ShaderProgram::Use() const {
 	if (!is_compiled_)
@@ -173,3 +179,5 @@ void ShaderProgram::Unuse() {
 	glUseProgram(0);
 	using_id_ = 0;
 }
+
+}  // namespace renderer

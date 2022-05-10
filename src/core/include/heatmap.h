@@ -1,22 +1,43 @@
-#ifndef HEATMAP_H
-#define HEATMAP_H
+#pragma once
 
+#include <algorithm>
 #include <limits>
+#include <span>
 #include <vector>
+
+#include "common.h"
 
 class Heatmap {
  public:
-	explicit Heatmap(std::vector<float> temperature_mv);
+	explicit Heatmap(
+			Floats temperature_mv, size_t x_resolution, size_t y_resolution,
+			const std::ranges::min_max_result<float>& temp_range = min_max_floats);
 	// TBD: <some_type> operator[](std::size_t idx); ?
-	[[nodiscard]] float min_temp() const { return min_temp_; }
-	[[nodiscard]] float max_temp() const { return max_temp_; }
+	[[nodiscard]] inline std::span<const float> row(size_t i) const {
+		return {temperatures_.begin() + i * x_resolution_, x_resolution_};
+	}
+	[[nodiscard]] inline std::span<float> row(size_t i) {
+		return {temperatures_.begin() + i * x_resolution_, x_resolution_};
+	}
+	[[nodiscard]] inline const Floats& temperatures() const { return temperatures_; }
+	[[nodiscard]] inline size_t x_resolution() const { return x_resolution_; }
+	[[nodiscard]] inline size_t y_resolution() const { return y_resolution_; }
+	[[nodiscard]] inline float min_temp() const { return min_temp_; }
+	[[nodiscard]] inline float max_temp() const { return max_temp_; }
+
+	void DebugPrint(size_t step = 1) const;
 
  private:
 	// for alexey purposes we want to use single mem array, so we implement 2d
 	// array access on out own
-	std::vector<float> temperature_;
+	Floats temperatures_;
+	size_t x_resolution_;
+	size_t y_resolution_;
 	float max_temp_ = std::numeric_limits<float>::min();
 	float min_temp_ = std::numeric_limits<float>::max();
+
+	constexpr static std::ranges::minmax_result<float> min_max_floats = {
+			std::numeric_limits<float>::min(), std::numeric_limits<float>::max()};
 };
 
-#endif  // HEATMAP_H
+using Heatmaps = std::vector<Heatmap>;

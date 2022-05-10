@@ -5,11 +5,13 @@
 #include <cassert>
 #include <vector>
 
+namespace renderer {
+
 class VertexBufferLayout {
  public:
 	struct VertexBufferElement;
 	using VertexBufferElements = std::vector<VertexBufferElement>;
-	struct VertexBufferElement  // NOLINT(cppcoreguidelines-avoid-magic-numbers)
+	struct VertexBufferElement
 	{
 		uint32_t location;
 		unsigned count;
@@ -51,3 +53,5 @@ class VertexBufferLayout {
 	int32_t stride_ = 0;
 	VertexBufferElements elements_;
 };
+
+}  // namespace renderer

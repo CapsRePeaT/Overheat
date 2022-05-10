@@ -5,23 +5,24 @@
 #include "constants.h"
 #include "renderer/vertexbuffer.h"
 
-OpenGLVertexArray::OpenGLVertexArray(std::unique_ptr<VertexBuffer>&& vb,
-                                     std::unique_ptr<IndexBuffer>&& ib) {
+namespace renderer::gl {
+
+VertexArray::VertexArray(std::unique_ptr<VertexBuffer>&& vb,
+                         std::unique_ptr<IndexBuffer>&& ib) {
 	glGenVertexArrays(consts::vertex_array_count_one, &id_);
 	SetBuffer(std::move(vb));
 	SetIndexBuffer(std::move(ib));
 }
 
-OpenGLVertexArray::~OpenGLVertexArray() {
+VertexArray::~VertexArray() {
 	glDeleteVertexArrays(consts::vertex_array_count_one, &id_);
 }
 
-OpenGLVertexArray::OpenGLVertexArray(OpenGLVertexArray&& other) noexcept {
+VertexArray::VertexArray(VertexArray&& other) noexcept {
 	*this = std::move(other);
 }
 
-OpenGLVertexArray& OpenGLVertexArray::operator=(
-		OpenGLVertexArray&& other) noexcept {
+VertexArray& VertexArray::operator=(VertexArray&& other) noexcept {
 	if (this == &other)
 		return *this;
 	// Delete owned array
@@ -35,7 +36,7 @@ OpenGLVertexArray& OpenGLVertexArray::operator=(
 	return *this;
 }
 
-void OpenGLVertexArray::SetBuffer(std::unique_ptr<VertexBuffer>&& vb) {
+void VertexArray::SetBuffer(std::unique_ptr<VertexBuffer>&& vb) {
 	Bind();
 	vb->Bind();
 	const auto& layout = vb->layout();
@@ -51,12 +52,14 @@ void OpenGLVertexArray::SetBuffer(std::unique_ptr<VertexBuffer>&& vb) {
 	vbo_ = std::move(vb);
 }
 
-void OpenGLVertexArray::SetIndexBuffer(std::unique_ptr<IndexBuffer>&& ib) {
+void VertexArray::SetIndexBuffer(std::unique_ptr<IndexBuffer>&& ib) {
 	Bind();
 	ib->Bind();
 	ibo_ = std::move(ib);
 }
 
-void OpenGLVertexArray::Bind() const { glBindVertexArray(id_); }
+void VertexArray::Bind() const { glBindVertexArray(id_); }
 
-void OpenGLVertexArray::Unbind() const { glBindVertexArray(0); }
+void VertexArray::Unbind() const { glBindVertexArray(0); }
+
+}  // namespace renderer::gl

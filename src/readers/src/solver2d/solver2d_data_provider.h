@@ -18,7 +18,7 @@ class Solver2dDataProvider : public IDataProvider {
 
  private:
 	void load_geometry(const Solver2d_TRM& data);
-	void load_heatmap(const Solver2d_T2D& heat);
+	void load_heatmap(const Solver2d_T2D& heat, float env_temp);
 
 	GeomStorage<BasicShape> geometry_{};
 	HeatmapStorage heatmap_{};

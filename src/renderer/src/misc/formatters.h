@@ -1,5 +1,4 @@
 #include <fmt/format.h>
-
 #include <glm/detail/qualifier.hpp>
 
 template <glm::length_t L, typename T, glm::qualifier Q>
@@ -14,7 +13,7 @@ struct fmt::formatter<glm::vec<L, T, Q>> {
 		constexpr std::array<const char*, 4> vars = {"x", "y", "z", "w"};
 		auto out = format_to(ctx.out(), "vec{{");
 		for (glm::length_t i = 0; i < L; ++i) {
-			if (i != 0) 
+			if (i != 0)
 				out = format_to(out, ", ");
 			out = format_to(out, "{}: {}", vars[i], v[i]);
 		}

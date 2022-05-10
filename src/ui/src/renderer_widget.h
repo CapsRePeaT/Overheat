@@ -1,7 +1,7 @@
 #pragma once
 
-#include <QOpenGLWidget>
 #include <QMouseEvent>
+#include <QOpenGLWidget>
 #include <memory>
 
 #include "common.h"
@@ -13,7 +13,7 @@ class RendererWidget : public QOpenGLWidget {
 	Q_OBJECT
  public:
 	explicit RendererWidget(QWidget* parent = nullptr);
-	RendererWidget(QWidget* parent, const std::shared_ptr<Scene>& scene);
+	RendererWidget(QWidget* parent, const std::shared_ptr<renderer::Scene>& scene);
 	~RendererWidget() override;
 
 	void UpdateVisualizationOptions(
@@ -21,11 +21,11 @@ class RendererWidget : public QOpenGLWidget {
 	void initializeGL() override;
 	void paintGL() override;
 	void resizeGL(int w, int h) override;
-	// camera controls 
+	// camera controls
 	// Right btn pressed + move = rotate
 	// left btn = selection
 	// Middle btn pressed + move = pan
-	// weel move = move
+	// wheel move = move
 	void mousePressEvent(QMouseEvent* event) override;
 	void mouseReleaseEvent(QMouseEvent* event) override;
 	void mouseMoveEvent(QMouseEvent* event) override;
@@ -40,8 +40,8 @@ class RendererWidget : public QOpenGLWidget {
 	};
  private:
 	Qt::MouseButton current_pressed_button_ = Qt::NoButton;
-	QPoint previous_mouse_pos_; 
-	std::unique_ptr<ISceneViewport> viewport_;
-	std::weak_ptr<Scene> scene_;
+	QPoint previous_mouse_pos_;
+	std::unique_ptr<renderer::ISceneViewport> viewport_;
+	std::weak_ptr<renderer::Scene> scene_;
 	DrawMode draw_mode_ = DrawMode::Gradient;
 };

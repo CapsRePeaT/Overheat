@@ -5,7 +5,7 @@
 #include <vector>
 
 #include "../common.h"
-
+#include "common.h"
 
 struct BodySize {
 	float x{}, y{}, z{};  //размеры корпуса по осям x, y, z:
@@ -96,6 +96,7 @@ class Solver3d_T2D {
 	[[nodiscard]] const std::vector<float>& temperatures() const {
 		return temperature_.data();
 	}
+	[[nodiscard]] float env_temp() const { return env_temp_; }
 	friend std::istream& operator>>(std::istream& istream, Solver3d_T2D& t2d) {
 		istream >> t2d.program_name_;
 		istream >> t2d.body_size_;
@@ -129,6 +130,8 @@ class Solver3d_T2D {
 		istream >> t2d.topology_.set_size(t2d.IST_ * t2d.NH_ * t2d.MH_);
 		istream >> t2d.env_temp_;
 		istream >> t2d.temperature_.set_size(t2d.IST_ * t2d.NH_ * t2d.MH_);
+
+		assert(t2d.temperature_.data().size() == t2d.temperature_.data().capacity());
 
 		return istream;
 	}

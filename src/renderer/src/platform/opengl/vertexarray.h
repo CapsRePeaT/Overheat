@@ -4,24 +4,30 @@
 
 #include "renderer/vertexarray.h"
 
-class OpenGLVertexArray final : public VertexArray {
+namespace renderer::gl {
+
+class VertexArray final : public renderer::VertexArray {
  public:
-	OpenGLVertexArray(std::unique_ptr<VertexBuffer>&& vb,
-	                  std::unique_ptr<IndexBuffer>&& ib);
-	OpenGLVertexArray() : OpenGLVertexArray(nullptr, nullptr) {}
-	OpenGLVertexArray(OpenGLVertexArray&& other) noexcept;
-	OpenGLVertexArray& operator=(OpenGLVertexArray&& other) noexcept;
-	~OpenGLVertexArray() override;
-	OpenGLVertexArray(const OpenGLVertexArray&) = delete;
-	OpenGLVertexArray& operator=(const OpenGLVertexArray&) = delete;
-	void SetBuffer(std::unique_ptr<VertexBuffer>&& vb) final;
-	void SetIndexBuffer(std::unique_ptr<IndexBuffer>&& ib) final;
-	[[nodiscard]] const IndexBuffer& indexBuffer() const final { return *ibo_; }
+	VertexArray(std::unique_ptr<renderer::VertexBuffer>&& vb,
+	            std::unique_ptr<renderer::IndexBuffer>&& ib);
+	VertexArray() : VertexArray(nullptr, nullptr) {}
+	VertexArray(VertexArray&& other) noexcept;
+	VertexArray& operator=(VertexArray&& other) noexcept;
+	~VertexArray() override;
+	VertexArray(const VertexArray&) = delete;
+	VertexArray& operator=(const VertexArray&) = delete;
+	void SetBuffer(std::unique_ptr<renderer::VertexBuffer>&& vb) final;
+	void SetIndexBuffer(std::unique_ptr<renderer::IndexBuffer>&& ib) final;
+	[[nodiscard]] const renderer::IndexBuffer& indexBuffer() const final {
+		return *ibo_;
+	}
 	void Bind() const final;
 	void Unbind() const final;
 
  private:
 	uint32_t id_;
-	std::unique_ptr<VertexBuffer> vbo_;
-	std::unique_ptr<IndexBuffer> ibo_;
+	std::unique_ptr<renderer::VertexBuffer> vbo_;
+	std::unique_ptr<renderer::IndexBuffer> ibo_;
 };
+
+}  // namespace renderer::gl

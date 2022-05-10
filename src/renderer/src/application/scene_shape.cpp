@@ -5,25 +5,30 @@
 
 #include <memory>
 
+#include "renderer/renderer_api.h"
 #include "renderer/vertexbuffer.h"
 #include "renderer/vertexbufferlayout.h"
+
+namespace renderer {
 
 // TODO: handle vertices better
 struct Vertex {
 	glm::vec3 positions;
 	glm::vec2 uv_coordinates;
+	float topness;
 };
 
 // VertexBufferLayout doesn't support non-contigious vertices now, so we
 // should check it
-static_assert(sizeof(Vertex) == sizeof(glm::vec3) + sizeof(glm::vec2) &&
+static_assert(sizeof(Vertex) ==
+                  sizeof(glm::vec3) + sizeof(glm::vec2) + sizeof(float) &&
               "All data in vertex struct must be contigious");
 static_assert(sizeof(glm::vec3) == sizeof(float) * 3 &&
               "All data in vertex struct must be contigious");
 static_assert(sizeof(glm::vec2) == sizeof(float) * 2 &&
               "All data in vertex struct must be contigious");
 
-SceneShape::SceneShape(const BasicShape& shape) : id_(shape.id().id()) {
+SceneShape::SceneShape(const BasicShape& shape) : core_shape_(shape) {
 	// (minX, maxX), (minY, maxY), (minZ, maxZ)
 	const auto bounds = shape.bbox().coordinates();
 
@@ -46,14 +51,14 @@ SceneShape::SceneShape(const BasicShape& shape) : id_(shape.id().id()) {
 	// 0---------3        o------> x
 	//
 	const std::array<const Vertex, 8> vertices = {
-			Vertex{{min_bounds.x, min_bounds.y, min_bounds.z}, {0.0f, 0.0f}},
-			Vertex{{min_bounds.x, max_bounds.y, min_bounds.z}, {0.0f, 1.0f}},
-			Vertex{{max_bounds.x, max_bounds.y, min_bounds.z}, {1.0f, 1.0f}},
-			Vertex{{max_bounds.x, min_bounds.y, min_bounds.z}, {1.0f, 0.0f}},
-			Vertex{{min_bounds.x, min_bounds.y, max_bounds.z}, {0.0f, 0.0f}},
-			Vertex{{min_bounds.x, max_bounds.y, max_bounds.z}, {0.0f, 1.0f}},
-			Vertex{{max_bounds.x, max_bounds.y, max_bounds.z}, {1.0f, 1.0f}},
-			Vertex{{max_bounds.x, min_bounds.y, max_bounds.z}, {1.0f, 0.0f}},
+			Vertex{{min_bounds.x, min_bounds.y, min_bounds.z}, {0.0f, 0.0f}, 0.0f},
+			Vertex{{min_bounds.x, max_bounds.y, min_bounds.z}, {0.0f, 1.0f}, 0.0f},
+			Vertex{{max_bounds.x, max_bounds.y, min_bounds.z}, {1.0f, 1.0f}, 0.0f},
+			Vertex{{max_bounds.x, min_bounds.y, min_bounds.z}, {1.0f, 0.0f}, 0.0f},
+			Vertex{{min_bounds.x, min_bounds.y, max_bounds.z}, {0.0f, 0.0f}, 1.0f},
+			Vertex{{min_bounds.x, max_bounds.y, max_bounds.z}, {0.0f, 1.0f}, 1.0f},
+			Vertex{{max_bounds.x, max_bounds.y, max_bounds.z}, {1.0f, 1.0f}, 1.0f},
+			Vertex{{max_bounds.x, min_bounds.y, max_bounds.z}, {1.0f, 0.0f}, 1.0f},
 	};
 
 	// 3 indices for a triangle, 2 triangles for a face, 6 faces
@@ -69,7 +74,11 @@ SceneShape::SceneShape(const BasicShape& shape) : id_(shape.id().id()) {
 	auto&& layout = std::make_unique<VertexBufferLayout>();
 	layout->Push<float>(3);
 	layout->Push<float>(2);
-	auto&& vbo = VertexBuffer::Create(vertices, std::move(layout));
-	auto&& ibo = IndexBuffer::Create(raw_ibo);
-	vao_       = VertexArray::Create(std::move(vbo), std::move(ibo));
+	layout->Push<float>(1);
+	auto& factory = RendererAPI::factory();
+	auto&& vbo    = factory.NewVertexBuffer(vertices, std::move(layout));
+	auto&& ibo    = factory.NewIndexBuffer(raw_ibo);
+	vao_          = factory.NewVertexArray(std::move(vbo), std::move(ibo));
 }
+
+}  // namespace renderer

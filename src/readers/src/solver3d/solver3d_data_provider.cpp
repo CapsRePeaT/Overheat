@@ -27,7 +27,7 @@ void Solver3dDataProvider::load_geometry(const Solver3d_TRM& data) {
 			const auto shapes = layer->geometry().shapes();
 			for (const auto& shape : shapes) {
 				geometry_.AddShape(std::make_unique<BasicShape>(
-						GlobalId(InstanceType::Shape, 0, box_counter_++), layer_counter_,
+						GlobalId(InstanceType::Shape, box_counter_++, 0), layer_counter_,
 						liftBox(shape->bbox(), offset)));
 			}
 			++layer_counter_;
@@ -39,8 +39,8 @@ void Solver3dDataProvider::load_geometry(const Solver3d_TRM& data) {
 }
 
 void Solver3dDataProvider::load_heatmap(const Solver3d_T2D& data) {
-	heatmap_ = HeatmapStorage(data.net_x(), data.net_y(), 
-	                          data.temperatures(), data.design_borders());
+	heatmap_ = HeatmapStorage(data.net_x(), data.net_y(), data.temperatures(),
+	                          data.env_temp(), data.design_borders());
 }
 
 }  // namespace Readers::Solver3d
