@@ -10,25 +10,28 @@ ShapeListWidget::ShapeListWidget(QWidget* parent)
 			view_(new QTreeView(this)) {
 	// example with checkboxes
 	// https://stackoverflow.com/questions/14158191/qt-qtreeview-and-custom-model-with-checkbox-columns
+	view_->setModel(model_);
 	view_->setWindowTitle(QObject::tr("Simple Tree Model"));
 	setWidget(view_);
 
-	// Test();
+	//Test();
 }
 
-void ShapeListWidget::AddData(const InstanceList& data) {
-
+void ShapeListWidget::AddData(const InstanceList& data) { 
+	model_->Fill(data);
 }
-void ClearData(const GlobalId& id) {
 
+void ShapeListWidget::ClearData(const GlobalId& id) {
+	assert(false && "not implemented");
 }
-void ClearAll() {
 
+void ShapeListWidget::ClearAll() { 
+	assert(false && "not implemented");
 }
 
 void ShapeListWidget::Test() {
-	// model_->TestFillWithTxtFile(
-	// 		"C:\\Users\\winroot\\Desktop\\overheat\\local_docs\\default.txt");
+	 model_->TestFillWithTxtFile(
+	 		"C:\\Users\\winroot\\Desktop\\overheat\\local_docs\\default.txt");
 }
 
 // TreeItem
@@ -126,6 +129,22 @@ int TreeModel::rowCount(const QModelIndex& parent) const {
 		parentItem = static_cast<TreeItem*>(parent.internalPointer());
 
 	return parentItem->child_count();
+}
+
+void AddToParent(TreeItem* parent, const InstanceList& data) {
+	//QVector<QVariant> columnData;
+	//columnData.reserve(1);
+	//columnData << QString::fromStdString(data.name);
+	TreeItem* child =
+			new TreeItem({QString::fromStdString(data.name), "a", "d"}, parent);
+	parent->append_child(child);
+	for (const auto& sub_child : data.dependants) 
+		AddToParent(child, sub_child);
+}
+
+void TreeModel::Fill(const InstanceList& data) { 
+	AddToParent(rootItem, data);
+	emit layoutChanged();
 }
 
 void TreeModel::TestFillWithTxtFile(const QString& file_path) {

@@ -77,6 +77,8 @@ class TreeModel : public QAbstractItemModel {
 	[[nodiscard]] int columnCount(
 			const QModelIndex& parent = QModelIndex()) const override;
 
+	void Fill(const InstanceList& data);
+
 	void TestFillWithTxtFile(const QString& file_path);
 
  private:

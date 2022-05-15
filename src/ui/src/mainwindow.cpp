@@ -47,9 +47,10 @@ MainWindow::~MainWindow() = default;
 void MainWindow::LoadFile(std::string trm_file_path,
                           std::string t2d_file_path,
                           const GeometryType type) {
-	core().LoadGeometry(trm_file_path, std::move(t2d_file_path), type);
-	const auto loaded_shapes   = core().GetFirstFile().GetShapes();
-	const auto loaded_heatmaps = core().GetFirstFile().heatmaps();
+	const auto rep_id = core().LoadRepresentation(trm_file_path, std::move(t2d_file_path), type);
+	const auto loaded_shapes   = core().GetRepresentation(rep_id).GetShapes();
+	const auto loaded_heatmaps = core().GetRepresentation(rep_id).heatmaps();
+	shape_list_widget_->AddData(core().GetRepresentationData(rep_id.representation_id()));
 	// Do we really need this assert?
 	// assert(!loaded_shapes.empty() && "no shapes received");
 	if (!loaded_shapes.empty()) {

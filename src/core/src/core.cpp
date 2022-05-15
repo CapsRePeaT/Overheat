@@ -6,7 +6,7 @@
 #include "../../readers/src/solver2d/solver2d_reader.h"
 #include "databases.h"
 
-void Core::LoadGeometry(std::string trm_file_path_mv,
+GlobalId Core::LoadRepresentation(std::string trm_file_path_mv,
                         std::string t2d_file_path_mv, 
 	                      const GeometryType type) {
 	switch (type) {
@@ -25,6 +25,7 @@ void Core::LoadGeometry(std::string trm_file_path_mv,
 		default:
 			assert(false && "undefined geom type");
 	}
+	return representations_.back().id();
 	
 	// TODO: If we create new file representation here,
 	// how can reader set its id to shapes?

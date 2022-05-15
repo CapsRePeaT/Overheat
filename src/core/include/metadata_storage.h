@@ -52,8 +52,21 @@ class MetadataStorage {
 		        std::forward<Args>(args)...);
 	}
 	std::string GetInstanceName(const GlobalId global_id) const {
-		std::string result = "Instanse ";
-		result += global_id.id();
+		std::string result;
+		switch (global_id.type()) {
+			case InstanceType::Shape:
+				result += "Shape ";
+				break;
+			case InstanceType::Representation:
+				result += "Representation ";
+				break;
+			case InstanceType::Layer:
+				result += "Layer ";
+				break;
+			default:
+				break;
+		}
+		result += std::to_string(global_id.id());
 		return result;
 	}
 	MetadataStorage()  = default;

@@ -18,19 +18,17 @@ class Core {
 		static Core instance;
 		return instance;
 	}
-	void LoadHeatmap(std::string file_path_mv) {}
-	void LoadGeometry(std::string trm_file_path_mv, 
-	                  std::string t2d_file_path_mv,
-	                  GeometryType type);
-	// for now we have only one file loaded
-	FileRepresentation& GetFirstFile() {
-		assert(!representations_.empty() && "any representations available");
-		return representations_[0];
+	GlobalId LoadRepresentation(std::string trm_file_path_mv, 
+	                            std::string t2d_file_path_mv,
+	                            GeometryType type);
+	FileRepresentation& GetRepresentation(const GlobalId id) {
+		const auto rep_id = id.representation_id();
+		assert(representations_.size() > rep_id && "Invalid Id");
+		return representations_[rep_id];
 	}
 	[[nodiscard]] MetadataPack GetShapeMetadata(const GlobalId id) const {
 		return GetRepresentation(id.representation_id()).GetShapeMetadata(id.id());
 	}
-	
 	/// For filling side widgets
 	InstanceList GetRepresentationData(const size_t representation_id) const {
 		return GetRepresentation(representation_id).GetInstanceList();
