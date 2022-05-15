@@ -35,6 +35,22 @@ GlobalIds FileRepresentation::GetAllShapeIdsOfLayer(GlobalId layer_id) const {
 	return result;
 }
 
+InstanceList FileRepresentation::GetInstanceList() const {
+	InstanceList result(id());
+	result.name = RepresentationName();
+	for (const auto& layer_id : GetAllLayerIds()) {
+		InstanceList layer_inst(layer_id);
+		layer_inst.name = GetName(layer_id);
+		for (const auto& shape_id : GetAllShapeIdsOfLayer(layer_id)) {
+			InstanceList shape_inst(shape_id);
+			shape_inst.name = GetName(shape_id);
+			layer_inst.dependants.push_back(shape_inst);
+		}
+		result.dependants.push_back(layer_inst);
+	}
+	return result;
+}
+
 HeatmapStorage::HeatmapStorage(std::vector<float> x_steps,
                                std::vector<float> y_steps,
                                const std::vector<float>& temperature,
@@ -55,36 +71,36 @@ HeatmapStorage::HeatmapStorage(std::vector<float> x_steps,
 	FillCoords(y_coords_, y_steps, Axis::Y);
 
 	// initializing heatmaps with border temperatures as environment_temperature_
-	const size_t row_length         = x_steps.size();
-	const size_t rows_count         = y_steps.size();
-	const size_t heatmap_resolution = row_length * rows_count;
+	const size_t x_steps_length = x_steps.size();
+	const size_t y_steps_count  = y_steps.size();
+	const size_t x_coords_num   = x_coords_.size();
+	const size_t y_coords_num   = y_coords_.size();
+	const size_t heatmap_resolution = x_steps_length * y_steps_count;
 	assert(temperature.size() % heatmap_resolution == 0 && "Not interger layers_count");
 	layers_count_ = temperature.size() / heatmap_resolution;
-
-	auto GetHitmapWithBorders = [this, row_length, rows_count, heatmap_resolution,
+	auto GetHitmapWithBorders = [this, x_steps_length, y_steps_count,
+	                             x_coords_num, y_coords_num, heatmap_resolution,
 	                             &temperature](const int current_layer) {
 		Floats result;
-		result.reserve(row_length * rows_count);
+		result.reserve(x_coords_num * y_coords_num);
 
 		const auto heatmaps_start = temperature.begin() + current_layer * heatmap_resolution;
 		std::span<const float> raw_heatmap(heatmaps_start, heatmap_resolution);
-
 		// fill the first line
-		std::fill_n(std::back_inserter(result), row_length, env_temp_);
-
+		std::fill_n(std::back_inserter(result), x_coords_num, env_temp_);
 		// Now this assert is ambiguous due to heatmap_resolution initialization,
 		// but god takes care of the safe
-		assert(raw_heatmap.size() % row_length == 0 && "Not integer rows count");
-		for (auto row_start = raw_heatmap.begin(),
-		          row_end   = raw_heatmap.begin() + row_length;
+		assert(raw_heatmap.size() % x_steps_length == 0 && "Not integer rows count");
+		for (auto row_start = raw_heatmap.begin();
 		     row_start != raw_heatmap.end();
-		     row_start = row_end, row_end += row_length) {
+		     row_start = row_start + x_steps_length) {
+			auto row_end = row_start + x_steps_length;
 			result.push_back(env_temp_);
 			std::copy(row_start, row_end, std::back_inserter(result));
 			result.push_back(env_temp_);
 		}
 		// fill the last line
-		std::fill_n(std::back_inserter(result), row_length, env_temp_);
+		std::fill_n(std::back_inserter(result), x_coords_num, env_temp_);
 		return result;
 	};
 
