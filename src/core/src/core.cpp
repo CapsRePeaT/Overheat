@@ -25,6 +25,7 @@ GlobalId Core::LoadRepresentation(std::string trm_file_path_mv,
 		default:
 			assert(false && "undefined geom type");
 	}
+	representations_.back().InitLayers();
 	return representations_.back().id();
 	
 	// TODO: If we create new file representation here,

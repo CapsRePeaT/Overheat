@@ -26,6 +26,8 @@ class GeomStorage {
 class Layer {
  public:
 	Layer() = default;
+	Layer(const GlobalId id, HeatmapId top_heatmap_id, HeatmapId bottom_heatmap_id)
+			: id_(id), top_heatmap_id_(top_heatmap_id), bottom_heatmap_id_(bottom_heatmap_id) {}
 
 	[[nodiscard]] GlobalId id() const { return id_; }
 
@@ -108,6 +110,8 @@ class FileRepresentation {
 	GeomStorage<BasicShape>& geom_storage() { return geom_storage_; }
 	HeatmapStorage& heatmaps() { return heatmaps_; }
 	InstanceList GetInstanceList() const;
+	// should be deleted when proper layer reading will be provided
+	[[deprecated]] void InitLayers();
  private:
 	// for side widgets
 	[[nodiscard]] GlobalIds GetAllLayerIds() const;
