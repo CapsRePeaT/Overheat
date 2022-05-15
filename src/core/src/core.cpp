@@ -6,34 +6,6 @@
 #include "../../readers/src/solver2d/solver2d_reader.h"
 #include "databases.h"
 
-NameAndIds Core::GetRepresentationsData() const { 
-	NameAndIds result; 
-	for (const auto& representation : representations_)
-		result.emplace_back(std::move(representation.GetName(representation.id())),
-		                    representation.id());
-	return result;
-
-}
-
-NameAndIds Core::GetLayersData(GlobalId representation_id) const {
-	assert(representation_id.type() == InstanceType::Representation);
-	const auto& representation =
-			GetRepresentation(representation_id.representation_id());
-	NameAndIds result;
-	for (const auto& id : representation.GetAllLayerIds())
-		result.emplace_back(std::move(representation.GetName(id)), id);
-	return result;
-}
-
-NameAndIds Core::GetShapesData(GlobalId layer_id) const { 
-	assert(layer_id.type() == InstanceType::Layer);
-	const auto& representation = GetRepresentation(layer_id.representation_id());
-	NameAndIds result;
-	for (const auto& id : representation.GetAllShapeIdsOfLayer(layer_id))
-		result.emplace_back(std::move(representation.GetName(id)), id);
-	return result;
-}
-
 void Core::LoadGeometry(std::string trm_file_path_mv,
                         std::string t2d_file_path_mv, 
 	                      const GeometryType type) {

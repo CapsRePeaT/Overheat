@@ -93,9 +93,6 @@ class FileRepresentation {
 	FileRepresentation(const FileRepresentation&) = delete;
 	FileRepresentation& operator=(const FileRepresentation&) = delete;
 	FileRepresentation& operator=(FileRepresentation&&) = delete; // id_ is const
-	// for side widgets
-	[[nodiscard]] GlobalIds GetAllLayerIds() const;
-	[[nodiscard]] GlobalIds GetAllShapeIdsOfLayer(GlobalId layer_id) const;
 
 	// FIXME implement geom search, now we return all shapes
 	[[nodiscard]] const Shapes& GetShapes(const Box3D& area = Box3D()) const;
@@ -104,14 +101,21 @@ class FileRepresentation {
 		return heatmaps_.representation_borders();
 	}
 	[[nodiscard]] GlobalId id() const { return id_; }
-	std::string GetName(GlobalId id) const {
-		return metadata_storage_.GetInstanceName(id);
+	std::string RepresentationName() const { 
+		return GetName(id());
 	}
 	// needed for geometry loading
 	GeomStorage<BasicShape>& geom_storage() { return geom_storage_; }
 	HeatmapStorage& heatmaps() { return heatmaps_; }
-
+	InstanceList GetInstanceList() const;
  private:
+	// for side widgets
+	[[nodiscard]] GlobalIds GetAllLayerIds() const;
+	[[nodiscard]] GlobalIds GetAllShapeIdsOfLayer(GlobalId layer_id) const;
+	std::string GetName(GlobalId id) const {
+		return metadata_storage_.GetInstanceName(id);
+	}
+
 	inline static RepresentationId id_counter = 0;
 
 	const GlobalId id_;

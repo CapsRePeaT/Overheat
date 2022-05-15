@@ -1,11 +1,15 @@
 #pragma once
 
+#include "common.h"
+
 #include <QAbstractItemModel>
 #include <QDockWidget>
 #include <QModelIndex>
 #include <QTreeView>
 #include <QVariant>
 #include <QVector>
+
+
 
 // TODO: remake with smart_ptrs
 
@@ -17,7 +21,9 @@ class ShapeListWidget : public QDockWidget {
 
  public:
 	explicit ShapeListWidget(QWidget* parent = nullptr);
-
+	void AddData(const InstanceList& data);
+	void ClearData(const GlobalId& id);
+	void ClearAll();
  private:
 	void Test();
 	TreeModel* model_ = nullptr;

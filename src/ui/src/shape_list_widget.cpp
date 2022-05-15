@@ -16,6 +16,16 @@ ShapeListWidget::ShapeListWidget(QWidget* parent)
 	// Test();
 }
 
+void ShapeListWidget::AddData(const InstanceList& data) {
+
+}
+void ClearData(const GlobalId& id) {
+
+}
+void ClearAll() {
+
+}
+
 void ShapeListWidget::Test() {
 	// model_->TestFillWithTxtFile(
 	// 		"C:\\Users\\winroot\\Desktop\\overheat\\local_docs\\default.txt");

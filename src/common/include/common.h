@@ -59,6 +59,13 @@ class GlobalId {
 	RepresentationId representation_id_ = UndefinedId;
 };
 
+struct InstanceList {
+	InstanceList(const GlobalId init_id) : id (init_id) {}
+	std::string name;
+	GlobalId id;
+	std::vector<InstanceList> dependants;
+};
+
 using GlobalIds = std::vector<GlobalId>;
 
 enum class GeometryType { 

@@ -32,9 +32,9 @@ class Core {
 	}
 	
 	/// For filling side widgets
-	NameAndIds GetRepresentationsData() const;
-	NameAndIds GetLayersData(GlobalId representation_id) const;
-	NameAndIds GetShapesData(GlobalId layer_id) const;
+	InstanceList GetRepresentationData(const size_t representation_id) const {
+		return GetRepresentation(representation_id).GetInstanceList();
+	}
 
  private:
 	Core() = default;
