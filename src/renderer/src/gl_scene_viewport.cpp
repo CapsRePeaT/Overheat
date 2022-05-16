@@ -100,6 +100,29 @@ void GLSceneViewport::RenderFrame() {
 	const ICamera& camera = camera_controller_->camera();
 
 	if (!heatmap_materials_ && !scene_->heatmaps().empty()) {
+		InitHeatmapMaterials();
+	}
+
+	if (heatmap_materials_)
+		for (const auto& shape : scene_->shapes()) {
+			// LOG_TRACE("Render shape: id {}, layer {}", shape->id().id(),
+			// shape->layer_id());
+			if (shape->is_visible()) {
+				(*heatmap_materials_)[shape->core_shape().layer_id()].Use(
+						shape->transform(), camera.viewProjectionMatrix());
+				api.DrawIndexed(shape->vertex_array());
+			}
+		}
+
+	if (data_) {
+		const auto& axes = data_->axes;
+		data_->debug_material->Use(axes->transform(), camera.viewProjectionMatrix(),
+		                           1.0f);
+		api.DrawIndexed(axes->vertex_array(), PrimitiveType::LINES);
+	}
+}
+
+void GLSceneViewport::InitHeatmapMaterials() {
 		auto heatmaps      = scene_->heatmaps();
 		heatmap_materials_ = std::vector<HeatmapMaterial>();
 		heatmap_materials_->reserve(heatmaps.size() - 1);
@@ -109,12 +132,6 @@ void GLSceneViewport::RenderFrame() {
 			const auto& bot_heatmap = heatmaps[i];
 			const auto& top_heatmap = heatmaps[i + 1];
 
-			// static bool is_printed = true;
-			// if (!is_printed && i == 6) {
-			// 	is_printed = true;
-			// 	bot_heatmap.DebugPrint(39);
-			// }
-			
 			auto heatmap_bottom_texture =
 					factory.NewTexture2D(side_resolution, side_resolution,
 			                         bot_heatmap.temperatures().data(), 1);
@@ -133,23 +150,6 @@ void GLSceneViewport::RenderFrame() {
 			heatmap_materials_->emplace_back(std::move(texture_pair),
 			                                 temp_ranges_pair, scene_->bounds());
 		}
-	}
-
-	if (heatmap_materials_)
-		for (const auto& shape : scene_->shapes()) {
-			// LOG_TRACE("Render shape: id {}, layer {}", shape->id().id(),
-			// shape->layer_id());
-			(*heatmap_materials_)[shape->core_shape().layer_id()].Use(
-					shape->transform(), camera.viewProjectionMatrix());
-			api.DrawIndexed(shape->vertex_array());
-		}
-
-	if (data_) {
-		const auto& axes = data_->axes;
-		data_->debug_material->Use(axes->transform(), camera.viewProjectionMatrix(),
-		                           1.0f);
-		api.DrawIndexed(axes->vertex_array(), PrimitiveType::LINES);
-	}
 }
 
 void GLSceneViewport::Resize(const int w, const int h) {

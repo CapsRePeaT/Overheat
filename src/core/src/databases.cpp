@@ -21,7 +21,7 @@ MetadataPack FileRepresentation::GetShapeMetadata(const ShapeId /*id*/) const {
 }
 
 void FileRepresentation::InitLayers() {
-	for (rsize_t layer_id = 0; layer_id < heatmaps_.heatmaps().size() - 1; ++layer_id) {
+	for (size_t layer_id = 0; layer_id < heatmaps_.heatmaps().size() - 1; ++layer_id) {
 		GlobalId new_id(InstanceType::Layer, layer_id, id().representation_id());
 		layers_.emplace_back(new_id, layer_id, layer_id + 1);
 	}

@@ -26,6 +26,7 @@ class GLSceneViewport final : public ISceneViewport {
 	void ZoomView(float delta) override;
 
  private:
+ 	void InitHeatmapMaterials();
 	// ClearResources must be invoked in dtor, but it's virtual. In this
 	// particular case we can safely do it, but for consistency and future safety
 	// I suggest to not to call virtual methods from dtors.
