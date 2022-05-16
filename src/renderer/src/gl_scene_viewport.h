@@ -24,6 +24,9 @@ class GLSceneViewport final : public ISceneViewport {
 	void MoveCamera(Vec2D screenPoint, Vec2D delta) override;
 	void RotateCamera(Vec2D screenPoint, Vec2D delta) override;
 	void ZoomView(float delta) override;
+	void SetVisibility(const GlobalIds& to_change, bool is_visible) override;
+	void ClearSelection() override;
+	void SetSelection(const GlobalIds& to_change, HighlightType type) override;
 
  private:
  	void InitHeatmapMaterials();

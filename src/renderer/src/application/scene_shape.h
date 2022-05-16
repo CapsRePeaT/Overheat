@@ -20,12 +20,18 @@ class SceneShape : public SceneObject {
 	[[nodiscard]] LayerId layer_id() const { return core_shape_.layer_id(); }
 	inline void SetIsVisible(bool is_visible) { is_visible_ = is_visible; }
 	[[nodiscard]] inline bool is_visible() const { return is_visible_; }
-	
+	inline void SetHighlightType(HighlightType highlight_type) {
+		highlight_type_ = highlight_type;
+	}
+	[[nodiscard]] inline HighlightType highlight_type() const {
+		return highlight_type_;
+	}
 
  private:
 	const BasicShape& core_shape_;
 	std::unique_ptr<VertexArray> vao_;
-	bool is_visible_ = true;
+	bool is_visible_              = true;
+	HighlightType highlight_type_ = HighlightType::None;
 };
 
 }  // namespace renderer

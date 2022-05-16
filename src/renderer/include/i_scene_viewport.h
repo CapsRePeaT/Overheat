@@ -59,6 +59,9 @@ class ISceneViewport {
 		SetColorRange(colors);
 	}
 	void SetDrawMode(DrawMode mode) { draw_mode_ = mode; };
+	virtual void SetVisibility(const GlobalIds& to_change, bool is_visible) = 0;
+	virtual void ClearSelection() = 0;
+	virtual void SetSelection(const GlobalIds& to_change, HighlightType type) = 0;
 	[[nodiscard]] bool is_initialized() const { return is_initialized_; }
 
  protected:
