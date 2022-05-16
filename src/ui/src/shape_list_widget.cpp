@@ -34,32 +34,53 @@ void ShapeListWidget::ClearAll() {
 	assert(false && "not implemented");
 }
 
-//Q_DECLARE_METATYPE(GlobalId);
-
 void ShapeListWidget::onItemClicked(const QModelIndex& index) { 
 	auto item = model_->itemFromIndex(index);
 	auto main_index = model_->index(index.row(), 0, index.parent());
-	if (index.column() == 1) {
-		std::cout << "visibility changed!" << std::endl;
-		ProcessChildren(main_index, index.column(), item->checkState());
+	QStandardItem* main_child = model_->itemFromIndex(main_index);
+	GlobalId id = main_child->data(id_data_role_).value<GlobalId>();
+	switch (index.column()) {
+		case 0:
+			emit ShowMetadata(id);
+			break;
+		case 1: {
+					GlobalIds shape_ids;
+			if (id.type() == InstanceType::Shape)
+				shape_ids.push_back(id);
+			ProcessChildren(main_index, index.column(), item->checkState(), shape_ids);
+			std::cout << "Visibility pack size: " << shape_ids.size() << std::endl;
+			emit ChangeVisibility(shape_ids);
+			break;
+		}
+		case 2: {
+					GlobalIds shape_ids;
+			if (id.type() == InstanceType::Shape)
+				shape_ids.push_back(id);
+			ProcessChildren(main_index, index.column(), item->checkState(), shape_ids);
+			std::cout << "Hilight pack size: " << shape_ids.size() << std::endl;
+			emit Hilight(shape_ids);
+			break;
+		}
+		default:
+			assert(false && "unsupported column");
+			break;
 	}
-	if (index.column() == 2) {
-		std::cout << "selection changed!" << std::endl;
-		ProcessChildren(main_index, index.column(), item->checkState());
-	}
-	
 }
 
 void ShapeListWidget::ProcessChildren(const QModelIndex& parent_index,
-                                      int clicked_column, Qt::CheckState state) {
+                                      int clicked_column, Qt::CheckState state,
+	                                    GlobalIds& shape_ids) {
 	for (int row = 0; row < model_->rowCount(parent_index); ++row) {
 		auto main_index = model_->index(row, 0, parent_index);
 		QStandardItem* main_child = model_->itemFromIndex(main_index);
+		GlobalId id = main_child->data(id_data_role_).value<GlobalId>();
+		if (id.type() == InstanceType::Shape)
+			shape_ids.push_back(id);
 		QStandardItem* child =
 				model_->itemFromIndex(model_->index(row, clicked_column, parent_index));
 		child->setCheckState(state);
 		if (model_->hasChildren(main_index)) {
-			ProcessChildren(main_index, clicked_column, state);
+			ProcessChildren(main_index, clicked_column, state, shape_ids);
 		}
 	}
 }

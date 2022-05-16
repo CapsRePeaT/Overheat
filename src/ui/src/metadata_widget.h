@@ -13,7 +13,7 @@ class MetadataWidget : public QTableWidget {
 	explicit MetadataWidget(QWidget* parent = nullptr);
 	void Test();
  public slots:
-	void OnShowMetadata(const MetadataPack& pack);
+	void ShowMetadata(const MetadataPack& pack);
  private:
 	QStringList lables_ = {"Parameter", "Value"};
 };

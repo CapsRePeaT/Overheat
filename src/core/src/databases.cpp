@@ -14,9 +14,11 @@ const FileRepresentation::Shapes& FileRepresentation::GetShapes(
 	return geom_storage_.shapes();
 }
 
-MetadataPack FileRepresentation::GetShapeMetadata(const ShapeId /*id*/) const {
+MetadataPack FileRepresentation::GetMetadata(const GlobalId id) const {
 	MetadataPack result;
-	assert(false && "not implemented");
+	result.emplace_back("description", "metadata");
+	result.emplace_back("representation", std::to_string(id.representation_id()));
+	result.emplace_back("id", std::to_string(id.id()));
 	return result;
 }
 

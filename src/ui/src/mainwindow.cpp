@@ -23,12 +23,16 @@ MainWindow::MainWindow(QWidget* parent)
 	// shape widget
 	addDockWidget(Qt::LeftDockWidgetArea, shape_list_widget_);
 	shape_list_widget_->setWindowTitle(tr("Shapes"));
+	connect(shape_list_widget_, &ShapeListWidget::ShowMetadata, 
+		      this, &MainWindow::OnShowMetadata);
+	connect(shape_list_widget_, &ShapeListWidget::Hilight, 
+		      this, &MainWindow::OnShapeSelected);
+//	connect(shape_list_widget_, &ShapeListWidget::ChangeVisibility, 
+//		      this, &MainWindow::OnShowMetadata);
 	// metadata widget
 	auto* metadata_dock = new QDockWidget(tr("Metadata"), this);
 	metadata_dock->setWidget(metadata_widget_);
 	addDockWidget(Qt::LeftDockWidgetArea, metadata_dock);
-	connect(this, &MainWindow::ShowMetadata, metadata_widget_,
-	        &MetadataWidget::OnShowMetadata);
 	// options widget
 	addDockWidget(Qt::LeftDockWidgetArea, visualization_options_);
 	visualization_options_->setWindowTitle(tr("Options"));
@@ -48,19 +52,24 @@ void MainWindow::LoadFile(std::string trm_file_path,
                           std::string t2d_file_path,
                           const GeometryType type) {
 	const auto rep_id = core().LoadRepresentation(trm_file_path, std::move(t2d_file_path), type);
-	const auto loaded_shapes   = core().GetRepresentation(rep_id).GetShapes();
-	const auto loaded_heatmaps = core().GetRepresentation(rep_id).heatmaps();
+	auto& representation  = core().GetRepresentation(rep_id);
+	const auto loaded_shapes   = representation.GetShapes();
+	const auto loaded_heatmaps = representation.heatmaps();
 	shape_list_widget_->AddData(core().GetRepresentationData(rep_id.representation_id()));
 	// Do we really need this assert?
 	// assert(!loaded_shapes.empty() && "no shapes received");
 	if (!loaded_shapes.empty()) {
 		LOG_INFO("Got {} files to render", loaded_shapes.size());
 		// FIXME: Adding shapes shouldn't need to make API context current
+
 		render_widget_->makeCurrent();
 		scene_->Clear();
 		scene_->AddShapes(loaded_shapes);
 		scene_->AddHeatmaps(loaded_heatmaps);
 		render_widget_->doneCurrent();
+		visualization_options_->SetMinMaxTemp(loaded_heatmaps.min_temp(),
+																					loaded_heatmaps.max_temp());
+		
 	} else {
 		LOG_WARN("No shaped received from file {}", trm_file_path);
 	}
@@ -106,6 +115,9 @@ void MainWindow::OnShapeSelected(const GlobalShapeIds& shape_ids) {
 		selected_shape_ids_   = shape_ids;
 		selected_shape_index_ = 0;
 	}
-	emit ShowMetadata(
-			core().GetShapeMetadata(selected_shape_ids_[selected_shape_index_]));
+	OnShowMetadata(selected_shape_ids_[selected_shape_index_]);
+}
+
+void MainWindow::OnShowMetadata(GlobalId id) {
+	metadata_widget_->ShowMetadata(core().GetMetadata(id));
 }

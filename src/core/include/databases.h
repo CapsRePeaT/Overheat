@@ -98,7 +98,7 @@ class FileRepresentation {
 
 	// FIXME implement geom search, now we return all shapes
 	[[nodiscard]] const Shapes& GetShapes(const Box3D& area = Box3D()) const;
-	[[nodiscard]] MetadataPack GetShapeMetadata(ShapeId id) const;
+	[[nodiscard]] MetadataPack GetMetadata(GlobalId id) const;
 	[[nodiscard]] Box3D representation_borders() const {
 		return heatmaps_.representation_borders();
 	}

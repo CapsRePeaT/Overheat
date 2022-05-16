@@ -8,7 +8,7 @@ MetadataWidget::MetadataWidget(QWidget* parent)
 	// Test();
 }
 
-void MetadataWidget::OnShowMetadata(const MetadataPack& pack) {
+void MetadataWidget::ShowMetadata(const MetadataPack& pack) {
 	setRowCount(static_cast<int>(pack.size()));
 	int row_counter = 0;
 	for (const auto& metadata : pack) {

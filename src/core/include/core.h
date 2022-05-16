@@ -26,8 +26,8 @@ class Core {
 		assert(representations_.size() > rep_id && "Invalid Id");
 		return representations_[rep_id];
 	}
-	[[nodiscard]] MetadataPack GetShapeMetadata(const GlobalId id) const {
-		return GetRepresentation(id.representation_id()).GetShapeMetadata(id.id());
+	[[nodiscard]] MetadataPack GetMetadata(const GlobalId id) const {
+		return GetRepresentation(id.representation_id()).GetMetadata(id);
 	}
 	/// For filling side widgets
 	InstanceList GetRepresentationData(const size_t representation_id) const {

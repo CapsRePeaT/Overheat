@@ -24,7 +24,7 @@ class ShapeListWidget : public QDockWidget {
 	}
 	void ClearData(const GlobalId& id);
 	void ClearAll();
-signals:
+ signals:
 	void ShowMetadata(GlobalId id);
 	void ChangeVisibility(GlobalIds shape_ids);
 	void Hilight(GlobalIds shape_ids);
@@ -34,7 +34,7 @@ signals:
  private:
 	void AddData(QStandardItem* parent, const InstanceList& data);
 	void ProcessChildren(const QModelIndex& parent_index, int clicked_column,
-	                     Qt::CheckState state);
+	                     Qt::CheckState state, GlobalIds& shape_ids);
 
 	const int id_data_role_ = Qt::UserRole + 1;
 	QStandardItemModel* model_ = nullptr;

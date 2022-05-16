@@ -47,3 +47,11 @@ VisualizationOptionsWidget::VisualizationOptionsWidget(QWidget* parent)
 }
 
 VisualizationOptionsWidget::~VisualizationOptionsWidget() = default;
+
+void VisualizationOptionsWidget::SetMinMaxTemp(float min, float max) {
+	ui_->min_temp->setValue(min);
+	ui_->max_temp->setValue(max);
+//  visualization_options_.min_temp = min;
+//  visualization_options_.max_temp = max;
+//  emit VisualizationOptionsChanged(visualization_options_);
+}

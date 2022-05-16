@@ -133,4 +133,4 @@ class PreparedMetadata {
 };
 
 // Why is not unordered_set?
-using MetadataPack = std::set<PreparedMetadata>;
+using MetadataPack = std::vector<PreparedMetadata>;

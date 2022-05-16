@@ -25,7 +25,7 @@ class VisualizationOptionsWidget : public QDockWidget {
  public:
 	explicit VisualizationOptionsWidget(QWidget* parent = nullptr);
 	~VisualizationOptionsWidget() override;
-
+	void SetMinMaxTemp(float min, float max);
  signals:
 	void VisualizationOptionsChanged(
 			const VisualizationOptions& visualization_options);
