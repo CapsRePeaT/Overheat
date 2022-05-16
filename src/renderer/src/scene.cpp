@@ -31,7 +31,7 @@ void Scene::AddHeatmaps(const HeatmapStorage& heatmaps_storage) {
 
 	// TODO: get max_resolution from renderer API (but may be leaved as it is
 	// because we are in scene and do not know which renderer api to call)
-	static constexpr size_t max_renderer_api_resolution = 256;  // 16384;
+	static constexpr size_t max_renderer_api_resolution = 128;  // 16384;
 	HeatmapNormalizer normalizer(heatmaps_storage, max_renderer_api_resolution);
 
 	const auto& heatmaps = heatmaps_storage.heatmaps();

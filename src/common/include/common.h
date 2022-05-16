@@ -40,9 +40,11 @@ enum class InstanceType {
 class GlobalId {
  public:
 	using InstanceId = size_t;
+	GlobalId() = default;
 	constexpr GlobalId(const InstanceType type, const InstanceId id,
 	                   const RepresentationId representation_id)
 			: type_(type), id_(id), representation_id_(representation_id) {}
+	GlobalId(const GlobalId& other) = default;
 	[[nodiscard]] bool operator==(const GlobalId& other) const = default;
 	[[nodiscard]] constexpr InstanceId id() const {
 		return id_;

@@ -3,6 +3,7 @@
 #include <QDockWidget>
 #include <QMainWindow>
 #include <QMdiArea>
+#include <QMetaType>
 
 #include "metadata_widget.h"
 #include "renderer_widget.h"
