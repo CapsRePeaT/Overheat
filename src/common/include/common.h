@@ -22,6 +22,12 @@ enum class DrawMode {
 	Stratified 
 };
 
+enum class HighlightType {
+	None,
+	Selected,
+	ActiveSelected
+};
+
 enum class ShapeType { 
 	Box = 0, 
 	Sphere, 
@@ -46,6 +52,13 @@ class GlobalId {
 			: type_(type), id_(id), representation_id_(representation_id) {}
 	GlobalId(const GlobalId& other) = default;
 	[[nodiscard]] bool operator==(const GlobalId& other) const = default;
+	[[nodiscard]] auto operator<=>(const GlobalId& other) const = default;//{
+	// 	if (representation_id_ != other.representation_id_)
+	// 		return representation_id_ <=> other.representation_id_; 
+	// 	if (type_ != other.type_)
+	// 		return static_cast<int>(type_) <=> static_cast<int>(other.type_);
+	// 	return id_ <=> other.id_;
+	// }
 	[[nodiscard]] constexpr InstanceId id() const {
 		return id_;
 	}

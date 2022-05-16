@@ -1,5 +1,6 @@
 #include "gl_scene_viewport.h"
 
+#include <bits/ranges_algo.h>
 #include <glad/glad.h>
 #include <spdlog/spdlog.h>
 
@@ -12,6 +13,7 @@
 #include "application/heatmap_material.h"
 #include "application/scene_shape.h"
 #include "camera_controller.h"
+#include "common.h"
 #include "constants.h"
 #include "log.h"
 #include "misc/formatters.h"
@@ -100,48 +102,18 @@ void GLSceneViewport::RenderFrame() {
 	const ICamera& camera = camera_controller_->camera();
 
 	if (!heatmap_materials_ && !scene_->heatmaps().empty()) {
-		auto heatmaps      = scene_->heatmaps();
-		heatmap_materials_ = std::vector<HeatmapMaterial>();
-		heatmap_materials_->reserve(heatmaps.size() - 1);
-		auto& factory = RendererAPI::factory();
-		for (size_t i = 0; i < heatmaps.size() - 1; ++i) {
-			int side_resolution     = heatmaps[i].x_resolution();
-			const auto& bot_heatmap = heatmaps[i];
-			const auto& top_heatmap = heatmaps[i + 1];
-
-			// static bool is_printed = true;
-			// if (!is_printed && i == 6) {
-			// 	is_printed = true;
-			// 	bot_heatmap.DebugPrint(39);
-			// }
-			
-			auto heatmap_bottom_texture =
-					factory.NewTexture2D(side_resolution, side_resolution,
-			                         bot_heatmap.temperatures().data(), 1);
-			auto heatmap_top_texture =
-					factory.NewTexture2D(side_resolution, side_resolution,
-			                         top_heatmap.temperatures().data(), 1);
-
-			auto texture_pair =
-					std::pair<std::unique_ptr<Texture2D>, std::unique_ptr<Texture2D>>(
-							std::move(heatmap_bottom_texture),
-							std::move(heatmap_top_texture));
-			auto temp_ranges_pair = std::pair<glm::vec2, glm::vec2>(
-					{bot_heatmap.min_temp(), bot_heatmap.max_temp()},
-					{top_heatmap.min_temp(), top_heatmap.max_temp()});
-
-			heatmap_materials_->emplace_back(std::move(texture_pair),
-			                                 temp_ranges_pair, scene_->bounds());
-		}
+		InitHeatmapMaterials();
 	}
 
 	if (heatmap_materials_)
 		for (const auto& shape : scene_->shapes()) {
 			// LOG_TRACE("Render shape: id {}, layer {}", shape->id().id(),
 			// shape->layer_id());
-			(*heatmap_materials_)[shape->core_shape().layer_id()].Use(
-					shape->transform(), camera.viewProjectionMatrix());
-			api.DrawIndexed(shape->vertex_array());
+			if (shape->is_visible()) {
+				(*heatmap_materials_)[shape->core_shape().layer_id()].Use(
+						shape->transform(), camera.viewProjectionMatrix());
+				api.DrawIndexed(shape->vertex_array());
+			}
 		}
 
 	if (data_) {
@@ -149,6 +121,33 @@ void GLSceneViewport::RenderFrame() {
 		data_->debug_material->Use(axes->transform(), camera.viewProjectionMatrix(),
 		                           1.0f);
 		api.DrawIndexed(axes->vertex_array(), PrimitiveType::LINES);
+	}
+}
+
+void GLSceneViewport::InitHeatmapMaterials() {
+	auto heatmaps      = scene_->heatmaps();
+	heatmap_materials_ = std::vector<HeatmapMaterial>();
+	heatmap_materials_->reserve(heatmaps.size() - 1);
+	auto& factory = RendererAPI::factory();
+	for (size_t i = 0; i < heatmaps.size() - 1; ++i) {
+		int side_resolution     = heatmaps[i].x_resolution();
+		const auto& bot_heatmap = heatmaps[i];
+		const auto& top_heatmap = heatmaps[i + 1];
+
+		auto heatmap_bottom_texture = factory.NewTexture2D(
+				side_resolution, side_resolution, bot_heatmap.temperatures().data(), 1);
+		auto heatmap_top_texture = factory.NewTexture2D(
+				side_resolution, side_resolution, top_heatmap.temperatures().data(), 1);
+
+		auto texture_pair =
+				std::pair<std::unique_ptr<Texture2D>, std::unique_ptr<Texture2D>>(
+						std::move(heatmap_bottom_texture), std::move(heatmap_top_texture));
+		auto temp_ranges_pair = std::pair<glm::vec2, glm::vec2>(
+				{bot_heatmap.min_temp(), bot_heatmap.max_temp()},
+				{top_heatmap.min_temp(), top_heatmap.max_temp()});
+
+		heatmap_materials_->emplace_back(std::move(texture_pair), temp_ranges_pair,
+		                                 scene_->bounds());
 	}
 }
 
@@ -214,6 +213,26 @@ void GLSceneViewport::ZoomView(const float delta) {
 	const float zoom = std::pow(zoom_base, delta * zoom_delta_coefficient);
 
 	camera_controller_->Zoom(zoom);
+}
+
+void GLSceneViewport::SetVisibility(const GlobalIds& to_change,
+                                    bool is_visible) {
+	for (auto id : to_change) {
+		scene_->shape_by_id(id)->SetIsVisible(is_visible);
+	}
+}
+
+void GLSceneViewport::ClearSelection() {
+	std::ranges::for_each(scene_->shapes(), [](auto& shape) {
+		shape->SetHighlightType(HighlightType::None);
+	});
+}
+
+void GLSceneViewport::SetSelection(const GlobalIds& to_change,
+                                   HighlightType type) {
+	for (auto id : to_change) {
+		scene_->shape_by_id(id)->SetHighlightType(type);
+	}
 }
 
 }  // namespace renderer
