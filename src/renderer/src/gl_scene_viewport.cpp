@@ -1,6 +1,5 @@
 #include "gl_scene_viewport.h"
 
-#include <bits/ranges_algo.h>
 #include <glad/glad.h>
 #include <spdlog/spdlog.h>
 

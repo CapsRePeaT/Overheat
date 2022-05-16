@@ -48,8 +48,7 @@ void ShapeListWidget::onItemClicked(const QModelIndex& index) {
 			if (id.type() == InstanceType::Shape)
 				shape_ids.push_back(id);
 			ProcessChildren(main_index, index.column(), item->checkState(), shape_ids);
-			std::cout << "Visibility pack size: " << shape_ids.size() << std::endl;
-			emit ChangeVisibility(shape_ids);
+			emit ChangeVisibility(shape_ids, item->checkState() == Qt::CheckState::Checked);
 			break;
 		}
 		case 2: {
@@ -57,8 +56,10 @@ void ShapeListWidget::onItemClicked(const QModelIndex& index) {
 			if (id.type() == InstanceType::Shape)
 				shape_ids.push_back(id);
 			ProcessChildren(main_index, index.column(), item->checkState(), shape_ids);
-			std::cout << "Hilight pack size: " << shape_ids.size() << std::endl;
-			emit Hilight(shape_ids);
+			if (item->checkState() == Qt::CheckState::Checked)
+				emit ShapesSelected(shape_ids);
+			else 
+				emit ShapesSelected({});
 			break;
 		}
 		default:

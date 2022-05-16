@@ -25,8 +25,8 @@ MainWindow::MainWindow(QWidget* parent)
 	shape_list_widget_->setWindowTitle(tr("Shapes"));
 	connect(shape_list_widget_, &ShapeListWidget::ShowMetadata, 
 		      this, &MainWindow::OnShowMetadata);
-	connect(shape_list_widget_, &ShapeListWidget::Hilight, 
-		      this, &MainWindow::OnShapeSelected);
+	connect(shape_list_widget_, &ShapeListWidget::ShapesSelected, 
+		      this, &MainWindow::OnShapesSelected);
 //	connect(shape_list_widget_, &ShapeListWidget::ChangeVisibility, 
 //		      this, &MainWindow::OnShowMetadata);
 	// metadata widget
@@ -41,9 +41,10 @@ MainWindow::MainWindow(QWidget* parent)
 	        &MainWindow::OnLoadFile3DBtnPressed);
 	connect(ui_->load_file_2d_btn, &QAction::triggered, this,
 	        &MainWindow::OnLoadFile2DBtnPressed);
-	connect(visualization_options_,
-	        &VisualizationOptionsWidget::VisualizationOptionsChanged,
+	connect(visualization_options_, &VisualizationOptionsWidget::VisualizationOptionsChanged,
 	        render_widget_, &RendererWidget::onVisualizationOptionsChanged);
+	connect(shape_list_widget_, &ShapeListWidget::ChangeVisibility,
+	        render_widget_, &RendererWidget::OnChangeVisibility);
 }
 
 MainWindow::~MainWindow() = default;
@@ -105,9 +106,14 @@ void MainWindow::GetFilesAndLoad(const GeometryType type) {
 	}
 }
 
-void MainWindow::OnShapeSelected(const GlobalShapeIds& shape_ids) {
+void MainWindow::OnShapesSelected(const GlobalShapeIds& shape_ids) {
 	// TODO: Needed to rework algorithm because it obviously is not optimal
-	if (shape_ids == selected_shape_ids_) {
+	if (!shape_ids.size()) {
+		render_widget_->OnClearSelection();
+		return;
+	}
+		
+	if (std::ranges::equal(shape_ids, selected_shape_ids_)) {
 		++selected_shape_index_;
 		if (selected_shape_index_ >= shape_ids.size())
 			selected_shape_index_ = 0;
@@ -115,7 +121,11 @@ void MainWindow::OnShapeSelected(const GlobalShapeIds& shape_ids) {
 		selected_shape_ids_   = shape_ids;
 		selected_shape_index_ = 0;
 	}
-	OnShowMetadata(selected_shape_ids_[selected_shape_index_]);
+	const auto selected_shape_id = selected_shape_ids_[selected_shape_index_];
+	render_widget_->OnClearSelection();
+	render_widget_->OnSetSelection(shape_ids, HighlightType::Selected);
+	render_widget_->OnSetSelection({selected_shape_id}, HighlightType::ActiveSelected);
+	OnShowMetadata(selected_shape_id);
 }
 
 void MainWindow::OnShowMetadata(GlobalId id) {

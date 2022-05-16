@@ -38,6 +38,15 @@ class RendererWidget : public QOpenGLWidget {
 			const VisualizationOptions& visualization_options) {
 		UpdateVisualizationOptions(visualization_options);
 	};
+	void OnChangeVisibility(GlobalIds shape_ids, bool is_visible) {
+		viewport_->SetVisibility(shape_ids, is_visible);
+	}
+	void OnSetSelection(GlobalIds shape_ids, HighlightType type) {
+		viewport_->SetSelection(shape_ids, type);
+	}
+	void OnClearSelection() { 
+		viewport_->ClearSelection();
+	}
  private:
 	Qt::MouseButton current_pressed_button_ = Qt::NoButton;
 	QPoint previous_mouse_pos_;

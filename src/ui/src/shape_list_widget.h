@@ -26,8 +26,8 @@ class ShapeListWidget : public QDockWidget {
 	void ClearAll();
  signals:
 	void ShowMetadata(GlobalId id);
-	void ChangeVisibility(GlobalIds shape_ids);
-	void Hilight(GlobalIds shape_ids);
+	void ChangeVisibility(GlobalIds shape_ids, bool is_visivle);
+	void ShapesSelected(GlobalIds shape_ids);
 
  private slots:
 	void onItemClicked(const QModelIndex& index);

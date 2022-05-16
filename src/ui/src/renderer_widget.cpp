@@ -144,3 +144,4 @@ void RendererWidget::wheelEvent(QWheelEvent* event) {
 	event->accept();
 	LOG_DEBUG("Wheel moved, delta: {0}.", delta);
 }
+

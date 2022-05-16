@@ -26,7 +26,7 @@ class MainWindow final : public QMainWindow {
  public slots:
 	void OnLoadFile3DBtnPressed();
 	void OnLoadFile2DBtnPressed();
-	void OnShapeSelected(const GlobalShapeIds& shape_ids);
+	void OnShapesSelected(const GlobalShapeIds& shape_ids);
 	void OnShowMetadata(GlobalId id);
  private:
 	void GetFilesAndLoad(GeometryType type);
