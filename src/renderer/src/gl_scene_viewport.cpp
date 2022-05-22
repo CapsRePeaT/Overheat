@@ -109,6 +109,7 @@ void GLSceneViewport::RenderFrame() {
 			// LOG_TRACE("Render shape: id {}, layer {}", shape->id().id(),
 			// shape->layer_id());
 			if (shape->is_visible()) {
+				// TODO: heatmap_materials_ may be empty!!!
 				(*heatmap_materials_)[shape->core_shape().layer_id()].Use(
 						shape->transform(), camera.viewProjectionMatrix());
 				api.DrawIndexed(shape->vertex_array());

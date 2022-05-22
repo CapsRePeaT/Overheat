@@ -74,14 +74,3 @@ TEST(Solver3d, read_heat_test) {
 	Readers::Solver3d::Solver3dReader(trm, t2d);
 	EXPECT_TRUE(true);
 }
-
-TEST(Solver3d, read_raw_test) {
-  auto data = Readers::Solver3d::read_geometry(sample);
-  EXPECT_TRUE(true);
-}
-
-TEST(Solver3d, read_geometry_test) {
-	auto data = Readers::Solver3d::read_geometry(sample);
-	auto geometry = Readers::Solver3d::Solver3dDataProvider(data, {}).geometry();
-	EXPECT_TRUE(true);
-}

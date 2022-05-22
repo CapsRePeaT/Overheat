@@ -2,6 +2,14 @@
 
 namespace {
 
+// TODO: copy-pasted from solver3d_TRM.cpp
+GlobalId getNewShapeId() {
+  static size_t id = 0;
+  ++id;
+  // TODO: pass disign_id
+  return {InstanceType::Shape, 0, id};
+}
+
 void build_layers_shapes(const float width, const float length,
                          const Readers::Solver2d::LayerType& layer,
                          GeomStorage<BasicShape>& storage) {
@@ -11,7 +19,7 @@ void build_layers_shapes(const float width, const float length,
 		           {0.f, length},  // need to clarify order
 		           {offset, layer_thickness}}};
 		storage.AddShape(std::make_unique<BasicShape>(
-			               GlobalId(InstanceType::Shape, 0, 0), 0, box));
+			               getNewShapeId(), 0, box));
 		offset += layer.position == Readers::Solver2d::Position::Upper
 		              ? layer_thickness
 		              : -layer_thickness;
@@ -38,8 +46,7 @@ void Solver2dDataProvider::load_geometry(const Solver2d_TRM& data) {
 		Box3D box{{{coordinates.x1_, coordinates.x2_},
 		           {coordinates.y1_, coordinates.y2_},
 		           {thickness_2d, thickness_2d}}};
-		geometry_.AddShape(std::make_unique<BasicShape>(
-				GlobalId(InstanceType::Shape, 0, 0), 0, box));
+		geometry_.AddShape(std::make_unique<BasicShape>(getNewShapeId(), 0, box));
 	}
 }
 

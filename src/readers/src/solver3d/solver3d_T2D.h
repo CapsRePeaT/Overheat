@@ -84,7 +84,7 @@ struct SpheresGroup {
 class Solver3d_T2D {
  public:
 	[[nodiscard]] Box3D design_borders() const {
-		return {{{0, body_size_.x}, {0, body_size_.y}, {0, body_size_.z}}};
+		return {{{0.f, body_size_.x}, {0.f, body_size_.y}, {0.f, body_size_.z}}};
 	}
 	[[nodiscard]] size_t layers_count() const { return IST_; }
 	[[nodiscard]] const std::vector<float>& net_x() const {
@@ -131,7 +131,8 @@ class Solver3d_T2D {
 		istream >> t2d.env_temp_;
 		istream >> t2d.temperature_.set_size(t2d.IST_ * t2d.NH_ * t2d.MH_);
 
-		assert(t2d.temperature_.data().size() == t2d.temperature_.data().capacity());
+		assert(t2d.temperature_.data().size() ==
+		       t2d.temperature_.data().capacity());
 
 		return istream;
 	}
@@ -144,11 +145,11 @@ class Solver3d_T2D {
 	size_t IST_{};  //– общее число слоев в корпусе,
 	size_t IH_{};   // – число однородных слоев,
 	size_t ID_{};   // – число слоев кристаллов ИС,
-	size_t IB_{};   // – число слоев шариковых выводов,
-	size_t IV_{};   // – число слоев межсоединений
-	size_t IP_{};   // – число боксов
-	size_t NH_{};   // – число узлов сетки по оси x,
-	size_t MH_{};   // – число узлов сетки по оси y
+	size_t IB_{};  // – число слоев шариковых выводов,
+	size_t IV_{};  // – число слоев межсоединений
+	size_t IP_{};  // – число боксов
+	size_t NH_{};  // – число узлов сетки по оси x,
+	size_t MH_{};  // – число узлов сетки по оси y
 	std::string raw_layers_{};  // string with char representation of layers
 	size_t num_crystals_in_crystal_layer_{};  //количество кристаллов в слое
 	                                          //кристаллов,
