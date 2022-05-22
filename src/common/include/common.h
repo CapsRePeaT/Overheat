@@ -116,6 +116,10 @@ class Box {
 	[[nodiscard]] bool undefined() const {
 		return coordinates_ == DefaultCoordinates();
 	}
+	float width(const int needed_dim) const { 
+		assert(needed_dim >= dim);
+		return coordinates_[needed_dim].second() - coordinates_[needed_dim].first();
+	}
 
  private:
 	static constexpr Values DefaultCoordinates();

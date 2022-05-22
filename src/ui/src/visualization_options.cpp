@@ -2,6 +2,7 @@
 
 #include <QColorDialog>
 #include <QDoubleSpinBox>
+#include <QSlider>
 
 #include "ui_visualization_options.h"
 
@@ -44,6 +45,13 @@ VisualizationOptionsWidget::VisualizationOptionsWidget(QWidget* parent)
 	};
 	init_temp(ui_->min_temp, 20.0f, &VisualizationOptions::min_temp);
 	init_temp(ui_->max_temp, 100.0f, &VisualizationOptions::max_temp);
+	// temp_slider
+	connect(ui_->temp_slider, &QSlider::valueChanged, this,
+	        [this](int temperature) {
+						visualization_options_.min_temp = temperature;
+						visualization_options_.max_temp = temperature;
+						emit VisualizationOptionsChanged(visualization_options_);
+					});
 }
 
 VisualizationOptionsWidget::~VisualizationOptionsWidget() = default;
@@ -51,7 +59,10 @@ VisualizationOptionsWidget::~VisualizationOptionsWidget() = default;
 void VisualizationOptionsWidget::SetMinMaxTemp(float min, float max) {
 	ui_->min_temp->setValue(min);
 	ui_->max_temp->setValue(max);
-//  visualization_options_.min_temp = min;
+	//ui_->temp_slider->setValue(max);
+	ui_->temp_slider->setMinimum(min);
+	ui_->temp_slider->setMaximum(max);
+	//  visualization_options_.min_temp = min;
 //  visualization_options_.max_temp = max;
 //  emit VisualizationOptionsChanged(visualization_options_);
 }

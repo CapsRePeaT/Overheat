@@ -16,6 +16,11 @@ class GeomStorage {
 	GeomStorage()  = default;
 	void AddShape(ShapePtr shape) { shapes_.emplace_back(std::move(shape)); }
 	[[nodiscard]] const Shapes& shapes() const { return shapes_; }
+	[[nodiscard]] const ShapePtr shape(ShapeId id) const { 
+		assert(id < shapes_.size());
+		return shapes_.at(id); 
+	}
+	const ShapePtr operator[](ShapeId id) const { return shape(id); }
 	void Clear() { shapes_.clear(); }
 
  private:
@@ -26,12 +31,17 @@ class GeomStorage {
 class Layer {
  public:
 	Layer() = default;
-	Layer(const GlobalId id, HeatmapId top_heatmap_id, HeatmapId bottom_heatmap_id)
+	Layer(const GlobalId id, HeatmapId bottom_heatmap_id, HeatmapId top_heatmap_id)
 			: id_(id), top_heatmap_id_(top_heatmap_id), bottom_heatmap_id_(bottom_heatmap_id) {}
 
 	[[nodiscard]] GlobalId id() const { return id_; }
+	HeatmapId top_heatmap_id() const { return top_heatmap_id_; }
+	HeatmapId bottom_heatmap_id() const { return bottom_heatmap_id_; }
 
  private:
+	// TODO implement me
+	const float bottom_ = std::numeric_limits<float>::max();
+	const float width_  = std::numeric_limits<float>::max();
 	GlobalId id_;
 	HeatmapId top_heatmap_id_;
 	HeatmapId bottom_heatmap_id_;
@@ -50,7 +60,10 @@ class HeatmapStorage {
 	[[nodiscard]] float environment_temperature() const {
 		return env_temp_;
 	}
-
+	const Heatmap& operator[](const size_t id) const { 
+		assert(id < heatmaps_.size());
+		return heatmaps_.at(id); 
+	}
 	[[nodiscard]] float x_size() const {
 		return representation_borders_.coordinates()[0].second;
 	}
