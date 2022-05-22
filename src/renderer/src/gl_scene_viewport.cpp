@@ -1,5 +1,6 @@
 #include "gl_scene_viewport.h"
 
+#include <bits/ranges_algo.h>
 #include <glad/glad.h>
 #include <spdlog/spdlog.h>
 
@@ -219,6 +220,28 @@ void GLSceneViewport::SetVisibility(const GlobalIds& to_change,
 	for (auto id : to_change) {
 		scene_->shape_by_id(id)->SetIsVisible(is_visible);
 	}
+}
+
+void GLSceneViewport::SetDrawMode(DrawMode mode) {
+	bool is_stratified = false;
+	switch (mode) {
+		case DrawMode::Gradient:
+			is_stratified = false;
+			break;
+		case DrawMode::Stratified:
+			is_stratified = true;
+			break;
+	}
+	if (heatmap_materials_)
+		std::ranges::for_each(*heatmap_materials_, [is_stratified](auto& material) {
+			material.SetIsStratified(is_stratified);
+		});
+}
+void GLSceneViewport::SetStratifiedStep(float step) {
+	if (heatmap_materials_)
+		std::ranges::for_each(*heatmap_materials_, [step](auto& material) {
+			material.SetStratifiedStep(step);
+		});
 }
 
 void GLSceneViewport::ClearSelection() {

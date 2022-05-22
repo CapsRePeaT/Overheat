@@ -8,6 +8,8 @@ uniform vec2 u_TemperatureRange;
 uniform vec2 u_BottomTemperatureRange;
 uniform vec2 u_TopTemperatureRange;
 uniform mat2x3 u_ColorRange;
+uniform bool u_IsStratified;
+uniform float u_StratifiedStep;
 
 uniform sampler2D u_BottomHeatmap;
 uniform sampler2D u_TopHeatmap;
@@ -32,8 +34,19 @@ float GetSideTemp() {
 	return mix(botTemp, topTemp, frag_Topness);
 }
 
+vec4 GetStratifiedColor(float temp) {
+	float minTemp = u_TemperatureRange[0];
+	float maxTemp = u_TemperatureRange[1];
+	temp = u_StratifiedStep * floor(temp / u_StratifiedStep);
+
+	float factor = smoothstep(minTemp, maxTemp, max(temp, minTemp));
+	return vec4(mix(u_ColorRange[0], u_ColorRange[1], factor), 1.0f);
+}
+
 vec4 GetColorByTemp(float temp) {
 	float factor = smoothstep(u_TemperatureRange[0], u_TemperatureRange[1], temp);
+	if (u_IsStratified)
+		return GetStratifiedColor(temp);
 	return vec4(mix(u_ColorRange[0], u_ColorRange[1], factor), 1.0f);
 }
 

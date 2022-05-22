@@ -28,6 +28,8 @@ class HeatmapMaterial {
 		color_range_[0] = min;
 		color_range_[1] = max;
 	}
+	void SetIsStratified(bool value) { is_stratified_ = value; }
+	void SetStratifiedStep(float step) { stratified_step_ = step; }
 	void SetShader(std::shared_ptr<ShaderProgram> shader) {
 		// Taking by-value and std::move to shader_ for explicity for
 		// client code, that there will be ref count incrementing and to allow for
@@ -47,6 +49,8 @@ class HeatmapMaterial {
 		shader_->SetVec2(bottom_temp_range_var_, bot_temp_range_);
 		shader_->SetVec2(top_temp_range_var_, top_temp_range_);
 		shader_->SetMat2(bounds_var_, bounds_);
+		shader_->SetBool(is_stratified_var, is_stratified_);
+		shader_->SetFloat(stratified_step_var, stratified_step_);
 	}
 
  private:
@@ -58,6 +62,8 @@ class HeatmapMaterial {
 	std::unique_ptr<Texture2D> bot_heatmap_texture_;
 	std::unique_ptr<Texture2D> top_heatmap_texture_;
 	glm::mat2 bounds_;
+	float stratified_step_ = 5.0f;
+	bool is_stratified_ = false;
 
 	// TODO: move to templated base class
 	const char* view_proj_shader_var_         = "u_ViewProjection";
@@ -69,6 +75,7 @@ class HeatmapMaterial {
 	const char* bottom_heatmap_var_           = "u_BottomHeatmap";
 	const char* top_heatmap_var_              = "u_TopHeatmap";
 	const char* bounds_var_                   = "u_Bounds";
+	const char* is_stratified_var             = "u_IsStratified";
+	const char* stratified_step_var           = "u_StratifiedStep";
 };
-
 }  // namespace renderer

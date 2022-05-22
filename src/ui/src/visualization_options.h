@@ -14,6 +14,7 @@ struct VisualizationOptions {
 	QColor max_temp_color{};
 	float min_temp{};
 	float max_temp{};
+	float stratified_step_{};
 };
 
 // options should be saved between sessions

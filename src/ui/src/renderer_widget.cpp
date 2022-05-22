@@ -81,7 +81,9 @@ void RendererWidget::UpdateVisualizationOptions(
 	                         max_color.blueF()});
 	viewport_->SetTemperatureRange(visualization_options.min_temp,
 	                               visualization_options.max_temp);
-	viewport_->SetDrawMode(visualization_options.draw_mode);
+	// viewport_->SetDrawMode(visualization_options.draw_mode);
+	// viewport_->SetStratifiedStep(visualization_options.stratified_step_);
+
 };
 
 // TODO: maybe need to delegate tweaks to renderer
