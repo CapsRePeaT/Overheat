@@ -16,6 +16,7 @@ void MetadataWidget::ShowMetadata(const MetadataPack& pack) {
 			QString::fromStdString(metadata.meaning()));
 		auto* value =
 				new QTableWidgetItem(QString::fromStdString(metadata.value()));
+		value->setToolTip(QString::fromStdString(metadata.value()));
 		setItem(row_counter, 0, meaning);
 		setItem(row_counter, 1, value);
 		++row_counter;
