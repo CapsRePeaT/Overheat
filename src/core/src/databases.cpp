@@ -5,6 +5,7 @@
 #include <numeric>
 #include <ranges>
 
+#include "common.h"
 #include "heatmap.h"
 #include "heatmap_normalizer.h"
 #include "log.h"
@@ -23,6 +24,11 @@ MetadataPack FileRepresentation::GetMetadata(const GlobalId id) const {
 }
 
 void FileRepresentation::InitLayers() {
+	if (heatmaps_.heatmaps().size() == 1) {
+		LayerId layer_id = 0;
+		GlobalId new_id(InstanceType::Layer, layer_id, id().representation_id());
+		layers_.emplace_back(new_id, layer_id, layer_id);
+	}
 	for (size_t layer_id = 0; layer_id < heatmaps_.heatmaps().size() - 1; ++layer_id) {
 		GlobalId new_id(InstanceType::Layer, layer_id, id().representation_id());
 		layers_.emplace_back(new_id, layer_id, layer_id + 1);
