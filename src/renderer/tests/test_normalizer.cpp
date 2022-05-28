@@ -157,7 +157,7 @@ TEST(BasicCase, FullInterpolationOnes) {
 	auto res_h = normalizer.BilinearInterpolateSlow(h);
 	h.DebugPrint();
 	res_h.DebugPrint();
-	res_h = normalizer.Normalize(std::move(res_h));
+	normalizer.Normalize(res_h);
 	res_h.DebugPrint();
 }
 
