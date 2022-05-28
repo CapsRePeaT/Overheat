@@ -5,6 +5,7 @@
 #include <spdlog/spdlog.h>
 
 #include <algorithm>
+#include <cassert>
 #include <memory>
 #include <utility>
 #include <vector>
@@ -70,7 +71,8 @@ void GLSceneViewport::ApplicationInit(const int w, const int h) {
 	auto camera = std::make_unique<OrthographicCamera>(
 			aspect_ratio, consts::init::zoom, consts::init::near_far_bounds);
 	camera_controller_ = std::make_unique<SphericalCameraController>(
-			std::move(camera), 100.0f, glm::pi<float>());
+			std::move(camera), /*radius=*/100.0f, /*phi=*/glm::pi<float>() * 3 / 2,
+			/*theta*/ glm::pi<float>() * 0.5f);
 }
 
 void GLSceneViewport::DebugInit(const int /*w*/, const int /*h*/) {
@@ -86,6 +88,20 @@ void GLSceneViewport::DebugInit(const int /*w*/, const int /*h*/) {
 }
 
 void GLSceneViewport::ClearResources() { ClearResourcesImpl(); }
+
+glm::vec3 HighlightTypeToColor(HighlightType highlight_type) {
+	switch (highlight_type) {
+		case HighlightType::None:
+			return consts::color_not_selected;
+		case HighlightType::Selected:
+			return consts::color_selected;
+		case HighlightType::ActiveSelected:
+			return consts::color_active_selected;
+		default:
+			assert(false && "Unkown highlight type!");
+			return consts::vec3_0;
+	}
+}
 
 void GLSceneViewport::ClearResourcesImpl() {
 	data_.reset();
@@ -109,9 +125,12 @@ void GLSceneViewport::RenderFrame() {
 		for (const auto& shape : scene_->shapes()) {
 			// LOG_TRACE("Render shape: id {}, layer {}", shape->id().id(),
 			// shape->layer_id());
-			if (shape->is_visible()) {
+			if (shape->is_visible() ||
+			    shape->highlight_type() != HighlightType::None) {
 				(*heatmap_materials_)[shape->core_shape().layer_id()].Use(
-						shape->transform(), camera.viewProjectionMatrix());
+						shape->transform(), camera.viewProjectionMatrix(),
+						HighlightTypeToColor(shape->highlight_type()),
+						!shape->is_visible());
 				api.DrawIndexed(shape->vertex_array());
 			}
 		}
@@ -149,6 +168,12 @@ void GLSceneViewport::InitHeatmapMaterials() {
 		heatmap_materials_->emplace_back(std::move(texture_pair), temp_ranges_pair,
 		                                 scene_->bounds());
 	}
+
+	// TODO: move this to more appropriate place
+	glm::vec3 center_of_bounds = {scene_->bounds().first, scene_->bounds().second,
+	                              0.0f};
+	center_of_bounds /= 2;
+	camera_controller_->SetPosition(center_of_bounds);
 }
 
 void GLSceneViewport::Resize(const int w, const int h) {
@@ -194,8 +219,8 @@ void GLSceneViewport::MoveCamera(const Vec2D /*screenPoint*/,
 
 void GLSceneViewport::RotateCamera(const Vec2D /*screenPoint*/,
                                    const Vec2D delta) {
-	static constexpr float zoom_coefficient = 1.0f / 1500.0f;
-	const float zoom_level = camera_controller_->camera().zoom_level();
+	static constexpr float zoom_coefficient = 1.0f / 500.0f;
+	const float zoom_level = 1.0f;  // camera_controller_->camera().zoom_level();
 
 	const float y_coefficient = zoom_level * zoom_coefficient;
 	const float x_coefficient = -zoom_level * zoom_coefficient;

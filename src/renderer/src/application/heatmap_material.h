@@ -36,7 +36,8 @@ class HeatmapMaterial {
 		// std::move for avoiding that
 		shader_ = std::move(shader);
 	}
-	void Use(const glm::mat4& transform, const glm::mat4& view_projection) {
+	void Use(const glm::mat4& transform, const glm::mat4& view_projection,
+	         const glm::vec3 edge_color, const bool is_transparent_heatmap) {
 		assert(bot_heatmap_texture_ != nullptr);
 
 		bot_heatmap_texture_->Bind(0);
@@ -51,6 +52,8 @@ class HeatmapMaterial {
 		shader_->SetMat2(bounds_var_, bounds_);
 		shader_->SetBool(is_stratified_var, is_stratified_);
 		shader_->SetFloat(stratified_step_var, stratified_step_);
+		shader_->SetVec3(edge_color_var, edge_color);
+		shader_->SetBool(is_transparent_heatmap_var, is_transparent_heatmap);
 	}
 
  private:
@@ -63,7 +66,7 @@ class HeatmapMaterial {
 	std::unique_ptr<Texture2D> top_heatmap_texture_;
 	glm::mat2 bounds_;
 	float stratified_step_ = 5.0f;
-	bool is_stratified_ = false;
+	bool is_stratified_    = false;
 
 	// TODO: move to templated base class
 	const char* view_proj_shader_var_         = "u_ViewProjection";
@@ -77,5 +80,7 @@ class HeatmapMaterial {
 	const char* bounds_var_                   = "u_Bounds";
 	const char* is_stratified_var             = "u_IsStratified";
 	const char* stratified_step_var           = "u_StratifiedStep";
+	const char* edge_color_var                = "u_edgeColor";
+	const char* is_transparent_heatmap_var    = "u_IsTransparentHeatmap";
 };
 }  // namespace renderer

@@ -29,6 +29,10 @@ constexpr glm::vec4 vec4_x_v = {1.0f, 0.0f, 0.0f, 0.0f};
 constexpr glm::vec4 vec4_y_v = {0.0f, 1.0f, 0.0f, 0.0f};
 constexpr glm::vec4 vec4_z_v = {0.0f, 0.0f, 1.0f, 0.0f};
 
+constexpr glm::vec3 color_not_selected    = vec3_0;
+constexpr glm::vec3 color_selected        = {1.0f, 0.66f, 0.0f};
+constexpr glm::vec3 color_active_selected = {1.0f, 0.33f, 0.0f};
+
 namespace init {
 // Camera
 constexpr float zoom           = 15.0f;
