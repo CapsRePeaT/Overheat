@@ -22,6 +22,13 @@ enum class DrawMode {
 	Stratified 
 };
 
+// weird option, may be not needed in the future
+enum class ShowTexture { 
+	Above = 0, 
+	Below, 
+	Both 
+};
+
 enum class HighlightType {
 	None,
 	Selected,
