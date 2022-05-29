@@ -37,15 +37,15 @@ std::vector<float> get_steps(const std::vector<Net>& net, const Index index) {
 class Solver2d_T2D {
  public:
 	[[nodiscard]] Box3D design_borders() const {
-		// FIXME we don't have z coords in 2d geometry, 
-		//so put some default value
-		return {{{0, xsub_}, {0, ysub_}, {0, 1}}};
+		// FIXME we don't have z coords in 2d geometry,
+		// so put some default value
+		return {{{0.f, xsub_}, {0.f, ysub_}, {0.f, 1.f}}};
 	}
 	[[nodiscard]] std::vector<float> net_x() const {
-		return get_steps(net_.data(), Index::X);
+		return std::vector<float>(mo_, hx_);  // first&last filled externally
 	}
 	[[nodiscard]] std::vector<float> net_y() const {
-		return get_steps(net_.data(), Index::Y);
+		return std::vector<float>(no_, hy_);  // first&last filled externally
 	}
 	[[nodiscard]] const std::vector<float>& temperatures() const {
 		return temperature_.data();
@@ -63,7 +63,7 @@ class Solver2d_T2D {
 		return istream;
 	}
 
- private:
+ public:
 	std::string program_name_{};
 
 	// MO,NO - количество узлов по x и y, соответственно.

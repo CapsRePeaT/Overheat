@@ -15,6 +15,7 @@
 #include "camera_controller.h"
 #include "common.h"
 #include "constants.h"
+#include "heatmap.h"
 #include "log.h"
 #include "misc/formatters.h"
 #include "renderer/debug/axes.h"
@@ -45,7 +46,7 @@ void GLSceneViewport::Initialize(const int w, const int h) {
 	OpenGlInit(w, h);
 	ApplicationInit(w, h);
 	//#ifndef NDEBUG
-	//  DebugInit(w, h);
+	// DebugInit(w, h);
 	//#endif
 
 	is_initialized_ = true;
@@ -142,30 +143,41 @@ void GLSceneViewport::RenderFrame() {
 	}
 }
 
+HeatmapMaterial CreateMaterial(const Heatmap& bot_heatmap,
+                               const Heatmap& top_heatmap,
+                               std::pair<float, float> bounds) {
+	auto& factory               = RendererAPI::factory();
+	int side_resolution         = bot_heatmap.x_resolution();
+	auto heatmap_bottom_texture = factory.NewTexture2D(
+			side_resolution, side_resolution, bot_heatmap.temperatures().data(), 1);
+	auto heatmap_top_texture = factory.NewTexture2D(
+			side_resolution, side_resolution, top_heatmap.temperatures().data(), 1);
+
+	auto texture_pair =
+			std::pair<std::unique_ptr<Texture2D>, std::unique_ptr<Texture2D>>(
+					std::move(heatmap_bottom_texture), std::move(heatmap_top_texture));
+	auto temp_ranges_pair = std::pair<glm::vec2, glm::vec2>(
+			{bot_heatmap.min_temp(), bot_heatmap.max_temp()},
+			{top_heatmap.min_temp(), top_heatmap.max_temp()});
+
+	return {std::move(texture_pair), temp_ranges_pair, bounds};
+}
+
 void GLSceneViewport::InitHeatmapMaterials() {
 	auto heatmaps      = scene_->heatmaps();
+	assert (heatmaps.size());
 	heatmap_materials_ = std::vector<HeatmapMaterial>();
 	heatmap_materials_->reserve(heatmaps.size() - 1);
-	auto& factory = RendererAPI::factory();
+	if (heatmaps.size() == 1) {
+		const auto& heatmap = heatmaps.front();
+		heatmap_materials_->emplace_back(
+				CreateMaterial(heatmap, heatmap, scene_->bounds()));
+	}
 	for (size_t i = 0; i < heatmaps.size() - 1; ++i) {
-		int side_resolution     = heatmaps[i].x_resolution();
 		const auto& bot_heatmap = heatmaps[i];
 		const auto& top_heatmap = heatmaps[i + 1];
-
-		auto heatmap_bottom_texture = factory.NewTexture2D(
-				side_resolution, side_resolution, bot_heatmap.temperatures().data(), 1);
-		auto heatmap_top_texture = factory.NewTexture2D(
-				side_resolution, side_resolution, top_heatmap.temperatures().data(), 1);
-
-		auto texture_pair =
-				std::pair<std::unique_ptr<Texture2D>, std::unique_ptr<Texture2D>>(
-						std::move(heatmap_bottom_texture), std::move(heatmap_top_texture));
-		auto temp_ranges_pair = std::pair<glm::vec2, glm::vec2>(
-				{bot_heatmap.min_temp(), bot_heatmap.max_temp()},
-				{top_heatmap.min_temp(), top_heatmap.max_temp()});
-
-		heatmap_materials_->emplace_back(std::move(texture_pair), temp_ranges_pair,
-		                                 scene_->bounds());
+		heatmap_materials_->emplace_back(
+				CreateMaterial(bot_heatmap, top_heatmap, scene_->bounds()));
 	}
 
 	// TODO: move this to more appropriate place
