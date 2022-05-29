@@ -37,8 +37,8 @@ Solver2dDataProvider::Solver2dDataProvider(const Solver2d_TRM& geom,
 void Solver2dDataProvider::load_geometry(const Solver2d_TRM& data) {
 	geometry_.Clear();
 	// read body
-	//build_layers_shapes(data.size_.width, data.size_.length, data.l1_, geometry_);
-	//build_layers_shapes(data.size_.width, data.size_.length, data.l2_, geometry_);
+	build_layers_shapes(data.size_.width, data.size_.length, data.l1_, geometry_);
+	build_layers_shapes(data.size_.width, data.size_.length, data.l2_, geometry_);
 
 	constexpr auto thickness_2d = 0.01f;  // for elements without thickness
   for (const auto& element : data.elements_)
