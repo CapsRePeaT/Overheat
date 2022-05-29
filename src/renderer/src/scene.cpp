@@ -2,8 +2,8 @@
 
 #include <algorithm>
 #include <cassert>
-#include <memory>
 #include <map>
+#include <memory>
 #include <vector>
 
 #include "application/scene_shape.h"
@@ -69,7 +69,10 @@ const Heatmaps& Scene::heatmaps() const { return impl_->heatmaps; }
 
 std::pair<float, float> Scene::bounds() const { return impl_->bounds; }
 
-void Scene::Clear() { impl_->scene_shapes.clear(); }
+void Scene::Clear() {
+	impl_->scene_shapes.clear();
+	impl_->indexed_shapes.clear();
+}
 
 const std::shared_ptr<SceneShape>& Scene::shape_by_id(GlobalId id) const {
 	return impl_->indexed_shapes.at(id);

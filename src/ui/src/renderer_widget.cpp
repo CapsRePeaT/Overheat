@@ -146,6 +146,5 @@ void RendererWidget::wheelEvent(QWheelEvent* event) {
 	const float delta       = event->angleDelta().y() * sensitivity;
 	viewport_->ZoomView(delta);
 	event->accept();
-	LOG_DEBUG("Wheel moved, delta: {0}.", delta);
 }
 
