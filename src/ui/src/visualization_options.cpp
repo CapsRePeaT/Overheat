@@ -80,9 +80,11 @@ VisualizationOptionsWidget::VisualizationOptionsWidget(QWidget* parent)
 	// strict mode
 	connect(ui_->strict_temp_slider, &QSlider::valueChanged, this,
 	        [this](int temperature) {
-						visualization_options_.min_temp = temperature;
-						visualization_options_.max_temp = temperature;
-						emit VisualizationOptionsChanged(visualization_options_);
+						if (ui_->strict_temp_slider->isEnabled()) {
+							visualization_options_.min_temp = temperature;
+							visualization_options_.max_temp = temperature;
+							emit VisualizationOptionsChanged(visualization_options_);
+						}
 					});
 	connect(ui_->strict_temp_slider, &QSlider::valueChanged,
 	        ui_->strict_temp_spin, &QDoubleSpinBox::setValue);
