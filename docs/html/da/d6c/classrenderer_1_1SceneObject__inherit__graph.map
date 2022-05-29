@@ -1,0 +1,9 @@
+<map id="renderer::SceneObject" name="renderer::SceneObject">
+<area shape="rect" id="node1" title=" " alt="" coords="408,5,560,229"/>
+<area shape="rect" id="node2" href="$d0/d9f/classrenderer_1_1ICamera.html" title=" " alt="" coords="23,321,185,531"/>
+<area shape="rect" id="node4" href="$dc/da5/classrenderer_1_1SceneShape.html" title=" " alt="" coords="210,329,361,523"/>
+<area shape="rect" id="node5" href="$d1/d21/classrenderer_1_1SphericalCameraController.html" title=" " alt="" coords="385,277,583,575"/>
+<area shape="rect" id="node6" href="$d3/d8c/classrenderer_1_1debug_1_1Axes.html" title=" " alt="" coords="607,380,758,472"/>
+<area shape="rect" id="node7" href="$d0/da3/classrenderer_1_1debug_1_1Line.html" title=" " alt="" coords="783,380,927,472"/>
+<area shape="rect" id="node3" href="$d9/d13/classrenderer_1_1OrthographicCamera.html" title=" " alt="" coords="5,623,203,891"/>
+</map>
