@@ -35,8 +35,9 @@ class ShapeListWidget : public QDockWidget {
 	void AddData(QStandardItem* parent, const InstanceList& data);
 	void ProcessChildren(const QModelIndex& parent_index, int clicked_column,
 	                     Qt::CheckState state, GlobalIds& shape_ids);
-
+	void ChangeSelectedShapesSet(GlobalIds& shape_ids, bool is_selected);
 	const int id_data_role_ = Qt::UserRole + 1;
 	QStandardItemModel* model_ = nullptr;
 	QTreeView* view_  = nullptr;
+	GlobalIds selected_shapes_;
 };

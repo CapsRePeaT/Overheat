@@ -40,10 +40,10 @@ void ShapeListWidget::onItemClicked(const QModelIndex& index) {
 	QStandardItem* main_child = model_->itemFromIndex(main_index);
 	GlobalId id = main_child->data(id_data_role_).value<GlobalId>();
 	switch (index.column()) {
-		case 0:
+		case 0: // name
 			emit ShowMetadata(id);
 			break;
-		case 1: {
+		case 1: { // visibility
 					GlobalIds shape_ids;
 			if (id.type() == InstanceType::Shape)
 				shape_ids.push_back(id);
@@ -51,15 +51,12 @@ void ShapeListWidget::onItemClicked(const QModelIndex& index) {
 			emit ChangeVisibility(shape_ids, item->checkState() == Qt::CheckState::Checked);
 			break;
 		}
-		case 2: {
+		case 2: { // selection
 					GlobalIds shape_ids;
 			if (id.type() == InstanceType::Shape)
 				shape_ids.push_back(id);
 			ProcessChildren(main_index, index.column(), item->checkState(), shape_ids);
-			if (item->checkState() == Qt::CheckState::Checked)
-				emit ShapesSelected(shape_ids);
-			else 
-				emit ShapesSelected({});
+			ChangeSelectedShapesSet(shape_ids, item->checkState() == Qt::CheckState::Checked);
 			break;
 		}
 		default:
@@ -105,3 +102,22 @@ void ShapeListWidget::AddData(QStandardItem* parent, const InstanceList& data) {
 	//return item_main;
 }
 
+void ShapeListWidget::
+ChangeSelectedShapesSet(GlobalIds& shape_ids, const bool is_selected) {
+	if (is_selected) {
+		//selected_shapes_.emplace_back(shape_ids.begin(), shape_ids.end());
+		// crunch stupid code
+		for (const auto& shape_id : shape_ids) {
+			selected_shapes_.push_back(shape_id);
+		}
+	} else {
+		std::sort(shape_ids.begin(), shape_ids.end());
+		selected_shapes_.erase(
+				remove_if(selected_shapes_.begin(), selected_shapes_.end(),
+		        [&](auto x) {
+							return binary_search(shape_ids.begin(), shape_ids.end(),  x);
+						}),
+				selected_shapes_.end());
+	}
+	emit ShapesSelected(selected_shapes_);
+}
