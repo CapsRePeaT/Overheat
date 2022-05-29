@@ -74,15 +74,15 @@ void RendererWidget::UpdateVisualizationOptions(
 		const VisualizationOptions& visualization_options) {
 	const auto min_color = visualization_options.min_temp_color;
 	const auto max_color = visualization_options.max_temp_color;
-	viewport_->SetColorRange(
+	viewport_->SetColorRange(   
 			std::array<float, 3>{min_color.redF(), min_color.greenF(),
 	                         min_color.blueF()},
 			std::array<float, 3>{max_color.redF(), max_color.greenF(),
 	                         max_color.blueF()});
 	viewport_->SetTemperatureRange(visualization_options.min_temp,
 	                               visualization_options.max_temp);
-	// viewport_->SetDrawMode(visualization_options.draw_mode);
-	// viewport_->SetStratifiedStep(visualization_options.stratified_step_);
+	viewport_->SetDrawMode(visualization_options.draw_mode);
+	viewport_->SetStratifiedStep(visualization_options.stratified_step_);
 
 };
 
