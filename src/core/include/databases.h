@@ -16,6 +16,11 @@ class GeomStorage {
 	GeomStorage()  = default;
 	void AddShape(ShapePtr shape) { shapes_.emplace_back(std::move(shape)); }
 	[[nodiscard]] const Shapes& shapes() const { return shapes_; }
+	[[nodiscard]] const ShapePtr shape(ShapeId id) const { 
+		assert(id < shapes_.size());
+		return shapes_.at(id); 
+	}
+	const ShapePtr operator[](ShapeId id) const { return shape(id); }
 	void Clear() { shapes_.clear(); }
 
  private:
@@ -26,10 +31,17 @@ class GeomStorage {
 class Layer {
  public:
 	Layer() = default;
+	Layer(const GlobalId id, HeatmapId bottom_heatmap_id, HeatmapId top_heatmap_id)
+			: id_(id), top_heatmap_id_(top_heatmap_id), bottom_heatmap_id_(bottom_heatmap_id) {}
 
 	[[nodiscard]] GlobalId id() const { return id_; }
+	HeatmapId top_heatmap_id() const { return top_heatmap_id_; }
+	HeatmapId bottom_heatmap_id() const { return bottom_heatmap_id_; }
 
  private:
+	// TODO implement me
+	const float bottom_ = std::numeric_limits<float>::max();
+	const float width_  = std::numeric_limits<float>::max();
 	GlobalId id_;
 	HeatmapId top_heatmap_id_;
 	HeatmapId bottom_heatmap_id_;
@@ -48,7 +60,10 @@ class HeatmapStorage {
 	[[nodiscard]] float environment_temperature() const {
 		return env_temp_;
 	}
-
+	const Heatmap& operator[](const size_t id) const { 
+		assert(id < heatmaps_.size());
+		return heatmaps_.at(id); 
+	}
 	[[nodiscard]] float x_size() const {
 		return representation_borders_.coordinates()[0].second;
 	}
@@ -93,25 +108,31 @@ class FileRepresentation {
 	FileRepresentation(const FileRepresentation&) = delete;
 	FileRepresentation& operator=(const FileRepresentation&) = delete;
 	FileRepresentation& operator=(FileRepresentation&&) = delete; // id_ is const
-	// for side widgets
-	[[nodiscard]] GlobalIds GetAllLayerIds() const;
-	[[nodiscard]] GlobalIds GetAllShapeIdsOfLayer(GlobalId layer_id) const;
 
 	// FIXME implement geom search, now we return all shapes
 	[[nodiscard]] const Shapes& GetShapes(const Box3D& area = Box3D()) const;
-	[[nodiscard]] MetadataPack GetShapeMetadata(ShapeId id) const;
+	[[nodiscard]] MetadataPack GetMetadata(GlobalId id) const;
 	[[nodiscard]] Box3D representation_borders() const {
 		return heatmaps_.representation_borders();
 	}
 	[[nodiscard]] GlobalId id() const { return id_; }
-	std::string GetName(GlobalId id) const {
-		return metadata_storage_.GetInstanceName(id);
+	std::string RepresentationName() const { 
+		return GetName(id());
 	}
 	// needed for geometry loading
 	GeomStorage<BasicShape>& geom_storage() { return geom_storage_; }
 	HeatmapStorage& heatmaps() { return heatmaps_; }
-
+	InstanceList GetInstanceList() const;
+	// should be deleted when proper layer reading will be provided
+	[[deprecated]] void InitLayers();
  private:
+	// for side widgets
+	[[nodiscard]] GlobalIds GetAllLayerIds() const;
+	[[nodiscard]] GlobalIds GetAllShapeIdsOfLayer(GlobalId layer_id) const;
+	std::string GetName(GlobalId id) const {
+		return metadata_storage_.GetInstanceName(id);
+	}
+
 	inline static RepresentationId id_counter = 0;
 
 	const GlobalId id_;

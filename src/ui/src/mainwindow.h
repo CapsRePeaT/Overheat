@@ -3,6 +3,7 @@
 #include <QDockWidget>
 #include <QMainWindow>
 #include <QMdiArea>
+#include <QMetaType>
 
 #include "metadata_widget.h"
 #include "renderer_widget.h"
@@ -22,14 +23,11 @@ class MainWindow final : public QMainWindow {
 	void LoadFile(std::string trm_file_path, 
 	              std::string t2d_file_path,
 	              GeometryType type);
- signals:
-	// todo
-	void ShowMetadata(const MetadataPack& pack);
  public slots:
 	void OnLoadFile3DBtnPressed();
 	void OnLoadFile2DBtnPressed();
-	void OnShapeSelected(const GlobalShapeIds& shape_ids);
-
+	void OnShapesSelected(const GlobalShapeIds& shape_ids);
+	void OnShowMetadata(GlobalId id);
  private:
 	void GetFilesAndLoad(GeometryType type);
 	Core& core() { return Core::instance(); }

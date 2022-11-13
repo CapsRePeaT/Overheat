@@ -1,0 +1,14 @@
+<map id="renderer::Scene::SceneImpl" name="renderer::Scene::SceneImpl">
+<area shape="rect" id="node1" title=" " alt="" coords="299,1051,483,1128"/>
+<area shape="rect" id="node2" title=" " alt="" coords="201,889,411,981"/>
+<area shape="rect" id="node3" title=" " alt="" coords="222,639,390,731"/>
+<area shape="rect" id="node6" title=" " alt="" coords="5,881,177,988"/>
+<area shape="rect" id="node4" href="$dc/da5/classrenderer_1_1SceneShape.html" title=" " alt="" coords="251,286,401,481"/>
+<area shape="rect" id="node5" href="$db/d18/classrenderer_1_1SceneObject.html" title=" " alt="" coords="339,5,491,229"/>
+<area shape="rect" id="node10" href="$d0/d9f/classrenderer_1_1ICamera.html" title=" " alt="" coords="430,279,593,488"/>
+<area shape="rect" id="node7" href="$d5/d96/classGlobalId.html" title=" " alt="" coords="21,595,162,775"/>
+<area shape="rect" id="node8" title=" " alt="" coords="435,889,601,981"/>
+<area shape="rect" id="node9" href="$d9/d13/classrenderer_1_1OrthographicCamera.html" title=" " alt="" coords="415,551,613,819"/>
+<area shape="rect" id="node11" title=" " alt="" coords="625,896,787,973"/>
+<area shape="rect" id="node12" href="$d1/d7b/classHeatmap.html" title=" " alt="" coords="647,587,765,782"/>
+</map>

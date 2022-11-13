@@ -1,15 +1,17 @@
 #pragma once
 
-#include <QAbstractItemModel>
+#include "common.h"
+
+#include <QStandardItemModel>
+#include <QStandardItem>
 #include <QDockWidget>
 #include <QModelIndex>
 #include <QTreeView>
 #include <QVariant>
 #include <QVector>
+#include <QMetaType>
 
-// TODO: remake with smart_ptrs
-
-class TreeModel;
+Q_DECLARE_METATYPE(GlobalId);
 
 // top level item should be a design
 class ShapeListWidget : public QDockWidget {
@@ -17,62 +19,25 @@ class ShapeListWidget : public QDockWidget {
 
  public:
 	explicit ShapeListWidget(QWidget* parent = nullptr);
+	void AddData(const InstanceList& data) { 
+		AddData(nullptr, data);
+	}
+	void ClearData(const GlobalId& id);
+	void ClearAll();
+ signals:
+	void ShowMetadata(GlobalId id);
+	void ChangeVisibility(GlobalIds shape_ids, bool is_visivle);
+	void ShapesSelected(GlobalIds shape_ids);
 
+ private slots:
+	void onItemClicked(const QModelIndex& index);
  private:
-	void Test();
-	TreeModel* model_ = nullptr;
+	void AddData(QStandardItem* parent, const InstanceList& data);
+	void ProcessChildren(const QModelIndex& parent_index, int clicked_column,
+	                     Qt::CheckState state, GlobalIds& shape_ids);
+	void ChangeSelectedShapesSet(GlobalIds& shape_ids, bool is_selected);
+	const int id_data_role_ = Qt::UserRole + 1;
+	QStandardItemModel* model_ = nullptr;
 	QTreeView* view_  = nullptr;
-};
-
-class TreeItem {
- public:
-	explicit TreeItem(const QVector<QVariant>& data,
-	                  TreeItem* parentItem = nullptr);
-	~TreeItem() { qDeleteAll(child_items_); }
-	void append_child(TreeItem* item) { child_items_.append(item); }
-	TreeItem* child(int row);
-	[[nodiscard]] int child_count() const { return child_items_.count(); }
-	[[nodiscard]] int column_count() const { return item_data_.count(); }
-	[[nodiscard]] QVariant data(int column) const;
-	[[nodiscard]] int row() const;
-	TreeItem* parentItem() { return parent_item_; }
-
- private:
-	QVector<TreeItem*> child_items_;
-	QVector<QVariant> item_data_;
-	TreeItem* parent_item_;
-};
-
-class TreeModel : public QAbstractItemModel {
-	Q_OBJECT
-
- public:
-	explicit TreeModel(QObject* parent = nullptr);
-	~TreeModel() override { delete rootItem; }
-
-	[[nodiscard]] QVariant data(const QModelIndex& index,
-	                            int role) const override;
-	[[nodiscard]] Qt::ItemFlags flags(const QModelIndex& index) const override;
-
-	// until clang-tidy 14 there is no way to unlint several lines at once :(
-	// NOLINTNEXTLINE(google-default-arguments)
-	[[nodiscard]] QVariant headerData(int section, Qt::Orientation orientation,
-	                                  int role = Qt::DisplayRole) const override;
-	// NOLINTNEXTLINE(google-default-arguments)
-	[[nodiscard]] QModelIndex index(
-			int row, int column,
-			const QModelIndex& parent = QModelIndex()) const override;
-	// NOLINTNEXTLINE(google-default-arguments)
-	[[nodiscard]] QModelIndex parent(const QModelIndex& index) const override;
-	// NOLINTNEXTLINE(google-default-arguments)
-	[[nodiscard]] int rowCount(
-			const QModelIndex& parent = QModelIndex()) const override;
-	// NOLINTNEXTLINE(google-default-arguments)
-	[[nodiscard]] int columnCount(
-			const QModelIndex& parent = QModelIndex()) const override;
-
-	void TestFillWithTxtFile(const QString& file_path);
-
- private:
-	TreeItem* rootItem;
+	GlobalIds selected_shapes_;
 };

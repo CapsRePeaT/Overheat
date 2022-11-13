@@ -1,0 +1,28 @@
+var searchData=
+[
+  ['h_0',['H',['../d3/d7b/namespaceReaders_1_1Solver3d.html#ae579f14818e3a7dd9701608b981d4131ac1d9f50f86825a1a2302ec2449c17196',1,'Readers::Solver3d']]],
+  ['heatmap_1',['Heatmap',['../d1/d7b/classHeatmap.html',1,'Heatmap'],['../d1/d7b/classHeatmap.html#a9893143b1fa1631e50868c4fc8dc86ba',1,'Heatmap::Heatmap()']]],
+  ['heatmap_2ecpp_2',['heatmap.cpp',['../db/d38/heatmap_8cpp.html',1,'']]],
+  ['heatmap_2eh_3',['heatmap.h',['../df/dfb/heatmap_8h.html',1,'']]],
+  ['heatmap_5fmaterial_2ecpp_4',['heatmap_material.cpp',['../d9/d62/heatmap__material_8cpp.html',1,'']]],
+  ['heatmap_5fmaterial_2eh_5',['heatmap_material.h',['../d4/d17/heatmap__material_8h.html',1,'']]],
+  ['heatmap_5fnormalizer_2ecpp_6',['heatmap_normalizer.cpp',['../d9/d3c/heatmap__normalizer_8cpp.html',1,'']]],
+  ['heatmap_5fnormalizer_2eh_7',['heatmap_normalizer.h',['../d8/db7/heatmap__normalizer_8h.html',1,'']]],
+  ['heatmapid_8',['HeatmapId',['../df/dbc/common_2include_2common_8h.html#a39052c16a5551495179569d14cace05c',1,'common.h']]],
+  ['heatmapmaterial_9',['HeatmapMaterial',['../d2/dbc/classrenderer_1_1HeatmapMaterial.html#a3a519a352fb96afe9eab63b911bd5404',1,'renderer::HeatmapMaterial::HeatmapMaterial()'],['../d2/dbc/classrenderer_1_1HeatmapMaterial.html',1,'renderer::HeatmapMaterial']]],
+  ['heatmapnormalizer_10',['HeatmapNormalizer',['../d2/dd3/classHeatmapNormalizer.html',1,'HeatmapNormalizer'],['../d2/dd3/classHeatmapNormalizer.html#ae1ae7e78e15e4d909b925d49d4a10af9',1,'HeatmapNormalizer::HeatmapNormalizer()']]],
+  ['heatmaps_11',['heatmaps',['../d2/d38/classIReader.html#a0b745c359f7e8331b01f999a8ba2306e',1,'IReader']]],
+  ['heatmaps_12',['Heatmaps',['../df/dfb/heatmap_8h.html#a5582298dcf98ef71bca61e6da4bd2bb0',1,'heatmap.h']]],
+  ['heatmaps_13',['heatmaps',['../d8/d81/classrenderer_1_1Scene.html#a2d50eb6bf50d97b7640438cde1123a55',1,'renderer::Scene::heatmaps()'],['../d1/d7d/classReaders_1_1Solver3d_1_1Solver3dDataProvider.html#af22b97d62f480e99d75eeb30f5a8f6a3',1,'Readers::Solver3d::Solver3dDataProvider::heatmaps()'],['../da/d0f/classReaders_1_1Solver2d_1_1Solver2dDataProvider.html#a5db685372476f3faae336ac134d0f6ff',1,'Readers::Solver2d::Solver2dDataProvider::heatmaps()'],['../d5/de5/classFileRepresentation.html#a4c49f3fff2606d097db018b95a03a364',1,'FileRepresentation::heatmaps()'],['../dc/dcb/classHeatmapStorage.html#ae3aad163078cce77a59e5e34f969a7eb',1,'HeatmapStorage::heatmaps()'],['../df/db4/structrenderer_1_1Scene_1_1SceneImpl.html#a43240f0758195aed166f3f8748b7dca4',1,'renderer::Scene::SceneImpl::heatmaps()'],['../d5/d13/classIDataProvider.html#a93263390e819b61f3c43da67de2c507f',1,'IDataProvider::heatmaps()']]],
+  ['heatmapstorage_14',['HeatmapStorage',['../dc/dcb/classHeatmapStorage.html#acde5bba4b1cc9f5b667aed3f2273a779',1,'HeatmapStorage::HeatmapStorage()=default'],['../dc/dcb/classHeatmapStorage.html#a76e1cd8b8bbd60d93143e6e298c85a40',1,'HeatmapStorage::HeatmapStorage(std::vector&lt; float &gt; x_steps, std::vector&lt; float &gt; y_steps, const std::vector&lt; float &gt; &amp;temperature, float environment_temperature, Box3D representation_borders)'],['../dc/dcb/classHeatmapStorage.html',1,'HeatmapStorage']]],
+  ['highlight_5ftype_15',['highlight_type',['../dc/da5/classrenderer_1_1SceneShape.html#a0e28403cd606013c581a375d46465b75',1,'renderer::SceneShape']]],
+  ['highlighttype_16',['HighlightType',['../df/dbc/common_2include_2common_8h.html#a3bbe7feb501815f36af2961dfe4de9bb',1,'common.h']]],
+  ['highlighttypetocolor_17',['HighlightTypeToColor',['../d0/db9/namespacerenderer.html#a3cf926e24d32b11a79e3e2b65343973d',1,'renderer']]],
+  ['hilightsetup_18',['HilightSetup',['../d1/d39/shapes_8h.html#abb4169e91f3ed17efd7a43b14bffda30',1,'shapes.h']]],
+  ['horizontalsize_19',['HorizontalSize',['../da/dff/structHorizontalSize.html',1,'']]],
+  ['hpu_20',['HPU',['../d1/da9/classReaders_1_1Solver3d_1_1HPU.html#ac00412bb1b3734309e5d2438e567df4f',1,'Readers::Solver3d::HPU::HPU()'],['../d1/da9/classReaders_1_1Solver3d_1_1HPU.html',1,'Readers::Solver3d::HPU']]],
+  ['hx_5f_21',['hx_',['../d1/d95/classSolver2d__T2D.html#a00d7b2ca41cdbfa8cb92abcce326deda',1,'Solver2d_T2D']]],
+  ['hxgr_5f_22',['hxgr_',['../d1/d95/classSolver2d__T2D.html#a75c152c257a021cd6fbb910b78073cae',1,'Solver2d_T2D']]],
+  ['hy_5f_23',['hy_',['../d1/d95/classSolver2d__T2D.html#ae81f5d6fda63c6d48677e32320490fce',1,'Solver2d_T2D']]],
+  ['hygr_5f_24',['hygr_',['../d1/d95/classSolver2d__T2D.html#aec7afd1dca9a1b6c0198f34ad414586a',1,'Solver2d_T2D']]]
+];

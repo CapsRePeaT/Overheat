@@ -8,7 +8,7 @@ MetadataWidget::MetadataWidget(QWidget* parent)
 	// Test();
 }
 
-void MetadataWidget::OnShowMetadata(const MetadataPack& pack) {
+void MetadataWidget::ShowMetadata(const MetadataPack& pack) {
 	setRowCount(static_cast<int>(pack.size()));
 	int row_counter = 0;
 	for (const auto& metadata : pack) {
@@ -16,6 +16,7 @@ void MetadataWidget::OnShowMetadata(const MetadataPack& pack) {
 			QString::fromStdString(metadata.meaning()));
 		auto* value =
 				new QTableWidgetItem(QString::fromStdString(metadata.value()));
+		value->setToolTip(QString::fromStdString(metadata.value()));
 		setItem(row_counter, 0, meaning);
 		setItem(row_counter, 1, value);
 		++row_counter;

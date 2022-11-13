@@ -1,10 +1,10 @@
 #include "renderer_api.h"
 
 #include <glad/glad.h>
-#include <spdlog/spdlog.h>
 
 #include <string_view>
 
+#include "log.h"
 #include "renderer/renderer_api.h"
 
 namespace renderer::gl {
@@ -38,16 +38,16 @@ void OpenGLMessageCallback(GLenum source, GLenum type, GLuint id,
                            const GLchar* message, const void* user_param) {
 	switch (severity) {
 		case GL_DEBUG_SEVERITY_HIGH:
-			spdlog::critical(message);
+			LOG_CRITICAL(message);
 			return;
 		case GL_DEBUG_SEVERITY_MEDIUM:
-			spdlog::error(message);
+			LOG_ERROR(message);
 			return;
 		case GL_DEBUG_SEVERITY_LOW:
-			spdlog::warn(message);
+			LOG_WARN(message);
 			return;
 		case GL_DEBUG_SEVERITY_NOTIFICATION:
-			spdlog::trace(message);
+			LOG_TRACE(message);
 			return;
 		default:
 			assert(false && "Unknown severity level!");
@@ -58,7 +58,7 @@ void OpenGLMessageCallback(GLenum source, GLenum type, GLuint id,
 
 void RendererAPI::InitImpl() {
 #ifndef NDEBUG
-	spdlog::info("Setting debug opengl context..");
+	LOG_INFO("Setting debug opengl context..");
 	glEnable(GL_DEBUG_OUTPUT);
 	glEnable(GL_DEBUG_OUTPUT_SYNCHRONOUS);
 	glDebugMessageCallback(OpenGLMessageCallback, nullptr);

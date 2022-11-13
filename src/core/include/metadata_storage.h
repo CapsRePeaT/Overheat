@@ -15,6 +15,7 @@
 template <class... Data>
 class MetadataStorage {
 	using DataTypes = std::tuple<Data...>;
+	using InstanceID = std::pair<InstanceType, GlobalId::InstanceId>;
 	class MetadataID {
 	 public:
 		MetadataID(size_t type_id, const std::string& description, size_t data_id)
@@ -35,25 +36,36 @@ class MetadataStorage {
 		const std::string& description_;
 		std::array<size_t, 2> ids_{};
 	};
-	class DataDescriptionAndValue : std::pair<std::string, std::string> {
-	 public:
-		DataDescriptionAndValue(std::string&& description, std::string&& value)
-				: std::pair<std::string, std::string>(description, value) {}
-	};
 
  public:
-	std::vector<DataDescriptionAndValue> GetData(size_t shape_id) const;
+	MetadataPack GetData(const GlobalId global_id) const {
+		return GetData({global_id.type(), global_id.id()});
+	}
+	MetadataPack GetData(InstanceID instance_id) const;
 	template <typename T, class... Args>
-	void AddData(size_t shape_id, std::string&& description, T&& data,
+	void AddData(InstanceID instance_id, std::string&& description, T&& data,
 	             Args&&... args) {
-		shape_id2metadata_id_[shape_id].push_back(
+		instance_id2metadata_id_[instance_id].push_back(
 				AddOnePieceOfData(std::forward<T>(data), description));
-		AddData(shape_id, std::forward<std::string>(description),
+		AddData(instance_id, std::forward<std::string>(description),
 		        std::forward<Args>(args)...);
 	}
 	std::string GetInstanceName(const GlobalId global_id) const {
-		std::string result = "Instanse ";
-		result += global_id.id();
+		std::string result;
+		switch (global_id.type()) {
+			case InstanceType::Shape:
+				result += "instance ";
+				break;
+			case InstanceType::Representation:
+				result += "Representation ";
+				break;
+			case InstanceType::Layer:
+				result += "Layer ";
+				break;
+			default:
+				break;
+		}
+		result += std::to_string(global_id.id());
 		return result;
 	}
 	MetadataStorage()  = default;
@@ -63,7 +75,7 @@ class MetadataStorage {
 	template <class T>
 	MetadataID AddOnePieceOfData(T&& data, std::string&& description);
 	std::tuple<std::map<std::string, std::map<size_t, Data>>...> data_;
-	std::map<size_t, std::vector<MetadataID>> shape_id2metadata_id_;
+	std::map<InstanceID, std::vector<MetadataID>> instance_id2metadata_id_;
 };
 
 using DefaultMetadataStorage = MetadataStorage<int, float, std::string>;
@@ -104,17 +116,16 @@ MetadataStorage<Data...>::AddOnePieceOfData(T&& data,
 }
 
 template <class... Data>
-std::vector<typename MetadataStorage<Data...>::DataDescriptionAndValue>
-MetadataStorage<Data...>::GetData(const size_t shape_id) const {
-	std::vector<std::string> result;
-	for (const auto& metadata_id : shape_id2metadata_id_[shape_id]) {
-		const auto& data_storage = std::get<metadata_id.TypeId()>(data_);
-		// TODO for better formating use fmt or stringstream if needed
-		// std::stringstream stream_result;
-		// stream_result << data_storage.at(metadata_id.TypeId());
-		result.push_back({metadata_id.Description(),
-		                  std::string(data_storage.at(metadata_id.Description())
-		                                  .at(metadata_id.TypeId()))});
-	}
+MetadataPack MetadataStorage<Data...>::GetData(InstanceID instance_id) const {
+	MetadataPack result;
+	//for (const auto& metadata_id : instance_id2metadata_id_.at(instance_id)) {
+	//	const auto& data_storage = std::get<metadata_id.TypeId()>(data_);
+	//	// TODO for better formating use fmt or stringstream if needed
+	//	// std::stringstream stream_result;
+	//	// stream_result << data_storage.at(metadata_id.TypeId());
+	//	result.push_back({metadata_id.Description(),
+	//	                  std::string(data_storage.at(metadata_id.Description())
+	//	                                  .at(metadata_id.TypeId()))});
+	//}
 	return result;
 }

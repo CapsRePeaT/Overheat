@@ -4,6 +4,7 @@
 #include <spdlog/spdlog.h>
 
 #include <algorithm>
+#include <cassert>
 #include <memory>
 #include <utility>
 #include <vector>
@@ -12,7 +13,9 @@
 #include "application/heatmap_material.h"
 #include "application/scene_shape.h"
 #include "camera_controller.h"
+#include "common.h"
 #include "constants.h"
+#include "heatmap.h"
 #include "log.h"
 #include "misc/formatters.h"
 #include "renderer/debug/axes.h"
@@ -43,7 +46,7 @@ void GLSceneViewport::Initialize(const int w, const int h) {
 	OpenGlInit(w, h);
 	ApplicationInit(w, h);
 	//#ifndef NDEBUG
-	//  DebugInit(w, h);
+	// DebugInit(w, h);
 	//#endif
 
 	is_initialized_ = true;
@@ -68,7 +71,8 @@ void GLSceneViewport::ApplicationInit(const int w, const int h) {
 	auto camera = std::make_unique<OrthographicCamera>(
 			aspect_ratio, consts::init::zoom, consts::init::near_far_bounds);
 	camera_controller_ = std::make_unique<SphericalCameraController>(
-			std::move(camera), 100.0f, glm::pi<float>());
+			std::move(camera), /*radius=*/100.0f, /*phi=*/glm::pi<float>() * 3 / 2,
+			/*theta*/ glm::pi<float>() * 0.5f);
 }
 
 void GLSceneViewport::DebugInit(const int /*w*/, const int /*h*/) {
@@ -85,6 +89,20 @@ void GLSceneViewport::DebugInit(const int /*w*/, const int /*h*/) {
 
 void GLSceneViewport::ClearResources() { ClearResourcesImpl(); }
 
+glm::vec3 HighlightTypeToColor(HighlightType highlight_type) {
+	switch (highlight_type) {
+		case HighlightType::None:
+			return consts::color_not_selected;
+		case HighlightType::Selected:
+			return consts::color_selected;
+		case HighlightType::ActiveSelected:
+			return consts::color_active_selected;
+		default:
+			assert(false && "Unkown highlight type!");
+			return consts::vec3_0;
+	}
+}
+
 void GLSceneViewport::ClearResourcesImpl() {
 	data_.reset();
 	if (heatmap_materials_)
@@ -100,48 +118,21 @@ void GLSceneViewport::RenderFrame() {
 	const ICamera& camera = camera_controller_->camera();
 
 	if (!heatmap_materials_ && !scene_->heatmaps().empty()) {
-		auto heatmaps      = scene_->heatmaps();
-		heatmap_materials_ = std::vector<HeatmapMaterial>();
-		heatmap_materials_->reserve(heatmaps.size() - 1);
-		auto& factory = RendererAPI::factory();
-		for (size_t i = 0; i < heatmaps.size() - 1; ++i) {
-			int side_resolution     = heatmaps[i].x_resolution();
-			const auto& bot_heatmap = heatmaps[i];
-			const auto& top_heatmap = heatmaps[i + 1];
-
-			// static bool is_printed = true;
-			// if (!is_printed && i == 6) {
-			// 	is_printed = true;
-			// 	bot_heatmap.DebugPrint(39);
-			// }
-			
-			auto heatmap_bottom_texture =
-					factory.NewTexture2D(side_resolution, side_resolution,
-			                         bot_heatmap.temperatures().data(), 1);
-			auto heatmap_top_texture =
-					factory.NewTexture2D(side_resolution, side_resolution,
-			                         top_heatmap.temperatures().data(), 1);
-
-			auto texture_pair =
-					std::pair<std::unique_ptr<Texture2D>, std::unique_ptr<Texture2D>>(
-							std::move(heatmap_bottom_texture),
-							std::move(heatmap_top_texture));
-			auto temp_ranges_pair = std::pair<glm::vec2, glm::vec2>(
-					{bot_heatmap.min_temp(), bot_heatmap.max_temp()},
-					{top_heatmap.min_temp(), top_heatmap.max_temp()});
-
-			heatmap_materials_->emplace_back(std::move(texture_pair),
-			                                 temp_ranges_pair, scene_->bounds());
-		}
+		InitHeatmapMaterials();
 	}
 
 	if (heatmap_materials_)
 		for (const auto& shape : scene_->shapes()) {
 			// LOG_TRACE("Render shape: id {}, layer {}", shape->id().id(),
 			// shape->layer_id());
-			(*heatmap_materials_)[shape->core_shape().layer_id()].Use(
-					shape->transform(), camera.viewProjectionMatrix());
-			api.DrawIndexed(shape->vertex_array());
+			if (shape->is_visible() ||
+			    shape->highlight_type() != HighlightType::None) {
+				(*heatmap_materials_)[shape->core_shape().layer_id()].Use(
+						shape->transform(), camera.viewProjectionMatrix(),
+						HighlightTypeToColor(shape->highlight_type()),
+						!shape->is_visible());
+				api.DrawIndexed(shape->vertex_array());
+			}
 		}
 
 	if (data_) {
@@ -150,6 +141,50 @@ void GLSceneViewport::RenderFrame() {
 		                           1.0f);
 		api.DrawIndexed(axes->vertex_array(), PrimitiveType::LINES);
 	}
+}
+
+HeatmapMaterial CreateMaterial(const Heatmap& bot_heatmap,
+                               const Heatmap& top_heatmap,
+                               std::pair<float, float> bounds) {
+	auto& factory               = RendererAPI::factory();
+	int side_resolution         = bot_heatmap.x_resolution();
+	auto heatmap_bottom_texture = factory.NewTexture2D(
+			side_resolution, side_resolution, bot_heatmap.temperatures().data(), 1);
+	auto heatmap_top_texture = factory.NewTexture2D(
+			side_resolution, side_resolution, top_heatmap.temperatures().data(), 1);
+
+	auto texture_pair =
+			std::pair<std::unique_ptr<Texture2D>, std::unique_ptr<Texture2D>>(
+					std::move(heatmap_bottom_texture), std::move(heatmap_top_texture));
+	auto temp_ranges_pair = std::pair<glm::vec2, glm::vec2>(
+			{bot_heatmap.min_temp(), bot_heatmap.max_temp()},
+			{top_heatmap.min_temp(), top_heatmap.max_temp()});
+
+	return {std::move(texture_pair), temp_ranges_pair, bounds};
+}
+
+void GLSceneViewport::InitHeatmapMaterials() {
+	auto heatmaps      = scene_->heatmaps();
+	assert (heatmaps.size());
+	heatmap_materials_ = std::vector<HeatmapMaterial>();
+	heatmap_materials_->reserve(heatmaps.size() - 1);
+	if (heatmaps.size() == 1) {
+		const auto& heatmap = heatmaps.front();
+		heatmap_materials_->emplace_back(
+				CreateMaterial(heatmap, heatmap, scene_->bounds()));
+	}
+	for (size_t i = 0; i < heatmaps.size() - 1; ++i) {
+		const auto& bot_heatmap = heatmaps[i];
+		const auto& top_heatmap = heatmaps[i + 1];
+		heatmap_materials_->emplace_back(
+				CreateMaterial(bot_heatmap, top_heatmap, scene_->bounds()));
+	}
+
+	// TODO: move this to more appropriate place
+	glm::vec3 center_of_bounds = {scene_->bounds().first, scene_->bounds().second,
+	                              0.0f};
+	center_of_bounds /= 2;
+	camera_controller_->SetPosition(center_of_bounds);
 }
 
 void GLSceneViewport::Resize(const int w, const int h) {
@@ -195,8 +230,8 @@ void GLSceneViewport::MoveCamera(const Vec2D /*screenPoint*/,
 
 void GLSceneViewport::RotateCamera(const Vec2D /*screenPoint*/,
                                    const Vec2D delta) {
-	static constexpr float zoom_coefficient = 1.0f / 1500.0f;
-	const float zoom_level = camera_controller_->camera().zoom_level();
+	static constexpr float zoom_coefficient = 1.0f / 500.0f;
+	const float zoom_level = 1.0f;  // camera_controller_->camera().zoom_level();
 
 	const float y_coefficient = zoom_level * zoom_coefficient;
 	const float x_coefficient = -zoom_level * zoom_coefficient;
@@ -214,6 +249,48 @@ void GLSceneViewport::ZoomView(const float delta) {
 	const float zoom = std::pow(zoom_base, delta * zoom_delta_coefficient);
 
 	camera_controller_->Zoom(zoom);
+}
+
+void GLSceneViewport::SetVisibility(const GlobalIds& to_change,
+                                    bool is_visible) {
+	for (auto id : to_change) {
+		scene_->shape_by_id(id)->SetIsVisible(is_visible);
+	}
+}
+
+void GLSceneViewport::SetDrawMode(DrawMode mode) {
+	bool is_stratified = false;
+	switch (mode) {
+		case DrawMode::Gradient:
+			is_stratified = false;
+			break;
+		case DrawMode::Stratified:
+			is_stratified = true;
+			break;
+	}
+	if (heatmap_materials_)
+		std::ranges::for_each(*heatmap_materials_, [is_stratified](auto& material) {
+			material.SetIsStratified(is_stratified);
+		});
+}
+void GLSceneViewport::SetStratifiedStep(float step) {
+	if (heatmap_materials_)
+		std::ranges::for_each(*heatmap_materials_, [step](auto& material) {
+			material.SetStratifiedStep(step);
+		});
+}
+
+void GLSceneViewport::ClearSelection() {
+	std::ranges::for_each(scene_->shapes(), [](auto& shape) {
+		shape->SetHighlightType(HighlightType::None);
+	});
+}
+
+void GLSceneViewport::SetSelection(const GlobalIds& to_change,
+                                   HighlightType type) {
+	for (auto id : to_change) {
+		scene_->shape_by_id(id)->SetHighlightType(type);
+	}
 }
 
 }  // namespace renderer

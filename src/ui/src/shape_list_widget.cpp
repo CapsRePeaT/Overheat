@@ -2,170 +2,122 @@
 
 #include <QFile>
 #include <QStringList>
+#include <QHeaderView>
+
+
+#include <iostream>
 #include <algorithm>
 
 ShapeListWidget::ShapeListWidget(QWidget* parent)
 		: QDockWidget(parent),
-			model_(new TreeModel(this)),
+			model_(new QStandardItemModel(this)),
 			view_(new QTreeView(this)) {
 	// example with checkboxes
 	// https://stackoverflow.com/questions/14158191/qt-qtreeview-and-custom-model-with-checkbox-columns
+	view_->setModel(model_);
 	view_->setWindowTitle(QObject::tr("Simple Tree Model"));
+	model_->setHorizontalHeaderItem(0, new QStandardItem("Shapes"));
+	model_->setHorizontalHeaderItem(1, new QStandardItem("Visible"));
+	model_->setHorizontalHeaderItem(2, new QStandardItem("Selected"));
 	setWidget(view_);
 
-	// Test();
+	connect(view_, &QTreeView::clicked, this, &ShapeListWidget::onItemClicked);
+
+	//Test();
 }
 
-void ShapeListWidget::Test() {
-	// model_->TestFillWithTxtFile(
-	// 		"C:\\Users\\winroot\\Desktop\\overheat\\local_docs\\default.txt");
+void ShapeListWidget::ClearData(const GlobalId& id) {
+	assert(false && "not implemented");
 }
 
-// TreeItem
-
-TreeItem::TreeItem(const QVector<QVariant>& data, TreeItem* parent)
-		: item_data_(data), parent_item_(parent) {}
-
-TreeItem* TreeItem::child(int row) {
-	if (row < 0 || row >= child_items_.size())
-		return nullptr;
-	return child_items_.at(row);
+void ShapeListWidget::ClearAll() { 
+	assert(false && "not implemented");
 }
 
-QVariant TreeItem::data(int column) const {
-	if (column < 0 || column >= item_data_.size())
-		return {};
-	return item_data_.at(column);
-}
-
-int TreeItem::row() const {
-	if (parent_item_)
-		return static_cast<int>(parent_item_->child_items_.indexOf(this));
-
-	return 0;
-}
-
-// Tree Model
-
-TreeModel::TreeModel(QObject* parent) : QAbstractItemModel(parent) {
-	rootItem = new TreeItem({tr("Name"), tr("Visibility"), tr("Highlight")});
-}
-
-// NOLINTNEXTLINE(google-default-arguments)
-int TreeModel::columnCount(const QModelIndex& parent) const {
-	if (parent.isValid())
-		return static_cast<TreeItem*>(parent.internalPointer())->column_count();
-	return rootItem->column_count();
-}
-
-QVariant TreeModel::data(const QModelIndex& index, int role) const {
-	if (!index.isValid())
-		return {};
-	if (role != Qt::DisplayRole)
-		return {};
-	auto* item = static_cast<TreeItem*>(index.internalPointer());
-	return item->data(index.column());
-}
-
-Qt::ItemFlags TreeModel::flags(const QModelIndex& index) const {
-	return !index.isValid() ? QAbstractItemModel::flags(index) : Qt::NoItemFlags;
-}
-
-// NOLINTNEXTLINE(google-default-arguments)
-QVariant TreeModel::headerData(int section, Qt::Orientation orientation,
-                               int role) const {
-	if (orientation == Qt::Horizontal && role == Qt::DisplayRole)
-		return rootItem->data(section);
-	return {};
-}
-
-// NOLINTNEXTLINE(google-default-arguments)
-QModelIndex TreeModel::index(int row, int column,
-                             const QModelIndex& parent) const {
-	if (!hasIndex(row, column, parent))
-		return {};
-	TreeItem* parentItem = nullptr;
-	if (!parent.isValid())
-		parentItem = rootItem;
-	else
-		parentItem = static_cast<TreeItem*>(parent.internalPointer());
-	TreeItem* childItem = parentItem->child(row);
-	if (childItem)
-		return createIndex(row, column, childItem);
-	return {};
-}
-
-QModelIndex TreeModel::parent(const QModelIndex& index) const {
-	if (!index.isValid())
-		return {};
-	auto* childItem      = static_cast<TreeItem*>(index.internalPointer());
-	TreeItem* parentItem = childItem->parentItem();
-	if (parentItem == rootItem)
-		return {};
-	return createIndex(parentItem->row(), 0, parentItem);
-}
-
-// NOLINTNEXTLINE(google-default-arguments)
-int TreeModel::rowCount(const QModelIndex& parent) const {
-	if (parent.column() > 0)
-		return 0;
-	TreeItem* parentItem = nullptr;
-	if (!parent.isValid())
-		parentItem = rootItem;
-	else
-		parentItem = static_cast<TreeItem*>(parent.internalPointer());
-
-	return parentItem->child_count();
-}
-
-void TreeModel::TestFillWithTxtFile(const QString& file_path) {
-	QFile file(file_path);
-	file.open(QIODevice::ReadOnly);
-	QString raw_data = file.readAll();
-	QStringList lines = raw_data.split('\n');
-	file.close();
-
-	QVector<TreeItem*> parents;
-	QVector<int> indentations;
-	parents << rootItem;
-	indentations << 0;
-
-	int number = 0;
-
-	while (number < lines.count()) {
-		int position = 0;
-		while (position < lines[number].length()) {
-			if (lines[number].at(position) != ' ')
-				break;
-			position++;
+void ShapeListWidget::onItemClicked(const QModelIndex& index) { 
+	auto item = model_->itemFromIndex(index);
+	auto main_index = model_->index(index.row(), 0, index.parent());
+	QStandardItem* main_child = model_->itemFromIndex(main_index);
+	GlobalId id = main_child->data(id_data_role_).value<GlobalId>();
+	switch (index.column()) {
+		case 0: // name
+			emit ShowMetadata(id);
+			break;
+		case 1: { // visibility
+					GlobalIds shape_ids;
+			if (id.type() == InstanceType::Shape)
+				shape_ids.push_back(id);
+			ProcessChildren(main_index, index.column(), item->checkState(), shape_ids);
+			emit ChangeVisibility(shape_ids, item->checkState() == Qt::CheckState::Checked);
+			break;
 		}
-		const QString lineData = lines[number].mid(position).trimmed();
-		if (!lineData.isEmpty()) {
-			// Read the column data from the rest of the line.
-			const QStringList columnStrings =
-					lineData.split(QLatin1Char('\t'), Qt::SkipEmptyParts);
-			QVector<QVariant> columnData;
-			columnData.reserve(columnStrings.count());
-			for (const QString& columnString : columnStrings)
-				columnData << columnString;
-
-			if (position > indentations.last()) {
-				// The last child of the current parent is now the new parent
-				// unless the current parent has no children.
-
-				if (parents.last()->child_count() > 0) {
-					parents << parents.last()->child(parents.last()->child_count() - 1);
-					indentations << position;
-				}
-			} else {
-				while (position < indentations.last() && parents.count() > 0) {
-					parents.pop_back();
-					indentations.pop_back();
-				}
-			}
-			// Append a new item to the current parent's list of children.
-			parents.last()->append_child(new TreeItem(columnData, parents.last()));
+		case 2: { // selection
+					GlobalIds shape_ids;
+			if (id.type() == InstanceType::Shape)
+				shape_ids.push_back(id);
+			ProcessChildren(main_index, index.column(), item->checkState(), shape_ids);
+			ChangeSelectedShapesSet(shape_ids, item->checkState() == Qt::CheckState::Checked);
+			break;
 		}
-		++number;
+		default:
+			assert(false && "unsupported column");
+			break;
 	}
+}
+
+void ShapeListWidget::ProcessChildren(const QModelIndex& parent_index,
+                                      int clicked_column, Qt::CheckState state,
+	                                    GlobalIds& shape_ids) {
+	for (int row = 0; row < model_->rowCount(parent_index); ++row) {
+		auto main_index = model_->index(row, 0, parent_index);
+		QStandardItem* main_child = model_->itemFromIndex(main_index);
+		GlobalId id = main_child->data(id_data_role_).value<GlobalId>();
+		if (id.type() == InstanceType::Shape)
+			shape_ids.push_back(id);
+		QStandardItem* child =
+				model_->itemFromIndex(model_->index(row, clicked_column, parent_index));
+		child->setCheckState(state);
+		if (model_->hasChildren(main_index)) {
+			ProcessChildren(main_index, clicked_column, state, shape_ids);
+		}
+	}
+}
+
+void ShapeListWidget::AddData(QStandardItem* parent, const InstanceList& data) {
+	QStandardItem* item_main = new QStandardItem(QString::fromStdString(data.name));
+	item_main->setEditable(false);
+	item_main->setData(QVariant::fromValue(data.id), id_data_role_);
+	QStandardItem* item_visibility = new QStandardItem();
+	item_visibility->setFlags(Qt::ItemFlag::ItemIsUserCheckable);
+	item_visibility->setCheckState(Qt::CheckState::Checked);
+	item_visibility->setEnabled(true);
+	QStandardItem* item_selected = new QStandardItem();
+	item_selected->setFlags(Qt::ItemFlag::ItemIsUserCheckable);
+	item_selected->setCheckState(Qt::CheckState::Unchecked);
+	item_selected->setEnabled(true);
+	const QList<QStandardItem*> row = {item_main, item_visibility, item_selected};
+	parent == nullptr ? model_->appendRow(row) : parent->appendRow(row);
+	for (const auto& dependant : data.dependants) 
+		AddData(item_main, dependant);
+	//return item_main;
+}
+
+void ShapeListWidget::
+ChangeSelectedShapesSet(GlobalIds& shape_ids, const bool is_selected) {
+	if (is_selected) {
+		//selected_shapes_.emplace_back(shape_ids.begin(), shape_ids.end());
+		// crunch stupid code
+		for (const auto& shape_id : shape_ids) {
+			selected_shapes_.push_back(shape_id);
+		}
+	} else {
+		std::sort(shape_ids.begin(), shape_ids.end());
+		selected_shapes_.erase(
+				remove_if(selected_shapes_.begin(), selected_shapes_.end(),
+		        [&](auto x) {
+							return binary_search(shape_ids.begin(), shape_ids.end(),  x);
+						}),
+				selected_shapes_.end());
+	}
+	emit ShapesSelected(selected_shapes_);
 }

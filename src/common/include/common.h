@@ -22,6 +22,19 @@ enum class DrawMode {
 	Stratified 
 };
 
+// weird option, may be not needed in the future
+enum class ShowTexture { 
+	Above = 0, 
+	Below, 
+	Both 
+};
+
+enum class HighlightType {
+	None,
+	Selected,
+	ActiveSelected
+};
+
 enum class ShapeType { 
 	Box = 0, 
 	Sphere, 
@@ -40,10 +53,19 @@ enum class InstanceType {
 class GlobalId {
  public:
 	using InstanceId = size_t;
+	GlobalId() = default;
 	constexpr GlobalId(const InstanceType type, const InstanceId id,
 	                   const RepresentationId representation_id)
 			: type_(type), id_(id), representation_id_(representation_id) {}
+	GlobalId(const GlobalId& other) = default;
 	[[nodiscard]] bool operator==(const GlobalId& other) const = default;
+	[[nodiscard]] auto operator<=>(const GlobalId& other) const = default;//{
+	// 	if (representation_id_ != other.representation_id_)
+	// 		return representation_id_ <=> other.representation_id_; 
+	// 	if (type_ != other.type_)
+	// 		return static_cast<int>(type_) <=> static_cast<int>(other.type_);
+	// 	return id_ <=> other.id_;
+	// }
 	[[nodiscard]] constexpr InstanceId id() const {
 		return id_;
 	}
@@ -57,6 +79,13 @@ class GlobalId {
 	InstanceType type_                  = InstanceType::Undefined;
 	InstanceId id_                      = UndefinedId;
 	RepresentationId representation_id_ = UndefinedId;
+};
+
+struct InstanceList {
+	InstanceList(const GlobalId init_id) : id (init_id) {}
+	std::string name;
+	GlobalId id;
+	std::vector<InstanceList> dependants;
 };
 
 using GlobalIds = std::vector<GlobalId>;
@@ -94,6 +123,10 @@ class Box {
 	[[nodiscard]] bool undefined() const {
 		return coordinates_ == DefaultCoordinates();
 	}
+	float width(const int needed_dim) const { 
+		assert(needed_dim >= dim);
+		return coordinates_[needed_dim].second() - coordinates_[needed_dim].first();
+	}
 
  private:
 	static constexpr Values DefaultCoordinates();
@@ -124,4 +157,4 @@ class PreparedMetadata {
 };
 
 // Why is not unordered_set?
-using MetadataPack = std::set<PreparedMetadata>;
+using MetadataPack = std::vector<PreparedMetadata>;

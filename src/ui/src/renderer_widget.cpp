@@ -1,4 +1,5 @@
 #include "renderer_widget.h"
+#include <qsurfaceformat.h>
 
 #include <QOpenGLContext>
 
@@ -74,7 +75,7 @@ void RendererWidget::UpdateVisualizationOptions(
 		const VisualizationOptions& visualization_options) {
 	const auto min_color = visualization_options.min_temp_color;
 	const auto max_color = visualization_options.max_temp_color;
-	viewport_->SetColorRange(
+	viewport_->SetColorRange(   
 			std::array<float, 3>{min_color.redF(), min_color.greenF(),
 	                         min_color.blueF()},
 			std::array<float, 3>{max_color.redF(), max_color.greenF(),
@@ -82,6 +83,8 @@ void RendererWidget::UpdateVisualizationOptions(
 	viewport_->SetTemperatureRange(visualization_options.min_temp,
 	                               visualization_options.max_temp);
 	viewport_->SetDrawMode(visualization_options.draw_mode);
+	viewport_->SetStratifiedStep(visualization_options.stratified_step_);
+
 };
 
 // TODO: maybe need to delegate tweaks to renderer
@@ -91,6 +94,7 @@ QSurfaceFormat surface_format(const QSurfaceFormat::FormatOptions options) {
 	surface_format.setProfile(QSurfaceFormat::CoreProfile);
 	surface_format.setRenderableType(QSurfaceFormat::OpenGL);
 	surface_format.setSwapBehavior(QSurfaceFormat::TripleBuffer);
+	//surface_format.setSamples(16);
 	// One swap per screen update (classic vsync)
 	surface_format.setSwapInterval(1);
 	// Sizes in bits
@@ -142,5 +146,5 @@ void RendererWidget::wheelEvent(QWheelEvent* event) {
 	const float delta       = event->angleDelta().y() * sensitivity;
 	viewport_->ZoomView(delta);
 	event->accept();
-	LOG_DEBUG("Wheel moved, delta: {0}.", delta);
 }
+

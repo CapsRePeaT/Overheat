@@ -58,11 +58,14 @@ class ISceneViewport {
 		SetTemperatureRange(temperatures);
 		SetColorRange(colors);
 	}
-	void SetDrawMode(DrawMode mode) { draw_mode_ = mode; };
+	virtual void SetDrawMode(DrawMode mode) = 0;
+	virtual void SetStratifiedStep(float step) = 0;
+	virtual void SetVisibility(const GlobalIds& to_change, bool is_visible) = 0;
+	virtual void ClearSelection() = 0;
+	virtual void SetSelection(const GlobalIds& to_change, HighlightType type) = 0;
 	[[nodiscard]] bool is_initialized() const { return is_initialized_; }
 
  protected:
-	DrawMode draw_mode_ = DrawMode::Gradient;
 	bool is_initialized_ = false;
 };
 

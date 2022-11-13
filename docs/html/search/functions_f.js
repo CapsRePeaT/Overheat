@@ -1,0 +1,21 @@
+var searchData=
+[
+  ['radius_0',['radius',['../d1/d21/classrenderer_1_1SphericalCameraController.html#a25ee9ff7380e368dacde166136927e7b',1,'renderer::SphericalCameraController']]],
+  ['read_1',['read',['../d4/d7f/classReaders_1_1Solver3d_1_1BaseLayer.html#a64d069cc097ca447eb81af4f0a09b13e',1,'Readers::Solver3d::BaseLayer::read()'],['../d1/da9/classReaders_1_1Solver3d_1_1HPU.html#a6d5cb1a6c0b6523ba7768b6598faa810',1,'Readers::Solver3d::HPU::read()'],['../d6/df3/classReaders_1_1Solver3d_1_1BS.html#afe685dafbbfac52be6a66dc57bb50fd3',1,'Readers::Solver3d::BS::read()'],['../d7/d93/classReaders_1_1Solver3d_1_1D.html#a266115642075257aae798c24f1051c46',1,'Readers::Solver3d::D::read()']]],
+  ['read_5fgeometry_2',['read_geometry',['../d3/d7b/namespaceReaders_1_1Solver3d.html#a1d2587356cf5324469d657aec17d4563',1,'Readers::Solver3d::read_geometry()'],['../d3/da4/namespaceReaders_1_1Solver2d.html#a5c75e5de4a3f35b868e3134fc9ab3e01',1,'Readers::Solver2d::read_geometry()']]],
+  ['read_5fheatmap_3',['read_heatmap',['../d3/d7b/namespaceReaders_1_1Solver3d.html#a9f749d2a7a9a1f6fd85f9bca8157b0c1',1,'Readers::Solver3d::read_heatmap()'],['../d3/da4/namespaceReaders_1_1Solver2d.html#a9c76370fc651aae532243199dcf873b0',1,'Readers::Solver2d::read_heatmap()']]],
+  ['render_4',['Render',['../d0/da3/classrenderer_1_1debug_1_1Line.html#a21c1fcd8040bc4c4f4cac0645895f408',1,'renderer::debug::Line']]],
+  ['rendererwidget_5',['RendererWidget',['../d5/de6/classRendererWidget.html#ad662cb3a6954859b1eadd855afbbb6cb',1,'RendererWidget::RendererWidget(QWidget *parent=nullptr)'],['../d5/de6/classRendererWidget.html#a7b6112a57e086bc36a4e76e3d4ffe491',1,'RendererWidget::RendererWidget(QWidget *parent, const std::shared_ptr&lt; renderer::Scene &gt; &amp;scene)']]],
+  ['renderframe_6',['RenderFrame',['../d0/d70/classrenderer_1_1GLSceneViewport.html#aecbfbb81f02aca531ab6e35fe01aae65',1,'renderer::GLSceneViewport::RenderFrame()'],['../d8/d57/classrenderer_1_1ISceneViewport.html#a4c01df2189634149d451cee267ed8c57',1,'renderer::ISceneViewport::RenderFrame()']]],
+  ['representation_5fborders_7',['representation_borders',['../dc/dcb/classHeatmapStorage.html#a6467258fa37179e6d559344558eab246',1,'HeatmapStorage::representation_borders()'],['../d5/de5/classFileRepresentation.html#aafcf2e1fd9355ad3b29c7edb612980ac',1,'FileRepresentation::representation_borders()']]],
+  ['representation_5fid_8',['representation_id',['../d5/d96/classGlobalId.html#adb897a4bd982e387a0ccf02bd22475d6',1,'GlobalId']]],
+  ['representationname_9',['RepresentationName',['../d5/de5/classFileRepresentation.html#ab64699f8054717a9f0bcaff81d424ec9',1,'FileRepresentation']]],
+  ['resize_10',['Resize',['../d0/d70/classrenderer_1_1GLSceneViewport.html#ae484fdd54c25a5d1c5cc5dff4d74ece9',1,'renderer::GLSceneViewport::Resize()'],['../d8/d57/classrenderer_1_1ISceneViewport.html#a8edac9fedb523d80b55d8f3db0ae5463',1,'renderer::ISceneViewport::Resize()']]],
+  ['resizegl_11',['resizeGL',['../d5/de6/classRendererWidget.html#a1a466aa01e8f298d51d83eb8fb8089ac',1,'RendererWidget']]],
+  ['rightvector_12',['rightVector',['../db/d18/classrenderer_1_1SceneObject.html#a4354275ab9c8eb32264a0f52874572b3',1,'renderer::SceneObject']]],
+  ['roll_13',['roll',['../db/d18/classrenderer_1_1SceneObject.html#ab32025d2140a38bf23bfbab7bc8c9199',1,'renderer::SceneObject']]],
+  ['rotate_14',['Rotate',['../db/d18/classrenderer_1_1SceneObject.html#a063fe95be3d8a8a4500c1a90e09cb3c1',1,'renderer::SceneObject::Rotate(float angle, glm::vec3 axis)'],['../db/d18/classrenderer_1_1SceneObject.html#a016c3bcd3db77c56c2237de9057d292f',1,'renderer::SceneObject::Rotate(glm::quat rotation)']]],
+  ['rotatecamera_15',['RotateCamera',['../d8/d57/classrenderer_1_1ISceneViewport.html#a7d160b1fd1edfe32c25662abd9a68b51',1,'renderer::ISceneViewport::RotateCamera()'],['../d0/d70/classrenderer_1_1GLSceneViewport.html#a401239fbd760f4edd0886347ea21a2b4',1,'renderer::GLSceneViewport::RotateCamera()']]],
+  ['rotation_16',['rotation',['../db/d18/classrenderer_1_1SceneObject.html#a37e43549fb92211aa73c4bd32744dec1',1,'renderer::SceneObject']]],
+  ['row_17',['row',['../d1/d7b/classHeatmap.html#a46eac207a73157baaabe227fc01f86da',1,'Heatmap::row(size_t i) const'],['../d1/d7b/classHeatmap.html#ab87c6f021c7bdadca0c523855a8474f0',1,'Heatmap::row(size_t i)']]]
+];

@@ -143,7 +143,9 @@ int32_t ShaderProgram::getUniformLocation(const char* name) const {
 void ShaderProgram::SetInt(const char* name, const int32_t value) const {
 	glUniform1i(getUniformLocation(name), value);
 }
-
+void ShaderProgram::SetBool(const char *name, const bool value) const {
+	glUniform1i(getUniformLocation(name), static_cast<GLint>(value));
+}
 void ShaderProgram::SetFloat(const char* name, const float value) const {
 	glUniform1f(getUniformLocation(name), value);
 }

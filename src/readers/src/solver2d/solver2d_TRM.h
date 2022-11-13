@@ -51,13 +51,15 @@ struct Element {
 	std::string sg_{};
 	float xff_{};
 	size_t nss_{};
-	Coordinates box_{};
+	std::vector<Coordinates> boxes_{};
 
 	friend std::istream& operator>>(std::istream& istream, Element& elem) {
 		istream >> elem.sg_ >> elem.xff_ >> elem.nss_;
-		for (size_t i = 0; i < elem.nss_; ++i)
-			istream >> elem.box_.x1_ >> elem.box_.x2_ >> elem.box_.y1_ >>
-					elem.box_.y2_;
+		for (size_t i = 0; i < elem.nss_; ++i) {
+			Coordinates box;
+			istream >> box.x1_ >> box.x2_ >> box.y1_ >> box.y2_;
+			elem.boxes_.push_back(box);
+		}
 		return istream;
 	}
 };

@@ -14,6 +14,10 @@ struct VisualizationOptions {
 	QColor max_temp_color{};
 	float min_temp{};
 	float max_temp{};
+	float stratified_step_{};
+	bool show_isoterm = false;
+	float isoterm_step{};
+	ShowTexture texture = ShowTexture::Both;
 };
 
 // options should be saved between sessions
@@ -25,12 +29,17 @@ class VisualizationOptionsWidget : public QDockWidget {
  public:
 	explicit VisualizationOptionsWidget(QWidget* parent = nullptr);
 	~VisualizationOptionsWidget() override;
-
+	void SetMinMaxTemp(float min, float max);
  signals:
 	void VisualizationOptionsChanged(
 			const VisualizationOptions& visualization_options);
-
+ private slots:
+	void MinTempChanged(double temperature);
+	void MaxTempChanged(double temperature);
+	void Reset();
  private:
+	void EnableStrictDrawMode(bool enabled);
+	std::pair<float, float> last_setted_range_;
 	std::unique_ptr<Ui::VisualizationOptionsWidget> ui_;
 	VisualizationOptions visualization_options_{};
 };
