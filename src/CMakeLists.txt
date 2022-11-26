@@ -21,7 +21,6 @@ add_subdirectory(ui)
 #
 
 find_package(glm)
-find_package(stb)
 find_package(glad)
 find_package(spdlog)
 find_package(magic_enum)
@@ -30,14 +29,14 @@ find_package(Boost)
 if(USE_QT)
 target_link_libraries(ui PRIVATE renderer core common ${QT_LIBRARIES_TO_LINK})
 endif()
-target_link_libraries(readers PRIVATE reader-interface common core Boost::Boost)
+target_link_libraries(readers PRIVATE reader-interface common core Boost::boost) 
 target_link_libraries(reader-test readers gtest_main reader-interface common core)
 
 target_link_libraries(core PRIVATE readers common)
 target_link_libraries(core PUBLIC reader-interface)
 
-target_link_libraries(renderer PRIVATE core common glm::glm stb::stb glad::glad)
-target_link_libraries(renderer-test gtest_main core common glm::glm stb::stb glad::glad renderer)
+target_link_libraries(renderer PRIVATE core common glm::glm glad::glad)
+target_link_libraries(renderer-test gtest_main core common glm::glm glad::glad renderer)
 
 target_link_libraries(common PUBLIC spdlog::spdlog)
 target_link_libraries(common PUBLIC magic_enum::magic_enum)

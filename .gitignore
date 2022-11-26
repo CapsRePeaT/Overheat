@@ -39,6 +39,7 @@ build/*
 .vs/
 .vscode/
 CMakeLists.txt.user
+CMakeSettings.json
 *.kdev4
 
 # Compile commands link in root

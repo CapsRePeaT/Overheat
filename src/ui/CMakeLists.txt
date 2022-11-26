@@ -65,4 +65,15 @@ if(QT_VERSION_MAJOR EQUAL 6)
     qt_finalize_executable(${MODULE_NAME})
 endif()
 
+if (CMAKE_BUILD_TYPE STREQUAL "Debug")
+    find_program(TOOL_WINDEPLOYQT NAMES windeployqt.debug.bat)
+else()
+    find_program(TOOL_WINDEPLOYQT NAMES windeployqt)
+endif()
+
+add_custom_command(TARGET ${MODULE_NAME} POST_BUILD
+    COMMAND ${TOOL_WINDEPLOYQT} $<TARGET_FILE:${MODULE_NAME}>
+    COMMENT "Running windeployqt..."
+)
+
 endif() # USE_QT
