@@ -9,11 +9,11 @@ macro(config_conan)
         stb/20200203
         spdlog/1.9.2
         magic_enum/0.7.3
-        boost/1.78.0
+        #boost/1.78.0
     )
     if(QT_FROM_CONAN)
         list(APPEND CONAN_DEPS
-            qt/6.2.2
+            qt/6.3.1
         )
     endif()
     if(UNIX)
@@ -28,6 +28,7 @@ macro(config_conan)
         glad:gl_profile=core
         boost:header_only=True
         boost:without_json=False
+        mpfr:shared=True
     )
     if(QT_FROM_CONAN)
         list(APPEND CONAN_OPTIONS

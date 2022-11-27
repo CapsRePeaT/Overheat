@@ -3,6 +3,9 @@ cmake_minimum_required(VERSION 3.17)
 # Don't allow to generate build in sources
 include(cmake/PreventSourceBuilds.cmake)
 
+# Init vcpkg in CMAKE_TOOLCHAIN_FILE (must be set before preject() call)
+include(cmake/Vcpkg.cmake)
+
 set(PROJECT_NAME Overheat VERSION 0.1)
 project(${PROJECT_NAME} LANGUAGES CXX)
 
@@ -19,8 +22,8 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 include(cmake/SetupBuildTypes.cmake)
 
 # Setup conan
-include(cmake/Conan.cmake)
-run_conan()
+#include(cmake/Conan.cmake)
+#run_conan()
 
 # Set color mode for gcc and clang
 include(cmake/ColorfullOutput.cmake)
