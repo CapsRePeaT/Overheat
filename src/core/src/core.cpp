@@ -4,6 +4,9 @@
 
 #include "../../readers/src/solver3d/solver3d_reader.h"
 #include "../../readers/src/solver2d/solver2d_reader.h"
+
+#include "../../fem_solver/src/fem_solver.hpp"
+
 #include "databases.h"
 
 GlobalId Core::LoadRepresentation(std::string trm_file_path_mv,
@@ -30,4 +33,10 @@ GlobalId Core::LoadRepresentation(std::string trm_file_path_mv,
 	
 	// TODO: If we create new file representation here,
 	// how can reader set its id to shapes?
+}
+
+
+void Core::CalculateHeat() { 
+	FemSolver solver;
+	solver.Solve();
 }

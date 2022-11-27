@@ -33,13 +33,15 @@ class Core {
 	InstanceList GetRepresentationData(const size_t representation_id) const {
 		return GetRepresentation(representation_id).GetInstanceList();
 	}
+	void CalculateHeat();
 
  private:
-	Core() = default;
+	Core() { CalculateHeat(); };
 	[[nodiscard]] const FileRepresentation& GetRepresentation(
 			const RepresentationId id) const {
 		// in the future there might be another connection with id and container
 		return representations_.at(id);
 	}
 	std::vector<FileRepresentation> representations_;
+
 };
