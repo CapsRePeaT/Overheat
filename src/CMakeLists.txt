@@ -3,6 +3,7 @@ add_subdirectory(core)
 add_subdirectory(readers)
 add_subdirectory(renderer)
 add_subdirectory(ui)
+add_subdirectory(fem_solver)
 
 #  Now dependency tree looks like this ((*) is executable)
 #
@@ -32,7 +33,7 @@ endif()
 target_link_libraries(readers PRIVATE reader-interface common core Boost::boost) 
 target_link_libraries(reader-test readers gtest_main reader-interface common core)
 
-target_link_libraries(core PRIVATE readers common)
+target_link_libraries(core PRIVATE readers common fem_solver)
 target_link_libraries(core PUBLIC reader-interface)
 
 target_link_libraries(renderer PRIVATE core common glm::glm glad::glad)

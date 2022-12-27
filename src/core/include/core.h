@@ -2,6 +2,7 @@
 
 #include <cassert>
 #include <string>
+#include <iostream>
 
 #include "common.h"
 #include "databases.h"
@@ -33,10 +34,16 @@ class Core {
 	InstanceList GetRepresentationData(const size_t representation_id) const {
 		return GetRepresentation(representation_id).GetInstanceList();
 	}
-	void CalculateHeat();
+	void CalculateHeat(FileRepresentation& file_rep);
 
  private:
-	Core() { CalculateHeat(); };
+	Core() { 
+		std::cout << "Core created" << std::endl;
+		GeomStorage<BasicShape> geom_storage_mv;
+		HeatmapStorage heatmap_storage_mv;
+		FileRepresentation dummy(geom_storage_mv, heatmap_storage_mv);
+		CalculateHeat(dummy);
+	};
 	[[nodiscard]] const FileRepresentation& GetRepresentation(
 			const RepresentationId id) const {
 		// in the future there might be another connection with id and container

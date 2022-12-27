@@ -45,6 +45,7 @@ MainWindow::MainWindow(QWidget* parent)
 	        render_widget_, &RendererWidget::onVisualizationOptionsChanged);
 	connect(shape_list_widget_, &ShapeListWidget::ChangeVisibility,
 	        render_widget_, &RendererWidget::OnChangeVisibility);
+	core(); // for debug
 }
 
 MainWindow::~MainWindow() = default;

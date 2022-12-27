@@ -36,7 +36,7 @@ GlobalId Core::LoadRepresentation(std::string trm_file_path_mv,
 }
 
 
-void Core::CalculateHeat() { 
+void Core::CalculateHeat(FileRepresentation& file_rep) { 
 	FemSolver solver;
-	solver.Solve();
+	solver.Solve(file_rep);
 }
