@@ -2,9 +2,11 @@
 
 #include "solver_db.hpp"
 
-class MatrixAgregator {
- public:
-	MatrixAgregator()  = default;
-	virtual ~MatrixAgregator() = default;
-	MainMatrix AgregateFsResultMatrix(const FsMatrixVec& db);
-};
+// not used in spec for 15/01/2023
+
+//class MatrixAgregator {
+// public:
+//	MatrixAgregator()  = default;
+//	virtual ~MatrixAgregator() = default;
+//	MainMatrix AgregateFsResultMatrix(const FsMatrixVec& db);
+//};

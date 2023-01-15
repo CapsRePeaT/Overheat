@@ -7,11 +7,16 @@
 void FemSolver::Solve(FileRepresentation& file_rep) {
 	std::cout << "starting heat solving..." << std::endl;
 	GeometryCutter cutter;
-	const auto geom_db = cutter.PrepareGeometry(file_rep);
-	VarianceSolver v_solver;	
-	const auto fs_matrixes = v_solver.ComputeMatrix(geom_db);
-	MatrixAgregator agregator;
-	const auto main_matrix = agregator.AgregateFsResultMatrix(fs_matrixes);
+	auto geom_db = cutter.PrepareGeometry(file_rep);
+	const auto index_2_coord_map = cutter.GetVerticeIndexes();
+	SolverShape* element = nullptr;
+	MainMatrix main_matrix;
+	while (geom_db.NextElement(element)) {
+		assert(element);
+		element->AddElementContribution(main_matrix);
+		delete element;
+		element = nullptr;
+	}
 	MainMatrixSolver main_solver;
 	const auto heatmap = main_solver.ComputeHeatmap(main_matrix);
 	HeatmapConverter converter;

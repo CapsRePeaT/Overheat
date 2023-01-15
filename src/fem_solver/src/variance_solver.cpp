@@ -1,6 +1,5 @@
 #include "variance_solver.hpp"
 
-FsMatrixVec VarianceSolver::ComputeMatrix(const FsDatapack& db) {
-	std::cout << "starting variance solver..." << std::endl;
-	return FsMatrixVec();
+void VarianceTetraeder::AddElementContribution(MainMatrix& matrix) const {
+	std::cout << "Add element contribution to matrix" << std::endl;
 }
