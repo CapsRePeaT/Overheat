@@ -8,7 +8,7 @@ class SolverShape {
  public:
 	SolverShape() = default;
 	virtual ~SolverShape() = default;
-	virtual void AddElementContribution(MainMatrix& matrix) const = 0;
+	virtual void AddElementContribution(MatrixEquation& matrix) const = 0;
  private:
 };
 

@@ -2,7 +2,7 @@
 
 #include <iostream>
 
-SolverHeatmap MainMatrixSolver::ComputeHeatmap(const MainMatrix& db) {
+SolverHeatmap MainMatrixSolver::ComputeHeatmap(const MatrixEquation& db) {
 	std::cout << "Solving main matrix, generating heatmap..." << std::endl;
 	return SolverHeatmap();
 }

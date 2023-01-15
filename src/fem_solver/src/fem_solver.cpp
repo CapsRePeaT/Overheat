@@ -10,7 +10,7 @@ void FemSolver::Solve(FileRepresentation& file_rep) {
 	auto geom_db = cutter.PrepareGeometry(file_rep);
 	const auto index_2_coord_map = cutter.GetVerticeIndexes();
 	SolverShape* element = nullptr;
-	MainMatrix main_matrix;
+	MatrixEquation main_matrix;
 	while (geom_db.NextElement(element)) {
 		assert(element);
 		element->AddElementContribution(main_matrix);

@@ -4,6 +4,8 @@
 #include <deque>
 #include <iostream>
 
+#include "../../common/include/common.h"
+
 class SolverShape;
 
 class FsDatapack {
@@ -22,6 +24,8 @@ class VerticeIndexes {
   using VerticeIndex = size_t;
   VerticeIndex AddVertice(Point3D point);
   Point3D GetCoords(VerticeIndex index);
+  // needed for heatmap interpolation
+  std::array<VerticeIndex, 4> GetConvexHull(Point3D point);
  private:
   std::vector<Point3D> coords_;
 };
@@ -32,12 +36,32 @@ class FsResultMatrix {
 };
 using FsMatrixVec = std::vector<FsResultMatrix>;
 
-class MainMatrix {
+class Coeficients {
  public:
-  MainMatrix() = default;
+	Coeficients() = default;
+ private:
+	size_t max_index_ = 0;
+	// element index equal to position index
+	// std::matrix
 };
 
 class SolverHeatmap {
  public:
+  using Temperature = double;
   SolverHeatmap() = default;
+ private:
+  size_t max_index_ = 0;
+  // element index equal to position index
+  std::deque<Temperature> temperatures_;
+};
+
+class MatrixEquation {
+ public:
+  using Result = std::deque<double>;
+  MatrixEquation() = default;
+ private:
+  size_t max_index_ = 0;
+  Coeficients coeficients_;
+  SolverHeatmap unknown_;
+  Result result_;
 };

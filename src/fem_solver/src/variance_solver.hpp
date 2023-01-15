@@ -18,7 +18,7 @@ class VarianceTetraeder : public SolverTetraeder {
 			            intensity_of_heat_source, convective_heat, indexes)
 		, index_to_coord_map_(index_to_coord_map) {}
 	~VarianceTetraeder() = default;
-	virtual void AddElementContribution(MainMatrix& matrix) const override;
+	virtual void AddElementContribution(MatrixEquation& matrix) const override;
  private:
 	CoficientMatrix coef_matrix_ = 0;
 	const VerticeIndexes& index_to_coord_map_;

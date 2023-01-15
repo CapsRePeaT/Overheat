@@ -6,6 +6,6 @@ class MainMatrixSolver {
  public:
 	MainMatrixSolver()  = default;
 	virtual ~MainMatrixSolver() = default;
-	SolverHeatmap ComputeHeatmap(const MainMatrix& db);
+	SolverHeatmap ComputeHeatmap(const MatrixEquation& db);
 };
 
