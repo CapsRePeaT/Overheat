@@ -4,10 +4,11 @@
 
 #include "boost/numeric/ublas/matrix_expression.hpp"
 #include "boost/numeric/ublas/matrix.hpp"
+#include "boost/numeric/ublas/matrix_sparse.hpp"
 #include "boost/numeric/ublas/lu.hpp"
 
-
-
+// we can choose between mapped_matrix, compressed_matrix, coordinate_matrix
+using Matrix = boost::numeric::ublas::compressed_matrix<float>;
 
 SolverHeatmap MainMatrixSolver::ComputeHeatmap(const MatrixEquation& db) {
 	try {
@@ -22,11 +23,11 @@ SolverHeatmap MainMatrixSolver::ComputeHeatmap(const MatrixEquation& db) {
 		};
 		// https://www.webmath.ru/poleznoe/formules_5_7.php
 		// result should be x1 = -1, x2 = 1, x3 = 3
-		boost::numeric::ublas::matrix<float> y(3, 1);
+		Matrix y(3, 1);
 		y(0, 0) = 2;
 		y(1, 0) = -2;
 		y(2, 0) = 2;
-		boost::numeric::ublas::matrix<float> A(3, 3);
+		Matrix A(3, 3);
 		//for (unsigned i = 0; i < A.size1(); ++i)
 		//	for (unsigned j = 0; j < A.size2(); ++j)
 		//		A(i, j) = 0.1 + 3 * i + j;
@@ -40,15 +41,14 @@ SolverHeatmap MainMatrixSolver::ComputeHeatmap(const MatrixEquation& db) {
 		//lu_substitute(A, pm, Ainv);
 		PrintMatrix(y, "input result");
 		PrintMatrix(A, "input coeficients");
-		boost::numeric::ublas::matrix<double> Afactorized = A;
-		boost::numeric::ublas::matrix<double> Ainv = boost::numeric::ublas::identity_matrix<float>(A.size1());
+		Matrix Afactorized = A;
+		Matrix Ainv = boost::numeric::ublas::identity_matrix<float>(A.size1());
 		boost::numeric::ublas::vector<double> x_boost(Afactorized.size1(), 1);
 		boost::numeric::ublas::permutation_matrix<size_t> pm(Afactorized.size1());
-		boost::numeric::ublas::matrix<double> result = boost::numeric::ublas::identity_matrix<float>(A.size1());
+		Matrix result = boost::numeric::ublas::identity_matrix<float>(A.size1());
 		// вырожденная
 		int singular = boost::numeric::ublas::lu_factorize(Afactorized, pm);
-		if (singular)
-		{
+		if (singular) {
 			throw std::runtime_error("[LinearSolver<LU>::solve()] A is singular.");
 		}
 		result = y;
