@@ -28,6 +28,7 @@ class VerticeIndexes {
   std::array<VerticeIndex, 4> GetConvexHull(Point3D point);
  private:
   std::vector<Point3D> coords_;
+	// add search tree
 };
 
 class FsResultMatrix {
