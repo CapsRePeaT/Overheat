@@ -20,16 +20,16 @@ class MainWindow final : public QMainWindow {
  public:
 	explicit MainWindow(QWidget* parent = nullptr);
 	~MainWindow() override;
-	void LoadFile(std::string trm_file_path, 
-	              std::string t2d_file_path,
-	              GeometryType type);
  public slots:
 	void OnLoadFile3DBtnPressed();
 	void OnLoadFile2DBtnPressed();
+	void OnRunComputationBtnPressed();
 	void OnShapesSelected(const GlobalShapeIds& shape_ids);
 	void OnShowMetadata(GlobalId id);
  private:
-	void GetFilesAndLoad(GeometryType type);
+	void LoadGeometryWithHeatmap(GeometryType type);
+	void LoadGeometryAndRunComputation();
+	void VisualizeRepresentation(GlobalId rep_id);
 	Core& core() { return Core::instance(); }
 	std::shared_ptr<renderer::Scene> scene_;
 	RendererWidget* render_widget_ = nullptr;

@@ -7,9 +7,9 @@ add_library(${MODULE_NAME} STATIC ${SOURCES})
 target_include_directories(${MODULE_NAME} PUBLIC include)
 target_compile_features(${MODULE_NAME} PRIVATE cxx_std_20)
 
-add_custom_command(TARGET ${MODULE_NAME} POST_BUILD
-        COMMAND ${CMAKE_COMMAND} -E copy_directory
-        ${CMAKE_CURRENT_SOURCE_DIR}/tests ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/tests)
+#add_custom_command(TARGET ${MODULE_NAME} POST_BUILD
+#        COMMAND ${CMAKE_COMMAND} -E copy_directory
+#        ${CMAKE_CURRENT_SOURCE_DIR}/tests ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/tests)
 
 # add_executable(fem_solver-test tests/solver3d_test.cpp tests/solver2d_test.cpp src/common.h)
 
