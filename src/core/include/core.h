@@ -38,13 +38,7 @@ class Core {
 	void CalculateHeat(FileRepresentation& file_rep);
 
  private:
-	Core() { 
-		//std::cout << "Core created" << std::endl;
-		//GeomStorage<BasicShape> geom_storage_mv;
-		//HeatmapStorage heatmap_storage_mv;
-		//FileRepresentation dummy(geom_storage_mv, heatmap_storage_mv);
-		//CalculateHeat(dummy);
-	};
+	Core() { };
 	[[nodiscard]] const FileRepresentation& GetRepresentation(
 			const RepresentationId id) const {
 		// in the future there might be another connection with id and container

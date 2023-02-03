@@ -20,7 +20,6 @@ class MainWindow final : public QMainWindow {
  public:
 	explicit MainWindow(QWidget* parent = nullptr);
 	~MainWindow() override;
-
  public slots:
 	void OnLoadFile3DBtnPressed();
 	void OnLoadFile2DBtnPressed();
@@ -28,9 +27,6 @@ class MainWindow final : public QMainWindow {
 	void OnShapesSelected(const GlobalShapeIds& shape_ids);
 	void OnShowMetadata(GlobalId id);
  private:
-	void LoadGeometryWithHeatmapCommon(std::string trm_file_path, 
-	              std::string t2d_file_path,
-	              GeometryType type);
 	void LoadGeometryWithHeatmap(GeometryType type);
 	void LoadGeometryAndRunComputation();
 	void VisualizeRepresentation(GlobalId rep_id);

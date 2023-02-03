@@ -36,7 +36,8 @@ GlobalId Core::LoadRepresentationWithHeatmap(std::string trm_file_path_mv,
 }
 
 GlobalId Core::LoadRepresentation(const std::string& trm_file_path_mv) {
-	representations_.emplace_back(GeomStorage<BasicShape>());
+	// FIXME add real representation
+	representations_.emplace_back(GeomStorage<BasicShape>()); // dummy
 	representations_.back().InitLayers();
 	return representations_.back().id();
 }

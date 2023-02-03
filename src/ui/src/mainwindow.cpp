@@ -52,13 +52,6 @@ MainWindow::MainWindow(QWidget* parent)
 
 MainWindow::~MainWindow() = default;
 
-void MainWindow::LoadGeometryWithHeatmapCommon(std::string trm_file_path,
-                          std::string t2d_file_path,
-                          const GeometryType type) {
-	const auto rep_id = core().LoadRepresentationWithHeatmap(trm_file_path, std::move(t2d_file_path), type);
-	VisualizeRepresentation(rep_id);
-}
-
 void MainWindow::VisualizeRepresentation(GlobalId rep_id) {
 	auto& representation = core().GetRepresentation(rep_id);
 	const auto loaded_shapes = representation.GetShapes();
@@ -69,7 +62,6 @@ void MainWindow::VisualizeRepresentation(GlobalId rep_id) {
 	if (!loaded_shapes.empty()) {
 		LOG_INFO("Got {} files to render", loaded_shapes.size());
 		// FIXME: Adding shapes shouldn't need to make API context current
-
 		render_widget_->makeCurrent();
 		scene_->Clear();
 		scene_->AddShapes(loaded_shapes);
@@ -77,7 +69,6 @@ void MainWindow::VisualizeRepresentation(GlobalId rep_id) {
 		render_widget_->doneCurrent();
 		visualization_options_->SetMinMaxTemp(loaded_heatmaps.min_temp(),
 			loaded_heatmaps.max_temp());
-
 	}
 }
 
@@ -94,24 +85,20 @@ void MainWindow::OnRunComputationBtnPressed() {
 }
 
 void MainWindow::LoadGeometryWithHeatmap(const GeometryType type) {
-	const QString trm_file = QFileDialog::getOpenFileName(
+	const QString trm_file_path = QFileDialog::getOpenFileName(
 			this, tr("Open trm File"), QDir::currentPath(),
 			tr("geom (*.txt *.TRM);; ALL (*.*)"));
-	if (trm_file.isEmpty())
+	if (trm_file_path.isEmpty())
 		return;
-	QDir trm_dir = QFileInfo(trm_file).absoluteDir();
+	QDir trm_dir = QFileInfo(trm_file_path).absoluteDir();
 	QString absolute_trm_dir = trm_dir.absolutePath();
-	const QString t2d_file = QFileDialog::getOpenFileName(
+	const QString t2d_file_path = QFileDialog::getOpenFileName(
 			this, tr("Open T2D File"), absolute_trm_dir,
 		    tr("geom (*.txt *.T2D);; ALL (*.*)"));
-	if (trm_file.length() && t2d_file.length()) {
-//		try {
-			LoadGeometryWithHeatmapCommon(trm_file.toStdString(), t2d_file.toStdString(), type);
-//		} catch (...) {
-//			QMessageBox::critical(
-//					nullptr, "Error",
-//					"Unknown error. File cannot be parsed, please check file format.");
-//		}
+	if (trm_file_path.length() && t2d_file_path.length()) {
+		const auto rep_id = core().LoadRepresentationWithHeatmap(trm_file_path.toStdString(), 
+			                                                     t2d_file_path.toStdString(), type);
+		VisualizeRepresentation(rep_id);
 	}
 }
 
