@@ -41,6 +41,8 @@ MainWindow::MainWindow(QWidget* parent)
 	        &MainWindow::OnLoadFile3DBtnPressed);
 	connect(ui_->load_file_2d_btn, &QAction::triggered, this,
 	        &MainWindow::OnLoadFile2DBtnPressed);
+	connect(ui_->run_computation_btn, &QAction::triggered, this,
+		    &MainWindow::OnRunComputationBtnPressed);
 	connect(visualization_options_, &VisualizationOptionsWidget::VisualizationOptionsChanged,
 	        render_widget_, &RendererWidget::onVisualizationOptionsChanged);
 	connect(shape_list_widget_, &ShapeListWidget::ChangeVisibility,
@@ -50,12 +52,16 @@ MainWindow::MainWindow(QWidget* parent)
 
 MainWindow::~MainWindow() = default;
 
-void MainWindow::LoadFile(std::string trm_file_path,
+void MainWindow::LoadGeometryWithHeatmapCommon(std::string trm_file_path,
                           std::string t2d_file_path,
                           const GeometryType type) {
-	const auto rep_id = core().LoadRepresentation(trm_file_path, std::move(t2d_file_path), type);
-	auto& representation  = core().GetRepresentation(rep_id);
-	const auto loaded_shapes   = representation.GetShapes();
+	const auto rep_id = core().LoadRepresentationWithHeatmap(trm_file_path, std::move(t2d_file_path), type);
+	VisualizeRepresentation(rep_id);
+}
+
+void MainWindow::VisualizeRepresentation(GlobalId rep_id) {
+	auto& representation = core().GetRepresentation(rep_id);
+	const auto loaded_shapes = representation.GetShapes();
 	const auto loaded_heatmaps = representation.heatmaps();
 	shape_list_widget_->AddData(core().GetRepresentationData(rep_id.representation_id()));
 	// Do we really need this assert?
@@ -70,22 +76,24 @@ void MainWindow::LoadFile(std::string trm_file_path,
 		scene_->AddHeatmaps(loaded_heatmaps);
 		render_widget_->doneCurrent();
 		visualization_options_->SetMinMaxTemp(loaded_heatmaps.min_temp(),
-																					loaded_heatmaps.max_temp());
-		
-	} else {
-		LOG_WARN("No shaped received from file {}", trm_file_path);
+			loaded_heatmaps.max_temp());
+
 	}
 }
 
 void MainWindow::OnLoadFile3DBtnPressed() {
-	GetFilesAndLoad(GeometryType::D3);
+	LoadGeometryWithHeatmap(GeometryType::D3);
 }
 
 void MainWindow::OnLoadFile2DBtnPressed() { 
-	GetFilesAndLoad(GeometryType::D2); 
+	LoadGeometryWithHeatmap(GeometryType::D2); 
 }
 
-void MainWindow::GetFilesAndLoad(const GeometryType type) {
+void MainWindow::OnRunComputationBtnPressed() {
+	LoadGeometryAndRunComputation();
+}
+
+void MainWindow::LoadGeometryWithHeatmap(const GeometryType type) {
 	const QString trm_file = QFileDialog::getOpenFileName(
 			this, tr("Open trm File"), QDir::currentPath(),
 			tr("geom (*.txt *.TRM);; ALL (*.*)"));
@@ -93,12 +101,12 @@ void MainWindow::GetFilesAndLoad(const GeometryType type) {
 		return;
 	QDir trm_dir = QFileInfo(trm_file).absoluteDir();
 	QString absolute_trm_dir = trm_dir.absolutePath();
-	const QString t2d_file = QFileDialog::getOpenFileName(this, tr("Open T2D File"),
-	                                                      absolute_trm_dir,
-		                                                    tr("geom (*.txt *.T2D);; ALL (*.*)"));
+	const QString t2d_file = QFileDialog::getOpenFileName(
+			this, tr("Open T2D File"), absolute_trm_dir,
+		    tr("geom (*.txt *.T2D);; ALL (*.*)"));
 	if (trm_file.length() && t2d_file.length()) {
 //		try {
-			LoadFile(trm_file.toStdString(), t2d_file.toStdString(), type);
+			LoadGeometryWithHeatmapCommon(trm_file.toStdString(), t2d_file.toStdString(), type);
 //		} catch (...) {
 //			QMessageBox::critical(
 //					nullptr, "Error",
@@ -107,13 +115,21 @@ void MainWindow::GetFilesAndLoad(const GeometryType type) {
 	}
 }
 
+void MainWindow::LoadGeometryAndRunComputation() {
+	const QString geom_file = QFileDialog::getOpenFileName(
+		this, tr("Open trm File"), QDir::currentPath(),
+		tr("geom (*.txt *.TRM);; ALL (*.*)"));
+	auto rep_id = core().LoadRepresentation(geom_file.toStdString());
+	core().CalculateHeat(core().GetRepresentation(rep_id));
+	VisualizeRepresentation(rep_id);
+}
+
 void MainWindow::OnShapesSelected(const GlobalShapeIds& shape_ids) {
 	// TODO: Needed to rework algorithm because it obviously is not optimal
 	if (!shape_ids.size()) {
 		render_widget_->OnClearSelection();
 		return;
 	}
-		
 	if (std::ranges::equal(shape_ids, selected_shape_ids_)) {
 		++selected_shape_index_;
 		if (selected_shape_index_ >= shape_ids.size())

@@ -101,8 +101,11 @@ class FileRepresentation {
 	FileRepresentation(GeomStorage<BasicShape> geom_storage_mv,
 	                   HeatmapStorage heatmap_storage_mv)
 			: id_(InstanceType::Representation, 0 /*Instance id*/, id_counter++),
-				geom_storage_(std::move(geom_storage_mv)),
-				heatmaps_(std::move(heatmap_storage_mv)) {}
+				  geom_storage_(std::move(geom_storage_mv)),
+			   	  heatmaps_(std::move(heatmap_storage_mv)) {}
+	FileRepresentation(GeomStorage<BasicShape> geom_storage_mv)
+		: id_(InstanceType::Representation, 0 /*Instance id*/, id_counter++),
+		geom_storage_(std::move(geom_storage_mv)) {}
 	FileRepresentation(FileRepresentation&&) = default;
 	~FileRepresentation() = default;
 	FileRepresentation(const FileRepresentation&) = delete;

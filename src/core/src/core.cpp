@@ -9,19 +9,19 @@
 
 #include "databases.h"
 
-GlobalId Core::LoadRepresentation(std::string trm_file_path_mv,
-                        std::string t2d_file_path_mv, 
-	                      const GeometryType type) {
+GlobalId Core::LoadRepresentationWithHeatmap(std::string trm_file_path_mv,
+                                             std::string t2d_file_path_mv, 
+	                                         const GeometryType type) {
 	switch (type) {
 		case GeometryType::D3: {
 		  Readers::Solver3d::Solver3dReader reader_3d(std::move(trm_file_path_mv),
-	                                                std::move(t2d_file_path_mv));
+	                                                  std::move(t2d_file_path_mv));
 			representations_.emplace_back(reader_3d.geometry(), reader_3d.heatmaps());
 			break;
 		}
 		case GeometryType::D2: {
 			Readers::Solver2d::Solver2dReader reader_2d(std::move(trm_file_path_mv),
-	                                                std::move(t2d_file_path_mv));
+	                                                    std::move(t2d_file_path_mv));
 			representations_.emplace_back(reader_2d.geometry(), reader_2d.heatmaps());
 			break;
 		}
@@ -35,6 +35,11 @@ GlobalId Core::LoadRepresentation(std::string trm_file_path_mv,
 	// how can reader set its id to shapes?
 }
 
+GlobalId Core::LoadRepresentation(const std::string& trm_file_path_mv) {
+	representations_.emplace_back(GeomStorage<BasicShape>());
+	representations_.back().InitLayers();
+	return representations_.back().id();
+}
 
 void Core::CalculateHeat(FileRepresentation& file_rep) { 
 	FemSolver solver;

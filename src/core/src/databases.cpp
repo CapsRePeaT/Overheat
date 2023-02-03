@@ -49,6 +49,8 @@ MetadataPack FileRepresentation::GetMetadata(const GlobalId id) const {
 }
 
 void FileRepresentation::InitLayers() {
+	if (heatmaps_.heatmaps().empty())
+		return;
 	if (heatmaps_.heatmaps().size() == 1) {
 		LayerId layer_id = 0;
 		GlobalId new_id(InstanceType::Layer, layer_id, id().representation_id());
