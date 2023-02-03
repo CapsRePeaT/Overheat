@@ -4,6 +4,14 @@
 #include <deque>
 #include <iostream>
 
+// span needed because of the issues with _ITERATOR_DEBUG_LEVEL
+// see https://github.com/boostorg/ublas/issues/77
+#include <span>
+#include "boost/numeric/ublas/matrix_expression.hpp"
+#include "boost/numeric/ublas/matrix.hpp"
+#include "boost/numeric/ublas/matrix_sparse.hpp"
+#include "boost/numeric/ublas/lu.hpp"
+
 #include "../../common/include/common.h"
 
 class SolverShape;
@@ -37,32 +45,28 @@ class FsResultMatrix {
 };
 using FsMatrixVec = std::vector<FsResultMatrix>;
 
-class Coeficients {
- public:
-	Coeficients() = default;
- private:
-	size_t max_index_ = 0;
-	// element index equal to position index
-	// std::matrix
-};
+using ValType = float;
+using Matrix = boost::numeric::ublas::compressed_matrix<ValType>;
 
 class SolverHeatmap {
- public:
-  using Temperature = double;
-  SolverHeatmap() = default;
- private:
-  size_t max_index_ = 0;
-  // element index equal to position index
-  std::deque<Temperature> temperatures_;
+public:
+	using Temperature = ValType;
+	SolverHeatmap() = default;
+	SolverHeatmap(const Matrix& matrix) {
+		FillData(matrix);
+	}
+	void FillData(const Matrix& matrix) {
+		assert(temperatures_.empty() && "Heatmap not adapted for rewriting");
+		for (unsigned i = 0; i < matrix.size1(); ++i)
+			temperatures_.push_back(matrix(i, 0));
+	}
+	void Print() const;
+private:
+	size_t max_index_ = 0;
+	// element index equal to position index
+	std::deque<Temperature> temperatures_;
 };
 
-class MatrixEquation {
- public:
-  using Result = std::deque<double>;
-  MatrixEquation() = default;
- private:
-  size_t max_index_ = 0;
-  Coeficients coeficients_;
-  SolverHeatmap unknown_;
-  Result result_;
-};
+
+
+

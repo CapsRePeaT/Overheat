@@ -1,45 +1,51 @@
 #include <gtest/gtest.h>
 
-#include "../src/solver2d/solver2d_reader.h"
+#include "solver_db.hpp"
 
-namespace {
-std::string sample =
-		" OPERATIONAL AMPLIFIER\n"
-		" &CP LAYER2=3 M=6 N=6 NBB=1  /\n"
-		"    1.    1.\n"
-		" 300. 0. 0.\n"
-		"    0.4  0.05  2.0              ZC2\n"
-		"  0.155 3.1E-4 0.0162           VC2\n"
-		"   710. 1670. 0.837E6           CC2\n"
-		" 2.33E-6 1.2E-6 8.3E-6          RC2\n"
-		" &PRT /\n"
-		"'T1' 2.E-4 1\n"
-		" .15 .20 .57 .60\n"
-		"'T2' 2.E-4 1\n"
-		" .15 .20 .40 .43\n"
-		"'T3' 2.E-1 1\n"
-		" .30 .40 .65 .85\n"
-		"'T4' 5.E-2 1\n"
-		" .70 .85 .55 .85\n"
-		"'R'  3.E-3 1\n"
-		" .55 .60 .15 .65\n"
-		"' ' 0 0                         END OF LAYOUT\n"
-		"                                END OF DATA";
 
-}
-
-TEST(Solver2d, read_geom_and_heatmap) {
-	fs::path trm = fs::current_path().parent_path().parent_path() / "src" /
-	               "readers" / "tests" / "en9.trm";
-	fs::path t2d = fs::current_path().parent_path().parent_path() / "src" /
-	               "readers" / "tests" / "en9.T2D";
-	auto trm_ex = exists(trm);
-	auto t2d_ex = exists(t2d);
-	Readers::Solver2d::Solver2dReader(trm, t2d);
-	EXPECT_TRUE(true);
-}
 
 TEST(Solver2d, read_geometry) {
-	Readers::Solver2d::read_geometry(sample);
-	EXPECT_TRUE(true);
+	MatrixEquation equation;
+	equation.AddResult(0, 2);
+	equation.AddResult(1, -2);
+	equation.AddResult(2, 2);
+
+	try {
+		// https://www.webmath.ru/poleznoe/formules_5_7.php
+		// result should be x1 = -1, x2 = 1, x3 = 3
+		Matrix y(3, 1);
+		y(0, 0) = 2;
+		y(1, 0) = -2;
+		y(2, 0) = 2;
+		Matrix A(3, 3);
+		//for (unsigned i = 0; i < A.size1(); ++i)
+		//	for (unsigned j = 0; j < A.size2(); ++j)
+		//		A(i, j) = 0.1 + 3 * i + j;
+		A(0, 0) = 2; A(0, 1) = 1;  A(0, 2) = 1;
+		A(1, 0) = 1; A(1, 1) = -1; A(1, 2) = 0;
+		A(2, 0) = 3; A(2, 1) = -1; A(2, 2) = 2;
+		//std::cout << A << std::endl;
+		//identity_matrix<float> Ainv = identity_matrix<float>(A.size1());
+		//permutation_matrix<size_t> pm(A.size1());
+		//lu_factorize(A, pm);
+		//lu_substitute(A, pm, Ainv);
+		PrintMatrix(y, "input result");
+		PrintMatrix(A, "input coeficients");
+		Matrix Afactorized = A;
+		Matrix Ainv = boost::numeric::ublas::identity_matrix<float>(A.size1());
+		boost::numeric::ublas::vector<double> x_boost(Afactorized.size1(), 1);
+		boost::numeric::ublas::permutation_matrix<size_t> pm(Afactorized.size1());
+		Matrix result = boost::numeric::ublas::identity_matrix<float>(A.size1());
+		// вырожденная
+		int singular = boost::numeric::ublas::lu_factorize(Afactorized, pm);
+		if (singular) {
+			throw std::runtime_error("[LinearSolver<LU>::solve()] A is singular.");
+		}
+		result = y;
+		//PrintMatrix(result, "result before");
+		boost::numeric::ublas::lu_substitute(Afactorized, pm, result);
+		//PrintMatrix(Afactorized, "input 2");
+		//PrintMatrix(pm);
+		PrintMatrix(result, "solution");
+	}
 }

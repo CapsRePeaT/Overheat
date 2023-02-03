@@ -3,6 +3,7 @@
 #include <array>
 
 #include "solver_db.hpp"
+#include "main_matrix_solver.hpp"
 
 class SolverShape {
  public:
