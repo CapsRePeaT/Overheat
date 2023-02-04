@@ -2,6 +2,8 @@
 
 #include "solver_db.hpp"
 
+void CustomPrintMatrix(const Matrix& matrix, const std::string& matrix_name);
+
 /// <summary>
 /// 
 /// </summary>

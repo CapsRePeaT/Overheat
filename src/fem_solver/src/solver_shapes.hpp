@@ -16,7 +16,7 @@ class SolverShape {
 class SolverTetraeder : public SolverShape {
  public:
 	 using VerticeIndexAndCoord 
-		 = std::pair<VerticeIndexes::VerticeIndex, VerticeIndexes::Point3D>;
+		 = std::pair<VerticeIndexes::VerticeIndex, Point3D>;
 	 SolverTetraeder(double thermal_conductivity,
 		 double ambient_temperature,
 		 double heat_flow,

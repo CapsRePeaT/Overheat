@@ -25,17 +25,25 @@ class FsDatapack {
   std::deque<SolverShape*> elements_;
 };
 
+struct Point3D
+{
+	std::array<double, 3> coords;
+};
+
 class VerticeIndexes {
  public:
-  // FIXME
-  using Point3D = double;
   using VerticeIndex = size_t;
-  VerticeIndex AddVertice(Point3D point);
-  Point3D GetCoords(VerticeIndex index);
+	VerticeIndex AddVertice(Point3D point) {
+		coords_.push_back(point);
+		return coords_.size() - 1;
+	}
+	Point3D GetCoords(VerticeIndex index) {
+		return coords_[index];
+	}
   // needed for heatmap interpolation
   std::array<VerticeIndex, 4> GetConvexHull(Point3D point);
  private:
-  std::vector<Point3D> coords_;
+  std::deque<Point3D> coords_;
 	// add search tree
 };
 
