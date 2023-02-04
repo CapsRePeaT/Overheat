@@ -1,10 +1,10 @@
+#include "solver3d_TRM.h"
+
 #include <databases.h>
 #include <shapes.h>
 
 #include <cassert>
 #include <ranges>
-
-#include "solver3d_TRM.h"
 
 namespace {
 GlobalId getNewShapeId() {
@@ -29,8 +29,18 @@ float BaseLayer::thermal_conductivity() const { return thermal_conductivity_; };
 float BaseLayer::thickness() const { return thickness_; }
 std::string_view BaseLayer::type_tag() const { return raw_type_tag_; };
 
-std::istream& HPU::read(std::istream& in) {
+std::istream& HU::read(std::istream& in) {
 	in >> thickness_ >> thermal_conductivity_ >> env_thermal_conductivity_;
+	in >> coordinates_.x1_ >> coordinates_.x2_ >> coordinates_.y1_ >>
+			coordinates_.y2_;
+	return in;
+}
+
+std::istream& P::read(std::istream& in) {
+	in >> type_;
+	in >> thickness_ >> thermal_conductivity_ >> border_thickness_ >>
+			cup_thickness_ >> env_thermal_conductivity_ >>
+			inner_thermal_conductivity_;
 	in >> coordinates_.x1_ >> coordinates_.x2_ >> coordinates_.y1_ >>
 			coordinates_.y2_;
 	return in;
@@ -66,14 +76,27 @@ std::istream& D::read(std::istream& in) {
 	return in;
 }
 
-GeomStorage<BasicShape> HPU::geometry() {
+GeomStorage<BasicShape> HU::geometry() {
 	Box3D box{{{coordinates_.x1_, coordinates_.x2_},
 	           {coordinates_.y1_, coordinates_.y2_},
 	           {0.f, thickness_}}};
 	GeomStorage<BasicShape> storage;
-	//assert(false && "add proper layer id and parent");
+	// assert(false && "add proper layer id and parent");
 	const size_t dummy_layer = 0;
-	storage.AddShape(std::make_shared<BasicShape>(getNewShapeId(), dummy_layer, box));
+	storage.AddShape(
+			std::make_shared<BasicShape>(getNewShapeId(), dummy_layer, box));
+	return storage;
+}
+
+GeomStorage<BasicShape> P::geometry() {
+	Box3D box{{{coordinates_.x1_, coordinates_.x2_},
+	           {coordinates_.y1_, coordinates_.y2_},
+	           {0.f, thickness_}}};
+	GeomStorage<BasicShape> storage;
+	// assert(false && "add proper layer id and parent");
+	const size_t dummy_layer = 0;
+	storage.AddShape(
+			std::make_shared<BasicShape>(getNewShapeId(), dummy_layer, box));
 	return storage;
 }
 
@@ -89,9 +112,10 @@ GeomStorage<BasicShape> BS::geometry() {
 				const auto y_ray = getSphereProjection(y_center, ny, radius);
 				Box3D::Values vals{x_ray, y_ray, {0.f, thickness_}};
 				Box3D box{vals};
-				//assert(false && "add proper layer id and parent");
+				// assert(false && "add proper layer id and parent");
 				const size_t dummy_layer = 0;
-				storage.AddShape(std::make_shared<BasicShape>(getNewShapeId(), dummy_layer, box));
+				storage.AddShape(
+						std::make_shared<BasicShape>(getNewShapeId(), dummy_layer, box));
 			}
 		}
 	}
@@ -104,7 +128,7 @@ GeomStorage<BasicShape> D::geometry() {
 		Box3D box{{{crystal.coordinates_.x1_, crystal.coordinates_.x2_},
 		           {crystal.coordinates_.y1_, crystal.coordinates_.y2_},
 		           {0.f, thickness_}}};
-		//assert(false && "add proper layer id and parent");
+		// assert(false && "add proper layer id and parent");
 		const size_t dummy_layer = 0;
 		storage.AddShape(
 				std::make_shared<BasicShape>(getNewShapeId(), dummy_layer, box));

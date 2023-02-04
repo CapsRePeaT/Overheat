@@ -8,6 +8,7 @@ class IDataProvider {
 	virtual GeomStorage<BasicShape> geometry() = 0;
 	virtual DefaultMetadataStorage metadata()  = 0;
 	virtual HeatmapStorage heatmaps() = 0;
+	virtual LayersShapes layers_shapes() = 0;
 
 	~IDataProvider() = default;
 };

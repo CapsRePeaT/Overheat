@@ -7,11 +7,12 @@ class VarianceTetraeder : public SolverTetraeder {
 	//FIXME, should be 4x4
 	using CoficientMatrix = double;
 	VarianceTetraeder(double thermal_conductivity,
-		double ambient_temperature,
-		double heat_flow,
-		double intensity_of_heat_source,
+		double ambient_temperature, // env_thermal_conductivity_
+		double heat_flow, // уточнить
+		double intensity_of_heat_source, // мощность пропорциональна обьему
+	                                                    // power* total_colume/n_tethra
 		double convective_heat,
-		std::array<VerticeIndexes::VerticeIndex, 4> indexes,
+		std::array<VerticeIndexes::VerticeIndex, 4> indexes, //
 		const VerticeIndexes& index_to_coord_map
 		) :
 		SolverTetraeder(thermal_conductivity, ambient_temperature, heat_flow, 

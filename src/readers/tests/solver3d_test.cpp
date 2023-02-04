@@ -2,9 +2,9 @@
 
 #include <fstream>
 
-#include "../../fem_solver/src/fem_solver.hpp"
 #include "../src/solver3d/solver3d_data_provider.h"
 #include "../src/solver3d/solver3d_reader.h"
+#include "core.h"
 
 std::string sample =
 		"VIRTEX\n"
@@ -69,13 +69,14 @@ TEST(Solver3d, read_heat_test) {
 	fs::path trm = fs::current_path().parent_path().parent_path() / "src" /
 	               "readers" / "tests" / "virtex.TRM";
 	fs::path t2d = fs::current_path().parent_path().parent_path() / "src" /
-	               "readers"  / "tests" / "virtex.t2d";
+	               "readers" / "tests" / "virtex.t2d";
 	auto trm_ex = exists(trm);
 	auto t2d_ex = exists(t2d);
-	Readers::Solver3d::Solver3dReader reader_3d(std::move(trm),
-	                                            std::move(t2d));
-	FileRepresentation rep(reader_3d.geometry(), reader_3d.heatmaps());
-	GeometryCutter cutter;
-	cutter.PrepareGeometry(rep);
+
+	auto& core = Core::instance();
+	auto id = core.LoadRepresentation(trm.string());
+	auto& rep = core.GetRepresentation(id);
+	core.CalculateHeat(rep);
+
 	EXPECT_TRUE(true);
 }

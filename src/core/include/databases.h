@@ -8,17 +8,19 @@
 #include "metadata_storage.h"
 #include "shapes.h"
 
+using LayersShapes = std::vector<std::vector<BasicShape>>;
+
 template <class Shape>
 class GeomStorage {
  public:
 	using ShapePtr = std::shared_ptr<Shape>;
-	using Shapes   = std::vector<ShapePtr>;
-	GeomStorage()  = default;
+	using Shapes = std::vector<ShapePtr>;
+	GeomStorage() = default;
 	void AddShape(ShapePtr shape) { shapes_.emplace_back(std::move(shape)); }
 	[[nodiscard]] const Shapes& shapes() const { return shapes_; }
-	[[nodiscard]] const ShapePtr shape(ShapeId id) const { 
+	[[nodiscard]] const ShapePtr shape(ShapeId id) const {
 		assert(id < shapes_.size());
-		return shapes_.at(id); 
+		return shapes_.at(id);
 	}
 	const ShapePtr operator[](ShapeId id) const { return shape(id); }
 	void Clear() { shapes_.clear(); }
@@ -31,8 +33,11 @@ class GeomStorage {
 class Layer {
  public:
 	Layer() = default;
-	Layer(const GlobalId id, HeatmapId bottom_heatmap_id, HeatmapId top_heatmap_id)
-			: id_(id), top_heatmap_id_(top_heatmap_id), bottom_heatmap_id_(bottom_heatmap_id) {}
+	Layer(const GlobalId id, HeatmapId bottom_heatmap_id,
+	      HeatmapId top_heatmap_id)
+			: id_(id),
+				top_heatmap_id_(top_heatmap_id),
+				bottom_heatmap_id_(bottom_heatmap_id) {}
 
 	[[nodiscard]] GlobalId id() const { return id_; }
 	HeatmapId top_heatmap_id() const { return top_heatmap_id_; }
@@ -41,7 +46,7 @@ class Layer {
  private:
 	// TODO implement me
 	const float bottom_ = std::numeric_limits<float>::max();
-	const float width_  = std::numeric_limits<float>::max();
+	const float width_ = std::numeric_limits<float>::max();
 	GlobalId id_;
 	HeatmapId top_heatmap_id_;
 	HeatmapId bottom_heatmap_id_;
@@ -57,12 +62,10 @@ class HeatmapStorage {
 	[[nodiscard]] Box3D representation_borders() const {
 		return representation_borders_;
 	}
-	[[nodiscard]] float environment_temperature() const {
-		return env_temp_;
-	}
-	const Heatmap& operator[](const size_t id) const { 
+	[[nodiscard]] float environment_temperature() const { return env_temp_; }
+	const Heatmap& operator[](const size_t id) const {
 		assert(id < heatmaps_.size());
-		return heatmaps_.at(id); 
+		return heatmaps_.at(id);
 	}
 	[[nodiscard]] float x_size() const {
 		return representation_borders_.coordinates()[0].second;
@@ -78,7 +81,7 @@ class HeatmapStorage {
 	[[nodiscard]] const Floats& y_coords() const { return y_coords_; }
 
  private:
-	size_t layers_count_           = 0;  // IST in T2D file
+	size_t layers_count_ = 0;  // IST in T2D file
 	float env_temp_ = 0.0f;
 	float min_step_;
 	Floats x_coords_;
@@ -99,18 +102,20 @@ class FileRepresentation {
 	using Layers = std::vector<Layer>;
 	using Shapes = GeomStorage<BasicShape>::Shapes;
 	FileRepresentation(GeomStorage<BasicShape> geom_storage_mv,
-	                   HeatmapStorage heatmap_storage_mv)
+	                   HeatmapStorage heatmap_storage_mv,
+	                   LayersShapes layers_shapes_mv)
 			: id_(InstanceType::Representation, 0 /*Instance id*/, id_counter++),
-				  geom_storage_(std::move(geom_storage_mv)),
-			   	  heatmaps_(std::move(heatmap_storage_mv)) {}
+				geom_storage_(std::move(geom_storage_mv)),
+				heatmaps_(std::move(heatmap_storage_mv)),
+				layers_shapes_(std::move(layers_shapes_mv)) {}
 	FileRepresentation(GeomStorage<BasicShape> geom_storage_mv)
-		: id_(InstanceType::Representation, 0 /*Instance id*/, id_counter++),
-		geom_storage_(std::move(geom_storage_mv)) {}
+			: id_(InstanceType::Representation, 0 /*Instance id*/, id_counter++),
+				geom_storage_(std::move(geom_storage_mv)) {}
 	FileRepresentation(FileRepresentation&&) = default;
 	~FileRepresentation() = default;
 	FileRepresentation(const FileRepresentation&) = delete;
 	FileRepresentation& operator=(const FileRepresentation&) = delete;
-	FileRepresentation& operator=(FileRepresentation&&) = delete; // id_ is const
+	FileRepresentation& operator=(FileRepresentation&&) = delete;  // id_ is const
 
 	// FIXME implement geom search, now we return all shapes
 	[[nodiscard]] const Shapes& GetShapes(const Box3D& area = Box3D()) const;
@@ -119,15 +124,15 @@ class FileRepresentation {
 		return heatmaps_.representation_borders();
 	}
 	[[nodiscard]] GlobalId id() const { return id_; }
-	std::string RepresentationName() const { 
-		return GetName(id());
-	}
+	std::string RepresentationName() const { return GetName(id()); }
 	// needed for geometry loading
 	GeomStorage<BasicShape>& geom_storage() { return geom_storage_; }
 	HeatmapStorage& heatmaps() { return heatmaps_; }
+	LayersShapes& layers() { return layers_shapes_; }
 	InstanceList GetInstanceList() const;
 	// should be deleted when proper layer reading will be provided
 	[[deprecated]] void InitLayers();
+
  private:
 	// for side widgets
 	[[nodiscard]] GlobalIds GetAllLayerIds() const;
@@ -146,5 +151,6 @@ class FileRepresentation {
 	// we assume that heatmap id equal to place of shape in the array.
 	HeatmapStorage heatmaps_;
 	DefaultMetadataStorage metadata_storage_;
+	LayersShapes layers_shapes_{};
 	Box3D design_borders_;
 };

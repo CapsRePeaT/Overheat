@@ -6,9 +6,9 @@
 #include <memory>
 #include <vector>
 
+#include "../common.h"
 #include "databases.h"
 #include "shapes.h"
-#include "../common.h"
 
 namespace Readers::Solver3d {
 
@@ -24,9 +24,11 @@ enum class LayerType {
 	UNDEFINED
 };  // layers types from Ryabov doc
 
-inline bool isHPU(LayerType type) {
-	return type == LayerType::H || type == LayerType::P || type == LayerType::U;
+inline bool isHU(LayerType type) {
+	return type == LayerType::H || type == LayerType::U;
 }
+
+inline bool isP(LayerType type) { return type == LayerType::P; }
 
 inline bool isBS(LayerType type) {
 	return type == LayerType::B || type == LayerType::S;
@@ -43,7 +45,7 @@ class BaseLayer {
 
 	// read ryabov file content from stream
 	virtual std::istream& read(std::istream& in) = 0;
-	virtual GeomStorage<BasicShape> geometry()   = 0;
+	virtual GeomStorage<BasicShape> geometry() = 0;
 
 	~BaseLayer() = default;
 
@@ -54,14 +56,29 @@ class BaseLayer {
 	float thickness_{};
 };
 
-class HPU : public BaseLayer {
+class HU : public BaseLayer {
  public:
-	explicit HPU(LayerType type) : BaseLayer(type){};
+	explicit HU(LayerType type) : BaseLayer(type){};
 	std::istream& read(std::istream& in) override;
 	GeomStorage<BasicShape> geometry() override;
 
  private:
 	float env_thermal_conductivity_{};
+	Coordinates coordinates_{};
+};
+
+class P : public BaseLayer {
+ public:
+	explicit P(LayerType type) : BaseLayer(type){};
+	std::istream& read(std::istream& in) override;
+	GeomStorage<BasicShape> geometry() override;
+
+ private:
+	size_t type_;
+	float env_thermal_conductivity_{};
+	float border_thickness_{};
+	float cup_thickness_{};
+	float inner_thermal_conductivity_{};
 	Coordinates coordinates_{};
 };
 
@@ -103,7 +120,7 @@ class D : public BaseLayer {
 
 enum GroupsPosition { UnderBody, Body, AboveBody };
 
-using Layers       = std::vector<std::shared_ptr<BaseLayer>>;
+using Layers = std::vector<std::shared_ptr<BaseLayer>>;
 using LayersGroups = std::map<GroupsPosition, Layers>;
 
 struct Solver3d_TRM {

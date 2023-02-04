@@ -18,18 +18,28 @@ Solver3dDataProvider::Solver3dDataProvider(const Solver3d_TRM& geom,
 }
 
 void Solver3dDataProvider::load_geometry(const Solver3d_TRM& data) {
-	float offset          = 0;
-	size_t box_counter_   = 0;
+	float offset = 0;
+	size_t box_counter_ = 0;
 	size_t layer_counter_ = 0;
 	geometry_.Clear();
+
 	for (const auto& [position, layers] : data.layers_groups_) {
 		for (const auto& layer : layers) {
+			std::vector<BasicShape> layer_shapes;
 			const auto shapes = layer->geometry().shapes();
 			for (const auto& shape : shapes) {
+				box_counter_++;
+				auto box = liftBox(shape->bbox(), offset);
+
 				geometry_.AddShape(std::make_unique<BasicShape>(
-						GlobalId(InstanceType::Shape, box_counter_++, 0), layer_counter_,
-						liftBox(shape->bbox(), offset)));
+						GlobalId(InstanceType::Shape, box_counter_, 0), layer_counter_,
+						box));
+
+				layer_shapes.emplace_back(
+						GlobalId(InstanceType::Shape, box_counter_, 0), layer_counter_,
+						box);
 			}
+			layers_shapes_.push_back(layer_shapes);
 			++layer_counter_;
 			// check that current layer is not Body
 			if (!(position == GroupsPosition::Body && layer->type() == LayerType::P))

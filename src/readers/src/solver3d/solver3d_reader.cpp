@@ -1,7 +1,7 @@
 #include "solver3d_reader.h"
 
-#include <magic_enum.hpp>
 #include <boost/regex.hpp>
+#include <magic_enum.hpp>
 
 #include <fstream>
 #include <string_view>
@@ -11,10 +11,11 @@
 
 namespace {
 
-std::vector<std::string> split(const std::string& str, const boost::regex& regex,
-                               int submatch = 0) {
+std::vector<std::string> split(const std::string& str,
+                               const boost::regex& regex, int submatch = 0) {
 	std::vector<std::string> retval{
-			boost::sregex_token_iterator(str.begin(), str.end(), regex, submatch), {}};
+			boost::sregex_token_iterator(str.begin(), str.end(), regex, submatch),
+			{}};
 
 	retval.erase(std::remove_if(retval.begin(), retval.end(),
 	                            [](const auto& str) { return str.empty(); }),
@@ -39,8 +40,10 @@ std::shared_ptr<Readers::Solver3d::BaseLayer> make_layer(
 			magic_enum::enum_cast<Readers::Solver3d::LayerType>(layer_tag);
 	if (!layer_type.has_value())
 		throw std::runtime_error("Unknown layer type.");
-	if (Readers::Solver3d::isHPU(*layer_type))
-		return std::make_shared<Readers::Solver3d::HPU>(*layer_type);
+	if (Readers::Solver3d::isHU(*layer_type))
+		return std::make_shared<Readers::Solver3d::HU>(*layer_type);
+	if (Readers::Solver3d::isP(*layer_type))
+		return std::make_shared<Readers::Solver3d::P>(*layer_type);
 	if (Readers::Solver3d::isBS(*layer_type))
 		return std::make_shared<Readers::Solver3d::BS>(*layer_type);
 	return std::make_shared<Readers::Solver3d::D>(*layer_type);
@@ -85,7 +88,7 @@ Solver3d_TRM read_geometry(const std::string& content) {
 			std::inserter(data.layers_groups_, data.layers_groups_.end()),
 			[&layers_regex, index = 0](
 					const auto& group) mutable -> std::pair<GroupsPosition, Layers> {
-				const auto layers_tags    = split(group, layers_regex);
+				const auto layers_tags = split(group, layers_regex);
 				const auto layers_content = split(group, layers_regex, -1);
 				Layers layers{};
 				for (size_t i = 0; i < layers_content.size(); ++i) {
