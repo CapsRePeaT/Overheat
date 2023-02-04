@@ -6,7 +6,8 @@ add_library(${MODULE_NAME} STATIC ${SOURCES})
 
 target_include_directories(${MODULE_NAME} PUBLIC include)
 target_compile_features(${MODULE_NAME} PRIVATE cxx_std_20)
-
+set(CMAKE_CXX20_STANDARD_COMPILE_OPTION "-std:c++latest")
+set(CMAKE_CXX20_EXTENSION_COMPILE_OPTION "-std:c++latest")
 add_custom_command(TARGET ${MODULE_NAME} POST_BUILD
         COMMAND ${CMAKE_COMMAND} -E copy_directory
         ${CMAKE_CURRENT_SOURCE_DIR}/tests ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/tests)

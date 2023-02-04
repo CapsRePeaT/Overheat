@@ -2,6 +2,7 @@
 
 #include <fstream>
 
+#include "../../fem_solver/src/fem_solver.hpp"
 #include "../src/solver3d/solver3d_data_provider.h"
 #include "../src/solver3d/solver3d_reader.h"
 
@@ -71,6 +72,10 @@ TEST(Solver3d, read_heat_test) {
 	               "readers"  / "tests" / "virtex.t2d";
 	auto trm_ex = exists(trm);
 	auto t2d_ex = exists(t2d);
-	Readers::Solver3d::Solver3dReader(trm, t2d);
+	Readers::Solver3d::Solver3dReader reader_3d(std::move(trm),
+	                                            std::move(t2d));
+	FileRepresentation rep(reader_3d.geometry(), reader_3d.heatmaps());
+	GeometryCutter cutter;
+	cutter.PrepareGeometry(rep);
 	EXPECT_TRUE(true);
 }
