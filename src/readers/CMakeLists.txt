@@ -3,7 +3,9 @@ file(GLOB_RECURSE SOURCES CONFIGURE_DEPENDS src/* include/*)
 
 # This library
 add_library(${MODULE_NAME} STATIC ${SOURCES})
-
+set(CMAKE_CXX_STANDARD 23)
+set(CMAKE_CXX20_STANDARD_COMPILE_OPTION "-std:c++latest")
+set(CMAKE_CXX20_EXTENSION_COMPILE_OPTION "-std:c++latest")
 target_include_directories(${MODULE_NAME} PUBLIC include)
 target_compile_features(${MODULE_NAME} PRIVATE cxx_std_20)
 
