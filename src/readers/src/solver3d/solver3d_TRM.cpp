@@ -16,9 +16,6 @@ GlobalId getNewShapeId() {
 }
 
 
-
-
-
 std::pair<float, float> getSphereProjection(const float center,
                                             const int offset,
                                             const float radius) {
@@ -113,9 +110,9 @@ GeomStorage<BasicShape> BS::geometry() {
 
 	for (const auto [x_center, y_center, nx, ny] : spheres_holders_) {
 		for (auto nx : std::views::iota(0, nx)) {
-			const auto x_ray = getSphereProjection(x_center, nx, radius);
+			const auto x_ray = getSphereProjection(x_center, dist_between_spheres_*nx, radius);
 			for (auto ny : std::views::iota(0, ny)) {
-				const auto y_ray = getSphereProjection(y_center, ny, radius);
+				const auto y_ray = getSphereProjection(y_center, dist_between_spheres_*ny, radius);
 				Box3D::Values vals{x_ray, y_ray, {0.f, thickness_}};
 				Box3D box{vals};
 				// assert(false && "add proper layer id and parent");
