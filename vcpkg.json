@@ -12,7 +12,8 @@
 		"spdlog",
 		"magic-enum",
 		"boost-json",
-		"boost-regex"
+		"boost-regex",
+		"boost-geometry"
 	]
 }
 

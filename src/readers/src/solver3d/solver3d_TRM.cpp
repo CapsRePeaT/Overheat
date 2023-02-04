@@ -5,6 +5,7 @@
 
 #include <cassert>
 #include <ranges>
+#include <cmath>
 
 namespace {
 GlobalId getNewShapeId() {
@@ -14,10 +15,15 @@ GlobalId getNewShapeId() {
 	return {InstanceType::Shape, 0, id};
 }
 
+
+
+
+
 std::pair<float, float> getSphereProjection(const float center,
                                             const int offset,
                                             const float radius) {
-	return {center + offset - radius, center + offset + radius};
+	return {center + offset - radius,
+	        center + offset + radius};
 }
 }  // namespace
 

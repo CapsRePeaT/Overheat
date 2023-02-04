@@ -13,6 +13,8 @@ class IReader {
 	GeomStorage<BasicShape> geometry() { return data_provider_->geometry(); }
 	DefaultMetadataStorage metadata() { return data_provider_->metadata(); }
 	HeatmapStorage heatmaps() { return data_provider_->heatmaps(); }
+	LayersShapes layers_shapes() { return data_provider_->layers_shapes(); }
+
 
  protected:
 	virtual void load() = 0;

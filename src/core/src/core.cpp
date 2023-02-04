@@ -16,13 +16,15 @@ GlobalId Core::LoadRepresentationWithHeatmap(std::string trm_file_path_mv,
 		case GeometryType::D3: {
 		  Readers::Solver3d::Solver3dReader reader_3d(std::move(trm_file_path_mv),
 	                                                  std::move(t2d_file_path_mv));
-			representations_.emplace_back(reader_3d.geometry(), reader_3d.heatmaps());
+			representations_.emplace_back(reader_3d.geometry(), reader_3d.heatmaps(),
+			                              reader_3d.layers_shapes());
 			break;
 		}
 		case GeometryType::D2: {
 			Readers::Solver2d::Solver2dReader reader_2d(std::move(trm_file_path_mv),
 	                                                    std::move(t2d_file_path_mv));
-			representations_.emplace_back(reader_2d.geometry(), reader_2d.heatmaps());
+			representations_.emplace_back(reader_2d.geometry(), reader_2d.heatmaps(),
+			                              reader_2d.layers_shapes());
 			break;
 		}
 		default:

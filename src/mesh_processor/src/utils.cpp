@@ -26,12 +26,6 @@ vec3d round_vec3d(auto vec) {
 	return ret;
 };
 
-void round_boundary(DrawableTrimesh<>& mesh) {
-	auto& verts = mesh.vector_verts();
-	for (auto vid : mesh.get_boundary_vertices()) {
-		verts[vid] = round_vec3d(verts[vid]);
-	}
-}
 
 BoostPolygon make_multi_polygon(const std::vector<vec3d>& outer_ring,
                                 const std::vector<std::vector<vec3d>>& holes) {

@@ -10,6 +10,7 @@
 #include <cinolib/vector_serialization.h>
 
 #include <vector>
+#include <cmath>
 
 namespace MeshProcessor {
 using namespace cinolib;
@@ -19,9 +20,22 @@ std::vector<vec3d> rotate(std::vector<vec3d> verts, vec3d rot_vec,
 // translate cloud of points on @translation
 std::vector<vec3d> translate(std::vector<vec3d> verts, vec3d translation);
 
-template <typename T>
-T round_t(T number) {
-	return std::round(number * 100000.0) / 100000.0;
+template<class T>
+static T Round(T a)
+{
+	static_assert(std::is_floating_point<T>::value, "Round<T>: T must be floating point");
+
+	return (a > 0) ? ::floor(a + static_cast<T>(0.5)) : ::ceil(a - static_cast<T>(0.5));
+}
+
+template<class T>
+static T round_t(T a)
+{
+	static_assert(std::is_floating_point<T>::value, "Round<T>: T must be floating point");
+	int places = 5;
+	const T shift = pow(static_cast<T>(10.0), places);
+
+	return std::abs(Round(a * shift) / shift);
 }
 
 vec3d round_vec3d(auto vec);
@@ -37,10 +51,9 @@ DrawableTrimesh<> trimeshFromPoly(const Poly& poly) {
 	std::vector<vec3d> verts;
 	std::vector<uint> tris;
 	char opt[100];
-	sprintf(opt, "qca%f", 0.05f);
+	sprintf(opt, "qca%f", 50000.f);
 	triangulate_polygon(poly, std::string(opt), 0, verts, tris);
 	DrawableTrimesh<> ret(verts, tris);
-	round_boundary(ret);
 	return ret;
 }
 

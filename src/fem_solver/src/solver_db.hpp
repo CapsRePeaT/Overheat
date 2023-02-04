@@ -17,6 +17,10 @@ class FsDatapack {
   std::deque<SolverShape*> elements_;
 };
 
+//
+//    |***|   |****|
+//  |*******************|
+
 class VerticeIndexes {
  public:
   // FIXME

@@ -6,7 +6,7 @@
 #include "box_mesh.h"
 #include "utils.h"
 
-using LayerMehses = std::vector<MeshProcessor::BoxMesh>;
+using LayerMehses  = std::vector<MeshProcessor::BoxMesh>;
 using LayersMehses = std::vector<LayerMehses>;
 
 using TrimeshVec = std::vector<cinolib::DrawableTrimesh<>>;
@@ -35,7 +35,7 @@ void calculate_holes_for_boxes(LayersMehses& layers) {
 					// |************|
 					box_lower.boxes_upper.push_back(u_ind);
 
-					auto ring = box_upper.generator.xy_ring();
+					auto ring  = box_upper.generator.xy_ring();
 					auto shift = box_upper.min_point - box_lower.min_point;
 					for (auto& vert : ring) vert += shift;
 					box_lower.holes_upper.push_back(ring);
@@ -45,7 +45,7 @@ void calculate_holes_for_boxes(LayersMehses& layers) {
 					//     |****|
 					box_upper.boxes_lower.push_back(l_ind);
 
-					auto ring = box_lower.generator.xy_z_ring();
+					auto ring  = box_lower.generator.xy_z_ring();
 					auto shift = box_lower.min_point - box_upper.min_point;
 					for (auto& vert : ring) vert += shift;
 					box_upper.holes_lower.push_back(ring);
@@ -56,10 +56,40 @@ void calculate_holes_for_boxes(LayersMehses& layers) {
 }
 
 void calculate_mesh_and_translate_to_origin_pos(LayersMehses& layers) {
+	using namespace cinolib;
+	static int counter = 0;
 	for (auto& layer : layers) {
 		for (auto& mesh : layer) {
 			mesh.calculate_mesh();
-			mesh.translate_to_origin();
+			// mesh.translate_to_origin();
+			if (counter == 834) {
+				mesh.merge_meshes();
+				mesh.total_mesh.poly_set_color(Color::GREEN());
+				mesh.total_mesh.vert_set_alpha(10);
+				mesh.total_mesh.vert_set_color(Color::BLACK());
+				// mesh.total_mesh.show_mesh_points();
+				mesh.total_mesh.show_wireframe_width(10);
+				mesh.total_mesh.updateGL();
+				GLcanvas gui(1920, 1080);
+				gui.refit_scene();
+				gui.push(&mesh.total_mesh);
+
+				DrawableArrow x(vec3d(-1000, 0, 0), vec3d(1000, 0, 0));
+				x.color = Color::GREEN();
+				x.size  = 100;
+				DrawableArrow y(vec3d(0, -1000, 0), vec3d(0, 1000, 0));
+				y.color = Color::BLUE();
+				y.size  = 100;
+				DrawableArrow z(vec3d(0, 0, -1000), vec3d(0, 0, 1000));
+				z.size = 100;
+
+				gui.push(&x);
+				gui.push(&y);
+				gui.push(&z);
+
+				gui.launch();
+			}
+			++counter;
 		}
 	}
 }
@@ -131,6 +161,6 @@ void generate(const LayersShapes& layers) {
 		layers_meshes.push_back(layer_meshes);
 	}
 	auto meshes = generate_trimesh_from_layers(layers_meshes);
-	auto tets = generate_tetmesh_from_trimeshes(meshes);
+	auto tets   = generate_tetmesh_from_trimeshes(meshes);
 }
 }  // namespace MeshProcessor
