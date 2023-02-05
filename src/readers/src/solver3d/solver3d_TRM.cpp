@@ -14,14 +14,6 @@ GlobalId getNewShapeId() {
 	// TODO: pass disign_id
 	return {InstanceType::Shape, 0, id};
 }
-
-
-std::pair<float, float> getSphereProjection(const float center,
-                                            const int offset,
-                                            const float radius) {
-	return {center + offset - radius,
-	        center + offset + radius};
-}
 }  // namespace
 
 namespace Readers::Solver3d {
@@ -109,22 +101,31 @@ GeomStorage<BasicShape> BS::geometry() {
 	const auto radius = thickness_ / 2;
 
 	for (const auto [x_center, y_center, nx, ny] : spheres_holders_) {
+		float offset_x = 0;
 		for (auto nx : std::views::iota(0, nx)) {
-			const auto x_ray = getSphereProjection(x_center, dist_between_spheres_*nx, radius);
+			float offset_y = 0;
+			// const float x_1 = ;
+			// const float x_2 = x_center + radius + offset_x;
+			const auto x_ray = std::make_pair(x_center - radius + offset_x,
+			                                  x_center + radius + offset_x);
 			for (auto ny : std::views::iota(0, ny)) {
-				const auto y_ray = getSphereProjection(y_center, dist_between_spheres_*ny, radius);
+				// const float y_1 = y_center - radius + offset_y;
+				// const float y_2 = ;
+				const auto y_ray = std::make_pair(y_center - radius + offset_y,
+				                                  y_center + radius + offset_y);
 				Box3D::Values vals{x_ray, y_ray, {0.f, thickness_}};
 				Box3D box{vals};
 				// assert(false && "add proper layer id and parent");
 				const size_t dummy_layer = 0;
 				storage.AddShape(
 						std::make_shared<BasicShape>(getNewShapeId(), dummy_layer, box));
+				offset_y += dist_between_spheres_ ;
 			}
+			offset_x += dist_between_spheres_ ;
 		}
 	}
 	return storage;
 }
-
 GeomStorage<BasicShape> D::geometry() {
 	GeomStorage<BasicShape> storage;
 	for (const auto& crystal : crystals_) {

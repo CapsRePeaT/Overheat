@@ -52,60 +52,6 @@ void BoxMesh::calculate_mesh() {
 	xy = trimeshFromPoly(xy_poly);
 
 	auto xy_z_poly = make_multi_polygon(generator.xy_z_ring(), holes_upper);
-	if (counter == 834) {
-		std::vector<vec3d> verts;
-		for (auto& vert : generator.xy_z_ring()) {
-			verts.push_back(vert);
-		}
-		for (auto& hole : holes_upper)
-			for (auto& vert : hole) verts.push_back(vert);
-		std::sort(verts.begin(), verts.end());
-		//auto duplicates = findDuplicates(verts);
-		std::vector<uint> polys;
-		DrawableTrimesh<> m(verts, polys);
-		GLcanvas gui(1920, 1080);
-
-
-
-		auto& points_m  = m.vector_verts();
-		std::vector<vec3d> duplicated_verts;
-		for (size_t i = 0; i < points_m.size(); ++i) {
-			for (size_t j = i + 1; j < points_m.size(); ++j) {
-				if (points_m[i] == points_m[j]) {
-					duplicated_verts.emplace_back(points_m[i]);
-				}
-			}
-		}
-
-		//for(auto& vert : duplicated_verts){}
-		auto vert = duplicated_verts[0];
-		auto sphere =DrawableSphere(vec3d{vert.x(),vert.y(),vert.z() },
-		                             100.f,
-		                             Color::GREEN());
-
-
-		m.vert_set_alpha(20);
-		m.vert_set_color(Color::RED());
-		m.show_mesh_points();
-		m.updateGL();
-		//gui.push(&m);
-
-		DrawableArrow x(vec3d(-1000, 0, 0), vec3d(1000, 0, 0));
-		x.color = Color::GREEN();
-		x.size = 100;
-		DrawableArrow y(vec3d(0, -1000, 0), vec3d(0, 1000, 0));
-		y.color = Color::BLUE();
-		y.size = 100;
-		DrawableArrow z(vec3d(0, 0, -1000), vec3d(0, 0, 1000));
-		z.size = 100;
-
-		gui.push(&x);
-		gui.push(&y);
-		gui.push(&z);
-		gui.push(&sphere);
-
-		gui.launch();
-	}
 	xy_z = trimeshFromPoly(xy_z_poly);
 	xy_z.translate(vec3d(0, 0, height));
 
