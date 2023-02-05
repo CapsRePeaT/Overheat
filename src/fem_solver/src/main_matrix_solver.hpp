@@ -2,15 +2,15 @@
 
 #include "solver_db.hpp"
 
-void CustomPrintMatrix(const Matrix& matrix, const std::string& matrix_name);
+void CustomPrintMatrix(const SparceMatrix& matrix, const std::string& matrix_name);
 
 /// <summary>
 /// 
 /// </summary>
 class MatrixEquation {
  public:
-  using Result = Matrix;
-  using Coeficients = Matrix;
+  using Result = SparceMatrix;
+  using Coeficients = SparceMatrix;
   MatrixEquation(size_t size_1, size_t size_2) 
 		: size_1_(size_1), size_2_(size_2_), coeficients_(size_1, size_2),
 		result_(size_1, 1) {};

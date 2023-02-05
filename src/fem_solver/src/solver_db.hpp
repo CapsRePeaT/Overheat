@@ -37,7 +37,7 @@ class VerticeIndexes {
 		coords_.push_back(point);
 		return coords_.size() - 1;
 	}
-	Point3D GetCoords(VerticeIndex index) {
+	Point3D GetCoords(VerticeIndex index) const {
 		return coords_[index];
 	}
   // needed for heatmap interpolation
@@ -54,16 +54,17 @@ class FsResultMatrix {
 using FsMatrixVec = std::vector<FsResultMatrix>;
 
 using ValType = float;
-using Matrix = boost::numeric::ublas::compressed_matrix<ValType>;
+using Matrix = boost::numeric::ublas::matrix<ValType>;
+using SparceMatrix = boost::numeric::ublas::compressed_matrix<ValType>;
 
 class SolverHeatmap {
 public:
 	using Temperature = ValType;
 	SolverHeatmap() = default;
-	SolverHeatmap(const Matrix& matrix) {
+	SolverHeatmap(const SparceMatrix& matrix) {
 		FillData(matrix);
 	}
-	void FillData(const Matrix& matrix) {
+	void FillData(const SparceMatrix& matrix) {
 		assert(temperatures_.empty() && "Heatmap not adapted for rewriting");
 		for (unsigned i = 0; i < matrix.size1(); ++i)
 			temperatures_.push_back(matrix(i, 0));
