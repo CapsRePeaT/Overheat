@@ -1,9 +1,11 @@
 #include "main_matrix_solver.hpp"
 
 #include <iostream>
+#include <iomanip>
 
 void CustomPrintMatrix(const SparceMatrix& matrix, const std::string& matrix_name) {
 	std::cout << "Matrix: " << matrix_name << std::endl;
+	std::cout << std::setprecision(3);
 	for (unsigned i = 0; i < matrix.size1(); ++i) {
 		for (unsigned j = 0; j < matrix.size2(); ++j)
 			std::cout << matrix(i, j) << "\t";

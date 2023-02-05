@@ -42,6 +42,9 @@ class VerticeIndexes {
 	}
   // needed for heatmap interpolation
   std::array<VerticeIndex, 4> GetConvexHull(Point3D point);
+  size_t MaxIndex() const {
+	return coords_.size() - 1;
+  }
  private:
   std::deque<Point3D> coords_;
 	// add search tree

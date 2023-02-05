@@ -25,7 +25,7 @@ FsDatapack GeometryCutter::PrepareGeometry(FileRepresentation& file_rep) {
 			149, // thermal_conductivity
 			20,  // ambient_temperature
 			0.2, // heat_flow
-			0.3, // intensity_of_heat_source
+			30, // intensity_of_heat_source
 			0.7, // convective_heat
 			indexes, 
 			convective_presense_per_side,

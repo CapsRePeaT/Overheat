@@ -19,7 +19,18 @@ class VarianceTetraeder : public SolverTetraeder {
 	~VarianceTetraeder() = default;
 	virtual void AddElementContribution(MatrixEquation& matrix) const override;
  private:
-	// ai, bi, ci, di
-	Matrix coef_matrix_;
+	static const std::array<Matrix, 4>& matrixes_by_side();
+	void ComputeThermalConductivityMatrix(const Matrix& co_factor,
+		const std::array<bool, 4>& convective_presense_per_side,
+		const std::array<double, 4>& side_square);
+	void ComputeFlux(const std::array<bool, 4>& convective_presense_per_side,
+		             const std::array<bool, 4>& heat_flow_presense_per_side,
+		             const std::array<double, 4>& side_square);
+	Matrix ComputeCoFactor(const Matrix& coordinates_and_coef);
+	std::array<double, 4> ComputeSideSquare();
+	// equal to 6 volumes of tethraeder, treat it as volume, so negative volume makes no sence
+	double coord_det;
+	Matrix thermal_conductivity_matrix_;
+	Matrix flux_;
 	const VerticeIndexes& index_to_coord_map_;
 };

@@ -11,17 +11,23 @@ class MatrixEquation {
  public:
   using Result = SparceMatrix;
   using Coeficients = SparceMatrix;
-  MatrixEquation(size_t size_1, size_t size_2) 
-		: size_1_(size_1), size_2_(size_2_), coeficients_(size_1, size_2),
-		result_(size_1, 1) {};
+  MatrixEquation(size_t size) 
+		: size_(size), coeficients_(size, size),
+		result_(size, 1) {};
   void AddResult(const size_t index, const ValType value) {
+	assert(index < size_);
 	result_(index, 0) = value;
   }
   void AddCoeficient(const size_t index_1, const size_t index_2, const ValType value) {
+	assert(index_1 < size_&& index_2 < size_);
 	coeficients_(index_1, index_2) += value;
   }
   void SetHeatmap(const SolverHeatmap& heatmap) {
-		heatmap_ = heatmap;
+	heatmap_ = heatmap;
+  }
+  void SetMaxSize(const size_t size) {
+	coeficients_.resize(size, size);
+	result_.resize(size, 1);
   }
   const SolverHeatmap& Solve();
   const SolverHeatmap& heatmap() const {
@@ -29,8 +35,7 @@ class MatrixEquation {
 	return heatmap_;
   }
  private:
-  size_t size_1_ = 0;
-  size_t size_2_ = 0;
+  size_t size_ = 0;
   Coeficients coeficients_;
   SolverHeatmap heatmap_;
   Result result_;

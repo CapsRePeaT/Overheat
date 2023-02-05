@@ -50,15 +50,22 @@ class SolverTetraeder : public SolverShape {
 		 thermal_conductivity_(thermal_conductivity),
 		 ambient_temperature_(ambient_temperature),
 		 heat_flow_(heat_flow), intensity_of_heat_source_(intensity_of_heat_source),
-		 convective_heat_(convective_heat_coef), indexes_(inp_indexes) {}
+		 convective_heat_coef_(convective_heat_coef), indexes_(inp_indexes) {}
 	~SolverTetraeder() = default;
 	const Indexes& indexes() const { return indexes_; }
+	double thermal_conductivity() const { return thermal_conductivity_; }
+	double ambient_temperature() const { return ambient_temperature_; }
+	double heat_flow() const { return heat_flow_; }
+	double intensity_of_heat_source() const { return intensity_of_heat_source_; }
+	double convective_heat_coef() const {
+		return convective_heat_coef_; 
+	}
  private:
 	 double thermal_conductivity_;
 	 double ambient_temperature_;
 	 double heat_flow_;
 	 double intensity_of_heat_source_;
-	 double convective_heat_;
+	 double convective_heat_coef_;
 	 Indexes indexes_;
 };
 
