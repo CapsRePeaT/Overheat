@@ -10,7 +10,7 @@ void VarianceTetraeder::AddElementContribution(MatrixEquation& matrix) const {
     // thermal_conductivity_matrix это К, вписываем в основное уравнение (переходим из локальных индексов в глобальные)
 	for (size_t i = 0; i < 4; ++i) {
 		for (size_t j = 0; j < 4; ++j)
-			matrix.AddCoeficient(indexes()[i], indexes()[i], thermal_conductivity_matrix_(i, j));
+			matrix.AddCoeficient(indexes()[i], indexes()[j], thermal_conductivity_matrix_(i, j));
 		matrix.AddResult(indexes()[i], flux_(i, 0));
 	}
 	std::cout << "Add element contribution to matrix" << std::endl;
