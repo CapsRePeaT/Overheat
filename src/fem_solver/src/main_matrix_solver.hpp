@@ -9,7 +9,7 @@ class MatrixEquation {
  public:
   using Result = Matrix;
   using Coeficients = Matrix;
-  MatrixEquation(size_t size_1, size_t size_2) 
+  MatrixEquation(const size_t size_1, const size_t size_2) 
 		: size_1_(size_1), size_2_(size_2_), coeficients_(size_1, size_2),
 		result_(size_1, 1) {};
   void AddResult(const size_t index, const ValType value) {
