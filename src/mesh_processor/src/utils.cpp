@@ -18,13 +18,6 @@ std::vector<vec3d> translate(std::vector<vec3d> verts, vec3d translation) {
 }
 
 
-vec3d round_vec3d(auto vec) {
-	vec3d ret;
-	ret.x() = std::round(vec.x() * 100000.0) / 100000.0;
-	ret.y() = std::round(vec.y() * 100000.0) / 100000.0;
-	ret.z() = std::round(vec.z() * 100000.0) / 100000.0;
-	return ret;
-};
 
 
 BoostPolygon make_multi_polygon(const std::vector<vec3d>& outer_ring,

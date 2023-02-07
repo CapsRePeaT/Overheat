@@ -35,6 +35,7 @@ class BoxMesh {
 	std::vector<size_t> boxes_lower{};
 
 	BoxBoundaryRingsGenerator generator;
+	double diag_;
 };
 
 

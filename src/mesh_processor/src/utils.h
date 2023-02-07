@@ -9,8 +9,8 @@
 #include <cinolib/tetgen_wrap.h>
 #include <cinolib/vector_serialization.h>
 
-#include <vector>
 #include <cmath>
+#include <vector>
 
 namespace MeshProcessor {
 using namespace cinolib;
@@ -20,19 +20,20 @@ std::vector<vec3d> rotate(std::vector<vec3d> verts, vec3d rot_vec,
 // translate cloud of points on @translation
 std::vector<vec3d> translate(std::vector<vec3d> verts, vec3d translation);
 
-template<class T>
-static T Round(T a)
-{
-	static_assert(std::is_floating_point<T>::value, "Round<T>: T must be floating point");
+template <class T>
+static T Round(T a) {
+	static_assert(std::is_floating_point<T>::value,
+	              "Round<T>: T must be floating point");
 
-	return (a > 0) ? ::floor(a + static_cast<T>(0.5)) : ::ceil(a - static_cast<T>(0.5));
+	return (a > 0) ? ::floor(a + static_cast<T>(0.5))
+	               : ::ceil(a - static_cast<T>(0.5));
 }
 
-template<class T>
-static T round_t(T a)
-{
-	static_assert(std::is_floating_point<T>::value, "Round<T>: T must be floating point");
-	int places = 5;
+template <class T>
+static T round_t(T a) {
+	static_assert(std::is_floating_point<T>::value,
+	              "Round<T>: T must be floating point");
+	int places    = 5;
 	const T shift = pow(static_cast<T>(10.0), places);
 
 	return std::abs(Round(a * shift) / shift);
@@ -43,11 +44,12 @@ BoostPolygon make_multi_polygon(
 		const std::vector<std::vector<vec3d>>& holes = {});
 
 template <typename Poly>
-DrawableTrimesh<> trimeshFromPoly(const Poly& poly) {
+DrawableTrimesh<> trimeshFromPoly(const Poly& poly, float area) {
 	std::vector<vec3d> verts;
 	std::vector<uint> tris;
 	char opt[100];
-	sprintf(opt, "Qqca%f", 500000.0f);
+	auto threshold = area;
+	sprintf(opt, "Qqca%f", 500000.0);
 	triangulate_polygon(poly, std::string(opt), 0, verts, tris);
 	DrawableTrimesh<> ret(verts, tris);
 	return ret;

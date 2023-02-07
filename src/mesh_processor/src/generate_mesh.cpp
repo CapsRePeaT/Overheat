@@ -1,12 +1,14 @@
 #include "generate_mesh.h"
 
+#include <cinolib/find_intersections.h>
 #include <cinolib/meshes/meshes.h>
 #include <cinolib/profiler.h>
 #include <cinolib/tetgen_wrap.h>
 
+#include <iostream>
+
 #include "box_mesh.h"
 #include "utils.h"
-#include <iostream>
 
 using LayerMehses  = std::vector<MeshProcessor::BoxMesh>;
 using LayersMehses = std::vector<LayerMehses>;
@@ -82,11 +84,11 @@ TrimeshVec generate_trimesh_from_layers(LayersMehses& layers) {
 		for (auto& mesh : layer) {
 			for (auto upper_box_id : mesh.boxes_upper) {
 				auto& upper_mesh = layers[mesh.layer + 1][upper_box_id];
-				mesh.xy_z += upper_mesh.xy;
+				// mesh.xy_z += upper_mesh.xy;
 			}
 			for (auto lower_box_id : mesh.boxes_lower) {
 				auto& lower_mesh = layers[mesh.layer - 1][lower_box_id];
-				mesh.xy += lower_mesh.xy_z;
+				// mesh.xy += lower_mesh.xy_z;
 			}
 			mesh.merge_meshes();
 			ret.push_back(mesh.total_mesh);
@@ -98,19 +100,21 @@ TrimeshVec generate_trimesh_from_layers(LayersMehses& layers) {
 
 cinolib::DrawableTetmesh<> generate_tetmesh(
 		const cinolib::DrawableTrimesh<>& mesh) {
-	static int i = 1;
+	static int i = 0;
 	std::cout << "generate_tetmesh: " << i << std::endl;
-	++i;
+
 	std::vector<uint> edges, tets;
 	std::vector<double> verts;
-	double vol_thresh = 5000;
+	double vol_thresh = 50000;
 	char opt[100];
-	sprintf(opt, "Qa%f", vol_thresh);
-	cinolib::tetgen_wrap(
-			MeshProcessor::serialized_xyz_from_vec3d(mesh.vector_verts()),
-			cinolib::serialized_vids_from_polys(mesh.vector_polys()), edges, opt,
-			verts, tets);
-
+	sprintf(opt, "Yd");
+	auto serialized_verts =
+			cinolib::serialized_xyz_from_vec3d(mesh.vector_verts());
+	auto serialized_polys =
+			cinolib::serialized_vids_from_polys(mesh.vector_polys());
+	cinolib::tetgen_wrap(serialized_verts, serialized_polys, edges, opt, verts,
+	                     tets);
+	++i;
 	return cinolib::DrawableTetmesh<>(verts, tets);
 }
 
@@ -122,7 +126,6 @@ TetmeshVec generate_tetmesh_from_trimeshes(TrimeshVec& meshes) {
 	static int count = 0;
 	for (const auto& tri_mesh : meshes) {
 		ret.push_back(generate_tetmesh(tri_mesh));
-		meshes.pop_back();
 		std::cout << "tetgen count:" << count << std::endl;
 		++count;
 	}
@@ -148,6 +151,51 @@ void generate(const LayersShapes& layers) {
 	}
 
 	auto meshes = generate_trimesh_from_layers(layers_meshes);
+
+	GLcanvas gui(1920, 980);
+	auto& mesh     = meshes[494];
+	auto& points_m = mesh.vector_verts();
+
+	std::vector<vec3d> duplicated_verts;
+	for (size_t i = 0; i < points_m.size(); ++i) {
+		for (size_t j = i + 1; j < points_m.size(); ++j) {
+			if (points_m[i] == points_m[j]) {
+				duplicated_verts.emplace_back(points_m[i]);
+			}
+		}
+	}
+
+	DrawableArrow x(vec3d(-35000, 0, 0), vec3d(35000, 0, 0));
+	x.color = Color::GREEN();
+	x.size  = 10;
+	DrawableArrow y(vec3d(0, -35000, 0), vec3d(0, 35000, 0));
+	y.color = Color::BLUE();
+	y.size  = 10;
+	DrawableArrow z(vec3d(0, 0, -35000), vec3d(0, 0, 35000));
+	z.size = 10;
+
+	gui.push(&x);
+	gui.push(&y);
+	gui.push(&z);
+
+	std::set<ipair> inters;
+	find_intersections(mesh, inters);
+	std::cout << "\n"
+						<< inters.size() << " pairs of intersecting triangles were found\n"
+						<< std::endl;
+
+	for (const auto& i : inters) {
+		mesh.poly_data(i.first).color  = Color::GREEN();
+		mesh.poly_data(i.second).color = Color::YELLOW();
+		// mesh.poly_remove(i.second);
+		mesh.poly_data(i.first).flags[MARKED]  = true;
+		mesh.poly_data(i.second).flags[MARKED] = true;
+	}
+
+	mesh.updateGL();
+	gui.push(&mesh);
+	gui.launch();
+
 	auto tets = generate_tetmesh_from_trimeshes(meshes);
 }
 }  // namespace MeshProcessor
