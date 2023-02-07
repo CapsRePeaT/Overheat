@@ -84,11 +84,11 @@ TrimeshVec generate_trimesh_from_layers(LayersMehses& layers) {
 		for (auto& mesh : layer) {
 			for (auto upper_box_id : mesh.boxes_upper) {
 				auto& upper_mesh = layers[mesh.layer + 1][upper_box_id];
-				// mesh.xy_z += upper_mesh.xy;
+				mesh.xy_z += upper_mesh.xy;
 			}
 			for (auto lower_box_id : mesh.boxes_lower) {
 				auto& lower_mesh = layers[mesh.layer - 1][lower_box_id];
-				// mesh.xy += lower_mesh.xy_z;
+				mesh.xy += lower_mesh.xy_z;
 			}
 			mesh.merge_meshes();
 			ret.push_back(mesh.total_mesh);
@@ -150,52 +150,32 @@ void generate(const LayersShapes& layers) {
 		layers_meshes.push_back(layer_meshes);
 	}
 
-	auto meshes = generate_trimesh_from_layers(layers_meshes);
+
 
 	GLcanvas gui(1920, 980);
-	auto& mesh     = meshes[494];
-	auto& points_m = mesh.vector_verts();
 
-	std::vector<vec3d> duplicated_verts;
-	for (size_t i = 0; i < points_m.size(); ++i) {
-		for (size_t j = i + 1; j < points_m.size(); ++j) {
-			if (points_m[i] == points_m[j]) {
-				duplicated_verts.emplace_back(points_m[i]);
-			}
-		}
-	}
+	auto meshes = generate_trimesh_from_layers(layers_meshes);
+	auto tets = generate_tetmesh_from_trimeshes(meshes);
+
+	auto mesh =  meshes[448];
+		mesh.updateGL();
+		gui.push(&mesh);
 
 	DrawableArrow x(vec3d(-35000, 0, 0), vec3d(35000, 0, 0));
 	x.color = Color::GREEN();
-	x.size  = 10;
+	x.size  = 50;
 	DrawableArrow y(vec3d(0, -35000, 0), vec3d(0, 35000, 0));
 	y.color = Color::BLUE();
-	y.size  = 10;
+	y.size  = 50;
 	DrawableArrow z(vec3d(0, 0, -35000), vec3d(0, 0, 35000));
-	z.size = 10;
+	z.size = 50;
 
 	gui.push(&x);
 	gui.push(&y);
 	gui.push(&z);
 
-	std::set<ipair> inters;
-	find_intersections(mesh, inters);
-	std::cout << "\n"
-						<< inters.size() << " pairs of intersecting triangles were found\n"
-						<< std::endl;
 
-	for (const auto& i : inters) {
-		mesh.poly_data(i.first).color  = Color::GREEN();
-		mesh.poly_data(i.second).color = Color::YELLOW();
-		// mesh.poly_remove(i.second);
-		mesh.poly_data(i.first).flags[MARKED]  = true;
-		mesh.poly_data(i.second).flags[MARKED] = true;
-	}
-
-	mesh.updateGL();
-	gui.push(&mesh);
 	gui.launch();
 
-	auto tets = generate_tetmesh_from_trimeshes(meshes);
 }
 }  // namespace MeshProcessor

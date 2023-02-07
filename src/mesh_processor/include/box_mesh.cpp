@@ -70,11 +70,11 @@ void BoxMesh::calculate_mesh() {
 
 
 
-	auto xy_poly = make_multi_polygon(generator.xy_ring(), {}/*holes_lower*/);
+	auto xy_poly = make_multi_polygon(generator.xy_ring(), holes_lower);
 	xy           = trimeshFromPoly(xy_poly, diag_);
 	round_boundary(xy);
 
-	auto xy_z_poly = make_multi_polygon(generator.xy_z_ring(), {}/*holes_upper*/);
+	auto xy_z_poly = make_multi_polygon(generator.xy_z_ring(), holes_upper);
 	xy_z           = trimeshFromPoly(xy_z_poly, diag_);
 	xy_z.translate(vec3d(0, 0, height));
 	round_boundary(xy_z);
