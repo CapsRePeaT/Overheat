@@ -72,7 +72,8 @@ ShapeHeatDataVec HU::shape_data() {
 	// assert(false && "add proper layer id and parent");
 	const size_t dummy_layer = 0;
 	BasicShape shape(getNewShapeId(), dummy_layer, box);
-	ShapeHeatData heat_data{env_thermal_conductivity_, 0, 0, 0};
+	ShapeHeatData heat_data{thermal_conductivity_, env_thermal_conductivity_, 0,
+	                        0, 0};
 	return {{heat_data, shape}};
 }
 
@@ -83,12 +84,13 @@ ShapeHeatDataVec P::shape_data() {
 	// assert(false && "add proper layer id and parent");
 	const size_t dummy_layer = 0;
 	BasicShape shape(getNewShapeId(), dummy_layer, box);
-	ShapeHeatData heat_data{env_thermal_conductivity_, 0, 0, 0};
+	ShapeHeatData heat_data{thermal_conductivity_, env_thermal_conductivity_, 0,
+	                        0, 0};
 
 	return {{heat_data, shape}};
 }
 
-ShapeHeatDataVec BS::shape_data(){
+ShapeHeatDataVec BS::shape_data() {
 	ShapeHeatDataVec storage;
 	// thickness_ aka diameter for this case
 	const auto radius = thickness_ / 2;
@@ -111,7 +113,7 @@ ShapeHeatDataVec BS::shape_data(){
 				// assert(false && "add proper layer id and parent");
 				const size_t dummy_layer = 0;
 				BasicShape shape(getNewShapeId(), dummy_layer, box);
-				ShapeHeatData heat_data{};
+				ShapeHeatData heat_data{thermal_conductivity_, 0, 0, 0, 0};
 				storage.push_back({heat_data, shape});
 				offset_y += dist_between_spheres_;
 			}
@@ -129,7 +131,7 @@ ShapeHeatDataVec D::shape_data() {
 		// assert(false && "add proper layer id and parent");
 		const size_t dummy_layer = 0;
 		BasicShape shape(getNewShapeId(), dummy_layer, box);
-		ShapeHeatData heat_data{0,0,crystal.power,0};
+		ShapeHeatData heat_data{thermal_conductivity_, 0, 0, crystal.power, 0};
 		storage.push_back({heat_data, shape});
 	}
 	return storage;

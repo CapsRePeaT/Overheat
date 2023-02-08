@@ -97,16 +97,16 @@ TrimeshVec generate_trimesh_from_layers(LayersMehses& layers) {
 	return ret;
 }
 
-cinolib::DrawableTetmesh<> generate_tetmesh(
+MeshProcessor::CustomTetmesh generate_tetmesh(
 		const cinolib::DrawableTrimesh<>& mesh) {
 	static int i = 0;
 	std::cout << "generate_tetmesh: " << i << std::endl;
 
 	std::vector<uint> edges, tets;
 	std::vector<double> verts;
-	double vol_thresh = 50000;
+	double vol_thresh = 500000;
 	char opt[100];
-	sprintf(opt, "Yd");
+	sprintf(opt, "Yqa%f", vol_thresh);
 	auto serialized_verts =
 			cinolib::serialized_xyz_from_vec3d(mesh.vector_verts());
 	auto serialized_polys =
@@ -114,7 +114,7 @@ cinolib::DrawableTetmesh<> generate_tetmesh(
 	cinolib::tetgen_wrap(serialized_verts, serialized_polys, edges, opt, verts,
 	                     tets);
 	++i;
-	return cinolib::DrawableTetmesh<>(verts, tets);
+	return MeshProcessor::CustomTetmesh(verts, tets);
 }
 
 MeshProcessor::TetmeshVec generate_tetmesh_from_trimeshes(TrimeshVec& meshes) {
@@ -149,11 +149,9 @@ TetmeshVec generate(const LayersShapes& layers) {
 		layers_meshes.push_back(layer_meshes);
 	}
 
-
 	auto meshes = generate_trimesh_from_layers(layers_meshes);
-	auto tets = generate_tetmesh_from_trimeshes(meshes);
+	auto tets   = generate_tetmesh_from_trimeshes(meshes);
 
 	return tets;
-
 }
 }  // namespace MeshProcessor

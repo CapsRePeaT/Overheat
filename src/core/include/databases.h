@@ -11,6 +11,7 @@
 using LayersShapes = std::vector<std::vector<BasicShape>>;
 
 struct ShapeHeatData {
+	double thermal_conductivity = 0;
 	double ambient_temperature = 0;  // env_thermal_conductivity_
 	double heat_flow = 0;            // уточнить
 	double power = 0;

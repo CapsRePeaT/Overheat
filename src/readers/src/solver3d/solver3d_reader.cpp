@@ -23,6 +23,23 @@ std::vector<std::string> split(const std::string& str,
 	return retval;
 }
 
+std::map<std::string, std::string> convert_to_map(
+		const std::string& input, const std::string& expression) {
+	boost::regex reg_expression(expression);
+	std::map<std::string, std::string> map;
+
+	boost::sregex_iterator iter(input.begin(), input.end(), reg_expression);
+	boost::sregex_iterator end;
+
+	while (iter != end) {
+		const boost::smatch& match = *iter;
+		map[match[1]]              = match[2];
+		iter++;
+	}
+
+	return map;
+}
+
 void read_general_info(const std::string& content,
                        Readers::Solver3d::Solver3d_TRM& data) {
 	std::stringstream istream;
@@ -88,7 +105,7 @@ Solver3d_TRM read_geometry(const std::string& content) {
 			std::inserter(data.layers_groups_, data.layers_groups_.end()),
 			[&layers_regex, index = 0](
 					const auto& group) mutable -> std::pair<GroupsPosition, Layers> {
-				const auto layers_tags = split(group, layers_regex);
+				const auto layers_tags    = split(group, layers_regex);
 				const auto layers_content = split(group, layers_regex, -1);
 				Layers layers{};
 				for (size_t i = 0; i < layers_content.size(); ++i) {
@@ -96,6 +113,10 @@ Solver3d_TRM read_geometry(const std::string& content) {
 				}
 				return {(GroupsPosition)index++, layers};
 			});
+
+	auto metadata                  = convert_to_map(content, "(\\w*)=(\\d+)");
+	data.metadata_.env_temperature = stod(metadata["TC"]);
+	data.metadata_.cup_temp_cond   = stod(metadata["AK"]);
 
 	return data;
 }

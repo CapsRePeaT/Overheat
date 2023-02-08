@@ -123,10 +123,17 @@ enum GroupsPosition { UnderBody, Body, AboveBody };
 using Layers       = std::vector<std::shared_ptr<BaseLayer>>;
 using LayersGroups = std::map<GroupsPosition, Layers>;
 
+struct Solver3d_TRM_Metadata{
+	double env_temperature;
+	double cup_temp_cond;
+};
+
 struct Solver3d_TRM {
 	std::string program_name_;
 	HorizontalSize size_;
 	LayersGroups layers_groups_;
+	Solver3d_TRM_Metadata metadata_;
+
 };
 
 }  // namespace Readers::Solver3d
