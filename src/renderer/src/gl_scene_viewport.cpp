@@ -12,6 +12,8 @@
 // TODO: maybe rename inner *renderer* folder to *primitives* or smth similar
 #include "application/heatmap_material.h"
 #include "application/scene_shape.h"
+#include "application/temperature_bar.h"
+#include "application/temperature_bar_material.h"
 #include "camera_controller.h"
 #include "common.h"
 #include "constants.h"
@@ -46,7 +48,7 @@ void GLSceneViewport::Initialize(const int w, const int h) {
 	OpenGlInit(w, h);
 	ApplicationInit(w, h);
 	//#ifndef NDEBUG
-	// DebugInit(w, h);
+	DebugInit(w, h);
 	//#endif
 
 	is_initialized_ = true;
@@ -70,9 +72,11 @@ void GLSceneViewport::ApplicationInit(const int w, const int h) {
 
 	auto camera = std::make_unique<OrthographicCamera>(
 			aspect_ratio, consts::init::zoom, consts::init::near_far_bounds);
+	camera->SetScreenBounds(w, h);
 	camera_controller_ = std::make_unique<SphericalCameraController>(
 			std::move(camera), /*radius=*/100.0f, /*phi=*/glm::pi<float>() * 3 / 2,
 			/*theta*/ glm::pi<float>() * 0.5f);
+	temperature_bar_ = std::make_unique<TemperatureBar>(20, h-50, glm::vec2{10.0f, 25.0f});
 }
 
 void GLSceneViewport::DebugInit(const int /*w*/, const int /*h*/) {
@@ -112,6 +116,8 @@ void GLSceneViewport::ClearResourcesImpl() {
 }
 
 void GLSceneViewport::RenderFrame() {
+	static int count = 0;
+	if (count++ < 2) return;
 	auto& api = RendererAPI::instance();
 	api.Clear();
 
@@ -121,25 +127,39 @@ void GLSceneViewport::RenderFrame() {
 		InitHeatmapMaterials();
 	}
 
-	if (heatmap_materials_)
+	if (heatmap_materials_) {
 		for (const auto& shape : scene_->shapes()) {
+			const auto layer_id        = shape->core_shape().layer_id();
+			const auto shape_transform = shape->transform();
 			// LOG_TRACE("Render shape: id {}, layer {}", shape->id().id(),
 			// shape->layer_id());
 			if (shape->is_visible() ||
 			    shape->highlight_type() != HighlightType::None) {
-				(*heatmap_materials_)[shape->core_shape().layer_id()].Use(
-						shape->transform(), camera.viewProjectionMatrix(),
-						HighlightTypeToColor(shape->highlight_type()),
-						!shape->is_visible());
+				auto& materials = *heatmap_materials_;
+				auto& material  = materials[layer_id];
+				material.Use(shape_transform, camera.viewProjectionMatrix(),
+				             HighlightTypeToColor(shape->highlight_type()),
+				             !shape->is_visible());
 				api.DrawIndexed(shape->vertex_array());
+				material.Unuse();
 			}
 		}
+	}
+
+	if (!temperature_bar_material_)
+		temperature_bar_material_ = std::make_unique<TemperatureBarMaterial>();
+	temperature_bar_material_->Use(camera.uiViewMatrix());
+	// data_->debug_heatmap_material->Use(glm::mat4(1), camera.uiViewMatrix());
+	api.DrawIndexed(temperature_bar_->vertex_array());
+	// data_->debug_heatmap_material->Unuse();
+	temperature_bar_material_->Unuse(); 
 
 	if (data_) {
 		const auto& axes = data_->axes;
 		data_->debug_material->Use(axes->transform(), camera.viewProjectionMatrix(),
 		                           1.0f);
 		api.DrawIndexed(axes->vertex_array(), PrimitiveType::LINES);
+		data_->debug_material->Unuse();
 	}
 }
 
@@ -164,8 +184,8 @@ HeatmapMaterial CreateMaterial(const Heatmap& bot_heatmap,
 }
 
 void GLSceneViewport::InitHeatmapMaterials() {
-	auto heatmaps      = scene_->heatmaps();
-	assert (heatmaps.size());
+	auto heatmaps = scene_->heatmaps();
+	assert(heatmaps.size());
 	heatmap_materials_ = std::vector<HeatmapMaterial>();
 	heatmap_materials_->reserve(heatmaps.size() - 1);
 	if (heatmaps.size() == 1) {
@@ -191,6 +211,8 @@ void GLSceneViewport::Resize(const int w, const int h) {
 	RendererAPI::instance().SetViewPort(0, 0, w, h);
 	camera_controller_->SetCameraAspectRatio(static_cast<float>(w) /
 	                                         static_cast<float>(h));
+	camera_controller_->SetCameraScreenBounds(w, h);
+	temperature_bar_ = std::make_unique<TemperatureBar>(20, h-50, glm::vec2{10.0f, 25.0f});
 }
 
 void GLSceneViewport::SetTemperatureRange(const float min, const float max) {
@@ -203,10 +225,12 @@ void GLSceneViewport::SetTemperatureRange(const float min, const float max) {
 void GLSceneViewport::SetColorRange(const ISceneViewport::Color min,
                                     const ISceneViewport::Color max) {
 	if (heatmap_materials_)
-		std::ranges::for_each(*heatmap_materials_, [&min, &max](auto& material) {
+		for (auto& material : *heatmap_materials_)
 			material.SetColorRange({min[0], min[1], min[2]},
 			                       {max[0], max[1], max[2]});
-		});
+
+	temperature_bar_material_->SetColorRange({min[0], min[1], min[2]},
+	                                         {max[0], max[1], max[2]});
 }
 
 void GLSceneViewport::MoveCamera(const Vec2D /*screenPoint*/,

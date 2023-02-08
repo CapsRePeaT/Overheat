@@ -49,12 +49,16 @@ void VertexArray::SetBuffer(std::unique_ptr<VertexBuffer>&& vb) {
 		                      element.normalized, layout.stride(), offset);
 		offset += element.count * element.size();
 	}
+	Unbind();
+	vb->Unbind();
 	vbo_ = std::move(vb);
 }
 
 void VertexArray::SetIndexBuffer(std::unique_ptr<IndexBuffer>&& ib) {
 	Bind();
 	ib->Bind();
+	Unbind();
+	ib->Unbind();
 	ibo_ = std::move(ib);
 }
 

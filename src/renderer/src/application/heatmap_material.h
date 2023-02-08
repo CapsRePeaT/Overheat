@@ -56,6 +56,8 @@ class HeatmapMaterial {
 		shader_->SetBool(is_transparent_heatmap_var, is_transparent_heatmap);
 	}
 
+	void Unuse() { shader_->Unuse(); }
+
  private:
 	std::shared_ptr<ShaderProgram> shader_;
 	glm::vec2 temperature_range_ = {0.0f, 100.0f};

@@ -62,6 +62,7 @@ void VertexBuffer::SetData(const void* data, const size_t size,
 	Bind();
 	glBufferSubData(GL_ARRAY_BUFFER, /*offset=*/0, size, data);
 	layout_ = std::move(layout);
+	Unbind();
 }
 
 }  // namespace renderer::gl

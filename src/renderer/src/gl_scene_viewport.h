@@ -4,6 +4,8 @@
 #include <optional>
 
 #include "application/heatmap_material.h"
+#include "application/temperature_bar.h"
+#include "application/temperature_bar_material.h"
 #include "renderer/debug/debug_heatmap_material.h"
 #include "camera_controller.h"
 #include "core.h"
@@ -44,6 +46,8 @@ class GLSceneViewport final : public ISceneViewport {
 	std::optional<std::vector<HeatmapMaterial>> heatmap_materials_;
 	std::unique_ptr<SphericalCameraController> camera_controller_;
 	std::shared_ptr<Scene> scene_;
+	std::unique_ptr<TemperatureBarMaterial> temperature_bar_material_;
+	std::unique_ptr<TemperatureBar> temperature_bar_;
 
 
 	struct Impl;

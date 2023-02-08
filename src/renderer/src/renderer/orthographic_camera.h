@@ -35,6 +35,10 @@ class OrthographicCamera : public ICamera {
 	[[nodiscard]] const glm::mat4& viewProjectionMatrix() const override {
 		return view_projection_matrix_;
 	}
+	[[nodiscard]] const glm::mat4& uiViewMatrix() const override {
+		return ui_view_matrix_;
+	}
+	void SetScreenBounds(int width, int height) override;
 
  private:
 	void RecalculateViewMatrix();
@@ -43,6 +47,7 @@ class OrthographicCamera : public ICamera {
 	glm::mat4 view_matrix_ = glm::mat4(1.0f);
 	glm::mat4 projection_matrix_ = glm::mat4(1.0f);
 	glm::mat4 view_projection_matrix_ = glm::mat4(1.0f);
+	glm::mat4 ui_view_matrix_ = glm::mat4(1.0f);
 
 	float zoom_level_ = 1.0f;
 	float aspect_ratio_ = 1.0f;

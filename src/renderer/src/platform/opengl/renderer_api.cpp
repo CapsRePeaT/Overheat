@@ -28,14 +28,15 @@ inline decltype(GL_TRIANGLES) PrimitiveTypeToGL(const PrimitiveType draw_as) {
 			return GL_TRIANGLE_FAN;
 		default:
 			assert(false && "Unkown primitive type");
+			return {};
 	}
 }
 
 // Signature from
 // https://www.khronos.org/opengl/wiki/Debug_Output#Getting_messages
-void OpenGLMessageCallback(GLenum source, GLenum type, GLuint id,
-                           GLenum severity, GLsizei length,
-                           const GLchar* message, const void* user_param) {
+void OpenGLMessageCallback(GLenum  /*source*/, GLenum  /*type*/, GLuint  /*id*/,
+                           GLenum severity, GLsizei  /*length*/,
+                           const GLchar* message, const void*  /*user_param*/) {
 	switch (severity) {
 		case GL_DEBUG_SEVERITY_HIGH:
 			LOG_CRITICAL(message);
@@ -74,7 +75,7 @@ void RendererAPI::InitImpl() {
 
 void RendererAPI::SetViewPort(const uint32_t x, const uint32_t y,
                               const uint32_t w, const uint32_t h) {
-	glViewport(x, y, w, h);  // NOLINT(cppcoreguidelines-narrowing-conversions)
+	glViewport(x, y, w, h);  // NOLINT(bugprone-narrowing-conversions)
 }
 
 void RendererAPI::SetClearColor(const glm::vec4 color) {
@@ -88,10 +89,11 @@ void RendererAPI::Clear() {
 void RendererAPI::DrawIndexedImpl(const VertexArray& va, const IndexBuffer& ib,
                                   const PrimitiveType draw_as) const {
 	va.Bind();
-	glDrawElements(
-			PrimitiveTypeToGL(draw_as), ib.elements_count(),
-			GL_UNSIGNED_INT,  // NOLINT(cppcoreguidelines-narrowing-conversions)
+	glDrawElements( 
+			PrimitiveTypeToGL(draw_as), ib.elements_count(),  // NOLINT(bugprone-narrowing-conversions)
+			GL_UNSIGNED_INT,
 			nullptr);
+	va.Unbind();
 }
 
 }  // namespace renderer::gl

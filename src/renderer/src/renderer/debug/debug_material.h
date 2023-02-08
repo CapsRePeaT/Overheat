@@ -20,6 +20,8 @@ class DebugMaterial {
 		shader_->SetMat4(view_proj_shader_var_, view_projection);
 	}
 
+	void Unuse() { shader_->Unuse(); }
+
  private:
 	std::shared_ptr<ShaderProgram> shader_;
 	// TODO: move to templated base class

@@ -12,6 +12,11 @@ class SceneObject {
 	                     glm::vec3 scale    = consts::init::scale,
 	                     glm::quat rotation = consts::init::rotation)
 			: position_(position), scale_(scale), rotation_(rotation) {}
+	SceneObject(const SceneObject&) = default;
+	SceneObject& operator=(const SceneObject&) = default;
+	SceneObject(SceneObject&&) noexcept = default;
+	SceneObject& operator=(SceneObject&&) noexcept = default;
+	virtual ~SceneObject() = default;
 
 	// Setters and getters of common transformation attributes of any scene object
 	virtual inline void SetPosition(glm::vec3 position) { position_ = position; }

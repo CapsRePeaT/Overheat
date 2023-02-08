@@ -78,6 +78,8 @@ class SphericalCameraController : public SceneObject {
 	inline void SetCameraAspectRatio(float ratio) {
 		camera_->SetAspectRatio(ratio);
 	}
+	inline void SetCameraScreenBounds(const int width, const int height) { 
+		camera_->SetScreenBounds(width, height); }
 	inline void Zoom(float zoom) { camera_->Zoom(zoom); }
 
  private:
