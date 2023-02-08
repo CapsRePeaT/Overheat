@@ -5,7 +5,8 @@
 
 FsDatapack GeometryCutter::PrepareGeometry(FileRepresentation& file_rep) {
 
-	MeshProcessor::generate(file_rep.layers());
+	auto heat_data = file_rep.shapes_metadata();
+	auto tets = MeshProcessor::generate(file_rep.layers());
 	FsDatapack result;
 	/*std::cout << "triangulating geometry..." << std::endl;
 	std::cout << "converting geometry to db..." << std::endl;

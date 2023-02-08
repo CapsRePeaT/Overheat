@@ -13,8 +13,7 @@
 		"magic-enum",
 		"boost-json",
 		"boost-regex",
-		"boost-geometry",
-		"cgal"
+		"boost-geometry"
 	]
 }
 

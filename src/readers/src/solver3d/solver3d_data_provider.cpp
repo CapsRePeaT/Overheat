@@ -18,26 +18,26 @@ Solver3dDataProvider::Solver3dDataProvider(const Solver3d_TRM& geom,
 }
 
 void Solver3dDataProvider::load_geometry(const Solver3d_TRM& data) {
-	float offset = 0;
-	size_t box_counter_ = 0;
+	float offset          = 0;
+	size_t box_counter_   = 0;
 	size_t layer_counter_ = 0;
 	geometry_.Clear();
 
 	for (const auto& [position, layers] : data.layers_groups_) {
 		for (const auto& layer : layers) {
 			std::vector<BasicShape> layer_shapes;
-			const auto shapes = layer->geometry().shapes();
-			for (const auto& shape : shapes) {
+			const auto shapes_data = layer->shape_data();
+			for (const auto& [heat_data, shape] : shapes_data) {
 				box_counter_++;
-				auto box = liftBox(shape->bbox(), offset);
+				auto box = liftBox(shape.bbox(), offset);
 
-				geometry_.AddShape(std::make_unique<BasicShape>(
-						GlobalId(InstanceType::Shape, box_counter_, 0), layer_counter_,
-						box));
+				const auto global_id = GlobalId(InstanceType::Shape, box_counter_, 0);
+				geometry_.AddShape(
+						std::make_unique<BasicShape>(global_id, layer_counter_, box));
+				layer_shapes.emplace_back(global_id, layer_counter_, box);
 
-				layer_shapes.emplace_back(
-						GlobalId(InstanceType::Shape, box_counter_, 0), layer_counter_,
-						box);
+				shapes_metadata_.emplace_back(heat_data);
+
 			}
 			layers_shapes_.push_back(layer_shapes);
 			++layer_counter_;

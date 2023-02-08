@@ -4,8 +4,8 @@
 #include <shapes.h>
 
 #include <cassert>
-#include <ranges>
 #include <cmath>
+#include <ranges>
 
 namespace {
 GlobalId getNewShapeId() {
@@ -17,12 +17,6 @@ GlobalId getNewShapeId() {
 }  // namespace
 
 namespace Readers::Solver3d {
-LayerType BaseLayer::type() const { return type_; };
-
-float BaseLayer::thermal_conductivity() const { return thermal_conductivity_; };
-
-float BaseLayer::thickness() const { return thickness_; }
-std::string_view BaseLayer::type_tag() const { return raw_type_tag_; };
 
 std::istream& HU::read(std::istream& in) {
 	in >> thickness_ >> thermal_conductivity_ >> env_thermal_conductivity_;
@@ -71,32 +65,31 @@ std::istream& D::read(std::istream& in) {
 	return in;
 }
 
-GeomStorage<BasicShape> HU::geometry() {
+ShapeHeatDataVec HU::shape_data() {
 	Box3D box{{{coordinates_.x1_, coordinates_.x2_},
 	           {coordinates_.y1_, coordinates_.y2_},
 	           {0.f, thickness_}}};
-	GeomStorage<BasicShape> storage;
 	// assert(false && "add proper layer id and parent");
 	const size_t dummy_layer = 0;
-	storage.AddShape(
-			std::make_shared<BasicShape>(getNewShapeId(), dummy_layer, box));
-	return storage;
+	BasicShape shape(getNewShapeId(), dummy_layer, box);
+	ShapeHeatData heat_data{env_thermal_conductivity_, 0, 0, 0};
+	return {{heat_data, shape}};
 }
 
-GeomStorage<BasicShape> P::geometry() {
+ShapeHeatDataVec P::shape_data() {
 	Box3D box{{{coordinates_.x1_, coordinates_.x2_},
 	           {coordinates_.y1_, coordinates_.y2_},
 	           {0.f, thickness_}}};
-	GeomStorage<BasicShape> storage;
 	// assert(false && "add proper layer id and parent");
 	const size_t dummy_layer = 0;
-	storage.AddShape(
-			std::make_shared<BasicShape>(getNewShapeId(), dummy_layer, box));
-	return storage;
+	BasicShape shape(getNewShapeId(), dummy_layer, box);
+	ShapeHeatData heat_data{env_thermal_conductivity_, 0, 0, 0};
+
+	return {{heat_data, shape}};
 }
 
-GeomStorage<BasicShape> BS::geometry() {
-	GeomStorage<BasicShape> storage;
+ShapeHeatDataVec BS::shape_data(){
+	ShapeHeatDataVec storage;
 	// thickness_ aka diameter for this case
 	const auto radius = thickness_ / 2;
 
@@ -117,25 +110,27 @@ GeomStorage<BasicShape> BS::geometry() {
 				Box3D box{vals};
 				// assert(false && "add proper layer id and parent");
 				const size_t dummy_layer = 0;
-				storage.AddShape(
-						std::make_shared<BasicShape>(getNewShapeId(), dummy_layer, box));
-				offset_y += dist_between_spheres_ ;
+				BasicShape shape(getNewShapeId(), dummy_layer, box);
+				ShapeHeatData heat_data{};
+				storage.push_back({heat_data, shape});
+				offset_y += dist_between_spheres_;
 			}
-			offset_x += dist_between_spheres_ ;
+			offset_x += dist_between_spheres_;
 		}
 	}
 	return storage;
 }
-GeomStorage<BasicShape> D::geometry() {
-	GeomStorage<BasicShape> storage;
+ShapeHeatDataVec D::shape_data() {
+	ShapeHeatDataVec storage;
 	for (const auto& crystal : crystals_) {
 		Box3D box{{{crystal.coordinates_.x1_, crystal.coordinates_.x2_},
 		           {crystal.coordinates_.y1_, crystal.coordinates_.y2_},
 		           {0.f, thickness_}}};
 		// assert(false && "add proper layer id and parent");
 		const size_t dummy_layer = 0;
-		storage.AddShape(
-				std::make_shared<BasicShape>(getNewShapeId(), dummy_layer, box));
+		BasicShape shape(getNewShapeId(), dummy_layer, box);
+		ShapeHeatData heat_data{0,0,crystal.power,0};
+		storage.push_back({heat_data, shape});
 	}
 	return storage;
 }

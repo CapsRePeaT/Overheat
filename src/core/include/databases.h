@@ -10,12 +10,22 @@
 
 using LayersShapes = std::vector<std::vector<BasicShape>>;
 
+struct ShapeHeatData {
+	double ambient_temperature = 0;  // env_thermal_conductivity_
+	double heat_flow = 0;            // уточнить
+	double power = 0;
+	double convective_heat = 0; // уточнить
+};
+
+using ShapesHeatData = std::vector<ShapeHeatData>;
+
+
 template <class Shape>
 class GeomStorage {
  public:
 	using ShapePtr = std::shared_ptr<Shape>;
-	using Shapes = std::vector<ShapePtr>;
-	GeomStorage() = default;
+	using Shapes   = std::vector<ShapePtr>;
+	GeomStorage()  = default;
 	void AddShape(ShapePtr shape) { shapes_.emplace_back(std::move(shape)); }
 	[[nodiscard]] const Shapes& shapes() const { return shapes_; }
 	[[nodiscard]] const ShapePtr shape(ShapeId id) const {
@@ -46,7 +56,7 @@ class Layer {
  private:
 	// TODO implement me
 	const float bottom_ = std::numeric_limits<float>::max();
-	const float width_ = std::numeric_limits<float>::max();
+	const float width_  = std::numeric_limits<float>::max();
 	GlobalId id_;
 	HeatmapId top_heatmap_id_;
 	HeatmapId bottom_heatmap_id_;
@@ -82,7 +92,7 @@ class HeatmapStorage {
 
  private:
 	size_t layers_count_ = 0;  // IST in T2D file
-	float env_temp_ = 0.0f;
+	float env_temp_      = 0.0f;
 	float min_step_;
 	Floats x_coords_;
 	Floats y_coords_;
@@ -103,17 +113,19 @@ class FileRepresentation {
 	using Shapes = GeomStorage<BasicShape>::Shapes;
 	FileRepresentation(GeomStorage<BasicShape> geom_storage_mv,
 	                   HeatmapStorage heatmap_storage_mv,
-	                   LayersShapes layers_shapes_mv)
+	                   LayersShapes layers_shapes_mv,
+	                   ShapesHeatData shapes_metadata_mv)
 			: id_(InstanceType::Representation, 0 /*Instance id*/, id_counter++),
 				geom_storage_(std::move(geom_storage_mv)),
 				heatmaps_(std::move(heatmap_storage_mv)),
-				layers_shapes_(std::move(layers_shapes_mv)) {}
+				layers_shapes_(std::move(layers_shapes_mv)),
+				shapes_metadata_(std::move(shapes_metadata_mv)){}
 	FileRepresentation(GeomStorage<BasicShape> geom_storage_mv)
 			: id_(InstanceType::Representation, 0 /*Instance id*/, id_counter++),
 				geom_storage_(std::move(geom_storage_mv)) {}
-	FileRepresentation(FileRepresentation&&) = default;
-	~FileRepresentation() = default;
-	FileRepresentation(const FileRepresentation&) = delete;
+	FileRepresentation(FileRepresentation&&)                 = default;
+	~FileRepresentation()                                    = default;
+	FileRepresentation(const FileRepresentation&)            = delete;
 	FileRepresentation& operator=(const FileRepresentation&) = delete;
 	FileRepresentation& operator=(FileRepresentation&&) = delete;  // id_ is const
 
@@ -129,6 +141,7 @@ class FileRepresentation {
 	GeomStorage<BasicShape>& geom_storage() { return geom_storage_; }
 	HeatmapStorage& heatmaps() { return heatmaps_; }
 	LayersShapes& layers() { return layers_shapes_; }
+	ShapesHeatData shapes_metadata() { return shapes_metadata_; }
 	InstanceList GetInstanceList() const;
 	// should be deleted when proper layer reading will be provided
 	[[deprecated]] void InitLayers();
@@ -152,5 +165,6 @@ class FileRepresentation {
 	HeatmapStorage heatmaps_;
 	DefaultMetadataStorage metadata_storage_;
 	LayersShapes layers_shapes_{};
+	ShapesHeatData shapes_metadata_{};
 	Box3D design_borders_;
 };

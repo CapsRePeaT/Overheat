@@ -14,7 +14,6 @@ using LayerMehses  = std::vector<MeshProcessor::BoxMesh>;
 using LayersMehses = std::vector<LayerMehses>;
 
 using TrimeshVec = std::vector<cinolib::DrawableTrimesh<>>;
-using TetmeshVec = std::vector<cinolib::DrawableTetmesh<>>;
 
 namespace {
 
@@ -118,8 +117,8 @@ cinolib::DrawableTetmesh<> generate_tetmesh(
 	return cinolib::DrawableTetmesh<>(verts, tets);
 }
 
-TetmeshVec generate_tetmesh_from_trimeshes(TrimeshVec& meshes) {
-	TetmeshVec ret;
+MeshProcessor::TetmeshVec generate_tetmesh_from_trimeshes(TrimeshVec& meshes) {
+	MeshProcessor::TetmeshVec ret;
 	ret.reserve(meshes.size());
 	cinolib::Profiler profiler;
 	profiler.push("generate_tetmesh_from_trimeshes");
@@ -135,7 +134,7 @@ TetmeshVec generate_tetmesh_from_trimeshes(TrimeshVec& meshes) {
 }  // namespace
 
 namespace MeshProcessor {
-void generate(const LayersShapes& layers) {
+TetmeshVec generate(const LayersShapes& layers) {
 	LayersMehses layers_meshes;
 	layers_meshes.reserve(layers.size());
 	for (auto& layer : layers) {
@@ -151,31 +150,10 @@ void generate(const LayersShapes& layers) {
 	}
 
 
-
-	GLcanvas gui(1920, 980);
-
 	auto meshes = generate_trimesh_from_layers(layers_meshes);
 	auto tets = generate_tetmesh_from_trimeshes(meshes);
 
-	auto mesh =  meshes[448];
-		mesh.updateGL();
-		gui.push(&mesh);
-
-	DrawableArrow x(vec3d(-35000, 0, 0), vec3d(35000, 0, 0));
-	x.color = Color::GREEN();
-	x.size  = 50;
-	DrawableArrow y(vec3d(0, -35000, 0), vec3d(0, 35000, 0));
-	y.color = Color::BLUE();
-	y.size  = 50;
-	DrawableArrow z(vec3d(0, 0, -35000), vec3d(0, 0, 35000));
-	z.size = 50;
-
-	gui.push(&x);
-	gui.push(&y);
-	gui.push(&z);
-
-
-	gui.launch();
+	return tets;
 
 }
 }  // namespace MeshProcessor
