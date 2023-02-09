@@ -8,7 +8,8 @@ class GeometryCutter {
   GeometryCutter() = default;
   ~GeometryCutter() = default;
   FsDatapack PrepareGeometry(FileRepresentation& file_rep);
-  const VerticeIndexes& GetVerticeIndexes();
+  VerticeIndexes& GetVerticeIndexes();
+  const VerticeIndexes& GetVerticeIndexes() const;
  private:
   VerticeIndexes index_to_coord_map_;
 };

@@ -49,6 +49,7 @@ target_link_libraries(renderer-test gtest_main core common glm::glm glad::glad r
 
 target_link_libraries(common PUBLIC spdlog::spdlog)
 target_link_libraries(common PUBLIC magic_enum::magic_enum)
+target_link_libraries(fem_solver PRIVATE Boost::boost) 
 target_link_libraries(reader-interface INTERFACE common)
 
 target_link_libraries(fem_solver PUBLIC cinolib)
