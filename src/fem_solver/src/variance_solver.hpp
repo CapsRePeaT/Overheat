@@ -12,7 +12,7 @@ class VarianceTetraeder : public SolverTetraeder {
 			double heat_flow,            // уточнить
 			double intensity_of_heat_source,  // мощность пропорциональна обьему
 	                                      // power* total_colume/n_tethra
-			double convective_heat,
+			double convective_heat, // коэффициент конвективного теплообмена на верхней поверхности корпуса
 			std::array<VerticeIndexes::VerticeIndex, 4> indexes,  //
 			const VerticeIndexes& index_to_coord_map)
 			: SolverTetraeder(thermal_conductivity, ambient_temperature, heat_flow,
