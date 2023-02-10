@@ -1,6 +1,6 @@
 #define pragma once
-#include <cinolib/geometry/vec_mat.h>
 
+#include <cinolib/geometry/vec_mat.h>
 #include <vector>
 namespace MeshProcessor {
 using namespace cinolib;

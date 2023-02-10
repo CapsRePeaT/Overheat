@@ -27,6 +27,7 @@ class FsDatapack {
 
 struct Point3D
 {
+	// TODO: consider using double, cause cinolib uses doubles
 	std::array<double, 3> coords;
 };
 

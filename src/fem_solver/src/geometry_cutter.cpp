@@ -4,50 +4,64 @@
 
 #include "../../mesh_processor/include/generate_mesh.h"
 #include "variance_solver.hpp"
+#include <iostream>
 
 FsDatapack GeometryCutter::PrepareGeometry(FileRepresentation& file_rep) {
-	auto heat_data  = file_rep.shapes_metadata();
-	auto tet_meshes = MeshProcessor::generate(file_rep.layers());
-	assert(heat_data.size() == tet_meshes.size() &&
-	       "Heat data and shapes mismatch");
+	auto generator     = MeshProcessor::MeshGenerator(file_rep, 500000, 500000);
+	auto total_tetmesh = generator.get_tet_mesh();
+
+	const auto upper_point_z = total_tetmesh.bbox().delta_z();
+
+	const auto& polys = total_tetmesh.vector_polys();
+	const auto& verts = total_tetmesh.vector_verts();
 
 	FsDatapack result;
+	std::array<std::array<int, 3>, 4> faces_indexes = {
+			std::array<int, 3>{0, 1, 2}, std::array<int, 3>{0, 1, 3},
+			std::array<int, 3>{0, 2, 3}, std::array<int, 3>{1, 2, 3}};
 
-	MeshProcessor::CustomTetmesh total_tetmesh;
-	for (auto i = 0; i < tet_meshes.size(); ++i) {
-		const auto shape_heat_data = heat_data[i];
-		auto& tet_mesh             = tet_meshes[i];
-		auto mesh_volume           = tet_mesh.mesh_volume();
-		auto& polys                = tet_mesh.vector_polys();
-		for (auto pid = 0; pid < polys.size(); ++pid) {
-			auto& p_data                = tet_mesh.poly_data(pid);
-			p_data.thermal_conductivity = shape_heat_data.thermal_conductivity;
-			p_data.ambient_temperature  = shape_heat_data.ambient_temperature;
-			p_data.heat_flow            = shape_heat_data.heat_flow;
-			p_data.intensity_of_heat_source =
-					shape_heat_data.power * tet_mesh.poly_volume(pid) / mesh_volume;
-			p_data.convective_heat = shape_heat_data.convective_heat;
-		}
-		total_tetmesh += tet_mesh;
-	}
-	/*std::cout << "triangulating geometry..." << std::endl;
-	std::cout << "converting geometry to db..." << std::endl;
-*/
-	const auto& polys = total_tetmesh.vector_polys();
 	for (auto pid = 0; pid < polys.size(); ++pid) {
-		std::array<VerticeIndexes::VerticeIndex, 4> indexes;
-		std::copy(polys[pid].begin(), polys[pid].end(), indexes.begin());
 		const auto& p_data = total_tetmesh.poly_data(pid);
-		
+
+		std::array<VerticeIndexes::VerticeIndex, 4> indexes;
+		std::array<cinolib::vec3d, 4> coord;
+		auto poly_verts = total_tetmesh.poly_verts(pid);
+		for (auto i = 0; i < polys[pid].size(); ++i) {
+			auto v = poly_verts[i];
+			auto glob_ind = GetVerticeIndexes().AddVertice({{v.x(), v.y(), v.z()}});
+			indexes[i]    = glob_ind;
+			coord[i]      = v;
+		}
+
+		std::array<bool, 4> convective_presense_per_side;
+		for (auto face_ind = 0; face_ind < faces_indexes.size(); ++face_ind) {
+			auto faces_verts_indexes = faces_indexes[face_ind];
+			auto is_upper_face       = true;
+			for (auto vert_ind : faces_verts_indexes) {
+				auto vert     = coord[vert_ind];
+				is_upper_face = is_upper_face && vert.z() == upper_point_z;
+				if (is_upper_face) {
+					int t = 2;
+				}
+			}
+			convective_presense_per_side[face_ind] = is_upper_face;
+		}
+
+		std::array<bool, 4> heat_flow_presense_per_side = {0, 0, 0, 0};//7493
 		result.AddElement(new VarianceTetraeder(
 				p_data.thermal_conductivity, p_data.ambient_temperature,
 				p_data.heat_flow, p_data.intensity_of_heat_source,
-				p_data.convective_heat, indexes, GetVerticeIndexes()));
+				p_data.convective_heat, indexes, convective_presense_per_side,
+				heat_flow_presense_per_side, GetVerticeIndexes()));
 	}
 
 	return result;
 }
 
-const VerticeIndexes& GeometryCutter::GetVerticeIndexes() {
+VerticeIndexes& GeometryCutter::GetVerticeIndexes() {
+	return index_to_coord_map_;
+}
+
+const VerticeIndexes& GeometryCutter::GetVerticeIndexes() const {
 	return index_to_coord_map_;
 }

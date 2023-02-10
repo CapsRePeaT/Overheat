@@ -17,13 +17,10 @@ std::vector<vec3d> translate(std::vector<vec3d> verts, vec3d translation) {
 	return verts;
 }
 
-
-
-
 BoostPolygon make_multi_polygon(const std::vector<vec3d>& outer_ring,
                                 const std::vector<std::vector<vec3d>>& holes) {
 	BoostPolygon poly = make_polygon(outer_ring);
-	auto& inners = poly.inners();
+	auto& inners      = poly.inners();
 	for (auto& inner : holes) {
 		boost::geometry::model::ring<BoostPoint> inner_ring;
 		for (auto point : inner)
@@ -34,4 +31,11 @@ BoostPolygon make_multi_polygon(const std::vector<vec3d>& outer_ring,
 	return poly;
 }
 
+double round_float(float x)  {
+	int y              = x;
+	float z            = x - y;
+	float m            = 1000;
+	float q            = z * m;
+	return round(q) + y * m;
+}
 }  // namespace MeshProcessor

@@ -1,5 +1,4 @@
 #include "box_boundary_generator.h"
-
 #include "utils.h"
 
 namespace MeshProcessor {
@@ -25,8 +24,7 @@ BoxBoundaryRingsGenerator::BoxBoundaryRingsGenerator(vec3d min_point,
 
 	std::vector<vec3d> x_segments;
 	for (auto coord : divider(length)) {
-		auto x = round_t(coord);
-		x_segments.push_back(vec3d(x, 0, 0));
+		x_segments.push_back(vec3d(round_t(coord), 0, 0));
 	}
 	if (x_segments.back() != vec3d{length, 0, 0}){
 		x_segments.pop_back();

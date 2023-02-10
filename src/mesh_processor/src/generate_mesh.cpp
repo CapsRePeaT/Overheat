@@ -1,28 +1,128 @@
 #include "generate_mesh.h"
 
+#include <boost/range/algorithm.hpp>
 #include <cinolib/find_intersections.h>
-#include <cinolib/meshes/meshes.h>
 #include <cinolib/profiler.h>
 #include <cinolib/tetgen_wrap.h>
 
-#include <iostream>
+#include <execution>
 
-#include "box_mesh.h"
 #include "utils.h"
 
-using LayerMehses  = std::vector<MeshProcessor::BoxMesh>;
-using LayersMehses = std::vector<LayerMehses>;
-
-using TrimeshVec = std::vector<cinolib::DrawableTrimesh<>>;
-
 namespace {
-
 bool operator>(const cinolib::vec3d& lhs, const cinolib::vec3d& rhs) {
 	return std::tie(lhs.x(), lhs.y(), lhs.z()) >
 	       std::tie(rhs.x(), rhs.y(), rhs.z());
 }
+}  // namespace
 
-void calculate_holes_for_boxes(LayersMehses& layers) {
+namespace MeshProcessor {
+using namespace cinolib;
+
+CustomTetmesh MeshGenerator::get_tet_mesh() {
+	Profiler profiler;
+	profiler.push("mesh creation");
+
+	auto tet_meshes = generate_layers_meshes(representation_.layers());
+	auto heat_data  = representation_.shapes_metadata();
+	assert(heat_data.size() == tet_meshes.size() &&
+	       "Heat data and shapes mismatch");
+	CustomTetmesh total_tetmesh;
+	for (auto i = 0; i < tet_meshes.size(); ++i) {
+		const auto shape_heat_data = heat_data[i];
+		auto& tet_mesh             = tet_meshes[i];
+		auto mesh_volume           = tet_mesh.mesh_volume();
+		auto& polys                = tet_mesh.vector_polys();
+		for (auto pid = 0; pid < polys.size(); ++pid) {
+			auto& p_data                = tet_mesh.poly_data(pid);
+			p_data.thermal_conductivity = shape_heat_data.thermal_conductivity;
+			p_data.ambient_temperature  = shape_heat_data.ambient_temperature;
+			p_data.heat_flow            = shape_heat_data.heat_flow;
+			p_data.intensity_of_heat_source =
+					shape_heat_data.power * tet_mesh.poly_volume(pid) / mesh_volume;
+			p_data.convective_heat = shape_heat_data.convective_heat;
+		}
+		total_tetmesh += tet_mesh;
+	}
+	profiler.pop();
+	return total_tetmesh;
+}
+
+TetmeshVec MeshGenerator::generate_layers_meshes(const LayersShapes& layers) {
+	LayersMehses layers_meshes;
+	layers_meshes.reserve(layers.size());
+	for (auto& layer : layers) {
+		LayerMehses layer_meshes;
+		layer_meshes.reserve(layer.size());
+		for (auto& box : layer) {
+			const auto& coords = box.bbox().coordinates();
+			BoxMesh box_mesh(coords[0], coords[1], coords[2], box.layer_id(),
+			                 area_thresh_);
+			layer_meshes.push_back(box_mesh);
+		}
+		layers_meshes.push_back(layer_meshes);
+	}
+
+	auto meshes = generate_trimesh_from_layers(layers_meshes);
+	auto tets   = generate_tetmesh_from_trimeshes(meshes);
+	return tets;
+}
+
+TetmeshVec MeshGenerator::generate_tetmesh_from_trimeshes(TrimeshVec& meshes) {
+	TetmeshVec ret;
+	ret.reserve(meshes.size());
+
+	boost::transform(meshes, std::back_inserter(ret), [this](const auto& tri_mesh) {
+		return generate_tetmesh(tri_mesh);
+	});
+
+	return ret;
+}
+
+CustomTetmesh MeshGenerator::generate_tetmesh(const DrawableTrimesh<>& mesh) {
+	std::vector<uint> edges, tets;
+	std::vector<double> verts;
+	char opt[100];
+	sprintf(opt, "YQqa%f", volume_thresh_);
+	tetgen_wrap(serialized_xyz_from_vec3d(mesh.vector_verts()),
+	            serialized_vids_from_polys(mesh.vector_polys()), edges, opt,
+	            verts, tets);
+
+	return CustomTetmesh(verts, tets);
+}
+
+TrimeshVec MeshGenerator::generate_trimesh_from_layers(LayersMehses& layers) {
+	calculate_holes_for_boxes(layers);
+	calculate_mesh_and_translate_to_origin_pos(layers);
+
+	TrimeshVec ret;
+	for (auto& layer : layers) {
+		for (auto& mesh : layer) {
+			for (auto upper_box_id : mesh.boxes_upper) {
+				auto& upper_mesh = layers[mesh.layer + 1][upper_box_id];
+				mesh.xy_z += upper_mesh.xy;
+			}
+			for (auto lower_box_id : mesh.boxes_lower) {
+				auto& lower_mesh = layers[mesh.layer - 1][lower_box_id];
+				mesh.xy += lower_mesh.xy_z;
+			}
+			mesh.merge_meshes();
+			ret.push_back(mesh.total_mesh);
+		}
+	}
+	return ret;
+}
+
+void MeshGenerator::calculate_mesh_and_translate_to_origin_pos(
+		LayersMehses& layers) {
+	for (auto& layer : layers)
+		for (auto& mesh : layer) {
+			mesh.calculate_mesh();
+			mesh.translate_to_origin();
+		}
+}
+
+void MeshGenerator::calculate_holes_for_boxes(LayersMehses& layers) {
 	for (int upper_ind = 1; upper_ind < layers.size(); ++upper_ind) {
 		auto lower_ind = upper_ind - 1;
 
@@ -56,102 +156,5 @@ void calculate_holes_for_boxes(LayersMehses& layers) {
 			}
 		}
 	}
-}
-
-void calculate_mesh_and_translate_to_origin_pos(LayersMehses& layers) {
-	using namespace cinolib;
-	static int counter = 0;
-	for (auto& layer : layers) {
-		for (auto& mesh : layer) {
-			mesh.calculate_mesh();
-			mesh.translate_to_origin();
-			++counter;
-		}
-	}
-}
-
-TrimeshVec generate_trimesh_from_layers(LayersMehses& layers) {
-	cinolib::Profiler profiler;
-	profiler.push("Calculate holes and meshes");
-	calculate_holes_for_boxes(layers);
-	calculate_mesh_and_translate_to_origin_pos(layers);
-
-	// add meshes to upper holes
-	// add meshes to lower holes
-	TrimeshVec ret;
-	for (auto& layer : layers) {
-		for (auto& mesh : layer) {
-			for (auto upper_box_id : mesh.boxes_upper) {
-				auto& upper_mesh = layers[mesh.layer + 1][upper_box_id];
-				mesh.xy_z += upper_mesh.xy;
-			}
-			for (auto lower_box_id : mesh.boxes_lower) {
-				auto& lower_mesh = layers[mesh.layer - 1][lower_box_id];
-				mesh.xy += lower_mesh.xy_z;
-			}
-			mesh.merge_meshes();
-			ret.push_back(mesh.total_mesh);
-		}
-	}
-	profiler.pop();
-	return ret;
-}
-
-MeshProcessor::CustomTetmesh generate_tetmesh(
-		const cinolib::DrawableTrimesh<>& mesh) {
-	static int i = 0;
-	std::cout << "generate_tetmesh: " << i << std::endl;
-
-	std::vector<uint> edges, tets;
-	std::vector<double> verts;
-	double vol_thresh = 500000;
-	char opt[100];
-	sprintf(opt, "Yqa%f", vol_thresh);
-	auto serialized_verts =
-			cinolib::serialized_xyz_from_vec3d(mesh.vector_verts());
-	auto serialized_polys =
-			cinolib::serialized_vids_from_polys(mesh.vector_polys());
-	cinolib::tetgen_wrap(serialized_verts, serialized_polys, edges, opt, verts,
-	                     tets);
-	++i;
-	return MeshProcessor::CustomTetmesh(verts, tets);
-}
-
-MeshProcessor::TetmeshVec generate_tetmesh_from_trimeshes(TrimeshVec& meshes) {
-	MeshProcessor::TetmeshVec ret;
-	ret.reserve(meshes.size());
-	cinolib::Profiler profiler;
-	profiler.push("generate_tetmesh_from_trimeshes");
-	static int count = 0;
-	for (const auto& tri_mesh : meshes) {
-		ret.push_back(generate_tetmesh(tri_mesh));
-		std::cout << "tetgen count:" << count << std::endl;
-		++count;
-	}
-	profiler.pop();
-	return ret;
-}
-}  // namespace
-
-namespace MeshProcessor {
-TetmeshVec generate(const LayersShapes& layers) {
-	LayersMehses layers_meshes;
-	layers_meshes.reserve(layers.size());
-	for (auto& layer : layers) {
-		LayerMehses layer_meshes;
-		layer_meshes.reserve(layer.size());
-		for (auto& box : layer) {
-			const auto& coords = box.bbox().coordinates();
-			MeshProcessor::BoxMesh box_mesh(coords[0], coords[1], coords[2],
-			                                box.layer_id());
-			layer_meshes.push_back(box_mesh);
-		}
-		layers_meshes.push_back(layer_meshes);
-	}
-
-	auto meshes = generate_trimesh_from_layers(layers_meshes);
-	auto tets   = generate_tetmesh_from_trimeshes(meshes);
-
-	return tets;
 }
 }  // namespace MeshProcessor

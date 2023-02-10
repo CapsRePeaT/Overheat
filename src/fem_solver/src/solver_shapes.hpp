@@ -15,7 +15,7 @@ class SolverShape {
 
 // legend:
 // () - vertice
-// [4] - side 
+// [4] - face
 // 
 //               *(0)         
 //              /|\
@@ -31,10 +31,10 @@ class SolverShape {
 // (2)*---------------------* (1)
 //              [0]  
 // 
-// side 0 : verts 0,1,2
-// side 1 : verts 0,1,3
-// side 2 : verts 0,2,3
-// side 3 : verts 1,2,3
+// face 0 : verts 0,1,2
+// face 1 : verts 0,1,3
+// face 2 : verts 0,2,3
+// face 3 : verts 1,2,3
 //
 class SolverTetraeder : public SolverShape {
  public:
