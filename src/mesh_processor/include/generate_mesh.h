@@ -1,11 +1,14 @@
 #define pragma once
 
+#include "box_mesh.h"
+
+#include "../../core/include/databases.h"
+
 #include <cinolib/color.h>
 #include <cinolib/meshes/drawable_tetmesh.h>
 #include <cinolib/meshes/mesh_attributes.h>
 
-#include "../../core/include/databases.h"
-#include "box_mesh.h"
+
 
 using LayerMehses  = std::vector<MeshProcessor::BoxMesh>;
 using LayersMehses = std::vector<LayerMehses>;
@@ -42,7 +45,7 @@ class MeshGenerator {
 				volume_thresh_(volume_thresh),
 				area_thresh_(area_thresh) {}
 
-	CustomTetmesh get_tet_mesh();
+	CustomTetmesh get_tetmesh();
 
  private:
 	TetmeshVec generate_layers_meshes(const LayersShapes& layers);
@@ -56,4 +59,4 @@ class MeshGenerator {
 	double volume_thresh_;
 	double area_thresh_;
 };
-}  // namespace MeshProcessor
+}  // namespace MeshProce

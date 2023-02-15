@@ -1,4 +1,5 @@
 #include "box_boundary_generator.h"
+
 #include "utils.h"
 
 namespace MeshProcessor {
@@ -6,12 +7,12 @@ using namespace cinolib;
 BoxBoundaryRingsGenerator::BoxBoundaryRingsGenerator(vec3d min_point,
                                                      vec3d max_point,
                                                      size_t count) {
-	auto diff          = max_point - min_point;
-	auto length        = diff.x();
-	auto width         = diff.y();
-	auto height        = diff.z();
-	double min_segment = std::min({length, width, height});
-	auto step          = min_segment;
+	const auto diff          = max_point - min_point;
+	const auto length        = diff.x();
+	const auto width         = diff.y();
+	const auto height        = diff.z();
+	const double min_segment = std::min({length, width, height});
+	const auto step          = min_segment;
 
 	auto divider = [&](auto finish) -> std::vector<double> {
 		std::vector<double> ring(finish / step + 1);
@@ -22,71 +23,63 @@ BoxBoundaryRingsGenerator::BoxBoundaryRingsGenerator(vec3d min_point,
 		return ring;
 	};
 
-	std::vector<vec3d> x_segments;
-	for (auto coord : divider(length)) {
-		x_segments.push_back(vec3d(round_t(coord), 0, 0));
-	}
-	if (x_segments.back() != vec3d{length, 0, 0}){
-		x_segments.pop_back();
-		x_segments.push_back(vec3d(length, 0, 0));
-	}
+	auto generate_segments = [&](const auto final_point, const auto segment,
+	                             auto point_builder) {
+		std::vector<vec3d> segments;
+		for (auto coord : divider(segment))
+			segments.push_back(point_builder(coord));
+		if (segments.back() != final_point) {
+			segments.pop_back();
+			segments.push_back(final_point);
+		}
+		return segments;
+	};
 
+	auto x_segments = generate_segments(
+			vec3d{length, 0, 0}, length,
+			[](const auto coord) { return vec3d(round_t(coord), 0, 0); });
 
-	std::vector<vec3d> y_segments;
-	for (auto coord : divider(width))
-		y_segments.push_back(vec3d(0, round_t(coord), 0));
-	if (y_segments.back() != vec3d{0, width, 0}){
-		y_segments.pop_back();
-		y_segments.push_back(vec3d(0, width, 0));
-	}
+	auto y_segments = generate_segments(
+			vec3d{0, width, 0}, width,
+			[](const auto coord) { return vec3d(0, round_t(coord), 0); });
 
+	auto z_segments = generate_segments(
+			vec3d{0, 0, height}, height,
+			[](const auto coord) { return vec3d(0, 0, round_t(coord)); });
 
-	std::vector<vec3d> z_segments;
-	for (auto coord : divider(height))
-		z_segments.push_back(vec3d(0, 0, round_t(coord)));
-	if (z_segments.back() != vec3d{0, 0, height}){
-		z_segments.pop_back();
-		z_segments.push_back(vec3d(0, 0, height));
-	}
-
+	auto build_frame = [](const auto& segment1, const auto& segment2,
+	                      const auto segment1_offset,
+	                      const auto segment2_offset) {
+		std::vector<vec3d> target_ring;
+		target_ring.insert(target_ring.end(), segment1.begin(), segment1.end());
+		target_ring.pop_back();
+		auto right_bound = translate(segment2, segment2_offset);
+		target_ring.insert(target_ring.end(), right_bound.begin(),
+		                   right_bound.end());
+		target_ring.pop_back();
+		auto left_bound = translate(segment1, segment1_offset);
+		target_ring.insert(target_ring.end(), left_bound.rbegin(),
+		                   left_bound.rend());
+		target_ring.pop_back();
+		target_ring.insert(target_ring.end(), segment2.rbegin(), segment2.rend());
+		target_ring.pop_back();
+		return target_ring;
+	};
 
 	// build xy, xy_z
-	xy.insert(xy.end(), x_segments.begin(), x_segments.end());
-	xy.pop_back();
-	auto y_x = translate(y_segments, vec3d(length, 0, 0));
-	xy.insert(xy.end(), y_x.begin(), y_x.end());
-	xy.pop_back();
-	auto x_y = translate(x_segments, vec3d(0, width, 0));
-	xy.insert(xy.end(), x_y.rbegin(), x_y.rend());
-	xy.pop_back();
-	xy.insert(xy.end(), y_segments.rbegin(), y_segments.rend());
-	xy.pop_back();
-	xy_z = translate(xy, vec3d(0, 0, height));
+	xy_   = build_frame(x_segments, y_segments, vec3d(0, width, 0),
+	                   vec3d(length, 0, 0));
+	xy_z_ = translate(xy_, vec3d(0, 0, height));
 
 	// build xz, xz_y
-	xz.insert(xz.end(), x_segments.begin(), x_segments.end());
-	xz.pop_back();
-	auto z_x = translate(z_segments, vec3d(length, 0, 0));
-	xz.insert(xz.end(), z_x.begin(), z_x.end());
-	xz.pop_back();
-	auto x_z = translate(x_segments, vec3d(0, 0, height));
-	xz.insert(xz.end(), x_z.rbegin(), x_z.rend());
-	xz.pop_back();
-	xz.insert(xz.end(), z_segments.rbegin(), z_segments.rend());
-
-	xz_y = translate(xz, vec3d(0, width, 0));
+	xz_   = build_frame(x_segments, z_segments, vec3d(0, 0, height),
+	                 vec3d(length, 0, 0));
+	xz_y_ = translate(xz_, vec3d(0, width, 0));
 
 	// build yz, yz_x
-	yz.insert(yz.end(), y_segments.begin(), y_segments.end());
-	yz.pop_back();
-	auto z_y = translate(z_segments, vec3d(0, width, 0));
-	yz.insert(yz.end(), z_y.begin(), z_y.end());
-	yz.pop_back();
-	auto y_z = translate(y_segments, vec3d(0, 0, height));
-	yz.insert(yz.end(), y_z.rbegin(), y_z.rend());
-	yz.pop_back();
-	yz.insert(yz.end(), z_segments.rbegin(), z_segments.rend());
-	yz_x = translate(yz, vec3d(0, 0, height));
+	yz_   = build_frame(y_segments, z_segments, vec3d(0, 0, height),
+	                 vec3d(0, width, 0));
+	yz_x_ = translate(yz_, vec3d(0, 0, height));
 }
 
 }  // namespace MeshProcessor

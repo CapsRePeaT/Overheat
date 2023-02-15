@@ -20,7 +20,7 @@ std::vector<vec3d> rotate(std::vector<vec3d> verts, vec3d rot_vec,
 // translate cloud of points on @translation
 std::vector<vec3d> translate(std::vector<vec3d> verts, vec3d translation);
 
-double round_float(float x);
+double round_float(const float x, const float digits_num = 1000);
 
 template <class T>
 static T round_floor(T a) {

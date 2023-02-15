@@ -8,7 +8,7 @@
 
 FsDatapack GeometryCutter::PrepareGeometry(FileRepresentation& file_rep) {
 	auto generator     = MeshProcessor::MeshGenerator(file_rep, 500000, 500000);
-	auto total_tetmesh = generator.get_tet_mesh();
+	auto total_tetmesh = generator.get_tetmesh();
 
 	const auto upper_point_z = total_tetmesh.bbox().delta_z();
 
@@ -40,9 +40,6 @@ FsDatapack GeometryCutter::PrepareGeometry(FileRepresentation& file_rep) {
 			for (auto vert_ind : faces_verts_indexes) {
 				auto vert     = coord[vert_ind];
 				is_upper_face = is_upper_face && vert.z() == upper_point_z;
-				if (is_upper_face) {
-					int t = 2;
-				}
 			}
 			convective_presense_per_side[face_ind] = is_upper_face;
 		}

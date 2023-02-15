@@ -31,11 +31,10 @@ BoostPolygon make_multi_polygon(const std::vector<vec3d>& outer_ring,
 	return poly;
 }
 
-double round_float(float x)  {
-	int y              = x;
-	float z            = x - y;
-	float m            = 1000;
-	float q            = z * m;
-	return round(q) + y * m;
+double round_float(const float x, float digits_num) {
+	int y   = x;
+	float z = x - y;
+	float q = z * digits_num;
+	return round(q) + y * digits_num;
 }
 }  // namespace MeshProcessor

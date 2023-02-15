@@ -10,6 +10,8 @@
 constexpr size_t UndefinedSizeT = std::numeric_limits<size_t>::max();
 constexpr size_t UndefinedId = UndefinedSizeT;
 constexpr size_t DefaultMatrixSize = 0;
+constexpr double DefaultRoundBoundary = 100000.0;
+
 
 using ShapeId          = size_t;
 using LayerId          = size_t;

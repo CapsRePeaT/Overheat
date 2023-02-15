@@ -19,18 +19,18 @@ bool operator>(const cinolib::vec3d& lhs, const cinolib::vec3d& rhs) {
 namespace MeshProcessor {
 using namespace cinolib;
 
-CustomTetmesh MeshGenerator::get_tet_mesh() {
+CustomTetmesh MeshGenerator::get_tetmesh() {
 	Profiler profiler;
 	profiler.push("mesh creation");
 
 	auto tet_meshes = generate_layers_meshes(representation_.layers());
-	auto heat_data  = representation_.shapes_metadata();
+	const auto heat_data  = representation_.shapes_metadata();
 	assert(heat_data.size() == tet_meshes.size() &&
 	       "Heat data and shapes mismatch");
 	CustomTetmesh total_tetmesh;
 	for (auto i = 0; i < tet_meshes.size(); ++i) {
-		const auto shape_heat_data = heat_data[i];
-		auto& tet_mesh             = tet_meshes[i];
+		const auto shape_heat_data = heat_data.at(i);
+		auto& tet_mesh             = tet_meshes.at(i);
 		auto mesh_volume           = tet_mesh.mesh_volume();
 		auto& polys                = tet_mesh.vector_polys();
 		for (auto pid = 0; pid < polys.size(); ++pid) {
@@ -51,10 +51,10 @@ CustomTetmesh MeshGenerator::get_tet_mesh() {
 TetmeshVec MeshGenerator::generate_layers_meshes(const LayersShapes& layers) {
 	LayersMehses layers_meshes;
 	layers_meshes.reserve(layers.size());
-	for (auto& layer : layers) {
+	for (const auto& layer : layers) {
 		LayerMehses layer_meshes;
 		layer_meshes.reserve(layer.size());
-		for (auto& box : layer) {
+		for (const auto& box : layer) {
 			const auto& coords = box.bbox().coordinates();
 			BoxMesh box_mesh(coords[0], coords[1], coords[2], box.layer_id(),
 			                 area_thresh_);
@@ -124,7 +124,7 @@ void MeshGenerator::calculate_mesh_and_translate_to_origin_pos(
 
 void MeshGenerator::calculate_holes_for_boxes(LayersMehses& layers) {
 	for (int upper_ind = 1; upper_ind < layers.size(); ++upper_ind) {
-		auto lower_ind = upper_ind - 1;
+		const auto lower_ind = upper_ind - 1;
 
 		auto& lower_layers = layers[lower_ind];
 		auto& upper_layers = layers[upper_ind];
@@ -134,6 +134,7 @@ void MeshGenerator::calculate_holes_for_boxes(LayersMehses& layers) {
 				auto& box_lower = lower_layers[l_ind];
 				if (box_upper.min_point > box_lower.min_point &&
 				    box_lower.max_point > box_upper.max_point) {
+					// case when we should add hole to lower box
 					//     |****|
 					// |************|
 					box_lower.boxes_upper.push_back(u_ind);
@@ -144,6 +145,7 @@ void MeshGenerator::calculate_holes_for_boxes(LayersMehses& layers) {
 					box_lower.holes_upper.push_back(ring);
 				} else if (box_upper.min_point < box_lower.min_point &&
 				           box_lower.max_point < box_upper.max_point) {
+					// case when we should add hole to upper box
 					// |************|
 					//     |****|
 					box_upper.boxes_lower.push_back(l_ind);

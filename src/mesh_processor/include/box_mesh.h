@@ -9,8 +9,7 @@
 
 namespace MeshProcessor {
 using namespace cinolib;
-class BoxMesh {
- public:
+struct BoxMesh {
 	BoxMesh(const std::pair<float, float>& x1_x2_points,
 	        const std::pair<float, float>& y1_y2_points,
 	        const std::pair<float, float>& z1_z2_points, size_t i_layer,
