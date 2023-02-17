@@ -12,7 +12,9 @@
 		"spdlog",
 		"magic-enum",
 		"boost-json",
-		"cgal"
+		"boost-regex",
+		"boost-geometry",
+		"boost-ublas"
 	]
 }
 

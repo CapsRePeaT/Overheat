@@ -4,6 +4,14 @@
 #include <deque>
 #include <iostream>
 
+// span needed because of the issues with _ITERATOR_DEBUG_LEVEL
+// see https://github.com/boostorg/ublas/issues/77
+#include <span>
+#include "boost/numeric/ublas/matrix_expression.hpp"
+#include "boost/numeric/ublas/matrix.hpp"
+#include "boost/numeric/ublas/matrix_sparse.hpp"
+#include "boost/numeric/ublas/lu.hpp"
+
 #include "../../common/include/common.h"
 
 class SolverShape;
@@ -17,17 +25,30 @@ class FsDatapack {
   std::deque<SolverShape*> elements_;
 };
 
+struct Point3D
+{
+	// TODO: consider using double, cause cinolib uses doubles
+	std::array<double, 3> coords;
+};
+
 class VerticeIndexes {
  public:
-  // FIXME
-  using Point3D = double;
   using VerticeIndex = size_t;
-  VerticeIndex AddVertice(Point3D point);
-  Point3D GetCoords(VerticeIndex index);
+	VerticeIndex AddVertice(Point3D point) {
+		coords_.push_back(point);
+		return coords_.size() - 1;
+	}
+	Point3D GetCoords(VerticeIndex index) const {
+		return coords_[index];
+	}
   // needed for heatmap interpolation
   std::array<VerticeIndex, 4> GetConvexHull(Point3D point);
+  size_t MaxIndex() const {
+	return coords_.size() - 1;
+  }
  private:
-  std::vector<Point3D> coords_;
+  std::deque<Point3D> coords_;
+	// add search tree
 };
 
 class FsResultMatrix {
@@ -36,32 +57,35 @@ class FsResultMatrix {
 };
 using FsMatrixVec = std::vector<FsResultMatrix>;
 
-class Coeficients {
- public:
-	Coeficients() = default;
- private:
-	size_t max_index_ = 0;
-	// element index equal to position index
-	// std::matrix
-};
+using ValType = float;
+using Matrix = boost::numeric::ublas::matrix<ValType>;
+using SparceMatrix = boost::numeric::ublas::compressed_matrix<ValType>;
 
 class SolverHeatmap {
- public:
-  using Temperature = double;
-  SolverHeatmap() = default;
+public:
+	using Temperature = ValType;
+	using Temperatures = std::deque<Temperature>;
+
+	SolverHeatmap() = default;
+	SolverHeatmap(const SparceMatrix& matrix) {
+		FillData(matrix);
+	}
+	void FillData(const SparceMatrix& matrix) {
+		assert(temperatures_.empty() && "Heatmap not adapted for rewriting");
+		for (unsigned i = 0; i < matrix.size1(); ++i)
+			temperatures_.push_back(matrix(i, 0));
+	}
+	void Print() const;
+	const Temperatures& temperatures() const { 
+		return temperatures_;
+	}
+
  private:
-  size_t max_index_ = 0;
-  // element index equal to position index
-  std::deque<Temperature> temperatures_;
+	// element index equal to position index
+	Temperatures temperatures_;
+
 };
 
-class MatrixEquation {
- public:
-  using Result = std::deque<double>;
-  MatrixEquation() = default;
- private:
-  size_t max_index_ = 0;
-  Coeficients coeficients_;
-  SolverHeatmap unknown_;
-  Result result_;
-};
+
+
+
