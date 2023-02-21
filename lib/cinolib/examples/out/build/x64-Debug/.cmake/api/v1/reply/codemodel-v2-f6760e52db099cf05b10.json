@@ -1,0 +1,1821 @@
+{
+	"configurations" : 
+	[
+		{
+			"directories" : 
+			[
+				{
+					"build" : ".",
+					"childIndexes" : 
+					[
+						1,
+						4,
+						5,
+						6,
+						7,
+						8,
+						9,
+						10,
+						11,
+						12,
+						13,
+						14,
+						15,
+						16,
+						17,
+						18,
+						19,
+						20,
+						21,
+						22,
+						23,
+						24,
+						25,
+						26,
+						27,
+						28,
+						29,
+						30,
+						31,
+						32,
+						33,
+						34,
+						35,
+						36,
+						37,
+						38,
+						39,
+						40,
+						41,
+						42,
+						43,
+						44,
+						45,
+						46,
+						47,
+						48,
+						49,
+						50,
+						51,
+						52
+					],
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.2"
+					},
+					"projectIndex" : 0,
+					"source" : "."
+				},
+				{
+					"build" : "imgui",
+					"childIndexes" : 
+					[
+						2
+					],
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.2"
+					},
+					"parentIndex" : 0,
+					"projectIndex" : 0,
+					"source" : "C:/Users/asavinov/source/repos/cinolib/external/imgui",
+					"targetIndexes" : 
+					[
+						21
+					]
+				},
+				{
+					"build" : "imgui/glfw",
+					"childIndexes" : 
+					[
+						3
+					],
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.0"
+					},
+					"parentIndex" : 1,
+					"projectIndex" : 1,
+					"source" : "C:/Users/asavinov/source/repos/cinolib/external/imgui/glfw"
+				},
+				{
+					"build" : "imgui/glfw/src",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.0"
+					},
+					"parentIndex" : 2,
+					"projectIndex" : 1,
+					"source" : "C:/Users/asavinov/source/repos/cinolib/external/imgui/glfw/src",
+					"targetIndexes" : 
+					[
+						14
+					]
+				},
+				{
+					"build" : "STB",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.14"
+					},
+					"parentIndex" : 0,
+					"projectIndex" : 0,
+					"source" : "C:/Users/asavinov/source/repos/cinolib/external/stb",
+					"targetIndexes" : 
+					[
+						5
+					]
+				},
+				{
+					"build" : "_deps/tetgen-build",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.1"
+					},
+					"parentIndex" : 0,
+					"projectIndex" : 2,
+					"source" : "out/build/x64-Debug/_deps/tetgen-src",
+					"targetIndexes" : 
+					[
+						44
+					]
+				},
+				{
+					"build" : "_deps/triangle-build",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.1"
+					},
+					"parentIndex" : 0,
+					"projectIndex" : 3,
+					"source" : "out/build/x64-Debug/_deps/triangle-src",
+					"targetIndexes" : 
+					[
+						48
+					]
+				},
+				{
+					"build" : "shewchuk_predicates",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.14"
+					},
+					"parentIndex" : 0,
+					"projectIndex" : 0,
+					"source" : "C:/Users/asavinov/source/repos/cinolib/external/shewchuk_predicates",
+					"targetIndexes" : 
+					[
+						40
+					]
+				},
+				{
+					"build" : "_deps/indirect_predicates-build",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.10"
+					},
+					"parentIndex" : 0,
+					"projectIndex" : 4,
+					"source" : "out/build/x64-Debug/_deps/indirect_predicates-src",
+					"targetIndexes" : 
+					[
+						23,
+						24
+					]
+				},
+				{
+					"build" : "_deps/graph_cuts-build",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.14"
+					},
+					"parentIndex" : 0,
+					"projectIndex" : 0,
+					"source" : "out/build/x64-Debug/_deps/graph_cuts-src",
+					"targetIndexes" : 
+					[
+						15
+					]
+				},
+				{
+					"build" : "01_trimesh_viewer",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.2"
+					},
+					"parentIndex" : 0,
+					"projectIndex" : 5,
+					"source" : "01_trimesh_viewer",
+					"targetIndexes" : 
+					[
+						49
+					]
+				},
+				{
+					"build" : "02_quadmesh_viewer",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.2"
+					},
+					"parentIndex" : 0,
+					"projectIndex" : 6,
+					"source" : "02_quadmesh_viewer",
+					"targetIndexes" : 
+					[
+						37
+					]
+				},
+				{
+					"build" : "03_polygonmesh_viewer",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.2"
+					},
+					"parentIndex" : 0,
+					"projectIndex" : 7,
+					"source" : "03_polygonmesh_viewer",
+					"targetIndexes" : 
+					[
+						32
+					]
+				},
+				{
+					"build" : "04_tetmesh_viewer",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.2"
+					},
+					"parentIndex" : 0,
+					"projectIndex" : 8,
+					"source" : "04_tetmesh_viewer",
+					"targetIndexes" : 
+					[
+						45
+					]
+				},
+				{
+					"build" : "05_hexmesh_viewer",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.2"
+					},
+					"parentIndex" : 0,
+					"projectIndex" : 9,
+					"source" : "05_hexmesh_viewer",
+					"targetIndexes" : 
+					[
+						19
+					]
+				},
+				{
+					"build" : "06_polyhedralmesh_viewer",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.2"
+					},
+					"parentIndex" : 0,
+					"projectIndex" : 10,
+					"source" : "06_polyhedralmesh_viewer",
+					"targetIndexes" : 
+					[
+						36
+					]
+				},
+				{
+					"build" : "07_texture_loading",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.2"
+					},
+					"parentIndex" : 0,
+					"projectIndex" : 11,
+					"source" : "07_texture_loading",
+					"targetIndexes" : 
+					[
+						47
+					]
+				},
+				{
+					"build" : "08_picking",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.2"
+					},
+					"parentIndex" : 0,
+					"projectIndex" : 12,
+					"source" : "08_picking",
+					"targetIndexes" : 
+					[
+						30
+					]
+				},
+				{
+					"build" : "09_polyharmonic_functions_srf",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.2"
+					},
+					"parentIndex" : 0,
+					"projectIndex" : 13,
+					"source" : "09_polyharmonic_functions_srf",
+					"targetIndexes" : 
+					[
+						33
+					]
+				},
+				{
+					"build" : "10_polyharmonic_functions_vol",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.2"
+					},
+					"parentIndex" : 0,
+					"projectIndex" : 14,
+					"source" : "10_polyharmonic_functions_vol",
+					"targetIndexes" : 
+					[
+						34
+					]
+				},
+				{
+					"build" : "11_sphere_mapping",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.2"
+					},
+					"parentIndex" : 0,
+					"projectIndex" : 15,
+					"source" : "11_sphere_mapping",
+					"targetIndexes" : 
+					[
+						41
+					]
+				},
+				{
+					"build" : "12_polygon_mesh_generation",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.2"
+					},
+					"parentIndex" : 0,
+					"projectIndex" : 16,
+					"source" : "12_polygon_mesh_generation",
+					"targetIndexes" : 
+					[
+						31
+					]
+				},
+				{
+					"build" : "13_polyhedral_mesh_generation",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.2"
+					},
+					"parentIndex" : 0,
+					"projectIndex" : 17,
+					"source" : "13_polyhedral_mesh_generation",
+					"targetIndexes" : 
+					[
+						35
+					]
+				},
+				{
+					"build" : "14_heat_geodesics",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.2"
+					},
+					"parentIndex" : 0,
+					"projectIndex" : 18,
+					"source" : "14_heat_geodesics",
+					"targetIndexes" : 
+					[
+						17
+					]
+				},
+				{
+					"build" : "16_sphere_sampling",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.2"
+					},
+					"parentIndex" : 0,
+					"projectIndex" : 19,
+					"source" : "16_sphere_sampling",
+					"targetIndexes" : 
+					[
+						42
+					]
+				},
+				{
+					"build" : "17_iso_contours",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.2"
+					},
+					"parentIndex" : 0,
+					"projectIndex" : 20,
+					"source" : "17_iso_contours",
+					"targetIndexes" : 
+					[
+						25
+					]
+				},
+				{
+					"build" : "18_iso_surfaces",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.2"
+					},
+					"parentIndex" : 0,
+					"projectIndex" : 21,
+					"source" : "18_iso_surfaces",
+					"targetIndexes" : 
+					[
+						26
+					]
+				},
+				{
+					"build" : "19_harmonic_map",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.2"
+					},
+					"parentIndex" : 0,
+					"projectIndex" : 22,
+					"source" : "19_harmonic_map",
+					"targetIndexes" : 
+					[
+						16
+					]
+				},
+				{
+					"build" : "20_coarse_quad_layouts",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.2"
+					},
+					"parentIndex" : 0,
+					"projectIndex" : 23,
+					"source" : "20_coarse_quad_layouts",
+					"targetIndexes" : 
+					[
+						9
+					]
+				},
+				{
+					"build" : "21_coarse_hex_layouts",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.2"
+					},
+					"parentIndex" : 0,
+					"projectIndex" : 24,
+					"source" : "21_coarse_hex_layouts",
+					"targetIndexes" : 
+					[
+						8
+					]
+				},
+				{
+					"build" : "22_remesher",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.2"
+					},
+					"parentIndex" : 0,
+					"projectIndex" : 25,
+					"source" : "22_remesher",
+					"targetIndexes" : 
+					[
+						38
+					]
+				},
+				{
+					"build" : "23_sharp_creases",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.2"
+					},
+					"parentIndex" : 0,
+					"projectIndex" : 26,
+					"source" : "23_sharp_creases",
+					"targetIndexes" : 
+					[
+						39
+					]
+				},
+				{
+					"build" : "25_surface_painter",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.2"
+					},
+					"parentIndex" : 0,
+					"projectIndex" : 27,
+					"source" : "25_surface_painter",
+					"targetIndexes" : 
+					[
+						43
+					]
+				},
+				{
+					"build" : "26_export_surface",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.2"
+					},
+					"parentIndex" : 0,
+					"projectIndex" : 28,
+					"source" : "26_export_surface",
+					"targetIndexes" : 
+					[
+						12
+					]
+				},
+				{
+					"build" : "27_import_surface",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.2"
+					},
+					"parentIndex" : 0,
+					"projectIndex" : 29,
+					"source" : "27_import_surface",
+					"targetIndexes" : 
+					[
+						22
+					]
+				},
+				{
+					"build" : "28_tetrahedralize",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.2"
+					},
+					"parentIndex" : 0,
+					"projectIndex" : 30,
+					"source" : "28_tetrahedralize",
+					"targetIndexes" : 
+					[
+						46
+					]
+				},
+				{
+					"build" : "29_ambient_occlusion",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.2"
+					},
+					"parentIndex" : 0,
+					"projectIndex" : 31,
+					"source" : "29_ambient_occlusion",
+					"targetIndexes" : 
+					[
+						6
+					]
+				},
+				{
+					"build" : "30_mesh_format_converter",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.2"
+					},
+					"parentIndex" : 0,
+					"projectIndex" : 32,
+					"source" : "30_mesh_format_converter",
+					"targetIndexes" : 
+					[
+						27
+					]
+				},
+				{
+					"build" : "31_LSCM",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.2"
+					},
+					"parentIndex" : 0,
+					"projectIndex" : 33,
+					"source" : "31_LSCM",
+					"targetIndexes" : 
+					[
+						3
+					]
+				},
+				{
+					"build" : "32_homotopy_basis",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.2"
+					},
+					"parentIndex" : 0,
+					"projectIndex" : 34,
+					"source" : "32_homotopy_basis",
+					"targetIndexes" : 
+					[
+						20
+					]
+				},
+				{
+					"build" : "33_edge_collapse",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.2"
+					},
+					"parentIndex" : 0,
+					"projectIndex" : 35,
+					"source" : "33_edge_collapse",
+					"targetIndexes" : 
+					[
+						11
+					]
+				},
+				{
+					"build" : "34_Hermite_RBF",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.2"
+					},
+					"parentIndex" : 0,
+					"projectIndex" : 36,
+					"source" : "34_Hermite_RBF",
+					"targetIndexes" : 
+					[
+						2
+					]
+				},
+				{
+					"build" : "35_Poisson_sampling",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.2"
+					},
+					"parentIndex" : 0,
+					"projectIndex" : 37,
+					"source" : "35_Poisson_sampling",
+					"targetIndexes" : 
+					[
+						4
+					]
+				},
+				{
+					"build" : "36_canonical_polygonal_schema",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.2"
+					},
+					"parentIndex" : 0,
+					"projectIndex" : 38,
+					"source" : "36_canonical_polygonal_schema",
+					"targetIndexes" : 
+					[
+						7
+					]
+				},
+				{
+					"build" : "37_find_intersections",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.2"
+					},
+					"parentIndex" : 0,
+					"projectIndex" : 39,
+					"source" : "37_find_intersections",
+					"targetIndexes" : 
+					[
+						13
+					]
+				},
+				{
+					"build" : "38_octree",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.2"
+					},
+					"parentIndex" : 0,
+					"projectIndex" : 40,
+					"source" : "38_octree",
+					"targetIndexes" : 
+					[
+						29
+					]
+				},
+				{
+					"build" : "39_normalize_and_center",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.2"
+					},
+					"parentIndex" : 0,
+					"projectIndex" : 41,
+					"source" : "39_normalize_and_center",
+					"targetIndexes" : 
+					[
+						28
+					]
+				},
+				{
+					"build" : "40_ARAP_UVmap",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.2"
+					},
+					"parentIndex" : 0,
+					"projectIndex" : 42,
+					"source" : "40_ARAP_UVmap",
+					"targetIndexes" : 
+					[
+						0
+					]
+				},
+				{
+					"build" : "41_ARAP_deformation",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.2"
+					},
+					"parentIndex" : 0,
+					"projectIndex" : 43,
+					"source" : "41_ARAP_deformation",
+					"targetIndexes" : 
+					[
+						1
+					]
+				},
+				{
+					"build" : "42_connected_components",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.2"
+					},
+					"parentIndex" : 0,
+					"projectIndex" : 44,
+					"source" : "42_connected_components",
+					"targetIndexes" : 
+					[
+						10
+					]
+				},
+				{
+					"build" : "43_hex2tet",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.2"
+					},
+					"parentIndex" : 0,
+					"projectIndex" : 45,
+					"source" : "43_hex2tet",
+					"targetIndexes" : 
+					[
+						18
+					]
+				},
+				{
+					"build" : "44_voxelize_mesh",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.2"
+					},
+					"parentIndex" : 0,
+					"projectIndex" : 46,
+					"source" : "44_voxelize_mesh",
+					"targetIndexes" : 
+					[
+						51
+					]
+				},
+				{
+					"build" : "45_voxelize_function",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.2"
+					},
+					"parentIndex" : 0,
+					"projectIndex" : 47,
+					"source" : "45_voxelize_function",
+					"targetIndexes" : 
+					[
+						50
+					]
+				}
+			],
+			"name" : "Debug",
+			"projects" : 
+			[
+				{
+					"childIndexes" : 
+					[
+						1,
+						2,
+						3,
+						4,
+						5,
+						6,
+						7,
+						8,
+						9,
+						10,
+						11,
+						12,
+						13,
+						14,
+						15,
+						16,
+						17,
+						18,
+						19,
+						20,
+						21,
+						22,
+						23,
+						24,
+						25,
+						26,
+						27,
+						28,
+						29,
+						30,
+						31,
+						32,
+						33,
+						34,
+						35,
+						36,
+						37,
+						38,
+						39,
+						40,
+						41,
+						42,
+						43,
+						44,
+						45,
+						46,
+						47
+					],
+					"directoryIndexes" : 
+					[
+						0,
+						1,
+						4,
+						7,
+						9
+					],
+					"name" : "examples",
+					"targetIndexes" : 
+					[
+						5,
+						15,
+						21,
+						40
+					]
+				},
+				{
+					"directoryIndexes" : 
+					[
+						2,
+						3
+					],
+					"name" : "GLFW",
+					"parentIndex" : 0,
+					"targetIndexes" : 
+					[
+						14
+					]
+				},
+				{
+					"directoryIndexes" : 
+					[
+						5
+					],
+					"name" : "tetgen",
+					"parentIndex" : 0,
+					"targetIndexes" : 
+					[
+						44
+					]
+				},
+				{
+					"directoryIndexes" : 
+					[
+						6
+					],
+					"name" : "triangle",
+					"parentIndex" : 0,
+					"targetIndexes" : 
+					[
+						48
+					]
+				},
+				{
+					"directoryIndexes" : 
+					[
+						8
+					],
+					"name" : "indirectPredicates",
+					"parentIndex" : 0,
+					"targetIndexes" : 
+					[
+						23,
+						24
+					]
+				},
+				{
+					"directoryIndexes" : 
+					[
+						10
+					],
+					"name" : "trimesh_viewer",
+					"parentIndex" : 0,
+					"targetIndexes" : 
+					[
+						49
+					]
+				},
+				{
+					"directoryIndexes" : 
+					[
+						11
+					],
+					"name" : "quadmesh_viewer",
+					"parentIndex" : 0,
+					"targetIndexes" : 
+					[
+						37
+					]
+				},
+				{
+					"directoryIndexes" : 
+					[
+						12
+					],
+					"name" : "polygonmesh_viewer",
+					"parentIndex" : 0,
+					"targetIndexes" : 
+					[
+						32
+					]
+				},
+				{
+					"directoryIndexes" : 
+					[
+						13
+					],
+					"name" : "tetmesh_viewer",
+					"parentIndex" : 0,
+					"targetIndexes" : 
+					[
+						45
+					]
+				},
+				{
+					"directoryIndexes" : 
+					[
+						14
+					],
+					"name" : "hexmesh_viewer",
+					"parentIndex" : 0,
+					"targetIndexes" : 
+					[
+						19
+					]
+				},
+				{
+					"directoryIndexes" : 
+					[
+						15
+					],
+					"name" : "polyhedralmesh_viewer",
+					"parentIndex" : 0,
+					"targetIndexes" : 
+					[
+						36
+					]
+				},
+				{
+					"directoryIndexes" : 
+					[
+						16
+					],
+					"name" : "texture_loading",
+					"parentIndex" : 0,
+					"targetIndexes" : 
+					[
+						47
+					]
+				},
+				{
+					"directoryIndexes" : 
+					[
+						17
+					],
+					"name" : "picking",
+					"parentIndex" : 0,
+					"targetIndexes" : 
+					[
+						30
+					]
+				},
+				{
+					"directoryIndexes" : 
+					[
+						18
+					],
+					"name" : "polyharmonic_functions_srf",
+					"parentIndex" : 0,
+					"targetIndexes" : 
+					[
+						33
+					]
+				},
+				{
+					"directoryIndexes" : 
+					[
+						19
+					],
+					"name" : "polyharmonic_functions_vol",
+					"parentIndex" : 0,
+					"targetIndexes" : 
+					[
+						34
+					]
+				},
+				{
+					"directoryIndexes" : 
+					[
+						20
+					],
+					"name" : "sphere_mapping",
+					"parentIndex" : 0,
+					"targetIndexes" : 
+					[
+						41
+					]
+				},
+				{
+					"directoryIndexes" : 
+					[
+						21
+					],
+					"name" : "polygon_mesh_generation",
+					"parentIndex" : 0,
+					"targetIndexes" : 
+					[
+						31
+					]
+				},
+				{
+					"directoryIndexes" : 
+					[
+						22
+					],
+					"name" : "polyhedral_mesh_generation",
+					"parentIndex" : 0,
+					"targetIndexes" : 
+					[
+						35
+					]
+				},
+				{
+					"directoryIndexes" : 
+					[
+						23
+					],
+					"name" : "heat_geodesics",
+					"parentIndex" : 0,
+					"targetIndexes" : 
+					[
+						17
+					]
+				},
+				{
+					"directoryIndexes" : 
+					[
+						24
+					],
+					"name" : "sphere_sampling",
+					"parentIndex" : 0,
+					"targetIndexes" : 
+					[
+						42
+					]
+				},
+				{
+					"directoryIndexes" : 
+					[
+						25
+					],
+					"name" : "iso_contours",
+					"parentIndex" : 0,
+					"targetIndexes" : 
+					[
+						25
+					]
+				},
+				{
+					"directoryIndexes" : 
+					[
+						26
+					],
+					"name" : "iso_surfaces",
+					"parentIndex" : 0,
+					"targetIndexes" : 
+					[
+						26
+					]
+				},
+				{
+					"directoryIndexes" : 
+					[
+						27
+					],
+					"name" : "harmonic_map",
+					"parentIndex" : 0,
+					"targetIndexes" : 
+					[
+						16
+					]
+				},
+				{
+					"directoryIndexes" : 
+					[
+						28
+					],
+					"name" : "coarse_quad_layout",
+					"parentIndex" : 0,
+					"targetIndexes" : 
+					[
+						9
+					]
+				},
+				{
+					"directoryIndexes" : 
+					[
+						29
+					],
+					"name" : "coarse_hex_layout",
+					"parentIndex" : 0,
+					"targetIndexes" : 
+					[
+						8
+					]
+				},
+				{
+					"directoryIndexes" : 
+					[
+						30
+					],
+					"name" : "remesher",
+					"parentIndex" : 0,
+					"targetIndexes" : 
+					[
+						38
+					]
+				},
+				{
+					"directoryIndexes" : 
+					[
+						31
+					],
+					"name" : "sharp_creases",
+					"parentIndex" : 0,
+					"targetIndexes" : 
+					[
+						39
+					]
+				},
+				{
+					"directoryIndexes" : 
+					[
+						32
+					],
+					"name" : "surface_painter",
+					"parentIndex" : 0,
+					"targetIndexes" : 
+					[
+						43
+					]
+				},
+				{
+					"directoryIndexes" : 
+					[
+						33
+					],
+					"name" : "export_surface",
+					"parentIndex" : 0,
+					"targetIndexes" : 
+					[
+						12
+					]
+				},
+				{
+					"directoryIndexes" : 
+					[
+						34
+					],
+					"name" : "import_surface",
+					"parentIndex" : 0,
+					"targetIndexes" : 
+					[
+						22
+					]
+				},
+				{
+					"directoryIndexes" : 
+					[
+						35
+					],
+					"name" : "tetrahedralize",
+					"parentIndex" : 0,
+					"targetIndexes" : 
+					[
+						46
+					]
+				},
+				{
+					"directoryIndexes" : 
+					[
+						36
+					],
+					"name" : "ambient_occlusion",
+					"parentIndex" : 0,
+					"targetIndexes" : 
+					[
+						6
+					]
+				},
+				{
+					"directoryIndexes" : 
+					[
+						37
+					],
+					"name" : "mesh_format_converter",
+					"parentIndex" : 0,
+					"targetIndexes" : 
+					[
+						27
+					]
+				},
+				{
+					"directoryIndexes" : 
+					[
+						38
+					],
+					"name" : "LSCM",
+					"parentIndex" : 0,
+					"targetIndexes" : 
+					[
+						3
+					]
+				},
+				{
+					"directoryIndexes" : 
+					[
+						39
+					],
+					"name" : "homotopy_basis",
+					"parentIndex" : 0,
+					"targetIndexes" : 
+					[
+						20
+					]
+				},
+				{
+					"directoryIndexes" : 
+					[
+						40
+					],
+					"name" : "edge_collapse",
+					"parentIndex" : 0,
+					"targetIndexes" : 
+					[
+						11
+					]
+				},
+				{
+					"directoryIndexes" : 
+					[
+						41
+					],
+					"name" : "HermiteRBF",
+					"parentIndex" : 0,
+					"targetIndexes" : 
+					[
+						2
+					]
+				},
+				{
+					"directoryIndexes" : 
+					[
+						42
+					],
+					"name" : "Poisson_sampling",
+					"parentIndex" : 0,
+					"targetIndexes" : 
+					[
+						4
+					]
+				},
+				{
+					"directoryIndexes" : 
+					[
+						43
+					],
+					"name" : "canonical_polygonal_schema",
+					"parentIndex" : 0,
+					"targetIndexes" : 
+					[
+						7
+					]
+				},
+				{
+					"directoryIndexes" : 
+					[
+						44
+					],
+					"name" : "find_intersections",
+					"parentIndex" : 0,
+					"targetIndexes" : 
+					[
+						13
+					]
+				},
+				{
+					"directoryIndexes" : 
+					[
+						45
+					],
+					"name" : "octree",
+					"parentIndex" : 0,
+					"targetIndexes" : 
+					[
+						29
+					]
+				},
+				{
+					"directoryIndexes" : 
+					[
+						46
+					],
+					"name" : "normalize_and_center",
+					"parentIndex" : 0,
+					"targetIndexes" : 
+					[
+						28
+					]
+				},
+				{
+					"directoryIndexes" : 
+					[
+						47
+					],
+					"name" : "ARAP_UVmap",
+					"parentIndex" : 0,
+					"targetIndexes" : 
+					[
+						0
+					]
+				},
+				{
+					"directoryIndexes" : 
+					[
+						48
+					],
+					"name" : "ARAP_deformation",
+					"parentIndex" : 0,
+					"targetIndexes" : 
+					[
+						1
+					]
+				},
+				{
+					"directoryIndexes" : 
+					[
+						49
+					],
+					"name" : "connected_components",
+					"parentIndex" : 0,
+					"targetIndexes" : 
+					[
+						10
+					]
+				},
+				{
+					"directoryIndexes" : 
+					[
+						50
+					],
+					"name" : "hex2tet",
+					"parentIndex" : 0,
+					"targetIndexes" : 
+					[
+						18
+					]
+				},
+				{
+					"directoryIndexes" : 
+					[
+						51
+					],
+					"name" : "voxelize_mesh",
+					"parentIndex" : 0,
+					"targetIndexes" : 
+					[
+						51
+					]
+				},
+				{
+					"directoryIndexes" : 
+					[
+						52
+					],
+					"name" : "voxelize_function",
+					"parentIndex" : 0,
+					"targetIndexes" : 
+					[
+						50
+					]
+				}
+			],
+			"targets" : 
+			[
+				{
+					"directoryIndex" : 47,
+					"id" : "ARAP_UVmap::@2436eb59a00bbd9cf926",
+					"jsonFile" : "target-ARAP_UVmap-Debug-50992a53f27adbfc029f.json",
+					"name" : "ARAP_UVmap",
+					"projectIndex" : 42
+				},
+				{
+					"directoryIndex" : 48,
+					"id" : "ARAP_deformation::@ca5520ed241926dd427c",
+					"jsonFile" : "target-ARAP_deformation-Debug-7ac53b5d583d8fdaee29.json",
+					"name" : "ARAP_deformation",
+					"projectIndex" : 43
+				},
+				{
+					"directoryIndex" : 41,
+					"id" : "HermiteRBF::@fb1d2a9096f5a3904175",
+					"jsonFile" : "target-HermiteRBF-Debug-7dbda38037f61a386219.json",
+					"name" : "HermiteRBF",
+					"projectIndex" : 36
+				},
+				{
+					"directoryIndex" : 38,
+					"id" : "LSCM::@74fa23442e478fad8abf",
+					"jsonFile" : "target-LSCM-Debug-ba99e0157ba2cfb1b7fc.json",
+					"name" : "LSCM",
+					"projectIndex" : 33
+				},
+				{
+					"directoryIndex" : 42,
+					"id" : "Poisson_sampling::@680d63e93557cf5f47b8",
+					"jsonFile" : "target-Poisson_sampling-Debug-3d40a9d7ce73cb9c016c.json",
+					"name" : "Poisson_sampling",
+					"projectIndex" : 37
+				},
+				{
+					"directoryIndex" : 4,
+					"id" : "STB::@24b413b659c283706c38",
+					"jsonFile" : "target-STB-Debug-f5f97439b0001d779396.json",
+					"name" : "STB",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 36,
+					"id" : "ambient_occlusion::@942cee31e98d3fc17b49",
+					"jsonFile" : "target-ambient_occlusion-Debug-1dde9e92b872ba8ebaa5.json",
+					"name" : "ambient_occlusion",
+					"projectIndex" : 31
+				},
+				{
+					"directoryIndex" : 43,
+					"id" : "canonical_polygonal_schema::@2b8962246d32ce88366e",
+					"jsonFile" : "target-canonical_polygonal_schema-Debug-7652b1844f904c682058.json",
+					"name" : "canonical_polygonal_schema",
+					"projectIndex" : 38
+				},
+				{
+					"directoryIndex" : 29,
+					"id" : "coarse_hex_layout::@7821d20b68008eee15fb",
+					"jsonFile" : "target-coarse_hex_layout-Debug-f2086cdc07715a85a7e1.json",
+					"name" : "coarse_hex_layout",
+					"projectIndex" : 24
+				},
+				{
+					"directoryIndex" : 28,
+					"id" : "coarse_quad_layout::@793328b7393756d4c589",
+					"jsonFile" : "target-coarse_quad_layout-Debug-14d7acbf568ec726749d.json",
+					"name" : "coarse_quad_layout",
+					"projectIndex" : 23
+				},
+				{
+					"directoryIndex" : 49,
+					"id" : "connected_components::@b036f40ccbc901c3ba00",
+					"jsonFile" : "target-connected_components-Debug-60c7b07807d408a750a9.json",
+					"name" : "connected_components",
+					"projectIndex" : 44
+				},
+				{
+					"directoryIndex" : 40,
+					"id" : "edge_collapse::@bb0beae2ba8caa75cf3e",
+					"jsonFile" : "target-edge_collapse-Debug-5f6053021320601ef1d1.json",
+					"name" : "edge_collapse",
+					"projectIndex" : 35
+				},
+				{
+					"directoryIndex" : 33,
+					"id" : "export_surface::@e4b83819ba727be39b7f",
+					"jsonFile" : "target-export_surface-Debug-c600f0b08c5d8a366e3e.json",
+					"name" : "export_surface",
+					"projectIndex" : 28
+				},
+				{
+					"directoryIndex" : 44,
+					"id" : "find_intersections::@9ef866e7d260a1e7b16a",
+					"jsonFile" : "target-find_intersections-Debug-051c7a6d7212152c33aa.json",
+					"name" : "find_intersections",
+					"projectIndex" : 39
+				},
+				{
+					"directoryIndex" : 3,
+					"id" : "glfw::@2fb04e988a43665c8296",
+					"jsonFile" : "target-glfw-Debug-0cc45208febed360b922.json",
+					"name" : "glfw",
+					"projectIndex" : 1
+				},
+				{
+					"directoryIndex" : 9,
+					"id" : "graph_cuts::@d1148efea8a3f8b4cf10",
+					"jsonFile" : "target-graph_cuts-Debug-f65c3cdaa749de432017.json",
+					"name" : "graph_cuts",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 27,
+					"id" : "harmonic_map::@c34ff2f52ab0142564c1",
+					"jsonFile" : "target-harmonic_map-Debug-d4633cde64eea9f0a8a9.json",
+					"name" : "harmonic_map",
+					"projectIndex" : 22
+				},
+				{
+					"directoryIndex" : 23,
+					"id" : "heat_geodesics::@61aa9d071e7de4d1e698",
+					"jsonFile" : "target-heat_geodesics-Debug-b68b39c8b560b7bb75f7.json",
+					"name" : "heat_geodesics",
+					"projectIndex" : 18
+				},
+				{
+					"directoryIndex" : 50,
+					"id" : "hex2tet::@5ae87a5f36c4607d796e",
+					"jsonFile" : "target-hex2tet-Debug-69f43c59af685a704eed.json",
+					"name" : "hex2tet",
+					"projectIndex" : 45
+				},
+				{
+					"directoryIndex" : 14,
+					"id" : "hexmesh_viewer::@c8293019b6552163fdd9",
+					"jsonFile" : "target-hexmesh_viewer-Debug-d8ece7ed882e984442a7.json",
+					"name" : "hexmesh_viewer",
+					"projectIndex" : 9
+				},
+				{
+					"directoryIndex" : 39,
+					"id" : "homotopy_basis::@bd3ac23184d9ab6dd879",
+					"jsonFile" : "target-homotopy_basis-Debug-50ace0ed30fbb094b193.json",
+					"name" : "homotopy_basis",
+					"projectIndex" : 34
+				},
+				{
+					"directoryIndex" : 1,
+					"id" : "imgui::@45ca6dacf63e9879b888",
+					"jsonFile" : "target-imgui-Debug-d69973519ade66e75190.json",
+					"name" : "imgui",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 34,
+					"id" : "import_surface::@d13c0d76b78d2899bbb9",
+					"jsonFile" : "target-import_surface-Debug-0837e316dde3525af8a8.json",
+					"name" : "import_surface",
+					"projectIndex" : 29
+				},
+				{
+					"directoryIndex" : 8,
+					"id" : "indirectPredicates::@0c2072562c8111427af4",
+					"jsonFile" : "target-indirectPredicates-Debug-cf49c52eee3b824e4092.json",
+					"name" : "indirectPredicates",
+					"projectIndex" : 4
+				},
+				{
+					"directoryIndex" : 8,
+					"id" : "indirectPredicates_test::@0c2072562c8111427af4",
+					"jsonFile" : "target-indirectPredicates_test-Debug-ee3bad53718211986e28.json",
+					"name" : "indirectPredicates_test",
+					"projectIndex" : 4
+				},
+				{
+					"directoryIndex" : 25,
+					"id" : "iso_contours::@d03a4b94ac46a55fde00",
+					"jsonFile" : "target-iso_contours-Debug-9d2f1699c867abef6073.json",
+					"name" : "iso_contours",
+					"projectIndex" : 20
+				},
+				{
+					"directoryIndex" : 26,
+					"id" : "iso_surfaces::@a2caec56692d29742afb",
+					"jsonFile" : "target-iso_surfaces-Debug-de29d7c1ae1b6137abca.json",
+					"name" : "iso_surfaces",
+					"projectIndex" : 21
+				},
+				{
+					"directoryIndex" : 37,
+					"id" : "mesh_format_converter::@7de3047602c4dc54cb55",
+					"jsonFile" : "target-mesh_format_converter-Debug-b0dfe3299627eda9ebc2.json",
+					"name" : "mesh_format_converter",
+					"projectIndex" : 32
+				},
+				{
+					"directoryIndex" : 46,
+					"id" : "normalize_and_center::@35421865e525ee359a01",
+					"jsonFile" : "target-normalize_and_center-Debug-c69f7c97fdc1a025b4a4.json",
+					"name" : "normalize_and_center",
+					"projectIndex" : 41
+				},
+				{
+					"directoryIndex" : 45,
+					"id" : "octree::@a81b118e36f50ff3f056",
+					"jsonFile" : "target-octree-Debug-076b43e58530a5c06b06.json",
+					"name" : "octree",
+					"projectIndex" : 40
+				},
+				{
+					"directoryIndex" : 17,
+					"id" : "picking::@cf5d191fcd5db94dd817",
+					"jsonFile" : "target-picking-Debug-eb8458305c69a2424394.json",
+					"name" : "picking",
+					"projectIndex" : 12
+				},
+				{
+					"directoryIndex" : 21,
+					"id" : "polygon_mesh_generation::@4023fa6360a499a619e3",
+					"jsonFile" : "target-polygon_mesh_generation-Debug-be8cb599e706bf493537.json",
+					"name" : "polygon_mesh_generation",
+					"projectIndex" : 16
+				},
+				{
+					"directoryIndex" : 12,
+					"id" : "polygonmesh_viewer::@86fa3de9970276a45c2b",
+					"jsonFile" : "target-polygonmesh_viewer-Debug-fe080d7d7acc5657d5aa.json",
+					"name" : "polygonmesh_viewer",
+					"projectIndex" : 7
+				},
+				{
+					"directoryIndex" : 18,
+					"id" : "polyharmonic_functions_srf::@7e8a959e3a5692469070",
+					"jsonFile" : "target-polyharmonic_functions_srf-Debug-38def57b3e88e872d483.json",
+					"name" : "polyharmonic_functions_srf",
+					"projectIndex" : 13
+				},
+				{
+					"directoryIndex" : 19,
+					"id" : "polyharmonic_functions_vol::@0bb7f5a9434b2d6e863b",
+					"jsonFile" : "target-polyharmonic_functions_vol-Debug-2723ec35ea886f9310d6.json",
+					"name" : "polyharmonic_functions_vol",
+					"projectIndex" : 14
+				},
+				{
+					"directoryIndex" : 22,
+					"id" : "polyhedral_mesh_generation::@15b61535f881c6c3987f",
+					"jsonFile" : "target-polyhedral_mesh_generation-Debug-85fcb1e43c22dfcdbec6.json",
+					"name" : "polyhedral_mesh_generation",
+					"projectIndex" : 17
+				},
+				{
+					"directoryIndex" : 15,
+					"id" : "polyhedralmesh_viewer::@7d4a3a0fb15ca2b3d55b",
+					"jsonFile" : "target-polyhedralmesh_viewer-Debug-4bc54fb47122d6b5826e.json",
+					"name" : "polyhedralmesh_viewer",
+					"projectIndex" : 10
+				},
+				{
+					"directoryIndex" : 11,
+					"id" : "quadmesh_viewer::@3458f10d64d3a35cb764",
+					"jsonFile" : "target-quadmesh_viewer-Debug-b63f1584abcbd34c1981.json",
+					"name" : "quadmesh_viewer",
+					"projectIndex" : 6
+				},
+				{
+					"directoryIndex" : 30,
+					"id" : "remesher::@a0e28a658377cac817e8",
+					"jsonFile" : "target-remesher-Debug-1449394f92e79905adb0.json",
+					"name" : "remesher",
+					"projectIndex" : 25
+				},
+				{
+					"directoryIndex" : 31,
+					"id" : "sharp_creases::@04dd39d78d93ff0c2efb",
+					"jsonFile" : "target-sharp_creases-Debug-55c92938ef616e9b5a79.json",
+					"name" : "sharp_creases",
+					"projectIndex" : 26
+				},
+				{
+					"directoryIndex" : 7,
+					"id" : "shewchuk_predicates::@d0b0aee035d36b842636",
+					"jsonFile" : "target-shewchuk_predicates-Debug-94fd69c40b652d9ad97e.json",
+					"name" : "shewchuk_predicates",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 20,
+					"id" : "sphere_mapping::@ff28c28ee1316cd57ca7",
+					"jsonFile" : "target-sphere_mapping-Debug-caa218fc714ad0d12fca.json",
+					"name" : "sphere_mapping",
+					"projectIndex" : 15
+				},
+				{
+					"directoryIndex" : 24,
+					"id" : "sphere_sampling::@a291233a27d3c8dfd6c3",
+					"jsonFile" : "target-sphere_sampling-Debug-5331160ce735da0b2400.json",
+					"name" : "sphere_sampling",
+					"projectIndex" : 19
+				},
+				{
+					"directoryIndex" : 32,
+					"id" : "surface_painter::@082df5f65b39bee9ca63",
+					"jsonFile" : "target-surface_painter-Debug-fdd11053e4067f709439.json",
+					"name" : "surface_painter",
+					"projectIndex" : 27
+				},
+				{
+					"directoryIndex" : 5,
+					"id" : "tetgen::@22a298146e8ade7c8ff8",
+					"jsonFile" : "target-tetgen-Debug-ec77e0d0ef1fb22f61d2.json",
+					"name" : "tetgen",
+					"projectIndex" : 2
+				},
+				{
+					"directoryIndex" : 13,
+					"id" : "tetmesh_viewer::@6ceb8ad1826c9866283e",
+					"jsonFile" : "target-tetmesh_viewer-Debug-f1d77e0abfd4073ad879.json",
+					"name" : "tetmesh_viewer",
+					"projectIndex" : 8
+				},
+				{
+					"directoryIndex" : 35,
+					"id" : "tetrahedralize::@519ea4250a41372eeabd",
+					"jsonFile" : "target-tetrahedralize-Debug-0f9d86753356fa45c558.json",
+					"name" : "tetrahedralize",
+					"projectIndex" : 30
+				},
+				{
+					"directoryIndex" : 16,
+					"id" : "texture_loading::@f52f1e8610c5989e3dee",
+					"jsonFile" : "target-texture_loading-Debug-1da8e4cc340dbbc206ae.json",
+					"name" : "texture_loading",
+					"projectIndex" : 11
+				},
+				{
+					"directoryIndex" : 6,
+					"id" : "triangle::@afb7f2633d2441d2a5b6",
+					"jsonFile" : "target-triangle-Debug-6d04a60341d49cf50df6.json",
+					"name" : "triangle",
+					"projectIndex" : 3
+				},
+				{
+					"directoryIndex" : 10,
+					"id" : "trimesh_viewer::@ccb982b09ab7bcb2a027",
+					"jsonFile" : "target-trimesh_viewer-Debug-38a3d1703140917e0066.json",
+					"name" : "trimesh_viewer",
+					"projectIndex" : 5
+				},
+				{
+					"directoryIndex" : 52,
+					"id" : "voxelize_function::@ebef8ce6165cae4a8577",
+					"jsonFile" : "target-voxelize_function-Debug-489709d12a312761e513.json",
+					"name" : "voxelize_function",
+					"projectIndex" : 47
+				},
+				{
+					"directoryIndex" : 51,
+					"id" : "voxelize_mesh::@40342e0b03d7b578e4d8",
+					"jsonFile" : "target-voxelize_mesh-Debug-7775020147087ad18e38.json",
+					"name" : "voxelize_mesh",
+					"projectIndex" : 46
+				}
+			]
+		}
+	],
+	"kind" : "codemodel",
+	"paths" : 
+	{
+		"build" : "C:/Users/asavinov/source/repos/cinolib/examples/out/build/x64-Debug",
+		"source" : "C:/Users/asavinov/source/repos/cinolib/examples"
+	},
+	"version" : 
+	{
+		"major" : 2,
+		"minor" : 2
+	}
+}

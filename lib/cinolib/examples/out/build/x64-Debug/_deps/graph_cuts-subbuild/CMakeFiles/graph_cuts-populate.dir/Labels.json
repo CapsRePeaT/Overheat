@@ -1,0 +1,46 @@
+{
+	"sources" : 
+	[
+		{
+			"file" : "C:/Users/asavinov/source/repos/cinolib/examples/out/build/x64-Debug/_deps/graph_cuts-subbuild/CMakeFiles/graph_cuts-populate"
+		},
+		{
+			"file" : "C:/Users/asavinov/source/repos/cinolib/examples/out/build/x64-Debug/_deps/graph_cuts-subbuild/CMakeFiles/graph_cuts-populate.rule"
+		},
+		{
+			"file" : "C:/Users/asavinov/source/repos/cinolib/examples/out/build/x64-Debug/_deps/graph_cuts-subbuild/CMakeFiles/graph_cuts-populate-complete.rule"
+		},
+		{
+			"file" : "C:/Users/asavinov/source/repos/cinolib/examples/out/build/x64-Debug/_deps/graph_cuts-subbuild/graph_cuts-populate-prefix/src/graph_cuts-populate-stamp/graph_cuts-populate-build.rule"
+		},
+		{
+			"file" : "C:/Users/asavinov/source/repos/cinolib/examples/out/build/x64-Debug/_deps/graph_cuts-subbuild/graph_cuts-populate-prefix/src/graph_cuts-populate-stamp/graph_cuts-populate-configure.rule"
+		},
+		{
+			"file" : "C:/Users/asavinov/source/repos/cinolib/examples/out/build/x64-Debug/_deps/graph_cuts-subbuild/graph_cuts-populate-prefix/src/graph_cuts-populate-stamp/graph_cuts-populate-download.rule"
+		},
+		{
+			"file" : "C:/Users/asavinov/source/repos/cinolib/examples/out/build/x64-Debug/_deps/graph_cuts-subbuild/graph_cuts-populate-prefix/src/graph_cuts-populate-stamp/graph_cuts-populate-install.rule"
+		},
+		{
+			"file" : "C:/Users/asavinov/source/repos/cinolib/examples/out/build/x64-Debug/_deps/graph_cuts-subbuild/graph_cuts-populate-prefix/src/graph_cuts-populate-stamp/graph_cuts-populate-mkdir.rule"
+		},
+		{
+			"file" : "C:/Users/asavinov/source/repos/cinolib/examples/out/build/x64-Debug/_deps/graph_cuts-subbuild/graph_cuts-populate-prefix/src/graph_cuts-populate-stamp/graph_cuts-populate-patch.rule"
+		},
+		{
+			"file" : "C:/Users/asavinov/source/repos/cinolib/examples/out/build/x64-Debug/_deps/graph_cuts-subbuild/graph_cuts-populate-prefix/src/graph_cuts-populate-stamp/graph_cuts-populate-test.rule"
+		},
+		{
+			"file" : "C:/Users/asavinov/source/repos/cinolib/examples/out/build/x64-Debug/_deps/graph_cuts-subbuild/graph_cuts-populate-prefix/src/graph_cuts-populate-stamp/graph_cuts-populate-update.rule"
+		}
+	],
+	"target" : 
+	{
+		"labels" : 
+		[
+			"graph_cuts-populate"
+		],
+		"name" : "graph_cuts-populate"
+	}
+}

@@ -1,0 +1,3 @@
+repository='https://github.com/cinolib-dev-team/GraphCuts.git'
+module=''
+tag='origin'
