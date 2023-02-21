@@ -17,6 +17,9 @@ set(CMAKE_CXX_STANDARD 23)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
+# add cinolib
+set(cinolib_DIR ${PROJECT_SOURCE_DIR}/lib/cinolib/)
+
 # Setup configuration types with ability to choose wich ones to generate.
 # Also considering multiconfig generators
 include(cmake/SetupBuildTypes.cmake)

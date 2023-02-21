@@ -36,6 +36,9 @@ build/*
 cmake-build-release/*
 cmake-build-debug/*
 
+# 3rd parties
+lib/cinolib/examples/out
+
 # IDE config directories
 .idea/*
 .vs/
