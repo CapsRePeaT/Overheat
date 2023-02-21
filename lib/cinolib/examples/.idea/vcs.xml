@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="VcsDirectoryMappings">
+    <mapping directory="$PROJECT_DIR$/.." vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/out/build/x64-Debug/_deps/graph_cuts-src" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/out/build/x64-Debug/_deps/indirect_predicates-src" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/out/build/x64-Debug/_deps/tetgen-src" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/out/build/x64-Debug/_deps/triangle-src" vcs="Git" />
+  </component>
+</project>

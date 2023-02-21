@@ -30,7 +30,7 @@ include(cmake/ColorfullOutput.cmake)
 
 # Export compile_commands.json
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
-
+#-Dcinolib_DIR="C:\Users\asavinov\source\repos\cinolib"
 # Enable link libraries in folders where they are not building
 cmake_policy(SET CMP0079 NEW)
 
