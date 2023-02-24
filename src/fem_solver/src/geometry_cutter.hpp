@@ -1,15 +1,19 @@
 #pragma once
 
-#include "solver_db.hpp"
 #include "../../core/include/databases.h"
+#include "solver_db.hpp"
 
 class GeometryCutter {
  public:
-  GeometryCutter() = default;
-  ~GeometryCutter() = default;
-  FsDatapack PrepareGeometry(FileRepresentation& file_rep);
-  VerticeIndexes& GetVerticeIndexes();
-  const VerticeIndexes& GetVerticeIndexes() const;
+	GeometryCutter(double area_thresh,
+	               double volume_thresh);
+	~GeometryCutter() = default;
+	FsDatapack PrepareGeometry(FileRepresentation& file_rep);
+	VerticeIndexes& GetVerticeIndexes();
+	const VerticeIndexes& GetVerticeIndexes() const;
+
  private:
-  VerticeIndexes index_to_coord_map_;
+	double area_thresh_;
+	double volume_thresh_;
+	VerticeIndexes index_to_coord_map_;
 };
