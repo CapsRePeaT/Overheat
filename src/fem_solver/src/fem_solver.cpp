@@ -7,7 +7,7 @@
 void FemSolver::Solve(FileRepresentation& file_rep) {
 	std::cout << "starting heat solving..." << std::endl;
 	GeometryCutter cutter(500000, 500000);
-	auto geom_db = cutter.PrepareGeometry(file_rep);
+	auto geom_db = cutter.PrepareGeometry(file_rep, true);
 	const auto index_2_coord_map = cutter.GetVerticeIndexes();
 	SolverShape* element = nullptr;
 	MatrixEquation main_matrix(index_2_coord_map.MaxIndex() + 1);
