@@ -5,10 +5,12 @@
 
 class GeometryCutter {
  public:
-	GeometryCutter(double area_thresh,
-	               double volume_thresh);
+	GeometryCutter(double area_thresh, double volume_thresh);
 	~GeometryCutter() = default;
-	FsDatapack PrepareGeometry(FileRepresentation& file_rep);
+	// if show_mesh == true, it blocks main thread
+	// until you close visualization window
+	FsDatapack PrepareGeometry(FileRepresentation& file_rep,
+	                           bool show_mesh = false);
 	VerticeIndexes& GetVerticeIndexes();
 	const VerticeIndexes& GetVerticeIndexes() const;
 

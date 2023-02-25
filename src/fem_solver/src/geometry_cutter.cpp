@@ -5,12 +5,39 @@
 #include <iostream>
 
 #include "../../mesh_processor/include/generate_mesh.h"
+#include "cinolib/drawable_arrow.h"
+#include "cinolib/gl/glcanvas.h"
 #include "variance_solver.hpp"
 
-FsDatapack GeometryCutter::PrepareGeometry(FileRepresentation& file_rep) {
+namespace
+{
+void show_debug_mesh(MeshProcessor::CustomTetmesh& mesh){
+	using namespace cinolib;
+	GLcanvas gui(1920,980);
+	mesh.updateGL();
+	DrawableArrow x(vec3d(-35000, 0, 0), vec3d(35000, 0, 0));
+	x.color = Color::GREEN();
+	x.size = 10;
+	DrawableArrow y(vec3d(0, -35000, 0), vec3d(0, 35000, 0));
+	y.color = Color::BLUE();
+	y.size = 10;
+	DrawableArrow z(vec3d(0, 0, -35000), vec3d(0, 0, 35000));
+	z.size = 10;
+
+	gui.push(&mesh);
+	gui.push(&x);
+	gui.push(&y);
+	gui.push(&z);
+	gui.launch();
+}
+}
+
+FsDatapack GeometryCutter::PrepareGeometry(FileRepresentation& file_rep,
+                                           bool show_mesh) {
 	auto generator =
 			MeshProcessor::MeshGenerator(file_rep, area_thresh_, volume_thresh_);
 	auto total_tetmesh = generator.get_tetmesh();
+	if(show_mesh) show_debug_mesh(total_tetmesh);
 
 	const auto upper_point_z = total_tetmesh.bbox().delta_z();
 
