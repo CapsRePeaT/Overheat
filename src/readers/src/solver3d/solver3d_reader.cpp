@@ -128,6 +128,9 @@ Solver3d_T2D read_heatmap(std::ifstream& istream) {
 }
 
 Solver3d_T2D Solver3dReader::load_heatmap() {
+	// FIXEME provide proper interface
+	if (t2d_file_.empty())
+		return {};
 	std::ifstream ifs{t2d_file_};
 	if (!ifs.good()) {
 		throw std::runtime_error("Stream state is not good");

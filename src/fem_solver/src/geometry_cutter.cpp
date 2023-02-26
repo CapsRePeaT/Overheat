@@ -24,6 +24,13 @@ void show_debug_mesh(MeshProcessor::CustomTetmesh& mesh){
 	DrawableArrow z(vec3d(0, 0, -35000), vec3d(0, 0, 35000));
 	z.size = 10;
 
+	// for cutting geometry and look inside
+	//MeshSlicer slicer;
+	//slicer.X_thresh = 0.6f; // in percents
+	//slicer.slice(mesh);
+	//mesh.updateGL();
+
+
 	gui.push(&mesh);
 	gui.push(&x);
 	gui.push(&y);
@@ -37,7 +44,8 @@ FsDatapack GeometryCutter::PrepareGeometry(FileRepresentation& file_rep,
 	auto generator =
 			MeshProcessor::MeshGenerator(file_rep, area_thresh_, volume_thresh_);
 	auto total_tetmesh = generator.get_tetmesh();
-	if(show_mesh) show_debug_mesh(total_tetmesh);
+	if (show_mesh) 
+		show_debug_mesh(total_tetmesh);
 
 	const auto upper_point_z = total_tetmesh.bbox().delta_z();
 

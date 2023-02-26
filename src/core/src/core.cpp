@@ -39,7 +39,10 @@ GlobalId Core::LoadRepresentationWithHeatmap(std::string trm_file_path_mv,
 
 GlobalId Core::LoadRepresentation(const std::string& trm_file_path_mv) {
 	// FIXME add real representation
-	representations_.emplace_back(GeomStorage<BasicShape>());  // dummy
+	Readers::Solver3d::Solver3dReader reader_3d(trm_file_path_mv, "");
+	representations_.emplace_back(reader_3d.geometry(), reader_3d.heatmaps(),
+		reader_3d.layers_shapes(),
+		reader_3d.shapes_metadata());
 	representations_.back().InitLayers();
 	return representations_.back().id();
 }

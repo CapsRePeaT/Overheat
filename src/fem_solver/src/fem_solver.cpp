@@ -6,7 +6,7 @@
 
 void FemSolver::Solve(FileRepresentation& file_rep) {
 	std::cout << "starting heat solving..." << std::endl;
-	GeometryCutter cutter(500000, 500000);
+	GeometryCutter cutter(500000, 500000); // 50000 is magic number for testcase virtex.trm
 	auto geom_db = cutter.PrepareGeometry(file_rep, true);
 	const auto index_2_coord_map = cutter.GetVerticeIndexes();
 	SolverShape* element = nullptr;

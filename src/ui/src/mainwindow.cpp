@@ -49,8 +49,8 @@ MainWindow::MainWindow(QWidget* parent)
 	        render_widget_, &RendererWidget::OnChangeVisibility);
 	// for debug
 	core(); 
-	auto rep_id = core().LoadRepresentation("dummy");
-	core().CalculateHeat(core().GetRepresentation(rep_id));
+	//auto rep_id = core().LoadRepresentation("dummy");
+	//core().CalculateHeat(core().GetRepresentation(rep_id));
 }
 
 MainWindow::~MainWindow() = default;
