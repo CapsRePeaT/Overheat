@@ -38,7 +38,7 @@ class Core {
 	void CalculateHeat(FileRepresentation& file_rep);
 
  private:
-	Core() { };
+	Core() {};
 	[[nodiscard]] const FileRepresentation& GetRepresentation(
 			const RepresentationId id) const {
 		// in the future there might be another connection with id and container

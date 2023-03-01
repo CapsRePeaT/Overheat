@@ -2,24 +2,32 @@
 
 #include "solver_db.hpp"
 
+void CustomPrintMatrix(const SparceMatrix& matrix, const std::string& matrix_name);
+
 /// <summary>
 /// 
 /// </summary>
 class MatrixEquation {
  public:
-  using Result = Matrix;
-  using Coeficients = Matrix;
-  MatrixEquation(const size_t size_1, const size_t size_2) 
-		: size_1_(size_1), size_2_(size_2_), coeficients_(size_1, size_2),
-		result_(size_1, 1) {};
+  using Result = SparceMatrix;
+  using Coeficients = SparceMatrix;
+  MatrixEquation(const size_t size) 
+		: size_(size), coeficients_(size, size),
+		result_(size, 1) {};
   void AddResult(const size_t index, const ValType value) {
-	result_(index, 0) = value;
+	assert(index < size_);
+	result_(index, 0) = value; //treat matrix as vector
   }
   void AddCoeficient(const size_t index_1, const size_t index_2, const ValType value) {
+	assert(index_1 < size_&& index_2 < size_);
 	coeficients_(index_1, index_2) += value;
   }
   void SetHeatmap(const SolverHeatmap& heatmap) {
-		heatmap_ = heatmap;
+	heatmap_ = heatmap;
+  }
+  void SetMaxSize(const size_t size) {
+	coeficients_.resize(size, size);
+	result_.resize(size, 1);
   }
   const SolverHeatmap& Solve();
   const SolverHeatmap& heatmap() const {
@@ -27,8 +35,7 @@ class MatrixEquation {
 	return heatmap_;
   }
  private:
-  size_t size_1_ = 0;
-  size_t size_2_ = 0;
+	size_t size_ = DefaultMatrixSize;
   Coeficients coeficients_;
   SolverHeatmap heatmap_;
   Result result_;

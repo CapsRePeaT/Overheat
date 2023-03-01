@@ -13,9 +13,12 @@ project(${PROJECT_NAME} LANGUAGES CXX)
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/bin)
 
 # C++ std20 without extensions
-set(CMAKE_CXX_STANDARD 20)
+set(CMAKE_CXX_STANDARD 23)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
+
+# add cinolib
+set(cinolib_DIR ${PROJECT_SOURCE_DIR}/lib/cinolib/)
 
 # Setup configuration types with ability to choose wich ones to generate.
 # Also considering multiconfig generators
@@ -30,7 +33,7 @@ include(cmake/ColorfullOutput.cmake)
 
 # Export compile_commands.json
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
-
+#-Dcinolib_DIR="C:\Users\asavinov\source\repos\cinolib"
 # Enable link libraries in folders where they are not building
 cmake_policy(SET CMP0079 NEW)
 

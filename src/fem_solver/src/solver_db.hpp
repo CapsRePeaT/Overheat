@@ -25,17 +25,29 @@ class FsDatapack {
   std::deque<SolverShape*> elements_;
 };
 
+struct Point3D
+{
+	// TODO: consider using double, cause cinolib uses doubles
+	std::array<double, 3> coords;
+};
+
 class VerticeIndexes {
  public:
-  // FIXME
-  using Point3D = double;
   using VerticeIndex = size_t;
-  VerticeIndex AddVertice(Point3D point);
-  Point3D GetCoords(VerticeIndex index);
+	VerticeIndex AddVertice(Point3D point) {
+		coords_.push_back(point);
+		return coords_.size() - 1;
+	}
+	Point3D GetCoords(VerticeIndex index) const {
+		return coords_[index];
+	}
   // needed for heatmap interpolation
   std::array<VerticeIndex, 4> GetConvexHull(Point3D point);
+  size_t MaxIndex() const {
+	return coords_.size() - 1;
+  }
  private:
-  std::vector<Point3D> coords_;
+  std::deque<Point3D> coords_;
 	// add search tree
 };
 
@@ -46,25 +58,32 @@ class FsResultMatrix {
 using FsMatrixVec = std::vector<FsResultMatrix>;
 
 using ValType = float;
-using Matrix = boost::numeric::ublas::compressed_matrix<ValType>;
+using Matrix = boost::numeric::ublas::matrix<ValType>;
+using SparceMatrix = boost::numeric::ublas::compressed_matrix<ValType>;
 
 class SolverHeatmap {
 public:
 	using Temperature = ValType;
+	using Temperatures = std::deque<Temperature>;
+
 	SolverHeatmap() = default;
-	SolverHeatmap(const Matrix& matrix) {
+	SolverHeatmap(const SparceMatrix& matrix) {
 		FillData(matrix);
 	}
-	void FillData(const Matrix& matrix) {
+	void FillData(const SparceMatrix& matrix) {
 		assert(temperatures_.empty() && "Heatmap not adapted for rewriting");
 		for (unsigned i = 0; i < matrix.size1(); ++i)
 			temperatures_.push_back(matrix(i, 0));
 	}
 	void Print() const;
-private:
-	size_t max_index_ = 0;
+	const Temperatures& temperatures() const { 
+		return temperatures_;
+	}
+
+ private:
 	// element index equal to position index
-	std::deque<Temperature> temperatures_;
+	Temperatures temperatures_;
+
 };
 
 

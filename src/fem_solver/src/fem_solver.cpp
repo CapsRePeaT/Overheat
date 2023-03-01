@@ -6,11 +6,11 @@
 
 void FemSolver::Solve(FileRepresentation& file_rep) {
 	std::cout << "starting heat solving..." << std::endl;
-	GeometryCutter cutter;
-	auto geom_db = cutter.PrepareGeometry(file_rep);
+	GeometryCutter cutter(500000, 500000); // 50000 is magic number for testcase virtex.trm
+	auto geom_db = cutter.PrepareGeometry(file_rep, true);
 	const auto index_2_coord_map = cutter.GetVerticeIndexes();
 	SolverShape* element = nullptr;
-	MatrixEquation main_matrix(3,3);
+	MatrixEquation main_matrix(index_2_coord_map.MaxIndex() + 1);
 	while (geom_db.NextElement(element)) {
 		assert(element);
 		element->AddElementContribution(main_matrix);
@@ -18,12 +18,12 @@ void FemSolver::Solve(FileRepresentation& file_rep) {
 		element = nullptr;
 	}
 	// TODO move to tests
-	main_matrix.AddResult(0, 2);
-	main_matrix.AddResult(1, -2);
-	main_matrix.AddResult(2, 2);
-	main_matrix.AddCoeficient(0, 0, 2); main_matrix.AddCoeficient(0, 1, 1); main_matrix.AddCoeficient(0, 2, 1);
-	main_matrix.AddCoeficient(1, 0, 1); main_matrix.AddCoeficient(1, 1, -1); main_matrix.AddCoeficient(1, 2, 0);
-	main_matrix.AddCoeficient(2, 0, 3); main_matrix.AddCoeficient(2, 1, -1); main_matrix.AddCoeficient(2, 2, 2);
+	//main_matrix.AddResult(0, 2);
+	//main_matrix.AddResult(1, -2);
+	//main_matrix.AddResult(2, 2);
+	//main_matrix.AddCoeficient(0, 0, 2); main_matrix.AddCoeficient(0, 1, 1); main_matrix.AddCoeficient(0, 2, 1);
+	//main_matrix.AddCoeficient(1, 0, 1); main_matrix.AddCoeficient(1, 1, -1); main_matrix.AddCoeficient(1, 2, 0);
+	//main_matrix.AddCoeficient(2, 0, 3); main_matrix.AddCoeficient(2, 1, -1); main_matrix.AddCoeficient(2, 2, 2);
 	const auto heatmap = main_matrix.Solve();
 	// https://www.webmath.ru/poleznoe/formules_5_7.php
 	// result should be x1 = -1, x2 = 1, x3 = 3

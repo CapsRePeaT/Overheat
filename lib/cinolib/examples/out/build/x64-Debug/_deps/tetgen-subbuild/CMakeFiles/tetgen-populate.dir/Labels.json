@@ -1,0 +1,46 @@
+{
+	"sources" : 
+	[
+		{
+			"file" : "C:/Users/asavinov/source/repos/cinolib/examples/out/build/x64-Debug/_deps/tetgen-subbuild/CMakeFiles/tetgen-populate"
+		},
+		{
+			"file" : "C:/Users/asavinov/source/repos/cinolib/examples/out/build/x64-Debug/_deps/tetgen-subbuild/CMakeFiles/tetgen-populate.rule"
+		},
+		{
+			"file" : "C:/Users/asavinov/source/repos/cinolib/examples/out/build/x64-Debug/_deps/tetgen-subbuild/CMakeFiles/tetgen-populate-complete.rule"
+		},
+		{
+			"file" : "C:/Users/asavinov/source/repos/cinolib/examples/out/build/x64-Debug/_deps/tetgen-subbuild/tetgen-populate-prefix/src/tetgen-populate-stamp/tetgen-populate-build.rule"
+		},
+		{
+			"file" : "C:/Users/asavinov/source/repos/cinolib/examples/out/build/x64-Debug/_deps/tetgen-subbuild/tetgen-populate-prefix/src/tetgen-populate-stamp/tetgen-populate-configure.rule"
+		},
+		{
+			"file" : "C:/Users/asavinov/source/repos/cinolib/examples/out/build/x64-Debug/_deps/tetgen-subbuild/tetgen-populate-prefix/src/tetgen-populate-stamp/tetgen-populate-download.rule"
+		},
+		{
+			"file" : "C:/Users/asavinov/source/repos/cinolib/examples/out/build/x64-Debug/_deps/tetgen-subbuild/tetgen-populate-prefix/src/tetgen-populate-stamp/tetgen-populate-install.rule"
+		},
+		{
+			"file" : "C:/Users/asavinov/source/repos/cinolib/examples/out/build/x64-Debug/_deps/tetgen-subbuild/tetgen-populate-prefix/src/tetgen-populate-stamp/tetgen-populate-mkdir.rule"
+		},
+		{
+			"file" : "C:/Users/asavinov/source/repos/cinolib/examples/out/build/x64-Debug/_deps/tetgen-subbuild/tetgen-populate-prefix/src/tetgen-populate-stamp/tetgen-populate-patch.rule"
+		},
+		{
+			"file" : "C:/Users/asavinov/source/repos/cinolib/examples/out/build/x64-Debug/_deps/tetgen-subbuild/tetgen-populate-prefix/src/tetgen-populate-stamp/tetgen-populate-test.rule"
+		},
+		{
+			"file" : "C:/Users/asavinov/source/repos/cinolib/examples/out/build/x64-Debug/_deps/tetgen-subbuild/tetgen-populate-prefix/src/tetgen-populate-stamp/tetgen-populate-update.rule"
+		}
+	],
+	"target" : 
+	{
+		"labels" : 
+		[
+			"tetgen-populate"
+		],
+		"name" : "tetgen-populate"
+	}
+}

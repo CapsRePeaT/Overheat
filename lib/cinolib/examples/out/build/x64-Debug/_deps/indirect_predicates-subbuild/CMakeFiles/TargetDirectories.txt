@@ -1,0 +1,3 @@
+C:/Users/asavinov/source/repos/cinolib/examples/out/build/x64-Debug/_deps/indirect_predicates-subbuild/CMakeFiles/indirect_predicates-populate.dir
+C:/Users/asavinov/source/repos/cinolib/examples/out/build/x64-Debug/_deps/indirect_predicates-subbuild/CMakeFiles/edit_cache.dir
+C:/Users/asavinov/source/repos/cinolib/examples/out/build/x64-Debug/_deps/indirect_predicates-subbuild/CMakeFiles/rebuild_cache.dir
