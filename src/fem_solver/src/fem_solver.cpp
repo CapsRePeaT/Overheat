@@ -8,9 +8,11 @@ void FemSolver::Solve(FileRepresentation& file_rep) {
 	std::cout << "starting heat solving..." << std::endl;
 	GeometryCutter cutter(500000, 500000); // 50000 is magic number for testcase virtex.trm
 	auto geom_db = cutter.PrepareGeometry(file_rep, true);
+	//auto geom_db = cutter.PrepareTestGeometry();
 	const auto index_2_coord_map = cutter.GetVerticeIndexes();
 	SolverShape* element = nullptr;
 	MatrixEquation main_matrix(index_2_coord_map.MaxIndex() + 1);
+	main_matrix.set_known_temp_and_indexes(cutter.TestTempAndIndexes());
 	while (geom_db.NextElement(element)) {
 		assert(element);
 		element->AddElementContribution(main_matrix);
