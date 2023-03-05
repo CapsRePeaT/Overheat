@@ -112,13 +112,13 @@ void AbstractPolyhedralMesh<M,V,E,F,P>::init(const std::vector<vec3d>           
     this->copy_xyz_to_uvw(UVW_param);
 
     std::chrono::steady_clock::time_point t1 = std::chrono::steady_clock::now();
-
-    std::cout << "load mesh\t"     <<
-                 this->num_verts() << "V / " <<
-                 this->num_edges() << "E / " <<
-                 this->num_faces() << "F / " <<
-                 this->num_polys() << "P  [" <<
-                 how_many_seconds(t0,t1) << "s]" << std::endl;
+	// FIXME custom modififcation
+    //std::cout << "load mesh\t"     <<
+    //             this->num_verts() << "V / " <<
+    //             this->num_edges() << "E / " <<
+    //             this->num_faces() << "F / " <<
+    //             this->num_polys() << "P  [" <<
+    //             how_many_seconds(t0,t1) << "s]" << std::endl;
 }
 
 //::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
@@ -153,13 +153,13 @@ void AbstractPolyhedralMesh<M,V,E,F,P>::init(const std::vector<vec3d>           
     this->copy_xyz_to_uvw(UVW_param);
 
     std::chrono::steady_clock::time_point t1 = std::chrono::steady_clock::now();
-
-    std::cout << "load mesh\t"     <<
-                 this->num_verts() << "V / " <<
-                 this->num_edges() << "E / " <<
-                 this->num_faces() << "F / " <<
-                 this->num_polys() << "P  [" <<
-                 how_many_seconds(t0,t1) << "s]" << std::endl;
+	// FIXME custom modififcation
+    //std::cout << "load mesh\t"     <<
+    //             this->num_verts() << "V / " <<
+    //             this->num_edges() << "E / " <<
+    //             this->num_faces() << "F / " <<
+    //             this->num_polys() << "P  [" <<
+    //             how_many_seconds(t0,t1) << "s]" << std::endl;
 }
 
 //::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::

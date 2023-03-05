@@ -193,11 +193,12 @@ void AbstractPolygonMesh<M,V,E,P>::init(const std::vector<vec3d>             & v
 
     std::chrono::steady_clock::time_point t1 = std::chrono::steady_clock::now();
 
-    std::cout << "load mesh\t"     <<
-                 this->num_verts() << "V / " <<
-                 this->num_edges() << "E / " <<
-                 this->num_polys() << "P  [" <<
-                 how_many_seconds(t0,t1) << "s]" << std::endl;
+	// FIXME custom modififcation
+    //std::cout << "load mesh\t"     <<
+    //             this->num_verts() << "V / " <<
+    //             this->num_edges() << "E / " <<
+    //             this->num_polys() << "P  [" <<
+    //             how_many_seconds(t0,t1) << "s]" << std::endl;
 }
 
 //::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
@@ -1747,10 +1748,11 @@ void AbstractPolygonMesh<M,V,E,P>::operator+=(const AbstractPolygonMesh<M,V,E,P>
 
     if(this->mesh_data().update_bbox) this->update_bbox();
 
-    std::cout << "Appended " << m.mesh_data().filename << " to mesh " << this->mesh_data().filename << std::endl;
-    std::cout << this->num_verts() << " verts" << std::endl;
-    std::cout << this->num_edges() << " edges" << std::endl;
-    std::cout << this->num_polys() << " polys" << std::endl;
+	// FIXME custom modififcation
+    //std::cout << "Appended " << m.mesh_data().filename << " to mesh " << this->mesh_data().filename << std::endl;
+    //std::cout << this->num_verts() << " verts" << std::endl;
+    //std::cout << this->num_edges() << " edges" << std::endl;
+    //std::cout << this->num_polys() << " polys" << std::endl;
 }
 
 //::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
