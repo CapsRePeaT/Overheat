@@ -44,12 +44,12 @@ struct fmt::formatter<std::vector<T>> {
 	template <typename FormatContext>
 	auto format(const std::vector<T>& v, FormatContext& ctx)
 			-> decltype(ctx.out()) {
-		auto out = format_to(ctx.out(), "vec{{");
+		auto out = fmt::format_to(ctx.out(), "vec{{");
 		for (auto it = v.cbegin(); it < v.cend(); ++it) {
-			out = format_to(out, "{}", *it);
+			out = fmt::format_to(out, "{}", *it);
 			if (it != v.cend() - 1)
-				out = format_to(out, ", ");
+				out = fmt::format_to(out, ", ");
 		}
-		return format_to(out, "}}");
+		return fmt::format_to(out, "}}");
 	}
 };

@@ -6,13 +6,14 @@
 #include "idata_provider.h"
 #include "shapes.h"
 
-
 class IReader {
  public:
 	// TODO: we should return new class FileRepresentation
 	GeomStorage<BasicShape> geometry() { return data_provider_->geometry(); }
 	DefaultMetadataStorage metadata() { return data_provider_->metadata(); }
 	HeatmapStorage heatmaps() { return data_provider_->heatmaps(); }
+	LayersShapes layers_shapes() { return data_provider_->layers_shapes(); }
+	ShapesHeatData shapes_metadata() { return data_provider_->shapes_metadata(); }
 
  protected:
 	virtual void load() = 0;
