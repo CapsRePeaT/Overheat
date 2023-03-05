@@ -4,18 +4,20 @@
 
 namespace MeshProcessor {
 using namespace cinolib;
-BoxBoundaryRingsGenerator::BoxBoundaryRingsGenerator(vec3d min_point,
-                                                     vec3d max_point,
-                                                     size_t count) {
-	const auto diff          = max_point - min_point;
-	const auto length        = diff.x();
-	const auto width         = diff.y();
-	const auto height        = diff.z();
-	const double min_segment = std::min({length, width, height});
-	const auto step          = min_segment;
+BoxBoundaryRingsGenerator::BoxBoundaryRingsGenerator(
+		vec3d min_point, vec3d max_point, const std::optional<double> step_opt) {
+	const auto diff   = max_point - min_point;
+	const auto length = diff.x();
+	const auto width  = diff.y();
+	const auto height = diff.z();
+	const auto step =
+			step_opt.has_value() ? *step_opt : std::min({length, width, height});
+	min_segment_ = step;
 
 	auto divider = [&](auto finish) -> std::vector<double> {
 		std::vector<double> ring(finish / step + 1);
+		if (step > finish)
+			ring.push_back(0);
 		std::generate(ring.begin(), ring.end(), [&, n = -step]() mutable {
 			n += step;
 			return n;
@@ -68,17 +70,17 @@ BoxBoundaryRingsGenerator::BoxBoundaryRingsGenerator(vec3d min_point,
 
 	// build xy, xy_z
 	xy_   = build_frame(x_segments, y_segments, vec3d(0, width, 0),
-	                   vec3d(length, 0, 0));
+	                    vec3d(length, 0, 0));
 	xy_z_ = translate(xy_, vec3d(0, 0, height));
 
 	// build xz, xz_y
 	xz_   = build_frame(x_segments, z_segments, vec3d(0, 0, height),
-	                 vec3d(length, 0, 0));
+	                    vec3d(length, 0, 0));
 	xz_y_ = translate(xz_, vec3d(0, width, 0));
 
 	// build yz, yz_x
 	yz_   = build_frame(y_segments, z_segments, vec3d(0, 0, height),
-	                 vec3d(0, width, 0));
+	                    vec3d(0, width, 0));
 	yz_x_ = translate(yz_, vec3d(0, 0, height));
 }
 

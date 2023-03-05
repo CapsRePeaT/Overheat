@@ -30,7 +30,8 @@ void round_boundary(DrawableTrimesh<>& mesh) {
 BoxMesh::BoxMesh(const std::pair<float, float>& x1_x2_points,
                  const std::pair<float, float>& y1_y2_points,
                  const std::pair<float, float>& z1_z2_points,
-                 const size_t i_layer, const double constraint) {
+                 const size_t i_layer, MeshConstraintFunction area_constraint,
+                 const std::optional<double> step) {
 	min_point =
 			vec3d{round_float(x1_x2_points.first), round_float(y1_y2_points.first),
 	          round_float(z1_z2_points.first)};
@@ -38,8 +39,8 @@ BoxMesh::BoxMesh(const std::pair<float, float>& x1_x2_points,
 			vec3d{round_float(x1_x2_points.second), round_float(y1_y2_points.second),
 	          round_float(z1_z2_points.second)};
 
-	generator   = BoxBoundaryRingsGenerator(min_point, max_point, 10);
-	area_thresh = constraint;
+	generator   = BoxBoundaryRingsGenerator(min_point, max_point, step);
+	area_thresh = area_constraint(generator.min_segment());
 	layer       = i_layer;
 }
 
@@ -50,7 +51,7 @@ void BoxMesh::calculate_mesh() {
 	const auto height = diff.z();
 
 	static int counter = 0;
-	std::cout<< counter << std::endl;
+	std::cout << counter << std::endl;
 	auto xy_poly = make_multi_polygon(generator.xy_ring(), holes_lower);
 	xy           = trimeshFromPoly(xy_poly, area_thresh);
 	round_boundary(xy);
