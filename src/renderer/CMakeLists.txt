@@ -4,7 +4,8 @@ file(GLOB_RECURSE SOURCES CONFIGURE_DEPENDS src/*.cpp src/*.h include/*.cpp incl
 add_library(${MODULE_NAME} STATIC ${SOURCES})
 
 target_include_directories(${MODULE_NAME} PUBLIC include)
-target_include_directories(${MODULE_NAME} PRIVATE src)
+find_path(STB_INCLUDE_DIRS "stb_truetype.h")
+target_include_directories(${MODULE_NAME} PRIVATE src ${STB_INCLUDE_DIRS})
 
 add_custom_command(TARGET ${MODULE_NAME} POST_BUILD
         COMMAND ${CMAKE_COMMAND} -E copy_directory
