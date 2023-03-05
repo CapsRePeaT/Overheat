@@ -40,9 +40,15 @@ void show_debug_mesh(MeshProcessor::CustomTetmesh& mesh) {
 
 FsDatapack GeometryCutter::PrepareGeometry(FileRepresentation& file_rep,
                                            bool show_mesh) {
+	auto timer_start = std::chrono::high_resolution_clock::now();
 	auto generator = MeshProcessor::MeshGenerator(
 			file_rep, area_constraint_, volume_constraint_, corner_points_step_);
 	auto total_tetmesh = generator.get_tetmesh();
+	auto timer_get_tetmesh_finish = std::chrono::high_resolution_clock::now();
+	std::cout << "Tet gen fineshed, it took "
+		<< std::chrono::duration_cast<std::chrono::seconds>(timer_get_tetmesh_finish - timer_start)
+		<< " seconds." << std::endl;
+	// for debug
 	if (show_mesh)
 		show_debug_mesh(total_tetmesh);
 
@@ -87,6 +93,10 @@ FsDatapack GeometryCutter::PrepareGeometry(FileRepresentation& file_rep,
 				p_data.convective_heat, indexes, convective_presense_per_side,
 				heat_flow_presense_per_side, GetVerticeIndexes()));
 	}
+	auto element_contribution_finish = std::chrono::high_resolution_clock::now();
+	std::cout << "Element contribution counting fineshed, it took "
+		<< std::chrono::duration_cast<std::chrono::seconds>(element_contribution_finish - timer_get_tetmesh_finish)
+		<< " seconds." << std::endl;
 
 	return result;
 }

@@ -50,7 +50,7 @@ class MeshGenerator {
 
  private:
 	TetmeshVec generate_layers_meshes(const LayersShapes& layers);
-	TetmeshVec generate_tetmesh_from_trimeshes(TrimeshVec& meshes);
+	TetmeshVec generate_tetmesh_from_trimeshes(TrimeshVec& meshes, bool show_mesh = false);
 	CustomTetmesh generate_tetmesh(const cinolib::DrawableTrimesh<>& mesh);
 	TrimeshVec generate_trimesh_from_layers(LayersMehses& layers);
 	void calculate_mesh_and_translate_to_origin_pos(LayersMehses& layers);

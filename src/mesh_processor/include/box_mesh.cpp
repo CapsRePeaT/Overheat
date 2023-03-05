@@ -49,22 +49,29 @@ void BoxMesh::calculate_mesh() {
 	const auto length = diff.x();
 	const auto width  = diff.y();
 	const auto height = diff.z();
+	// FIXME use this lambda instead of hardcoding
+	auto UseOptimisations = [this](auto element_size) {
+		bool use_opt = true;
+		// use relation between area_thresh and element_size
+		return use_opt;
+	};
 
 	static int counter = 0;
-	std::cout << counter << std::endl;
+	if (counter % 100 == 0)
+		std::cout << "processed meshes for " << counter << " shapes" << std::endl;
 	auto xy_poly = make_multi_polygon(generator.xy_ring(), holes_lower);
-	xy           = trimeshFromPoly(xy_poly, area_thresh);
+	xy           = trimeshFromPoly(xy_poly, area_thresh, false);
 	round_boundary(xy);
 
 	auto xy_z_poly = make_multi_polygon(generator.xy_z_ring(), holes_upper);
-	xy_z           = trimeshFromPoly(xy_z_poly, area_thresh);
+	xy_z           = trimeshFromPoly(xy_z_poly, area_thresh, false);
 	xy_z.translate(vec3d(0, 0, height));
 	round_boundary(xy_z);
 
 	// xz, xz_y triangulations
 	auto xz_ring_rotated = rotate(generator.xz_ring(), vec3d(1, 0, 0), M_PI / 2);
 	BoostPolygon xz_poly = make_polygon(xz_ring_rotated);
-	xz                   = trimeshFromPoly(xz_poly, area_thresh);
+	xz                   = trimeshFromPoly(xz_poly, area_thresh, false); // sides
 	auto& mesh_xz_verts  = xz.vector_verts();
 	mesh_xz_verts        = rotate(mesh_xz_verts, vec3d(1, 0, 0), -M_PI / 2);
 	round_boundary(xz);
@@ -75,7 +82,7 @@ void BoxMesh::calculate_mesh() {
 	// xz, xz_y triangulations
 	auto yz_ring_rotated = rotate(generator.yz_ring(), vec3d(0, 1, 0), M_PI / 2);
 	BoostPolygon yz_poly = make_polygon(yz_ring_rotated);
-	yz                   = trimeshFromPoly(yz_poly, area_thresh);
+	yz                   = trimeshFromPoly(yz_poly, area_thresh, false);
 	auto& mesh_yz_verts  = yz.vector_verts();
 	mesh_yz_verts        = rotate(mesh_yz_verts, vec3d(0, 1, 0), -M_PI / 2);
 	round_boundary(yz);

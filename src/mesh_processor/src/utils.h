@@ -40,11 +40,15 @@ BoostPolygon make_multi_polygon(
 		const std::vector<std::vector<vec3d>>& holes = {});
 
 template <typename Poly>
-DrawableTrimesh<> trimeshFromPoly(const Poly& poly, double area_thresh) {
+DrawableTrimesh<> trimeshFromPoly(const Poly& poly, double area_thresh, bool use_optimisations) {
 	std::vector<vec3d> verts;
 	std::vector<uint> tris;
 	char opt[100];
-	sprintf(opt, "Qqca%f", area_thresh);
+	//FIXME
+	if (use_optimisations)
+		sprintf(opt, "Qqca%f", area_thresh);
+	else
+		sprintf(opt, "Qca%f", area_thresh);
 	triangulate_polygon(poly, std::string(opt), 0, verts, tris);
 	DrawableTrimesh<> ret(verts, tris);
 	return ret;
