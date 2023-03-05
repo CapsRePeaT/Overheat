@@ -27,7 +27,7 @@ void FemSolver::Solve(FileRepresentation& file_rep) {
 		return volume_step;
 	};
 	GeometryCutter cutter(corner_points_step, area_constraint, volume_constraint);
-	auto geom_db = cutter.PrepareGeometry(file_rep, false);
+	auto geom_db = cutter.PrepareGeometry(file_rep, true /* show debug view*/);
 	auto timer_cutter_fin = std::chrono::high_resolution_clock::now();
 	std::cout << "Geometry cutting and element contribution computation fineshed, it took " 
 		      << std::chrono::duration_cast<std::chrono::seconds>(timer_cutter_fin - timer_start)

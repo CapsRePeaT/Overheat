@@ -46,11 +46,11 @@ class MeshGenerator {
 				volume_constraint_(volume_constraint),
 				corner_points_step_(corner_points_step) {}
 
-	CustomTetmesh get_tetmesh();
+	CustomTetmesh get_tetmesh(bool show_mesh = true);
 
  private:
-	TetmeshVec generate_layers_meshes(const LayersShapes& layers);
-	TetmeshVec generate_tetmesh_from_trimeshes(TrimeshVec& meshes, bool show_mesh = false);
+	TetmeshVec generate_layers_meshes(const LayersShapes& layers, bool show_mesh);
+	TetmeshVec generate_tetmesh_from_trimeshes(TrimeshVec& meshes, bool show_mesh);
 	CustomTetmesh generate_tetmesh(const cinolib::DrawableTrimesh<>& mesh);
 	TrimeshVec generate_trimesh_from_layers(LayersMehses& layers);
 	void calculate_mesh_and_translate_to_origin_pos(LayersMehses& layers);
