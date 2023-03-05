@@ -17,10 +17,6 @@ void CustomPrintMatrix(const SparceMatrix& matrix, const std::string& matrix_nam
 const SolverHeatmap& MatrixEquation::Solve() {
 	assert(!already_solved_ && "Can be solved only one time");
 	already_solved_ = true;
-	//SparceMatrix& A = coeficients_;
-	//SparceMatrix& y = result_;
-	//CustomPrintMatrix(y, "input result");
-	//CustomPrintMatrix(A, "input coeficients");
 	SparceMatrix Afactorized = coeficients_;
 	//SparceMatrix Ainv = boost::numeric::ublas::identity_matrix<float>(A.size1());
 	boost::numeric::ublas::vector<double> x_boost(Afactorized.size1(), 1);

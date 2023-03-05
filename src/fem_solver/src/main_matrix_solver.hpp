@@ -4,9 +4,6 @@
 
 void CustomPrintMatrix(const SparceMatrix& matrix, const std::string& matrix_name);
 
-/// <summary>
-/// 
-/// </summary>
 class MatrixEquation {
  public:
   using Result = SparceMatrix;
