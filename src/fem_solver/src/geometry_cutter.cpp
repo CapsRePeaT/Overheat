@@ -9,18 +9,17 @@
 #include "cinolib/gl/glcanvas.h"
 #include "variance_solver.hpp"
 
-namespace
-{
-void show_debug_mesh(MeshProcessor::CustomTetmesh& mesh){
+namespace {
+void show_debug_mesh(MeshProcessor::CustomTetmesh& mesh) {
 	using namespace cinolib;
-	GLcanvas gui(1920,980);
+	GLcanvas gui(1920, 980);
 	mesh.updateGL();
 	DrawableArrow x(vec3d(-35000, 0, 0), vec3d(35000, 0, 0));
 	x.color = Color::GREEN();
-	x.size = 10;
+	x.size  = 10;
 	DrawableArrow y(vec3d(0, -35000, 0), vec3d(0, 35000, 0));
 	y.color = Color::BLUE();
-	y.size = 10;
+	y.size  = 10;
 	DrawableArrow z(vec3d(0, 0, -35000), vec3d(0, 0, 35000));
 	z.size = 10;
 
@@ -41,10 +40,10 @@ void show_debug_mesh(MeshProcessor::CustomTetmesh& mesh){
 
 FsDatapack GeometryCutter::PrepareGeometry(FileRepresentation& file_rep,
                                            bool show_mesh) {
-	auto generator =
-			MeshProcessor::MeshGenerator(file_rep, area_thresh_, volume_thresh_);
+	auto generator = MeshProcessor::MeshGenerator(
+			file_rep, area_constraint_, volume_constraint_, corner_points_step_);
 	auto total_tetmesh = generator.get_tetmesh();
-	if (show_mesh) 
+	if (show_mesh)
 		show_debug_mesh(total_tetmesh);
 
 	const auto upper_point_z = total_tetmesh.bbox().delta_z();
@@ -201,5 +200,14 @@ VerticeIndexes& GeometryCutter::GetVerticeIndexes() {
 const VerticeIndexes& GeometryCutter::GetVerticeIndexes() const {
 	return index_to_coord_map_;
 }
-GeometryCutter::GeometryCutter(double area_thresh, double volume_thresh)
-		: area_thresh_(area_thresh), volume_thresh_(volume_thresh) {}
+GeometryCutter::GeometryCutter(double corner_points_step,
+                               MeshConstraintFunction area_constraint,
+                               MeshConstraintFunction volume_constraint)
+		: corner_points_step_(corner_points_step),
+			area_constraint_(area_constraint),
+			volume_constraint_(volume_constraint) {}
+
+GeometryCutter::GeometryCutter(MeshConstraintFunction area_constraint,
+                               MeshConstraintFunction volume_constraint)
+		: area_constraint_(area_constraint),
+			volume_constraint_(volume_constraint) {}
