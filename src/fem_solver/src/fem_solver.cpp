@@ -6,7 +6,18 @@
 
 void FemSolver::Solve(FileRepresentation& file_rep) {
 	std::cout << "starting heat solving..." << std::endl;
-	GeometryCutter cutter(500000, 500000); // 50000 is magic number for testcase virtex.trm
+
+	auto corner_points_step = 500;
+	auto area_constraint    = [](const double step) -> double {
+    return std::pow(step, 2) * 2.5;
+	};
+	// regular tetrahedron volume
+	auto volume_constraint = [](const double step) -> double {
+		return 1 / 12 * std::pow(step, 3) * std::sqrt(2.0);
+	};
+
+	GeometryCutter cutter(corner_points_step, area_constraint, volume_constraint);
+
 	auto geom_db = cutter.PrepareGeometry(file_rep, true);
 	const auto index_2_coord_map = cutter.GetVerticeIndexes();
 	SolverShape* element = nullptr;

@@ -5,6 +5,7 @@
 #include <cinolib/meshes/mesh_attributes.h>
 
 #include "../../core/include/databases.h"
+#include "../../fem_solver/src/geometry_cutter.hpp"
 #include "box_mesh.h"
 
 using LayerMehses  = std::vector<MeshProcessor::BoxMesh>;
@@ -36,11 +37,14 @@ using TetmeshVec = std::vector<CustomTetmesh>;
 
 class MeshGenerator {
  public:
-	MeshGenerator(FileRepresentation& file_rep, double area_thresh,
-	              double volume_thresh)
+	MeshGenerator(FileRepresentation& file_rep,
+	              MeshConstraintFunction area_constraint,
+	              MeshConstraintFunction volume_constraint,
+	              const std::optional<double> corner_points_step)
 			: representation_(file_rep),
-				area_thresh_(area_thresh),
-				volume_thresh_(volume_thresh){}
+				area_constraint_(area_constraint),
+				volume_constraint_(volume_constraint),
+				corner_points_step_(corner_points_step) {}
 
 	CustomTetmesh get_tetmesh();
 
@@ -53,7 +57,8 @@ class MeshGenerator {
 	void calculate_holes_for_boxes(LayersMehses& layers);
 
 	FileRepresentation& representation_;
-	double volume_thresh_;
-	double area_thresh_;
+	MeshConstraintFunction area_constraint_;
+	MeshConstraintFunction volume_constraint_;
+	std::optional<double> corner_points_step_;
 };
 }  // namespace MeshProcessor

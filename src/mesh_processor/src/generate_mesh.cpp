@@ -23,8 +23,8 @@ CustomTetmesh MeshGenerator::get_tetmesh() {
 	Profiler profiler;
 	profiler.push("mesh creation");
 
-	auto tet_meshes = generate_layers_meshes(representation_.layers());
-	const auto heat_data  = representation_.shapes_metadata();
+	auto tet_meshes      = generate_layers_meshes(representation_.layers());
+	const auto heat_data = representation_.shapes_metadata();
 	assert(heat_data.size() == tet_meshes.size() &&
 	       "Heat data and shapes mismatch");
 	CustomTetmesh total_tetmesh;
@@ -57,7 +57,7 @@ TetmeshVec MeshGenerator::generate_layers_meshes(const LayersShapes& layers) {
 		for (const auto& box : layer) {
 			const auto& coords = box.bbox().coordinates();
 			BoxMesh box_mesh(coords[0], coords[1], coords[2], box.layer_id(),
-			                 area_thresh_);
+			                 area_constraint_, corner_points_step_);
 			layer_meshes.push_back(box_mesh);
 		}
 		layers_meshes.push_back(layer_meshes);
@@ -72,9 +72,9 @@ TetmeshVec MeshGenerator::generate_tetmesh_from_trimeshes(TrimeshVec& meshes) {
 	TetmeshVec ret;
 	ret.reserve(meshes.size());
 
-	boost::transform(meshes, std::back_inserter(ret), [this](const auto& tri_mesh) {
-		return generate_tetmesh(tri_mesh);
-	});
+	boost::transform(
+			meshes, std::back_inserter(ret),
+			[this](const auto& tri_mesh) { return generate_tetmesh(tri_mesh); });
 
 	return ret;
 }
@@ -83,7 +83,12 @@ CustomTetmesh MeshGenerator::generate_tetmesh(const DrawableTrimesh<>& mesh) {
 	std::vector<uint> edges, tets;
 	std::vector<double> verts;
 	char opt[100];
-	sprintf(opt, "YQqa%f", volume_thresh_);
+	const auto bbox = mesh.bbox();
+	const auto min_edge =
+			corner_points_step_.has_value()
+					? *corner_points_step_
+					: std::min({bbox.delta_x(), bbox.delta_y(), bbox.delta_z()});
+	sprintf(opt, "YQqa%f", volume_constraint_(min_edge));
 	tetgen_wrap(serialized_xyz_from_vec3d(mesh.vector_verts()),
 	            serialized_vids_from_polys(mesh.vector_polys()), edges, opt,
 	            verts, tets);
