@@ -27,18 +27,20 @@ class MatrixEquation {
 	coeficients_.resize(size, size);
 	result_.resize(size, 1);
   }
-  const SolverHeatmap& Solve();
-  const SolverHeatmap& heatmap() const {
-	assert(already_solved_);
-	return heatmap_;
-  }
-  void AddKnownTempAndIndex(const TempAndIndex& temp_and_index) {
+	const SolverHeatmap& heatmap() const {
+		assert(already_solved_);
+		return heatmap_;
+	}
+	void AddKnownTempAndIndex(const TempAndIndex& temp_and_index) {
 		known_temp_and_indexes_.emplace_back(temp_and_index);
-  }
-  void set_known_temp_and_indexes(
-	  const std::vector<TempAndIndex>& known_temp_and_indexes) {
-	known_temp_and_indexes_ = known_temp_and_indexes;
-  }
+	}
+	void set_known_temp_and_indexes(
+		const std::vector<TempAndIndex>& known_temp_and_indexes) {
+		known_temp_and_indexes_ = known_temp_and_indexes;
+	}
+  // solvers
+  const SolverHeatmap& SolveBoostLuFactorisation();
+  const SolverHeatmap& SolveCholeskyFactorisation();
  private:
   void ApplyKnownTemps();
   size_t size_ = DefaultMatrixSize;

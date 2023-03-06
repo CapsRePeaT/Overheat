@@ -36,7 +36,7 @@ void MatrixEquation::ApplyKnownTemps() {
 	}
 }
 
-const SolverHeatmap& MatrixEquation::Solve() {
+const SolverHeatmap& MatrixEquation::SolveBoostLuFactorisation() {
 	assert(!already_solved_ && "Can be solved only one time");
 	//CustomPrintMatrix(coeficients_, "MAIN MATRIX coeficients BEFORE");
 	//CustomPrintMatrix(result_, "MAIN MATRIX result BEFORE");
@@ -58,5 +58,9 @@ const SolverHeatmap& MatrixEquation::Solve() {
 	boost::numeric::ublas::lu_substitute(Afactorized, pm, result);
 	//CustomPrintMatrix(result, "heatmap");
 	heatmap_ = SolverHeatmap(result);
+	return heatmap_;
+}
+
+const SolverHeatmap& MatrixEquation::SolveCholeskyFactorisation() {
 	return heatmap_;
 }
