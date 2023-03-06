@@ -13,7 +13,7 @@ void VarianceTetraeder::AddElementContribution(MatrixEquation& matrix) const {
 			matrix.AddCoeficient(indexes()[i], indexes()[j], thermal_conductivity_matrix_(i, j));
 		matrix.AddResult(indexes()[i], flux_(i, 0));
 	}
-	std::cout << "Add element contribution to matrix" << std::endl;
+	//std::cout << "Add element contribution to matrix" << std::endl;
 }
 
 double CalcDeterminant(boost::numeric::ublas::matrix<double> matrix) {
@@ -113,8 +113,8 @@ VarianceTetraeder::VarianceTetraeder(double thermal_conductivity,
 	const auto side_square = ComputeSideSquare();
 	ComputeThermalConductivityMatrix(co_factor, heat_flow_presense_per_side, side_square);
 	ComputeFlux(convective_presense_per_side, heat_flow_presense_per_side, side_square);
-	CustomPrintMatrix(thermal_conductivity_matrix_, "thermal_conductivity_matrix_");
-	CustomPrintMatrix(flux_, "flux_");
+	//CustomPrintMatrix(thermal_conductivity_matrix_, "thermal_conductivity_matrix_");
+	//CustomPrintMatrix(flux_, "flux_");
 }
 
 std::array<double, 4> VarianceTetraeder::ComputeSideSquare() {

@@ -20,6 +20,9 @@ class FsDatapack {
  public:
   bool NextElement(SolverShape*& element);
   void AddElement(SolverShape* element);
+	void PrintContent() const {
+		std::cout << "shape count: " << elements_.size() << std::endl;
+	}
   FsDatapack() = default;
  private:
   std::deque<SolverShape*> elements_;

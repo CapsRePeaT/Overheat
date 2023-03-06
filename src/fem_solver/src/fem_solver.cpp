@@ -16,9 +16,9 @@ void FemSolver::Solve(FileRepresentation& file_rep) {
 	auto corner_points_step = 1000; 
 	// was std::pow(corner_points_step, 2) * 2.5
 	const double area_step = std::pow(corner_points_step, 2) / 2;
-	const auto volume_by_formula = 1 / 12 * std::pow(area_step, 3) * std::sqrt(2.0);
+	const double volume_by_formula = (1.0 / 12) * std::pow(area_step, 3) * std::sqrt(2.0);
 	// was volume_by_formula
-	const double volume_step = volume_by_formula + volume_by_formula / 10;
+	const double volume_step = volume_by_formula +volume_by_formula / 10;
 	auto area_constraint = [&area_step](const double step) -> double {
 		return area_step;
 	};
@@ -32,6 +32,7 @@ void FemSolver::Solve(FileRepresentation& file_rep) {
 	std::cout << "Geometry cutting and element contribution computation fineshed, it took " 
 		      << std::chrono::duration_cast<std::chrono::seconds>(timer_cutter_fin - timer_start)
 		      << " seconds." << std::endl;
+	geom_db.PrintContent();
 	//auto geom_db = cutter.PrepareTestGeometry();
 	const auto index_2_coord_map = cutter.GetVerticeIndexes();
 	SolverShape* element = nullptr;
@@ -45,7 +46,7 @@ void FemSolver::Solve(FileRepresentation& file_rep) {
 	}
 	auto timer_matrix_filling_fin = std::chrono::high_resolution_clock::now();
 	std::cout << "Adding element contribution to main matrix fineshed, it took "
-		<< std::chrono::duration_cast<std::chrono::seconds>(timer_cutter_fin - timer_matrix_filling_fin)
+		<< std::chrono::duration_cast<std::chrono::seconds>(timer_matrix_filling_fin - timer_cutter_fin)
 		<< " seconds." << std::endl;
 	const auto heatmap = main_matrix.Solve();
 	auto timer_matrix_fin = std::chrono::high_resolution_clock::now();

@@ -49,8 +49,8 @@ FsDatapack GeometryCutter::PrepareGeometry(FileRepresentation& file_rep,
 		<< std::chrono::duration_cast<std::chrono::seconds>(timer_get_tetmesh_finish - timer_start)
 		<< " seconds." << std::endl;
 	// for debug
-	if (show_mesh)
-		show_debug_mesh(total_tetmesh);
+	//if (show_mesh)
+		//show_debug_mesh(total_tetmesh);
 
 	const auto upper_point_z = total_tetmesh.bbox().delta_z();
 
