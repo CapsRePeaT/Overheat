@@ -1,43 +1,58 @@
 #include "fem_solver.hpp"
+
+#include <chrono>
+
 #include "variance_solver.hpp"
 #include "heatmap_converter.hpp"
 #include "matrix_agregator.hpp"
 #include "main_matrix_solver.hpp"
 
 void FemSolver::Solve(FileRepresentation& file_rep) {
+	// cutting
+	auto timer_start = std::chrono::high_resolution_clock::now();
 	std::cout << "starting heat solving..." << std::endl;
-
-	auto corner_points_step = 500;
-	auto area_constraint    = [](const double step) -> double {
-    return std::pow(step, 2) * 2.5;
+	std::cout << "Geometry cutting and element contribution started." << std::endl;
+	// was 500
+	auto corner_points_step = 1000; 
+	// was std::pow(corner_points_step, 2) * 2.5
+	const double area_step = std::pow(corner_points_step, 2) / 2;
+	const double volume_by_formula = (1.0 / 12) * std::pow(area_step, 3) * std::sqrt(2.0);
+	// was volume_by_formula
+	const double volume_step = volume_by_formula +volume_by_formula / 10;
+	auto area_constraint = [&area_step](const double step) -> double {
+		return area_step;
 	};
 	// regular tetrahedron volume
-	auto volume_constraint = [](const double step) -> double {
-		return 1 / 12 * std::pow(step, 3) * std::sqrt(2.0);
+	auto volume_constraint = [&volume_step](const double step) -> double {
+		return volume_step;
 	};
-
 	GeometryCutter cutter(corner_points_step, area_constraint, volume_constraint);
-
-	auto geom_db = cutter.PrepareGeometry(file_rep, true);
+	auto geom_db = cutter.PrepareGeometry(file_rep, true /* show debug view*/);
+	auto timer_cutter_fin = std::chrono::high_resolution_clock::now();
+	std::cout << "Geometry cutting and element contribution computation fineshed, it took " 
+		      << std::chrono::duration_cast<std::chrono::seconds>(timer_cutter_fin - timer_start)
+		      << " seconds." << std::endl;
+	geom_db.PrintContent();
+	//auto geom_db = cutter.PrepareTestGeometry();
 	const auto index_2_coord_map = cutter.GetVerticeIndexes();
 	SolverShape* element = nullptr;
 	MatrixEquation main_matrix(index_2_coord_map.MaxIndex() + 1);
+	main_matrix.set_known_temp_and_indexes(cutter.TestTempAndIndexes());
 	while (geom_db.NextElement(element)) {
 		assert(element);
 		element->AddElementContribution(main_matrix);
 		delete element;
 		element = nullptr;
 	}
-	// TODO move to tests
-	//main_matrix.AddResult(0, 2);
-	//main_matrix.AddResult(1, -2);
-	//main_matrix.AddResult(2, 2);
-	//main_matrix.AddCoeficient(0, 0, 2); main_matrix.AddCoeficient(0, 1, 1); main_matrix.AddCoeficient(0, 2, 1);
-	//main_matrix.AddCoeficient(1, 0, 1); main_matrix.AddCoeficient(1, 1, -1); main_matrix.AddCoeficient(1, 2, 0);
-	//main_matrix.AddCoeficient(2, 0, 3); main_matrix.AddCoeficient(2, 1, -1); main_matrix.AddCoeficient(2, 2, 2);
+	auto timer_matrix_filling_fin = std::chrono::high_resolution_clock::now();
+	std::cout << "Adding element contribution to main matrix fineshed, it took "
+		<< std::chrono::duration_cast<std::chrono::seconds>(timer_matrix_filling_fin - timer_cutter_fin)
+		<< " seconds." << std::endl;
 	const auto heatmap = main_matrix.Solve();
-	// https://www.webmath.ru/poleznoe/formules_5_7.php
-	// result should be x1 = -1, x2 = 1, x3 = 3
+	auto timer_matrix_fin = std::chrono::high_resolution_clock::now();
+	std::cout << "Main matrix soliving fineshed, it took "
+		<< std::chrono::duration_cast<std::chrono::seconds>(timer_matrix_fin - timer_matrix_filling_fin)
+		<< " seconds." << std::endl;
 	heatmap.Print();
 	HeatmapConverter converter;
 	converter.ConvertHeatmap(file_rep, heatmap);

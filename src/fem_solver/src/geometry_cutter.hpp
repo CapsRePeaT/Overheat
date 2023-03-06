@@ -21,6 +21,12 @@ class GeometryCutter {
 	// until you close visualization window
 	FsDatapack PrepareGeometry(FileRepresentation& file_rep,
 	                           bool show_mesh = false);
+	FsDatapack PrepareTestGeometry();
+	std::vector<std::pair<double, size_t>> TestTempAndIndexes() {
+		std::vector<std::pair<double, size_t>> result;
+		result.push_back(std::make_pair(20, 0));
+		return result;
+	}
 	VerticeIndexes& GetVerticeIndexes();
 	const VerticeIndexes& GetVerticeIndexes() const;
 

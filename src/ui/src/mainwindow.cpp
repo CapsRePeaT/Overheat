@@ -109,6 +109,8 @@ void MainWindow::LoadGeometryAndRunComputation() {
 	const QString geom_file = QFileDialog::getOpenFileName(
 		this, tr("Open trm File"), QDir::currentPath(),
 		tr("geom (*.txt *.TRM);; ALL (*.*)"));
+	if (geom_file.isEmpty())
+		return;
 	auto rep_id = core().LoadRepresentation(geom_file.toStdString());
 	core().CalculateHeat(core().GetRepresentation(rep_id));
 	VisualizeRepresentation(rep_id);

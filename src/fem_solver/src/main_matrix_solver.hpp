@@ -8,6 +8,7 @@ class MatrixEquation {
  public:
   using Result = SparceMatrix;
   using Coeficients = SparceMatrix;
+  using TempAndIndex = std::pair<double, size_t>;
   MatrixEquation(const size_t size) 
 		: size_(size), coeficients_(size, size),
 		result_(size, 1) {};
@@ -31,11 +32,20 @@ class MatrixEquation {
 	assert(already_solved_);
 	return heatmap_;
   }
+  void AddKnownTempAndIndex(const TempAndIndex& temp_and_index) {
+		known_temp_and_indexes_.emplace_back(temp_and_index);
+  }
+  void set_known_temp_and_indexes(
+	  const std::vector<TempAndIndex>& known_temp_and_indexes) {
+	known_temp_and_indexes_ = known_temp_and_indexes;
+  }
  private:
-	size_t size_ = DefaultMatrixSize;
+  void ApplyKnownTemps();
+  size_t size_ = DefaultMatrixSize;
   Coeficients coeficients_;
   SolverHeatmap heatmap_;
   Result result_;
+  std::vector<TempAndIndex> known_temp_and_indexes_;
   bool already_solved_ = false;
 };
 

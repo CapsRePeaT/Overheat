@@ -19,11 +19,11 @@ bool operator>(const cinolib::vec3d& lhs, const cinolib::vec3d& rhs) {
 namespace MeshProcessor {
 using namespace cinolib;
 
-CustomTetmesh MeshGenerator::get_tetmesh() {
+CustomTetmesh MeshGenerator::get_tetmesh(bool show_mesh) {
 	Profiler profiler;
 	profiler.push("mesh creation");
 
-	auto tet_meshes      = generate_layers_meshes(representation_.layers());
+	auto tet_meshes      = generate_layers_meshes(representation_.layers(), show_mesh);
 	const auto heat_data = representation_.shapes_metadata();
 	assert(heat_data.size() == tet_meshes.size() &&
 	       "Heat data and shapes mismatch");
@@ -48,7 +48,7 @@ CustomTetmesh MeshGenerator::get_tetmesh() {
 	return total_tetmesh;
 }
 
-TetmeshVec MeshGenerator::generate_layers_meshes(const LayersShapes& layers) {
+TetmeshVec MeshGenerator::generate_layers_meshes(const LayersShapes& layers, bool show_mesh) {
 	LayersMehses layers_meshes;
 	layers_meshes.reserve(layers.size());
 	for (const auto& layer : layers) {
@@ -64,11 +64,42 @@ TetmeshVec MeshGenerator::generate_layers_meshes(const LayersShapes& layers) {
 	}
 
 	auto meshes = generate_trimesh_from_layers(layers_meshes);
-	auto tets   = generate_tetmesh_from_trimeshes(meshes);
+	auto tets   = generate_tetmesh_from_trimeshes(meshes, show_mesh);
 	return tets;
 }
 
-TetmeshVec MeshGenerator::generate_tetmesh_from_trimeshes(TrimeshVec& meshes) {
+TetmeshVec MeshGenerator::generate_tetmesh_from_trimeshes(TrimeshVec& meshes, bool show_mesh) {
+	// FOR DEBUG
+	if (show_mesh) {
+		cinolib::DrawableTrimesh<> temp_meshes;
+		for (const auto& mesh : meshes) {
+			temp_meshes += mesh;
+		}
+		using namespace cinolib;
+		GLcanvas gui(1920, 980);
+		temp_meshes.updateGL();
+		DrawableArrow x(vec3d(-35000, 0, 0), vec3d(35000, 0, 0));
+		x.color = Color::GREEN();
+		x.size = 30;
+		DrawableArrow y(vec3d(0, -35000, 0), vec3d(0, 35000, 0));
+		y.color = Color::BLUE();
+		y.size = 30;
+		DrawableArrow z(vec3d(0, 0, -35000), vec3d(0, 0, 35000));
+		z.size = 30;
+
+		// for cutting geometry and look inside
+		//MeshSlicer slicer;
+		//slicer.X_thresh = 0.6f; // in percents
+		//slicer.slice(mesh);
+		//mesh.updateGL();
+		gui.push(&temp_meshes);
+		gui.push(&x);
+		gui.push(&y);
+		gui.push(&z);
+		gui.launch();
+	}
+
+
 	TetmeshVec ret;
 	ret.reserve(meshes.size());
 
