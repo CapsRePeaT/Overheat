@@ -49,7 +49,7 @@ void FemSolver::Solve(FileRepresentation& file_rep) {
 	std::cout << "Adding element contribution to main matrix fineshed, it took "
 		<< std::chrono::duration_cast<std::chrono::seconds>(timer_matrix_filling_fin - timer_cutter_fin)
 		<< " seconds." << std::endl;
-	const auto heatmap = main_matrix.SolveBoostLuFactorisation();
+	const auto heatmap = main_matrix.SolveCholeskyFactorisation();
 	auto timer_matrix_fin = std::chrono::high_resolution_clock::now();
 	std::cout << "Main matrix soliving fineshed, it took "
 		<< std::chrono::duration_cast<std::chrono::seconds>(timer_matrix_fin - timer_matrix_filling_fin)
