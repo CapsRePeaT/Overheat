@@ -40,7 +40,8 @@ class MatrixEquation {
 	}
   // solvers
   const SolverHeatmap& SolveBoostLuFactorisation();
-  const SolverHeatmap& SolveCholeskyFactorisation();
+  const SolverHeatmap& SolveHYPRE();
+  const SolverHeatmap& SolveHYPRETest();
  private:
   void ApplyKnownTemps();
   size_t size_ = DefaultMatrixSize;
