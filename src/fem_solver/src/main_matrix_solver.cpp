@@ -5,6 +5,31 @@
 
 /* Struct linear solvers header */
 #include "HYPRE_struct_ls.h"
+//#include "HYPRE_IJ_mv.h"
+#include "_hypre_IJ_mv.h"
+// tests
+
+#include "HYPRE_parcsr_ls.h" // ILU, MGR
+
+
+
+//#include "HYPRE_parcsr_mv.h"
+//#include "HYPRE_utilities.h"
+//#include "_hypre_utilities.h"
+//
+//#include "HYPRE.h"
+//#include "HYPRE_krylov.h"
+//#include "distributed_matrix.h"
+//#include "HYPREf.h"
+//#include "HYPRE_DistributedMatrixPilutSolver_types.h"
+
+
+//HYPRE_Solver solver;
+///* Create Solver */
+//HYPRE_ILUCreate(MPI_COMM_WORLD, &solver);
+//HYPRE_MGRCreate(MPI_COMM_WORLD, &solver);
+//HYPRE_FSAISetMaxSteps();
+
 
 void CustomPrintMatrix(const SparceMatrix& matrix, const std::string& matrix_name) {
 	std::cout << "Matrix: " << matrix_name << std::endl;
@@ -79,6 +104,8 @@ const SolverHeatmap& MatrixEquation::SolveCholeskyFactorisation() {
 	MPI_Comm_rank(MPI_COMM_WORLD, &myid);
 	MPI_Comm_size(MPI_COMM_WORLD, &num_procs);
 
+	/* Initialize HYPRE */
+	HYPRE_Init();
 	//if (num_procs != 2)
 	//{
 	//	if (myid == 0) { printf("Must run with 2 processors!\n"); }
@@ -86,9 +113,126 @@ const SolverHeatmap& MatrixEquation::SolveCholeskyFactorisation() {
 
 	//	return heatmap_;
 	//}
+	HYPRE_IJMatrix ij_matrix; //matrix
+	{
+		
+		int  nrows = 3;
+		int  ncols[3] = {3, 3, 3};
+		int  rows[3] = {0, 1, 2};
+		int  cols[9] = {0, 1, 2, 
+			            0, 1, 2, 
+			            0, 1, 2};
+		double values[9] = {2, 1, 1, 
+			                1, -1, 0, 
+			                3, -1, 2};
+		HYPRE_IJMatrixCreate(MPI_COMM_WORLD,
+			0 /*ilower*/, 3 /*iupper*/,
+			0 /*jlower*/, 3 /*jupper*/, &ij_matrix);
+		HYPRE_IJMatrixSetObjectType(ij_matrix, HYPRE_PARCSR);
+		HYPRE_IJMatrixInitialize(ij_matrix);
+		HYPRE_IJMatrixSetValues(ij_matrix, nrows, ncols, rows, cols, values);
+		HYPRE_IJMatrixAssemble(ij_matrix);
+		HYPRE_IJMatrixPrint(ij_matrix, "Matrix_debug.txt");
+	}
+	HYPRE_IJVector ij_vector_b; // right hand side
+	{
+		int jlower, jupper;
+		int nvalues = 3;
+		int indices[3] = {0, 1, 2};
+		double values[3] = {2, -2, 2};
+		HYPRE_IJVectorCreate(MPI_COMM_WORLD, 0, 2, &ij_vector_b);
+		HYPRE_IJVectorSetObjectType(ij_vector_b, HYPRE_PARCSR);
+		HYPRE_IJVectorInitialize(ij_vector_b);
+		HYPRE_IJVectorSetValues(ij_vector_b, nvalues, indices, values);
+		HYPRE_IJVectorAssemble(ij_vector_b);
+		HYPRE_IJVectorPrint(ij_vector_b, "Vector_debug_b.txt");
 
-	/* Initialize HYPRE */
-	HYPRE_Init();
+	}
+	HYPRE_IJVector ij_vector_x; // solution
+	{
+		int jlower, jupper;
+		int nvalues = 3;
+		int indices[3] = { 0, 1, 2 };
+		double values[3] = { 0, 0, 0 };
+		HYPRE_IJVectorCreate(MPI_COMM_WORLD, 0, 2, &ij_vector_x);
+		HYPRE_IJVectorSetObjectType(ij_vector_x, HYPRE_PARCSR);
+		HYPRE_IJVectorInitialize(ij_vector_x);
+		HYPRE_IJVectorSetValues(ij_vector_x, nvalues, indices, values);
+		HYPRE_IJVectorAssemble(ij_vector_x);
+		HYPRE_IJVectorPrint(ij_vector_x, "Vector_debug_x.txt");
+
+	}
+
+
+	/* 5. Set up and use a solver (See the Reference Manual for descriptions
+	 of all of the options.) */
+	{
+
+
+		///* Create Solver */
+		//int HYPRE_SOLVERCreate(MPI_COMM_WORLD, &solver);
+		///* Set certain parameters if desired */
+		//HYPRE_SOLVERSetTol(solver, 1.e-8);
+		///* Set up Solver */
+		//HYPRE_SOLVERSetup(solver, A, b, x);
+		///* Solve the system */
+		//HYPRE_SOLVERSolve(solver, A, b, x);
+		///* Destroy the solver */
+		//HYPRE_SOLVERDestroy(solver);
+
+
+		HYPRE_Solver solver;
+		/* Create Solver */
+		HYPRE_ILUCreate(&solver);
+		HYPRE_ILUSetType(solver, 0); //https://hypre.readthedocs.io/en/latest/api-sol-parcsr.html#_CPPv416HYPRE_ILUSetType12HYPRE_Solver9HYPRE_Int
+		//HYPRE_ParaSailsBuildIJMatrix(solver, &ij_matrix);
+		https://oomph-lib.github.io/oomph-lib/doc/the_data_structure/html/hypre__solver_8cc_source.html
+		HYPRE_ParCSRMatrix hypre_par_matrix;
+		HYPRE_IJMatrixGetObject(ij_matrix, (void**)&hypre_par_matrix);
+		HYPRE_ParVector hypre_par_vector_b;
+		HYPRE_IJVectorGetObject(ij_vector_b, (void**)&hypre_par_vector_b);
+		HYPRE_ParVector hypre_par_vector_x;
+		HYPRE_IJVectorGetObject(ij_vector_x, (void**)&hypre_par_vector_x);
+		
+		HYPRE_ILUSetup(solver, hypre_par_matrix, hypre_par_vector_b, hypre_par_vector_x);
+		HYPRE_ILUSolve(solver, hypre_par_matrix, hypre_par_vector_b, hypre_par_vector_x);
+		HYPRE_ParVectorPrint(hypre_par_vector_x, "result_par_vec");
+		HYPRE_ILUDestroy(solver);
+		//HYPRE_MGRCreate(&solver); // WORKS!
+		
+
+		//HYPRE_FSAISetMaxSteps();
+
+		///* Create an empty PCG Struct solver */
+		//HYPRE_ILUCreate(MPI_COMM_WORLD, &solver);
+
+		///* Set some parameters */
+		//HYPRE_PCGSetTol(solver, 1.0e-06); /* convergence tolerance */
+		//HYPRE_PCGSetPrintLevel(solver, 2); /* amount of info. printed */
+
+		///* Setup and solve */
+		//HYPRE_PCGSetup(solver, ij_matrix, b, x);
+		//HYPRE_PCGSolve(solver, A, b, x);
+	}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	
+
+	
 
 	/* Print GPU info */
 	/* HYPRE_PrintDeviceInfo(); */
