@@ -31,6 +31,7 @@ set(CINOLIB_USES_SHEWCHUK_PREDICATES OFF)
 find_package(glm)
 find_package(glad)
 find_package(spdlog)
+find_package(hypre)
 find_package(magic_enum)
 find_package(Boost)
 find_package(cinolib REQUIRED)
@@ -49,7 +50,7 @@ target_link_libraries(renderer-test gtest_main core common glm::glm glad::glad r
 
 target_link_libraries(common PUBLIC spdlog::spdlog)
 target_link_libraries(common PUBLIC magic_enum::magic_enum)
-target_link_libraries(fem_solver PRIVATE Boost::boost) 
+target_link_libraries(fem_solver PRIVATE Boost::boost HYPRE::HYPRE) 
 target_link_libraries(reader-interface INTERFACE common)
 
 target_link_libraries(fem_solver PUBLIC cinolib)

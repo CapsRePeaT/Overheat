@@ -38,7 +38,7 @@ void MatrixEquation::ApplyKnownTemps() {
 
 const SolverHeatmap& MatrixEquation::SolveBoostLuFactorisation() {
 	assert(!already_solved_ && "Can be solved only one time");
-	//CustomPrintMatrix(coeficients_, "MAIN MATRIX coeficients BEFORE");
+	CustomPrintMatrix(coeficients_, "MAIN MATRIX coeficients BEFORE");
 	//CustomPrintMatrix(result_, "MAIN MATRIX result BEFORE");
 	ApplyKnownTemps();
 	//CustomPrintMatrix(coeficients_, "MAIN MATRIX coeficients after");

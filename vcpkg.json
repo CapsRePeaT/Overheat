@@ -14,7 +14,8 @@
 		"boost-json",
 		"boost-regex",
 		"boost-geometry",
-		"boost-ublas"
+		"boost-ublas",
+		"hypre"
 	]
 }
 
