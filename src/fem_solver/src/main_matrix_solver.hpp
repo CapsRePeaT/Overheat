@@ -41,6 +41,7 @@ class MatrixEquation {
   // solvers
   const SolverHeatmap& SolveBoostLuFactorisation();
   const SolverHeatmap& SolveHYPRE();
+  // runs many solvers in a row, may not work
   const SolverHeatmap& SolveHYPRETest();
  private:
   void ApplyKnownTemps();
