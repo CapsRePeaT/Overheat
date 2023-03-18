@@ -195,7 +195,6 @@ const SolverHeatmap& MatrixEquation::SolveHYPRETest() {
 		HYPRE_IJVectorSetValues(ij_vector_b, nvalues, indices, values);
 		HYPRE_IJVectorAssemble(ij_vector_b);
 		HYPRE_IJVectorPrint(ij_vector_b, "Vector_debug_b.txt");
-
 	}
 	HYPRE_IJVector ij_vector_x; // solution
 	{
@@ -208,14 +207,13 @@ const SolverHeatmap& MatrixEquation::SolveHYPRETest() {
 		HYPRE_IJVectorSetValues(ij_vector_x, nvalues, indices, values);
 		HYPRE_IJVectorAssemble(ij_vector_x);
 		HYPRE_IJVectorPrint(ij_vector_x, "Vector_debug_x.txt");
-
 	}
 	// hybrid(krylov)
 	{
 		HYPRE_Solver solver;
 		HYPRE_ParCSRHybridCreate(&solver);
 		//HYPRE_MGRSetCpointsByBlock(solver); // we use default
-			//https://oomph-lib.github.io/oomph-lib/doc/the_data_structure/html/hypre__solver_8cc_source.html
+		//https://oomph-lib.github.io/oomph-lib/doc/the_data_structure/html/hypre__solver_8cc_source.html
 		HYPRE_ParCSRMatrix hypre_par_matrix;
 		HYPRE_IJMatrixGetObject(ij_matrix, (void**)&hypre_par_matrix);
 		HYPRE_ParVector hypre_par_vector_b;
@@ -263,5 +261,10 @@ const SolverHeatmap& MatrixEquation::SolveHYPRETest() {
 	}
 	// FSAI, based on Cholesky 
 	// needed version HYPRE version 2.25.0, as for 13/3/2023 vcpkg supports only 2.23.0
+	return heatmap_;
+}
+
+
+const SolverHeatmap& MatrixEquation::SolverGauss() {
 	return heatmap_;
 }

@@ -1,6 +1,7 @@
 #pragma once
 
 #include <array>
+#include <math.h>
 
 #include "solver_db.hpp"
 #include "main_matrix_solver.hpp"
@@ -59,6 +60,18 @@ class SolverTetraeder : public SolverShape {
 	double intensity_of_heat_source() const { return intensity_of_heat_source_; }
 	double convective_heat_coef() const {
 		return convective_heat_coef_; 
+	}
+	size_t BiggestIndexDiff() const {
+		size_t biggest_diff = 0;
+		for (auto i = 0; i < 4; ++i)
+			for (auto j = 0; j < 4; ++j) {
+				const auto diff = indexes_[i] > indexes_[j] 
+					              ? indexes_[i] - indexes_[j]
+					              : indexes_[j] - indexes_[i];
+				if (biggest_diff < diff)
+					biggest_diff = diff;
+			}
+		return biggest_diff;
 	}
  private:
 	 double thermal_conductivity_;

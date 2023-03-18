@@ -20,6 +20,13 @@ class MatrixEquation {
 	assert(index_1 < size_&& index_2 < size_);
 	coeficients_(index_1, index_2) += value;
   }
+	void AddElementIndexBiggestDiff(const size_t diff) {
+		if (biggest_index_diff_ < diff)
+			biggest_index_diff_ = diff;
+	}
+	size_t biggest_index_diff() const {
+		return biggest_index_diff_;
+	}
   void SetHeatmap(const SolverHeatmap& heatmap) {
 	heatmap_ = heatmap;
   }
@@ -43,8 +50,10 @@ class MatrixEquation {
   const SolverHeatmap& SolveHYPRE();
   // runs many solvers in a row, may not work
   const SolverHeatmap& SolveHYPRETest();
+  const SolverHeatmap& SolverGauss();
  private:
   void ApplyKnownTemps();
+  size_t biggest_index_diff_ = 0;
   size_t size_ = DefaultMatrixSize;
   Coeficients coeficients_;
   SolverHeatmap heatmap_;

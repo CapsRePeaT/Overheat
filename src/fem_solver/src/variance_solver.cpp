@@ -13,6 +13,7 @@ void VarianceTetraeder::AddElementContribution(MatrixEquation& matrix) const {
 			matrix.AddCoeficient(indexes()[i], indexes()[j], thermal_conductivity_matrix_(i, j));
 		matrix.AddResult(indexes()[i], flux_(i, 0));
 	}
+	matrix.AddElementIndexBiggestDiff(BiggestIndexDiff());
 	//std::cout << "Add element contribution to matrix" << std::endl;
 }
 

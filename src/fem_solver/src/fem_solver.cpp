@@ -45,6 +45,7 @@ void FemSolver::Solve(FileRepresentation& file_rep) {
 		delete element;
 		element = nullptr;
 	}
+	std::cout << "Main matrix biggest diff " << main_matrix.biggest_index_diff() << std::endl;
 	auto timer_matrix_filling_fin = std::chrono::high_resolution_clock::now();
 	std::cout << "Adding element contribution to main matrix fineshed, it took "
 		<< std::chrono::duration_cast<std::chrono::seconds>(timer_matrix_filling_fin - timer_cutter_fin)
