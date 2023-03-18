@@ -28,6 +28,7 @@
 #include "renderer/renderer_api.h"
 #include "renderer/texture2d.h"
 #include "scene.h"
+#include "text/font.h"
 
 namespace renderer {
 
@@ -48,9 +49,8 @@ void GLSceneViewport::Initialize(const int w, const int h) {
 	OpenGlInit(w, h);
 	ApplicationInit(w, h);
 	//#ifndef NDEBUG
-	DebugInit(w, h);
+	// DebugInit(w, h);
 	//#endif
-
 	is_initialized_ = true;
 }
 
@@ -76,7 +76,11 @@ void GLSceneViewport::ApplicationInit(const int w, const int h) {
 	camera_controller_ = std::make_unique<SphericalCameraController>(
 			std::move(camera), /*radius=*/100.0f, /*phi=*/glm::pi<float>() * 3 / 2,
 			/*theta*/ glm::pi<float>() * 0.5f);
-	temperature_bar_ = std::make_unique<TemperatureBar>(20, h-50, glm::vec2{10.0f, 25.0f});
+	temperature_bar_ = std::make_unique<TemperatureBar>(20.0f, h-50.0f, glm::vec2{10.0f, 25.0f});
+	font_ = std::make_unique<Font>(Font::default_font_name);
+	if (!font_->Init())
+		LOG_CRITICAL("Font has not been initialized");
+	texts_.push_back(font_->CreateText(U"Test", {40.0f, 50.0f}));
 }
 
 void GLSceneViewport::DebugInit(const int /*w*/, const int /*h*/) {
@@ -154,6 +158,14 @@ void GLSceneViewport::RenderFrame() {
 	// data_->debug_heatmap_material->Unuse();
 	temperature_bar_material_->Unuse(); 
 
+	if (!texts_.empty()) {
+		font_->material().Use(camera.uiViewMatrix());
+		for (const auto& text : texts_) {
+			api.DrawIndexed(text->vertex_array());
+		}
+		font_->material().Unuse();
+	}
+
 	if (data_) {
 		const auto& axes = data_->axes;
 		data_->debug_material->Use(axes->transform(), camera.viewProjectionMatrix(),
@@ -213,7 +225,7 @@ void GLSceneViewport::Resize(const int w, const int h) {
 	                                         static_cast<float>(h));
 	camera_controller_->SetCameraScreenBounds(w, h);
 	temperature_bar_ = std::make_unique<TemperatureBar>(20, h-50, glm::vec2{10.0f, 25.0f});
-}
+} 
 
 void GLSceneViewport::SetTemperatureRange(const float min, const float max) {
 	if (heatmap_materials_)

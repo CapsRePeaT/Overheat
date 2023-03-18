@@ -4,11 +4,30 @@
 
 namespace renderer::gl {
 
-// TODO: get data type as template parameter and set type for glTextImage2D by it
-Texture2D::Texture2D(const GLsizei width, GLsizei height,
-                                 const void* data, const int channels,
-                                 const int32_t filter, const int32_t wrap_mode,
-                                 bool generate_bitmap)
+namespace {
+
+GLenum FormatToGLenum(Format format) {
+	switch (format) {
+		case Format::FLOAT:
+			return GL_FLOAT;
+		case Format::UINT:
+			return GL_UNSIGNED_INT;
+		case Format::UBYTE:
+			return GL_UNSIGNED_BYTE;
+
+		default:
+			break;
+	}
+}
+
+}  // namespace
+
+// TODO: get data type as template parameter and set type for glTextImage2D by
+// it
+Texture2D::Texture2D(const GLsizei width, GLsizei height, const void* data,
+                     const int channels, const Format format,
+                     const int32_t filter, const int32_t wrap_mode,
+                     bool generate_bitmap)
 		: id_(0), width_(width), height_(height) {
 	switch (channels) {
 		case 1:
@@ -29,7 +48,7 @@ Texture2D::Texture2D(const GLsizei width, GLsizei height,
 
 	glBindTexture(GL_TEXTURE_2D, id_);
 	glTexImage2D(GL_TEXTURE_2D, 0, mode_, width_, height_, 0, mode_,
-	             GL_FLOAT, data);
+	             FormatToGLenum(format), data);
 
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, wrap_mode);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, wrap_mode);
@@ -91,6 +110,17 @@ void Texture2D::Bind(const int unit) const {
 		glBindTexture(GL_TEXTURE_2D, id_);
 		bound_id = id_;
 	}
+}
+
+// TODO: make it RAII
+void Texture2D::Unbind(const int unit) const {
+	if (unit != active_unit && unit >= 0) {
+		GLenum active_texture = GL_TEXTURE0 + unit;
+		glActiveTexture(active_texture);
+		active_unit = unit;
+	}
+	glBindTexture(GL_TEXTURE_2D, 0);
+	bound_id = 0;
 }
 
 }  // namespace renderer::gl

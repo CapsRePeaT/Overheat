@@ -33,12 +33,21 @@ constexpr glm::vec3 color_not_selected    = vec3_0;
 constexpr glm::vec3 color_selected        = {1.0f, 0.66f, 0.0f};
 constexpr glm::vec3 color_active_selected = {1.0f, 0.33f, 0.0f};
 
+// fonts
+// we don't need non-printable first 32 characters
+constexpr char32_t ascii_base = 32;
+constexpr size_t ascii_num = 127 - ascii_base;
+// https://en.wikipedia.org/wiki/Cyrillic_script_in_Unicode
+constexpr char32_t cyrillic_base = 0x0400;
+constexpr size_t cyrillic_num = 256;
+
 namespace init {
 // Camera
 constexpr float zoom           = 15.0f;
 constexpr float near_plane     = 1.0f;
 constexpr float far_plane      = 2000.0f;
 constexpr auto near_far_bounds = std::make_pair(near_plane, far_plane);
+constexpr float default_stratified_step = 5.0f;
 // Renderer
 constexpr glm::vec4 clear_color = {0.49, 0.49, 0.49, 1};
 // Objects

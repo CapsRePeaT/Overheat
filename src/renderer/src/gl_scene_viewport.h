@@ -10,6 +10,8 @@
 #include "camera_controller.h"
 #include "core.h"
 #include "i_scene_viewport.h"
+#include "text/text2d.h"
+#include "text/font.h"
 
 namespace renderer {
 
@@ -48,7 +50,8 @@ class GLSceneViewport final : public ISceneViewport {
 	std::shared_ptr<Scene> scene_;
 	std::unique_ptr<TemperatureBarMaterial> temperature_bar_material_;
 	std::unique_ptr<TemperatureBar> temperature_bar_;
-
+	std::unique_ptr<Font> font_;
+	std::vector<std::shared_ptr<Text2D>> texts_;
 
 	struct Impl;
 	std::unique_ptr<Impl> data_;

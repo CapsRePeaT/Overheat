@@ -1,7 +1,5 @@
 #include "heatmap_material.h"
 
-#include <memory>
-
 #include "config.h"
 
 namespace renderer {
