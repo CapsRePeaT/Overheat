@@ -45,7 +45,7 @@ class GeometryCutter {
 	MeshConstraintFunction area_constraint_;
 	MeshConstraintFunction volume_constraint_;
 	VerticeIndexes index_to_coord_map_;
-	std::vector<std::pair<double, Point3D>> points_temps_;
+	std::set<std::pair<double, Point3D>> points_temps_;
 };
 
 

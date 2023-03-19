@@ -36,7 +36,10 @@ using CustomTetmesh = cinolib::DrawableTetmesh<
 
 using TetmeshVec = std::vector<CustomTetmesh>;
 
-
+inline bool operator>(const cinolib::vec3d& lhs, const cinolib::vec3d& rhs) {
+	return std::tie(lhs.x(), lhs.y(), lhs.z()) >
+	       std::tie(rhs.x(), rhs.y(), rhs.z());
+}
 
 class MeshGenerator {
  public:

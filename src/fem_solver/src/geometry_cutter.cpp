@@ -3,8 +3,8 @@
 #include <cinolib/octree.h>
 
 #include <algorithm>
-#include <iostream>
 #include <cassert>
+#include <iostream>
 
 #include "../../mesh_processor/include/generate_mesh.h"
 #include "cinolib/drawable_arrow.h"
@@ -35,10 +35,10 @@ void show_debug_mesh(MeshProcessor::CustomTetmesh& mesh) {
 	gui.push(&x);
 	gui.push(&y);
 	gui.push(&z);
-	// gui.launch();
+	gui.launch();
 }
 bool is_boundary_face(std::set<cinolib::vec3d>& boundary,
-                      std::vector<cinolib::vec3d>& face_coords) {
+                      std::array<cinolib::vec3d,3>& face_coords) {
 	return std::all_of(
 			face_coords.begin(), face_coords.end(),
 			[&boundary](const auto vert) { return boundary.contains(vert); });
@@ -47,22 +47,62 @@ bool is_boundary_face(std::set<cinolib::vec3d>& boundary,
 std::optional<CornerCondition> get_boundary_conds(
 		MeshProcessor::Polyhedron_attributes& p_data,
 		SideBoundaryConditionsMap& boundary,
-		std::vector<cinolib::vec3d>& face_coords) {
+		std::array<cinolib::vec3d,3>& face_coords,
+		std::array<cinolib::vec3d,4>& poly_coords) {
+	double min_x = std::min_element(poly_coords.begin(), poly_coords.end(),
+	                               [](auto f, auto s) { return f.x() < s.x(); })->x();
+	double max_x = std::max_element(poly_coords.begin(), poly_coords.end(),
+	                               [](auto f, auto s) { return f.x() < s.x(); })->x();
+
+	double min_y = std::min_element(poly_coords.begin(), poly_coords.end(),
+	                               [](auto f, auto s) { return f.y() < s.y(); })->y();
+	double max_y = std::max_element(poly_coords.begin(), poly_coords.end(),
+	                               [](auto f, auto s) { return f.y() < s.y(); })->y();
+
+	double min_z = std::min_element(poly_coords.begin(), poly_coords.end(),
+	                               [](auto f, auto s) { return f.z() < s.z(); })->z();
+	double max_z = std::max_element(poly_coords.begin(), poly_coords.end(),
+	                               [](auto f, auto s) { return f.z() < s.z(); })->z();
+
 	for (auto& b : boundary)
 		if (is_boundary_face(b.second, face_coords)) {
 			switch (b.first) {
 				case ConstraintSide::xy:
-					return p_data.corner_conditions.xy;
+					if (face_coords[0].z() == face_coords[1].z() &&
+					    face_coords[1].z() == face_coords[2].z() &&
+					    face_coords[0].z() == min_z)
+						return p_data.corner_conditions.xy;
+					break;
 				case ConstraintSide::xy_z:
-					return p_data.corner_conditions.xy_z;
+					if (face_coords[0].z() == face_coords[1].z() &&
+					    face_coords[1].z() == face_coords[2].z() &&
+					    face_coords[0].z() == max_z)
+						return p_data.corner_conditions.xy_z;
+					break;
 				case ConstraintSide::xz:
-					return p_data.corner_conditions.xz;
+					if (face_coords[0].y() == face_coords[1].y() &&
+					    face_coords[1].y() == face_coords[2].y() &&
+					    face_coords[0].y() == min_y)
+						return p_data.corner_conditions.xz;
+					break;
 				case ConstraintSide::xz_y:
-					return p_data.corner_conditions.xz_y;
+					if (face_coords[0].y() == face_coords[1].y() &&
+					    face_coords[1].y() == face_coords[2].y() &&
+					    face_coords[0].y() == max_y)
+						return p_data.corner_conditions.xz_y;
+					break;
 				case ConstraintSide::yz:
-					return p_data.corner_conditions.yz;
+					if (face_coords[0].x() == face_coords[1].x() &&
+					    face_coords[1].x() == face_coords[2].x() &&
+					    face_coords[0].x() == min_x)
+						return p_data.corner_conditions.yz;
+					break;
 				case ConstraintSide::yz_x:
-					return p_data.corner_conditions.yz_x;
+					if (face_coords[0].x() == face_coords[1].x() &&
+					    face_coords[1].x() == face_coords[2].x() &&
+					    face_coords[0].x() == max_x)
+						return p_data.corner_conditions.yz_x;
+					break;
 				default:
 					throw std::runtime_error("Unexpected constraint");
 			}
@@ -78,7 +118,7 @@ FsDatapack GeometryCutter::PrepareGeometry(FileRepresentation& file_rep,
 	auto timer_start = std::chrono::high_resolution_clock::now();
 	auto generator = MeshGenerator(file_rep, area_constraint_, volume_constraint_,
 	                               corner_points_step_);
-	auto total_tetmesh            = generator.get_tetmesh();
+	auto total_tetmesh            = generator.get_tetmesh(show_mesh);
 	auto boundary                 = generator.get_boundary_verts();
 	auto timer_get_tetmesh_finish = std::chrono::high_resolution_clock::now();
 	std::cout << "Tet gen fineshed, it took "
@@ -105,7 +145,7 @@ FsDatapack GeometryCutter::PrepareGeometry(FileRepresentation& file_rep,
 		auto& p_data = total_tetmesh.poly_data(pid);
 
 		std::array<VerticeIndexes::VerticeIndex, 4> indexes;
-		std::array<cinolib::vec3d, 4> coord;
+		std::array<cinolib::vec3d, 4> poly_coords;
 
 		auto poly_verts = total_tetmesh.poly_verts(pid);
 		assert(polys[pid].size() == 4);
@@ -113,34 +153,36 @@ FsDatapack GeometryCutter::PrepareGeometry(FileRepresentation& file_rep,
 			auto v        = poly_verts[i];
 			auto glob_ind = GetVerticeIndexes().AddVertice(
 					{{v.x(), v.y(), v.z()}});  //  для него пробросить темпу
-			indexes[i] = glob_ind;
-			coord[i]   = v;
+			indexes[i]     = glob_ind;
+			poly_coords[i] = v;
 		}
 
 		std::array<double, 4> convective_presense_per_side = {0, 0, 0, 0};
 		std::array<double, 4> heat_flow_presense_per_side  = {0, 0, 0, 0};
 		for (auto face_ind = 0; face_ind < faces_indexes.size(); ++face_ind) {
-			auto faces_verts_indexes                = faces_indexes[face_ind];
-			std::vector<cinolib::vec3d> face_coords = {coord[faces_verts_indexes[0]],
-			                                           coord[faces_verts_indexes[1]],
-			                                           coord[faces_verts_indexes[2]]};
+			auto faces_verts_indexes               = faces_indexes[face_ind];
+			std::array<cinolib::vec3d,3> face_coords = {
+					poly_coords[faces_verts_indexes[0]],
+					poly_coords[faces_verts_indexes[1]],
+					poly_coords[faces_verts_indexes[2]]};
 
-			auto boundary_conds = get_boundary_conds(p_data, boundary, face_coords);
+			auto boundary_conds =
+					get_boundary_conds(p_data, boundary, face_coords, poly_coords);
 			if (boundary_conds.has_value()) {
 				convective_presense_per_side[face_ind] =
 						boundary_conds->convective_heat;
 				heat_flow_presense_per_side[face_ind] = boundary_conds->heat_flow;
-				for (auto coord : face_coords) {
-					points_temps_.push_back(
-							{boundary_conds->temperature, Point3D{coord.x(), coord.y(), coord.z()}});
-				}
+				if (boundary_conds->temperature > 0)
+					for (auto coord : face_coords) {
+						points_temps_.insert({boundary_conds->temperature,
+						                      Point3D{coord.x(), coord.y(), coord.z()}});
+					}
 			}
 		}
 		result.AddElement(new VarianceTetraeder(
 				p_data.thermal_conductivity, ambient_temperature,
-				p_data.intensity_of_heat_source, indexes,
-				convective_presense_per_side, heat_flow_presense_per_side,
-				GetVerticeIndexes()));
+				p_data.intensity_of_heat_source, indexes, convective_presense_per_side,
+				heat_flow_presense_per_side, GetVerticeIndexes()));
 	}
 	auto element_contribution_finish = std::chrono::high_resolution_clock::now();
 	std::cout << "Element contribution counting fineshed, it took "
@@ -208,12 +250,13 @@ FsDatapack GeometryCutter::PrepareTestGeometry() {
 	if (num_of_shapes >= 1) {
 		std::array<VerticeIndexes::VerticeIndex, 4> indexes = {0, 1, 2, 3};
 		// inner sides indexes: 3
-		std::array<double, 4> convective_presense_per_side = { convective_heat, convective_heat, convective_heat, 0};
-		std::array<double, 4> heat_flow_presense_per_side  = {0, 0, 0, 0};
+		std::array<double, 4> convective_presense_per_side = {
+				convective_heat, convective_heat, convective_heat, 0};
+		std::array<double, 4> heat_flow_presense_per_side = {0, 0, 0, 0};
 		result.AddElement(new VarianceTetraeder(
 				thermal_conductivity,  // thermal_conductivity
 				ambient_temperature,   // ambient_temperature
-				5,                // intensity_of_heat_source, set 20 to middle element
+				5,  // intensity_of_heat_source, set 20 to middle element
 				indexes, convective_presense_per_side, heat_flow_presense_per_side,
 				GetVerticeIndexes()));
 	}
@@ -221,7 +264,8 @@ FsDatapack GeometryCutter::PrepareTestGeometry() {
 		std::array<VerticeIndexes::VerticeIndex, 4> indexes = {1, 2, 3, 4};
 		// inner sides indexes: 0 3
 		// heat flow on index: 2
-		std::array<double, 4> convective_presense_per_side = {0, convective_heat, 0, 0};
+		std::array<double, 4> convective_presense_per_side = {0, convective_heat, 0,
+		                                                      0};
 		std::array<double, 4> heat_flow_presense_per_side  = {0, 0, heat_flow, 0};
 		result.AddElement(new VarianceTetraeder(
 				thermal_conductivity,      // thermal_conductivity
@@ -234,7 +278,8 @@ FsDatapack GeometryCutter::PrepareTestGeometry() {
 		std::array<VerticeIndexes::VerticeIndex, 4> indexes = {2, 3, 4, 5};
 		// inner sides indexes: 0 2
 		// heat flow on index: 3
-		std::array<double, 4> convective_presense_per_side = {0, convective_heat, 0, 0};
+		std::array<double, 4> convective_presense_per_side = {0, convective_heat, 0,
+		                                                      0};
 		std::array<double, 4> heat_flow_presense_per_side  = {0, 0, 0, heat_flow};
 		result.AddElement(new VarianceTetraeder(
 				thermal_conductivity,      // thermal_conductivity
@@ -246,8 +291,9 @@ FsDatapack GeometryCutter::PrepareTestGeometry() {
 	if (num_of_shapes >= 4) {
 		std::array<VerticeIndexes::VerticeIndex, 4> indexes = {2, 4, 5, 6};
 		// inner sides indexes: 0
-		std::array<double, 4> convective_presense_per_side = {0, convective_heat, convective_heat, convective_heat};
-		std::array<double, 4> heat_flow_presense_per_side  = {0, 0, 0, 0};
+		std::array<double, 4> convective_presense_per_side = {
+				0, convective_heat, convective_heat, convective_heat};
+		std::array<double, 4> heat_flow_presense_per_side = {0, 0, 0, 0};
 		result.AddElement(new VarianceTetraeder(
 				thermal_conductivity,      // thermal_conductivity
 				ambient_temperature,       // ambient_temperature

@@ -9,13 +9,6 @@
 
 #include "utils.h"
 
-namespace {
-bool operator>(const cinolib::vec3d& lhs, const cinolib::vec3d& rhs) {
-	return std::tie(lhs.x(), lhs.y(), lhs.z()) >
-	       std::tie(rhs.x(), rhs.y(), rhs.z());
-}
-}  // namespace
-
 namespace MeshProcessor {
 using namespace cinolib;
 
@@ -96,7 +89,7 @@ TetmeshVec MeshGenerator::generate_tetmesh_from_trimeshes(TrimeshVec& meshes,
 		gui.push(&x);
 		gui.push(&y);
 		gui.push(&z);
-	    gui.launch();
+		gui.launch();
 	}
 
 	TetmeshVec ret;
@@ -132,29 +125,38 @@ TrimeshVec MeshGenerator::generate_trimesh_from_layers(LayersMehses& layers) {
 	calculate_mesh_and_translate_to_origin_pos(layers);
 
 	TrimeshVec ret;
+	for (auto& layer : layers)
+		for (auto& mesh : layer) {
+			boundary_verts_[ConstraintSide::xy].insert(mesh.xy.vector_verts().begin(),
+			                                           mesh.xy.vector_verts().end());
+			boundary_verts_[ConstraintSide::yz].insert(mesh.yz.vector_verts().begin(),
+			                                           mesh.yz.vector_verts().end());
+			boundary_verts_[ConstraintSide::xz].insert(mesh.xz.vector_verts().begin(),
+			                                           mesh.xz.vector_verts().end());
+			boundary_verts_[ConstraintSide::xy_z].insert(
+					mesh.xy_z.vector_verts().begin(), mesh.xy_z.vector_verts().end());
+			boundary_verts_[ConstraintSide::xz_y].insert(
+					mesh.xz_y.vector_verts().begin(), mesh.xz_y.vector_verts().end());
+			boundary_verts_[ConstraintSide::yz_x].insert(
+					mesh.yz_x.vector_verts().begin(), mesh.yz_x.vector_verts().end());
+		}
+
 	for (auto& layer : layers) {
 		for (auto& mesh : layer) {
 			for (auto upper_box_id : mesh.boxes_upper) {
 				auto& upper_mesh = layers[mesh.layer + 1][upper_box_id];
 				mesh.xy_z += upper_mesh.xy;
+				for (auto vert : upper_mesh.xy.vector_verts())
+					boundary_verts_[ConstraintSide::xy].erase(vert);
 			}
+
 			for (auto lower_box_id : mesh.boxes_lower) {
 				auto& lower_mesh = layers[mesh.layer - 1][lower_box_id];
 				mesh.xy += lower_mesh.xy_z;
+				for (auto vert : lower_mesh.xy_z.vector_verts())
+					boundary_verts_[ConstraintSide::xy_z].erase(vert);
 			}
 			mesh.merge_meshes();
-			boundary_verts_[ConstraintSide::xy] = {mesh.xy.vector_verts().begin(),
-			                                       mesh.xy.vector_verts().end()};
-			boundary_verts_[ConstraintSide::yz] = {mesh.yz.vector_verts().begin(),
-			                                       mesh.yz.vector_verts().end()};
-			boundary_verts_[ConstraintSide::xz] = {mesh.xz.vector_verts().begin(),
-			                                       mesh.xz.vector_verts().end()};
-			boundary_verts_[ConstraintSide::xy_z] = {mesh.xy_z.vector_verts().begin(),
-			                                         mesh.xy_z.vector_verts().end()};
-			boundary_verts_[ConstraintSide::xz_y] = {mesh.xz_y.vector_verts().begin(),
-			                                         mesh.xz_y.vector_verts().end()};
-			boundary_verts_[ConstraintSide::yz_x] = {mesh.yz_x.vector_verts().begin(),
-			                                         mesh.yz_x.vector_verts().end()};
 
 			ret.push_back(mesh.total_mesh);
 		}
