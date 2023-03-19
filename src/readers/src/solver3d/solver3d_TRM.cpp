@@ -19,6 +19,7 @@ GlobalId getNewShapeId() {
 namespace Readers::Solver3d {
 
 std::istream& HU::read(std::istream& in) {
+	corner_conditions_ = read_corner_conditions(in);
 	in >> thickness_ >> thermal_conductivity_ >> env_thermal_conductivity_;
 	in >> coordinates_.x1_ >> coordinates_.x2_ >> coordinates_.y1_ >>
 			coordinates_.y2_;
@@ -26,6 +27,7 @@ std::istream& HU::read(std::istream& in) {
 }
 
 std::istream& P::read(std::istream& in) {
+	corner_conditions_ = read_corner_conditions(in);
 	in >> type_;
 	in >> thickness_ >> thermal_conductivity_ >> border_thickness_ >>
 			cup_thickness_ >> env_thermal_conductivity_ >>
@@ -37,6 +39,7 @@ std::istream& P::read(std::istream& in) {
 
 std::istream& BS::read(std::istream& in) {
 	// thickness_ equals to spheres diameter
+	corner_conditions_ = read_corner_conditions(in);
 	in >> thickness_ >> thermal_conductivity_ >> dist_between_spheres_;
 	size_t sphere_nums = 0;
 	in >> sphere_nums;
@@ -57,9 +60,10 @@ std::istream& D::read(std::istream& in) {
 	crystals_.reserve(crystals_num_per_layer_);
 	while (!in.eof()) {
 		Crystal crystal;
+		crystal.corner_conditions = read_corner_conditions(in);
 		in >> crystal.name >> crystal.power >> crystal.magic_number;
-		in >> crystal.coordinates_.x1_ >> crystal.coordinates_.x2_ >>
-				crystal.coordinates_.y1_ >> crystal.coordinates_.y2_;
+		in >> crystal.coordinates.x1_ >> crystal.coordinates.x2_ >>
+				crystal.coordinates.y1_ >> crystal.coordinates.y2_;
 		crystals_.push_back(crystal);
 	}
 	return in;
@@ -73,7 +77,7 @@ ShapeHeatDataVec HU::shape_data() {
 	const size_t dummy_layer = 0;
 	BasicShape shape(getNewShapeId(), dummy_layer, box);
 	ShapeHeatData heat_data{thermal_conductivity_, env_thermal_conductivity_, 0,
-	                        0, 0};
+	                        corner_conditions_};
 	return {{heat_data, shape}};
 }
 
@@ -85,7 +89,7 @@ ShapeHeatDataVec P::shape_data() {
 	const size_t dummy_layer = 0;
 	BasicShape shape(getNewShapeId(), dummy_layer, box);
 	ShapeHeatData heat_data{thermal_conductivity_, env_thermal_conductivity_, 0,
-	                        0, 0};
+	                        corner_conditions_};
 
 	return {{heat_data, shape}};
 }
@@ -113,7 +117,8 @@ ShapeHeatDataVec BS::shape_data() {
 				// assert(false && "add proper layer id and parent");
 				const size_t dummy_layer = 0;
 				BasicShape shape(getNewShapeId(), dummy_layer, box);
-				ShapeHeatData heat_data{thermal_conductivity_, 0, 0, 0, 0};
+				ShapeHeatData heat_data{thermal_conductivity_, 0, 0,
+				                        corner_conditions_};
 				storage.push_back({heat_data, shape});
 				offset_y += dist_between_spheres_;
 			}
@@ -125,16 +130,42 @@ ShapeHeatDataVec BS::shape_data() {
 ShapeHeatDataVec D::shape_data() {
 	ShapeHeatDataVec storage;
 	for (const auto& crystal : crystals_) {
-		Box3D box{{{crystal.coordinates_.x1_, crystal.coordinates_.x2_},
-		           {crystal.coordinates_.y1_, crystal.coordinates_.y2_},
+		Box3D box{{{crystal.coordinates.x1_, crystal.coordinates.x2_},
+		           {crystal.coordinates.y1_, crystal.coordinates.y2_},
 		           {0.f, thickness_}}};
 		// assert(false && "add proper layer id and parent");
 		const size_t dummy_layer = 0;
 		BasicShape shape(getNewShapeId(), dummy_layer, box);
-		ShapeHeatData heat_data{thermal_conductivity_, 0, 0, crystal.power, 0};
+		ShapeHeatData heat_data{thermal_conductivity_, 0, crystal.power,
+		                        corner_conditions_};
 		storage.push_back({heat_data, shape});
 	}
 	return storage;
 }
 
+void read_condition(std::istream& in, CornerCondition& condition) {
+	std::string temp_name;
+	in >> temp_name >> condition.heat_flow >> condition.convective_heat >>
+			condition.temperature;
+
+	auto greater_zero_condition_count = 0;
+	for (auto constraint : {condition.heat_flow, condition.convective_heat,
+	                        condition.temperature}) {
+		if (constraint > 0)
+			++greater_zero_condition_count;
+	}
+	if (greater_zero_condition_count > 1)
+		throw std::runtime_error("To much constraints");
+}
+
+CornerConditions BaseLayer::read_corner_conditions(std::istream& in) {
+	CornerConditions conditions;
+	read_condition(in, conditions.xy);
+	read_condition(in, conditions.xy_z);
+	read_condition(in, conditions.xz);
+	read_condition(in, conditions.xz_y);
+	read_condition(in, conditions.yz);
+	read_condition(in, conditions.yz_x);
+	return conditions;
+}
 }  // namespace Readers::Solver3d

@@ -291,7 +291,7 @@ uint AbstractPolyhedralMesh<M,V,E,F,P>::num_srf_polys() const
 {
     uint count = 0;
     for(uint pid=0; pid<this->num_polys(); ++pid)
-    {        
+    {
         if(this->poly_is_on_surf(pid)) ++count;
     }
     return count;
@@ -479,7 +479,7 @@ void AbstractPolyhedralMesh<M,V,E,F,P>::update_v_normal(const uint vid)
 {
     vec3d n(0,0,0);
     for(uint fid : adj_v2f(vid))
-    {        
+    {
         if(face_is_on_srf(fid))
         {
             assert(this->adj_f2p(fid).size()==1);
@@ -1630,7 +1630,7 @@ template<class M, class V, class E, class F, class P>
 CINO_INLINE
 double AbstractPolyhedralMesh<M,V,E,F,P>::vert_volume(const uint vid) const
 {
-    double vol = 0.0;    
+    double vol = 0.0;
     for(uint pid : this->adj_v2p(vid)) vol += this->poly_volume(pid);
     vol /= static_cast<double>(this->adj_v2p(vid).size());
     return vol;
@@ -1943,7 +1943,7 @@ std::vector<uint> AbstractPolyhedralMesh<M,V,E,F,P>::edge_ordered_poly_ring(cons
     {                              // otherwise it'll be impossible to cover the whole umbrella
         curr_f = this->edge_adj_srf_faces(eid).front();
         curr_p = this->adj_f2p(curr_f).front();
-    }    
+    }
 
     plist.push_back(curr_p);
 
@@ -2455,7 +2455,8 @@ void AbstractPolyhedralMesh<M,V,E,F,P>::poly_switch_id(const uint pid0, const ui
 template<class M, class V, class E, class F, class P>
 CINO_INLINE
 uint AbstractPolyhedralMesh<M,V,E,F,P>::poly_add(const std::vector<uint> & flist,
-                                                 const std::vector<bool> & fwinding)
+                                                 const std::vector<bool> & fwinding,
+                                                 const P & data)
 {
     if(poly_id(flist)!=-1)
     {
@@ -2471,7 +2472,6 @@ uint AbstractPolyhedralMesh<M,V,E,F,P>::poly_add(const std::vector<uint> & flist
     this->polys.push_back(flist);
     this->polys_face_winding.push_back(fwinding);
 
-    P data;
     this->p_data.push_back(data);
     assert(this->polys.size() == this->p_data.size());
 
@@ -2961,7 +2961,7 @@ bool AbstractPolyhedralMesh<M,V,E,F,P>::poly_fix_orientation()
                 q.push(nbr);
             }
             else
-            {                
+            {
                 assert(poly_face_is_CCW(pid,fid) != poly_face_is_CCW(nbr,fid));
                 if(poly_face_is_CCW(pid,fid) == poly_face_is_CCW(nbr,fid))
                 {
@@ -3204,9 +3204,9 @@ void AbstractPolyhedralMesh<M,V,E,F,P>::operator+=(const AbstractPolyhedralMesh<
     for(uint pid=0; pid<m.num_polys(); ++pid)
     {
         auto f = m.poly_faces_id(pid);
-        auto w = m.poly_faces_winding(pid);        
+        auto w = m.poly_faces_winding(pid);
         for(uint & fid : f) fid += nf;
-        this->poly_add(f,w);
+        this->poly_add(f,w,m.poly_data(pid));
     }
 
     if(this->mesh_data().update_bbox) this->update_bbox();

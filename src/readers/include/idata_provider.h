@@ -10,6 +10,7 @@ class IDataProvider {
 	virtual HeatmapStorage heatmaps()          = 0;
 	virtual LayersShapes layers_shapes()       = 0;
 	virtual ShapesHeatData shapes_metadata()   = 0;
+	virtual float ambient_temperature()        = 0;
 
 	~IDataProvider() = default;
 };

@@ -13,10 +13,12 @@ void FemSolver::Solve(FileRepresentation& file_rep) {
 	std::cout << "starting heat solving..." << std::endl;
 	std::cout << "Geometry cutting and element contribution started." << std::endl;
 	// was 500
-	auto corner_points_step = 1000; 
+	auto corner_points_step = 1000;
 	// was std::pow(corner_points_step, 2) * 2.5
-	const double area_step = std::pow(corner_points_step, 2) / 2;
-	const double volume_by_formula = (1.0 / 12) * std::pow(area_step, 3) * std::sqrt(2.0);
+	const double area_step = std::pow(corner_points_step, 2) * 2.5;
+
+	const double volume_by_formula =  std::pow(area_step, 3) * std::sqrt(2.0);
+
 	// was volume_by_formula
 	const double volume_step = volume_by_formula +volume_by_formula / 10;
 	auto area_constraint = [&area_step](const double step) -> double {
@@ -38,7 +40,8 @@ void FemSolver::Solve(FileRepresentation& file_rep) {
 	const auto index_2_coord_map = cutter.GetVerticeIndexes();
 	SolverShape* element = nullptr;
 	MatrixEquation main_matrix(index_2_coord_map.MaxIndex() + 1);
-	main_matrix.set_known_temp_and_indexes(cutter.TestTempAndIndexes());
+	//main_matrix.set_known_temp_and_indexes(cutter.TestTempAndIndexes());
+	main_matrix.set_known_temp_and_indexes(cutter.TempAndIndexes());
 	while (geom_db.NextElement(element)) {
 		assert(element);
 		element->AddElementContribution(main_matrix);

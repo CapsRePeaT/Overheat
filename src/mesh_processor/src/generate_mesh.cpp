@@ -23,7 +23,7 @@ CustomTetmesh MeshGenerator::get_tetmesh(bool show_mesh) {
 	Profiler profiler;
 	profiler.push("mesh creation");
 
-	auto tet_meshes      = generate_layers_meshes(representation_.layers(), show_mesh);
+	auto tet_meshes = generate_layers_meshes(representation_.layers(), show_mesh);
 	const auto heat_data = representation_.shapes_metadata();
 	assert(heat_data.size() == tet_meshes.size() &&
 	       "Heat data and shapes mismatch");
@@ -36,11 +36,9 @@ CustomTetmesh MeshGenerator::get_tetmesh(bool show_mesh) {
 		for (auto pid = 0; pid < polys.size(); ++pid) {
 			auto& p_data                = tet_mesh.poly_data(pid);
 			p_data.thermal_conductivity = shape_heat_data.thermal_conductivity;
-			p_data.ambient_temperature  = shape_heat_data.ambient_temperature;
-			p_data.heat_flow            = shape_heat_data.heat_flow;
 			p_data.intensity_of_heat_source =
 					shape_heat_data.power * tet_mesh.poly_volume(pid) / mesh_volume;
-			p_data.convective_heat = shape_heat_data.convective_heat;
+			p_data.corner_conditions = shape_heat_data.corner_conditions;
 		}
 		total_tetmesh += tet_mesh;
 	}
@@ -48,7 +46,8 @@ CustomTetmesh MeshGenerator::get_tetmesh(bool show_mesh) {
 	return total_tetmesh;
 }
 
-TetmeshVec MeshGenerator::generate_layers_meshes(const LayersShapes& layers, bool show_mesh) {
+TetmeshVec MeshGenerator::generate_layers_meshes(const LayersShapes& layers,
+                                                 bool show_mesh) {
 	LayersMehses layers_meshes;
 	layers_meshes.reserve(layers.size());
 	for (const auto& layer : layers) {
@@ -68,7 +67,8 @@ TetmeshVec MeshGenerator::generate_layers_meshes(const LayersShapes& layers, boo
 	return tets;
 }
 
-TetmeshVec MeshGenerator::generate_tetmesh_from_trimeshes(TrimeshVec& meshes, bool show_mesh) {
+TetmeshVec MeshGenerator::generate_tetmesh_from_trimeshes(TrimeshVec& meshes,
+                                                          bool show_mesh) {
 	// FOR DEBUG
 	if (show_mesh) {
 		cinolib::DrawableTrimesh<> temp_meshes;
@@ -80,25 +80,24 @@ TetmeshVec MeshGenerator::generate_tetmesh_from_trimeshes(TrimeshVec& meshes, bo
 		temp_meshes.updateGL();
 		DrawableArrow x(vec3d(-35000, 0, 0), vec3d(35000, 0, 0));
 		x.color = Color::GREEN();
-		x.size = 30;
+		x.size  = 30;
 		DrawableArrow y(vec3d(0, -35000, 0), vec3d(0, 35000, 0));
 		y.color = Color::BLUE();
-		y.size = 30;
+		y.size  = 30;
 		DrawableArrow z(vec3d(0, 0, -35000), vec3d(0, 0, 35000));
 		z.size = 30;
 
 		// for cutting geometry and look inside
-		//MeshSlicer slicer;
-		//slicer.X_thresh = 0.6f; // in percents
-		//slicer.slice(mesh);
-		//mesh.updateGL();
+		// MeshSlicer slicer;
+		// slicer.X_thresh = 0.6f; // in percents
+		// slicer.slice(mesh);
+		// mesh.updateGL();
 		gui.push(&temp_meshes);
 		gui.push(&x);
 		gui.push(&y);
 		gui.push(&z);
-		gui.launch();
+		// gui.launch();
 	}
-
 
 	TetmeshVec ret;
 	ret.reserve(meshes.size());
@@ -119,7 +118,8 @@ CustomTetmesh MeshGenerator::generate_tetmesh(const DrawableTrimesh<>& mesh) {
 			corner_points_step_.has_value()
 					? *corner_points_step_
 					: std::min({bbox.delta_x(), bbox.delta_y(), bbox.delta_z()});
-	sprintf(opt, "YQqa%f", volume_constraint_(min_edge));
+	const auto constraint = volume_constraint_(min_edge);
+	sprintf(opt, "YQqa%f", constraint);
 	tetgen_wrap(serialized_xyz_from_vec3d(mesh.vector_verts()),
 	            serialized_vids_from_polys(mesh.vector_polys()), edges, opt,
 	            verts, tets);
@@ -143,6 +143,19 @@ TrimeshVec MeshGenerator::generate_trimesh_from_layers(LayersMehses& layers) {
 				mesh.xy += lower_mesh.xy_z;
 			}
 			mesh.merge_meshes();
+			boundary_verts_[ConstraintSide::xy] = {mesh.xy.vector_verts().begin(),
+			                                       mesh.xy.vector_verts().end()};
+			boundary_verts_[ConstraintSide::yz] = {mesh.yz.vector_verts().begin(),
+			                                       mesh.yz.vector_verts().end()};
+			boundary_verts_[ConstraintSide::xz] = {mesh.xz.vector_verts().begin(),
+			                                       mesh.xz.vector_verts().end()};
+			boundary_verts_[ConstraintSide::xy_z] = {mesh.xy_z.vector_verts().begin(),
+			                                         mesh.xy_z.vector_verts().end()};
+			boundary_verts_[ConstraintSide::xz_y] = {mesh.xz_y.vector_verts().begin(),
+			                                         mesh.xz_y.vector_verts().end()};
+			boundary_verts_[ConstraintSide::yz_x] = {mesh.yz_x.vector_verts().begin(),
+			                                         mesh.yz_x.vector_verts().end()};
+
 			ret.push_back(mesh.total_mesh);
 		}
 	}

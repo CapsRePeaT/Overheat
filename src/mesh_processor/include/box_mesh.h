@@ -43,5 +43,4 @@ struct BoxMesh {
 
 	BoxBoundaryRingsGenerator generator;
 };
-
 }  // namespace MeshProcessor
