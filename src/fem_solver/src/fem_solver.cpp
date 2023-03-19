@@ -29,8 +29,8 @@ void FemSolver::Solve(FileRepresentation& file_rep) {
 		return volume_step;
 	};
 	GeometryCutter cutter(corner_points_step, area_constraint, volume_constraint);
-	//auto geom_db = cutter.PrepareGeometry(file_rep, true /* show debug view*/);
-	auto geom_db = cutter.PrepareTestGeometry();
+	auto geom_db = cutter.PrepareGeometry(file_rep, true /* show debug view*/);
+	//auto geom_db = cutter.PrepareTestGeometry();
 	auto timer_cutter_fin = std::chrono::high_resolution_clock::now();
 	std::cout << "Geometry cutting and element contribution computation fineshed, it took " 
 		      << std::chrono::duration_cast<std::chrono::seconds>(timer_cutter_fin - timer_start)
@@ -40,7 +40,8 @@ void FemSolver::Solve(FileRepresentation& file_rep) {
 	const auto index_2_coord_map = cutter.GetVerticeIndexes();
 	SolverShape* element = nullptr;
 	MatrixEquation main_matrix(index_2_coord_map.MaxIndex() + 1);
-	main_matrix.set_known_temp_and_indexes(cutter.TestTempAndIndexes());
+	//main_matrix.set_known_temp_and_indexes(cutter.TestTempAndIndexes());
+	main_matrix.set_known_temp_and_indexes(cutter.TempAndIndexes());
 	while (geom_db.NextElement(element)) {
 		assert(element);
 		element->AddElementContribution(main_matrix);
