@@ -1,7 +1,7 @@
 VIRTEX
 35. 35.
 // lowest level of BGA
-B 
+B
 // here is an corner conditions
 // follow the exact order: xy, xy_z, xz, xz_y, yz, yz_x
 xy   0 0 20 // heat_flow=0, convective_heat=0, temperature=0
