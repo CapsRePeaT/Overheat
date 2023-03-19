@@ -90,16 +90,16 @@ const std::array<Matrix, 4>& VarianceTetraeder::matrixes_by_side() {
 
 VarianceTetraeder::VarianceTetraeder(double thermal_conductivity,
 	double ambient_temperature,
-	double heat_flow,
+	//double heat_flow,
 	double intensity_of_heat_source,
-	double convective_heat_coef,
+	//double convective_heat_coef,
 	Indexes inp_indexes,
 	std::array<double, 4> convective_presense_per_side,
 	std::array<double, 4> heat_flow_presense_per_side,
 	const VerticeIndexes& index_to_coord_map
 ) :
-	SolverTetraeder(thermal_conductivity, ambient_temperature, heat_flow,
-		intensity_of_heat_source, convective_heat_coef, inp_indexes)
+	SolverTetraeder(thermal_conductivity, ambient_temperature,
+		intensity_of_heat_source, inp_indexes)
 	, index_to_coord_map_(index_to_coord_map) {
 	Matrix coordinates_and_coef(4,4);
 	for (size_t i = 0; i < 4; ++i) {
@@ -216,8 +216,8 @@ void VarianceTetraeder::ComputeThermalConductivityMatrix(const Matrix& co_factor
 		= bnu::prod(thermal_conductivity_matrix_, cutted_co_factor_t);
 	thermal_conductivity_matrix_ = thermal_conductivity_matrix_ / (6 * coord_det);
 	for (size_t i = 0; i < convective_presense_per_side.size(); ++i) {
-		if (convective_presense_per_side[i]) {
-			thermal_conductivity_matrix_ += matrixes_by_side()[i] * convective_heat_coef()
+		if (convective_presense_per_side[i] != 0) {
+			thermal_conductivity_matrix_ += matrixes_by_side()[i] * convective_presense_per_side[i]
 				* side_square[i] / 12;
 		}
 	}
@@ -232,17 +232,17 @@ void VarianceTetraeder::ComputeFlux(const std::array<double, 4>& convective_pres
 	// heat flow computation (as part of flux vector computation) 
 	Matrix zero_at_missing_vert(4, 1, 1);
 	for (size_t i = 0; i < heat_flow_presense_per_side.size(); ++i) {
-		if (heat_flow_presense_per_side[i]) {
+		if (heat_flow_presense_per_side[i] != 0) {
 			zero_at_missing_vert(i, 0) = 0;
-			flux_ += zero_at_missing_vert * heat_flow() * side_square[i] / 3;
+			flux_ += zero_at_missing_vert * heat_flow_presense_per_side[i] * side_square[i] / 3;
 			zero_at_missing_vert(i, 0) = 1;
 		}
 	}
 	for (size_t i = 0; i < convective_presense_per_side.size(); ++i) {
-		if (convective_presense_per_side[i]) {
+		if (convective_presense_per_side[i] != 0) {
 			zero_at_missing_vert(i, 0) = 0;
 			flux_ += zero_at_missing_vert * ambient_temperature()
-				* convective_heat_coef() * side_square[i] / 3;
+				* convective_presense_per_side[i] * side_square[i] / 3;
 			zero_at_missing_vert(i, 0) = 1;
 		}
 	}

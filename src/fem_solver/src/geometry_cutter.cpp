@@ -4,6 +4,7 @@
 
 #include <algorithm>
 #include <iostream>
+#include <cassert>
 
 #include "../../mesh_processor/include/generate_mesh.h"
 #include "cinolib/drawable_arrow.h"
@@ -107,6 +108,7 @@ FsDatapack GeometryCutter::PrepareGeometry(FileRepresentation& file_rep,
 		std::array<cinolib::vec3d, 4> coord;
 
 		auto poly_verts = total_tetmesh.poly_verts(pid);
+		assert(polys[pid].size() == 4);
 		for (auto i = 0; i < polys[pid].size(); ++i) {
 			auto v        = poly_verts[i];
 			auto glob_ind = GetVerticeIndexes().AddVertice(
@@ -134,10 +136,9 @@ FsDatapack GeometryCutter::PrepareGeometry(FileRepresentation& file_rep,
 				}
 			}
 		}
-
 		result.AddElement(new VarianceTetraeder(
 				p_data.thermal_conductivity, ambient_temperature,
-				p_data.intensity_of_heat_source, 0, 0, indexes,
+				p_data.intensity_of_heat_source, indexes,
 				convective_presense_per_side, heat_flow_presense_per_side,
 				GetVerticeIndexes()));
 	}
@@ -207,14 +208,12 @@ FsDatapack GeometryCutter::PrepareTestGeometry() {
 	if (num_of_shapes >= 1) {
 		std::array<VerticeIndexes::VerticeIndex, 4> indexes = {0, 1, 2, 3};
 		// inner sides indexes: 3
-		std::array<double, 4> convective_presense_per_side = {1, 1, 1, 0};
+		std::array<double, 4> convective_presense_per_side = { convective_heat, convective_heat, convective_heat, 0};
 		std::array<double, 4> heat_flow_presense_per_side  = {0, 0, 0, 0};
 		result.AddElement(new VarianceTetraeder(
 				thermal_conductivity,  // thermal_conductivity
 				ambient_temperature,   // ambient_temperature
-				heat_flow,             // heat_flow
 				5,                // intensity_of_heat_source, set 20 to middle element
-				convective_heat,  // convective_heat
 				indexes, convective_presense_per_side, heat_flow_presense_per_side,
 				GetVerticeIndexes()));
 	}
@@ -222,15 +221,12 @@ FsDatapack GeometryCutter::PrepareTestGeometry() {
 		std::array<VerticeIndexes::VerticeIndex, 4> indexes = {1, 2, 3, 4};
 		// inner sides indexes: 0 3
 		// heat flow on index: 2
-		std::array<double, 4> convective_presense_per_side = {0, 1, 0, 0};
-		std::array<double, 4> heat_flow_presense_per_side  = {0, 0, 1, 0};
+		std::array<double, 4> convective_presense_per_side = {0, convective_heat, 0, 0};
+		std::array<double, 4> heat_flow_presense_per_side  = {0, 0, heat_flow, 0};
 		result.AddElement(new VarianceTetraeder(
 				thermal_conductivity,      // thermal_conductivity
 				ambient_temperature,       // ambient_temperature
-				heat_flow,                 // heat_flow
 				intensity_of_heat_source,  // intensity_of_heat_source, set 20 to middle
-		                               // element
-				convective_heat,           // convective_heat
 				indexes, convective_presense_per_side, heat_flow_presense_per_side,
 				GetVerticeIndexes()));
 	}
@@ -238,30 +234,24 @@ FsDatapack GeometryCutter::PrepareTestGeometry() {
 		std::array<VerticeIndexes::VerticeIndex, 4> indexes = {2, 3, 4, 5};
 		// inner sides indexes: 0 2
 		// heat flow on index: 3
-		std::array<double, 4> convective_presense_per_side = {0, 1, 0, 0};
-		std::array<double, 4> heat_flow_presense_per_side  = {0, 0, 0, 1};
+		std::array<double, 4> convective_presense_per_side = {0, convective_heat, 0, 0};
+		std::array<double, 4> heat_flow_presense_per_side  = {0, 0, 0, heat_flow};
 		result.AddElement(new VarianceTetraeder(
 				thermal_conductivity,      // thermal_conductivity
 				ambient_temperature,       // ambient_temperature
-				heat_flow,                 // heat_flow
 				intensity_of_heat_source,  // intensity_of_heat_source, set 20 to middle
-		                               // element
-				convective_heat,           // convective_heat
 				indexes, convective_presense_per_side, heat_flow_presense_per_side,
 				GetVerticeIndexes()));
 	}
 	if (num_of_shapes >= 4) {
 		std::array<VerticeIndexes::VerticeIndex, 4> indexes = {2, 4, 5, 6};
 		// inner sides indexes: 0
-		std::array<double, 4> convective_presense_per_side = {0, 1, 1, 1};
+		std::array<double, 4> convective_presense_per_side = {0, convective_heat, convective_heat, convective_heat};
 		std::array<double, 4> heat_flow_presense_per_side  = {0, 0, 0, 0};
 		result.AddElement(new VarianceTetraeder(
 				thermal_conductivity,      // thermal_conductivity
 				ambient_temperature,       // ambient_temperature
-				heat_flow,                 // heat_flow
 				intensity_of_heat_source,  // intensity_of_heat_source, set 20 to middle
-		                               // element
-				convective_heat,           // convective_heat
 				indexes, convective_presense_per_side, heat_flow_presense_per_side,
 				GetVerticeIndexes()));
 	}
