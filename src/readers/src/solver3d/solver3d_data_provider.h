@@ -17,7 +17,7 @@ class Solver3dDataProvider : public IDataProvider {
 	DefaultMetadataStorage metadata() override { return metadata_; };
 	LayersShapes layers_shapes() override { return layers_shapes_; };
 	ShapesHeatData shapes_metadata()  override { return shapes_metadata_; };
-
+	float ambient_temperature() {return ambient_temperature_;}
 
  private:
 	void load_geometry(const Solver3d_TRM& data);
@@ -29,5 +29,6 @@ class Solver3dDataProvider : public IDataProvider {
 	DefaultMetadataStorage metadata_{};
 	LayersShapes layers_shapes_{};
 	ShapesHeatData shapes_metadata_{};
+	float ambient_temperature_;
 };
 }  // namespace Readers::Solver3d

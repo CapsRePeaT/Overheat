@@ -10,16 +10,29 @@
 
 using LayersShapes = std::vector<std::vector<BasicShape>>;
 
+struct CornerCondition {
+	float heat_flow       = 0;
+	float convective_heat = 0;
+	float temperature     = 0;
+};
+
+struct CornerConditions {
+	CornerCondition xy;
+	CornerCondition xy_z;
+	CornerCondition xz;
+	CornerCondition xz_y;
+	CornerCondition yz;
+	CornerCondition yz_x;
+};
+
 struct ShapeHeatData {
-	double thermal_conductivity = 0;
-	double ambient_temperature = 0;  // env_thermal_conductivity_
-	double heat_flow = 0;            // уточнить
-	double power = 0;
-	double convective_heat = 0; // уточнить
+	double thermal_conductivity        = 0;
+	double ambient_temperature         = 0;
+	double power                       = 0;
+	CornerConditions corner_conditions;
 };
 
 using ShapesHeatData = std::vector<ShapeHeatData>;
-
 
 template <class Shape>
 class GeomStorage {
@@ -115,12 +128,14 @@ class FileRepresentation {
 	FileRepresentation(GeomStorage<BasicShape> geom_storage_mv,
 	                   HeatmapStorage heatmap_storage_mv,
 	                   LayersShapes layers_shapes_mv,
-	                   ShapesHeatData shapes_metadata_mv)
+	                   ShapesHeatData shapes_metadata_mv,
+	                   float ambient_temperature)
 			: id_(InstanceType::Representation, 0 /*Instance id*/, id_counter++),
 				geom_storage_(std::move(geom_storage_mv)),
 				heatmaps_(std::move(heatmap_storage_mv)),
 				layers_shapes_(std::move(layers_shapes_mv)),
-				shapes_metadata_(std::move(shapes_metadata_mv)){}
+				shapes_metadata_(std::move(shapes_metadata_mv)),
+				ambient_temperature_(ambient_temperature){}
 	FileRepresentation(GeomStorage<BasicShape> geom_storage_mv)
 			: id_(InstanceType::Representation, 0 /*Instance id*/, id_counter++),
 				geom_storage_(std::move(geom_storage_mv)) {}
@@ -143,6 +158,7 @@ class FileRepresentation {
 	HeatmapStorage& heatmaps() { return heatmaps_; }
 	LayersShapes& layers() { return layers_shapes_; }
 	ShapesHeatData shapes_metadata() { return shapes_metadata_; }
+	float ambient_temperature() {return ambient_temperature_;}
 	InstanceList GetInstanceList() const;
 	// should be deleted when proper layer reading will be provided
 	[[deprecated]] void InitLayers();
@@ -167,5 +183,6 @@ class FileRepresentation {
 	DefaultMetadataStorage metadata_storage_;
 	LayersShapes layers_shapes_{};
 	ShapesHeatData shapes_metadata_{};
+	float ambient_temperature_{};
 	Box3D design_borders_;
 };

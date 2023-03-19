@@ -17,6 +17,7 @@ class Solver2dDataProvider : public IDataProvider {
 	DefaultMetadataStorage metadata() override { return metadata_; };
 	LayersShapes layers_shapes() override { return {}; };
 	ShapesHeatData shapes_metadata()  override { return {}; };
+	float ambient_temperature() {return 0;}
 
 			private:
 	void load_geometry(const Solver2d_TRM& data);

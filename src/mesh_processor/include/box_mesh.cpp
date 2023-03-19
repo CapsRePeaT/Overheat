@@ -9,6 +9,7 @@
 namespace MeshProcessor {
 
 using namespace cinolib;
+
 void round_boundary(DrawableTrimesh<>& mesh) {
 	auto round_vec3d = [](const auto vec) {
 		vec3d ret;
@@ -72,9 +73,9 @@ void BoxMesh::calculate_mesh() {
 	// xz, xz_y triangulations
 	auto xz_ring_rotated = rotate(generator.xz_ring(), vec3d(1, 0, 0), M_PI / 2);
 	BoostPolygon xz_poly = make_polygon(xz_ring_rotated);
-	xz                   = trimeshFromPoly(xz_poly, area_thresh, use_optimisation); // sides
-	auto& mesh_xz_verts  = xz.vector_verts();
-	mesh_xz_verts        = rotate(mesh_xz_verts, vec3d(1, 0, 0), -M_PI / 2);
+	xz = trimeshFromPoly(xz_poly, area_thresh, use_optimisation);  // sides
+	auto& mesh_xz_verts = xz.vector_verts();
+	mesh_xz_verts       = rotate(mesh_xz_verts, vec3d(1, 0, 0), -M_PI / 2);
 	round_boundary(xz);
 	xz_y = xz;
 	xz_y.translate(vec3d(0, width, 0));
@@ -83,9 +84,9 @@ void BoxMesh::calculate_mesh() {
 	// xz, xz_y triangulations
 	auto yz_ring_rotated = rotate(generator.yz_ring(), vec3d(0, 1, 0), M_PI / 2);
 	BoostPolygon yz_poly = make_polygon(yz_ring_rotated);
-	yz                   = trimeshFromPoly(yz_poly, area_thresh, use_optimisation);
-	auto& mesh_yz_verts  = yz.vector_verts();
-	mesh_yz_verts        = rotate(mesh_yz_verts, vec3d(0, 1, 0), -M_PI / 2);
+	yz                  = trimeshFromPoly(yz_poly, area_thresh, use_optimisation);
+	auto& mesh_yz_verts = yz.vector_verts();
+	mesh_yz_verts       = rotate(mesh_yz_verts, vec3d(0, 1, 0), -M_PI / 2);
 	round_boundary(yz);
 
 	yz_x = yz;

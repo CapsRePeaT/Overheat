@@ -16,7 +16,8 @@ GlobalId Core::LoadRepresentationWithHeatmap(std::string trm_file_path_mv,
 			                                            std::move(t2d_file_path_mv));
 			representations_.emplace_back(reader_3d.geometry(), reader_3d.heatmaps(),
 			                              reader_3d.layers_shapes(),
-			                              reader_3d.shapes_metadata());
+			                              reader_3d.shapes_metadata(),
+			                              reader_3d.ambient_temperature());
 			break;
 		}
 		case GeometryType::D2: {
@@ -24,7 +25,8 @@ GlobalId Core::LoadRepresentationWithHeatmap(std::string trm_file_path_mv,
 			                                            std::move(t2d_file_path_mv));
 			representations_.emplace_back(reader_2d.geometry(), reader_2d.heatmaps(),
 			                              reader_2d.layers_shapes(),
-			                              reader_2d.shapes_metadata());
+			                              reader_2d.shapes_metadata(),
+			                              reader_2d.ambient_temperature());
 			break;
 		}
 		default:
@@ -40,9 +42,9 @@ GlobalId Core::LoadRepresentationWithHeatmap(std::string trm_file_path_mv,
 GlobalId Core::LoadRepresentation(const std::string& trm_file_path_mv) {
 	// FIXME add real representation
 	Readers::Solver3d::Solver3dReader reader_3d(trm_file_path_mv, "");
-	representations_.emplace_back(reader_3d.geometry(), reader_3d.heatmaps(),
-		reader_3d.layers_shapes(),
-		reader_3d.shapes_metadata());
+	representations_.emplace_back(
+			reader_3d.geometry(), reader_3d.heatmaps(), reader_3d.layers_shapes(),
+			reader_3d.shapes_metadata(), reader_3d.ambient_temperature());
 	representations_.back().InitLayers();
 	return representations_.back().id();
 }

@@ -14,6 +14,7 @@ class IReader {
 	HeatmapStorage heatmaps() { return data_provider_->heatmaps(); }
 	LayersShapes layers_shapes() { return data_provider_->layers_shapes(); }
 	ShapesHeatData shapes_metadata() { return data_provider_->shapes_metadata(); }
+	float ambient_temperature() {return data_provider_->ambient_temperature();}
 
  protected:
 	virtual void load() = 0;

@@ -21,6 +21,7 @@ void Solver3dDataProvider::load_geometry(const Solver3d_TRM& data) {
 	float offset          = 0;
 	size_t box_counter_   = 0;
 	size_t layer_counter_ = 0;
+	ambient_temperature_ = data.metadata_.env_temperature;
 	geometry_.Clear();
 
 	for (const auto& [position, layers] : data.layers_groups_) {

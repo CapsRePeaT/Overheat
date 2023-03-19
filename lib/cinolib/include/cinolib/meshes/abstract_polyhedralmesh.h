@@ -287,7 +287,7 @@ class AbstractPolyhedralMesh : public AbstractMesh<M,V,E,P>
                 std::vector<uint>  poly_e2f                    (const uint pid, const uint eid) const;
                 std::vector<uint>  poly_f2f                    (const uint pid, const uint fid) const;
                 void               poly_switch_id              (const uint pid0, const uint pid1);
-                uint               poly_add                    (const std::vector<uint> & flist, const std::vector<bool> & fwinding);
+                uint               poly_add                    (const std::vector<uint> & flist, const std::vector<bool> & fwinding, const P & data  = {});
                 uint               poly_add                    (const std::vector<uint> & vlist);
                 void               poly_remove_unreferenced    (const uint pid);
                 void               poly_remove                 (const uint pid, const bool delete_dangling_elements = true);

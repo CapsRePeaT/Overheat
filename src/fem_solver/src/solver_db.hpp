@@ -28,17 +28,6 @@ class FsDatapack {
   std::deque<SolverShape*> elements_;
 };
 
-struct Point3D
-{
-	// TODO: consider using double, cause cinolib uses doubles
-	std::array<double, 3> coords;
-	friend bool operator<(const Point3D& l, const Point3D& r)
-	{
-		return std::tie(l.coords[0], l.coords[1], l.coords[2])
-			< std::tie(r.coords[0], r.coords[1], r.coords[2]);
-	}
-};
-
 class VerticeIndexes {
  public:
   using VerticeIndex = size_t;

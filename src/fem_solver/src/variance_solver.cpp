@@ -94,8 +94,8 @@ VarianceTetraeder::VarianceTetraeder(double thermal_conductivity,
 	double intensity_of_heat_source,
 	double convective_heat_coef,
 	Indexes inp_indexes,
-	std::array<bool, 4> convective_presense_per_side,
-	std::array<bool, 4> heat_flow_presense_per_side,
+	std::array<double, 4> convective_presense_per_side,
+	std::array<double, 4> heat_flow_presense_per_side,
 	const VerticeIndexes& index_to_coord_map
 ) :
 	SolverTetraeder(thermal_conductivity, ambient_temperature, heat_flow,
@@ -202,7 +202,7 @@ Matrix VarianceTetraeder::ComputeCoFactor(const Matrix& coordinates_and_coef) {
 }
 
 void VarianceTetraeder::ComputeThermalConductivityMatrix(const Matrix& co_factor,
-	const std::array<bool, 4>& convective_presense_per_side,
+	const std::array<double , 4>& convective_presense_per_side,
 	const std::array<double, 4>& side_square) {
 	Matrix thermal_conductivity_coef_matrix = boost::numeric::ublas::identity_matrix<float>(3);
 	thermal_conductivity_coef_matrix *= thermal_conductivity();
@@ -224,8 +224,8 @@ void VarianceTetraeder::ComputeThermalConductivityMatrix(const Matrix& co_factor
 	//CustomPrintMatrix(thermal_conductivity_matrix_, "thermal_conductivity_matrix");
 }
 
-void VarianceTetraeder::ComputeFlux(const std::array<bool, 4>& convective_presense_per_side,
-	                                const std::array<bool, 4>& heat_flow_presense_per_side,
+void VarianceTetraeder::ComputeFlux(const std::array<double, 4>& convective_presense_per_side,
+	                                const std::array<double, 4>& heat_flow_presense_per_side,
 	                                const std::array<double, 4>& side_square) {
 	flux_ = Matrix(4, 1, 1);
 	flux_ *= intensity_of_heat_source() * coord_det / (4 * 6);

@@ -1,6 +1,14 @@
 VIRTEX
 35. 35.
 B
+// here is an corner conditions
+// follow the exact order: xy, xy_z, xz, xz_y, yz, yz_x
+xy 0 0 0 // heat_flow=0, convective_heat=0, temperature=0
+xy_z 0 2 0
+xz 0 2 0
+xz_y 0 2 0 // heat_flow=0, convective_heat=2, temperature=0
+yz 0 2 0
+yz_x 0 2 0
 0.4 0.05 1.
 4 
  2.  2. 32  4
@@ -8,10 +16,22 @@ B
  2. 30. 32  4
 30.  6.  4 24
 H
+xy 0 2 0
+xy_z 0 2 0
+xz 0 2 0
+xz_y 0 2 0
+yz 0 2 0
+yz_x 0 2 0
 0.36 1.E-3 0.
 0. 35. 0. 35.
 #
 S
+xy 0 2 0
+xy_z 0 2 0
+xz 0 2 0
+xz_y 0 2 0
+yz 0 2 0
+yz_x 0 2 0
 0.2 0.05 1.
 4
  4.  4. 28  4
@@ -19,9 +39,21 @@ S
  4. 28. 28  4
 28.  8.  4 20
 U
+xy 0 2 0
+xy_z 0 2 0
+xz 0 2 0
+xz_y 0 2 0
+yz 0 2 0
+yz_x 0 2 0
  0.2 0.15 0.
  2. 33. 2. 33.
 S
+xy 0 2 0
+xy_z 0 2 0
+xz 0 2 0
+xz_y 0 2 0
+yz 0 2 0
+yz_x 0 2 0
  0.1 0.05 0.5
  12
  11.0 14.0 7  1
@@ -39,10 +71,28 @@ S
 D
 0.2
 0.15 3
+xy 0 2 0
+xy_z 0 2 0
+xz 0 2 0
+xz_y 0 2 0
+yz 0 2 0
+yz_x 0 2 0
  'GTZ1' 0.5 1
  10.5 14.5 13.5 21.5
+xy 0 2 0
+xy_z 0 2 0
+xz 0 2 0
+xz_y 0 2 0
+yz 0 2 0
+yz_x 0 2 0
  'SLR1' 1.0 1
  15.5 19.5 11.5 23.5
+xy 0 2 0
+xy_z 0 2 0
+xz 0 2 0
+xz_y 0 2 0
+yz 0 2 0
+yz_x 0 2 0
  'SLR2' 1.0 1
  20.5 24.5 11.5 23.5
 #
