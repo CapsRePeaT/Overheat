@@ -96,7 +96,7 @@ TetmeshVec MeshGenerator::generate_tetmesh_from_trimeshes(TrimeshVec& meshes,
 		gui.push(&x);
 		gui.push(&y);
 		gui.push(&z);
-		// gui.launch();
+	    gui.launch();
 	}
 
 	TetmeshVec ret;
