@@ -78,7 +78,7 @@ FsDatapack GeometryCutter::PrepareGeometry(FileRepresentation& file_rep,
 	auto timer_start = std::chrono::high_resolution_clock::now();
 	auto generator = MeshGenerator(file_rep, area_constraint_, volume_constraint_,
 	                               corner_points_step_);
-	auto total_tetmesh            = generator.get_tetmesh();
+	auto total_tetmesh            = generator.get_tetmesh(show_mesh);
 	auto boundary                 = generator.get_boundary_verts();
 	auto timer_get_tetmesh_finish = std::chrono::high_resolution_clock::now();
 	std::cout << "Tet gen fineshed, it took "
@@ -130,10 +130,11 @@ FsDatapack GeometryCutter::PrepareGeometry(FileRepresentation& file_rep,
 				convective_presense_per_side[face_ind] =
 						boundary_conds->convective_heat;
 				heat_flow_presense_per_side[face_ind] = boundary_conds->heat_flow;
-				for (auto coord : face_coords) {
-					points_temps_.push_back(
-							{boundary_conds->temperature, Point3D{coord.x(), coord.y(), coord.z()}});
-				}
+				if (boundary_conds->temperature > 0)
+					for (auto coord : face_coords) {
+						points_temps_.push_back(
+								{boundary_conds->temperature, Point3D{coord.x(), coord.y(), coord.z()}});
+					}
 			}
 		}
 		result.AddElement(new VarianceTetraeder(

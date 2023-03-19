@@ -17,7 +17,7 @@ void FemSolver::Solve(FileRepresentation& file_rep) {
 	// was std::pow(corner_points_step, 2) * 2.5
 	const double area_step = std::pow(corner_points_step, 2) * 2.5;
 
-	const double volume_by_formula =  std::pow(area_step, 3) * std::sqrt(2.0);
+	const double volume_by_formula = std::pow(area_step, 3) * std::sqrt(2.0);
 
 	// was volume_by_formula
 	const double volume_step = volume_by_formula +volume_by_formula / 10;
@@ -29,7 +29,7 @@ void FemSolver::Solve(FileRepresentation& file_rep) {
 		return volume_step;
 	};
 	GeometryCutter cutter(corner_points_step, area_constraint, volume_constraint);
-	auto geom_db = cutter.PrepareGeometry(file_rep, true /* show debug view*/);
+	auto geom_db = cutter.PrepareGeometry(file_rep, false /* show debug view*/);
 	//auto geom_db = cutter.PrepareTestGeometry();
 	auto timer_cutter_fin = std::chrono::high_resolution_clock::now();
 	std::cout << "Geometry cutting and element contribution computation fineshed, it took " 

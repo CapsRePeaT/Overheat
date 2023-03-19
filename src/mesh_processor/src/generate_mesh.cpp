@@ -143,18 +143,30 @@ TrimeshVec MeshGenerator::generate_trimesh_from_layers(LayersMehses& layers) {
 				mesh.xy += lower_mesh.xy_z;
 			}
 			mesh.merge_meshes();
-			boundary_verts_[ConstraintSide::xy] = {mesh.xy.vector_verts().begin(),
-			                                       mesh.xy.vector_verts().end()};
-			boundary_verts_[ConstraintSide::yz] = {mesh.yz.vector_verts().begin(),
-			                                       mesh.yz.vector_verts().end()};
-			boundary_verts_[ConstraintSide::xz] = {mesh.xz.vector_verts().begin(),
-			                                       mesh.xz.vector_verts().end()};
-			boundary_verts_[ConstraintSide::xy_z] = {mesh.xy_z.vector_verts().begin(),
-			                                         mesh.xy_z.vector_verts().end()};
-			boundary_verts_[ConstraintSide::xz_y] = {mesh.xz_y.vector_verts().begin(),
-			                                         mesh.xz_y.vector_verts().end()};
-			boundary_verts_[ConstraintSide::yz_x] = {mesh.yz_x.vector_verts().begin(),
-			                                         mesh.yz_x.vector_verts().end()};
+			//boundary_verts_[ConstraintSide::xy] = {mesh.xy.vector_verts().begin(),
+			//                                       mesh.xy.vector_verts().end()};
+			//boundary_verts_[ConstraintSide::yz] = {mesh.yz.vector_verts().begin(),
+			//                                       mesh.yz.vector_verts().end()};
+			//boundary_verts_[ConstraintSide::xz] = {mesh.xz.vector_verts().begin(),
+			//                                       mesh.xz.vector_verts().end()};
+			//boundary_verts_[ConstraintSide::xy_z] = {mesh.xy_z.vector_verts().begin(),
+			//                                         mesh.xy_z.vector_verts().end()};
+			//boundary_verts_[ConstraintSide::xz_y] = {mesh.xz_y.vector_verts().begin(),
+			//                                         mesh.xz_y.vector_verts().end()};
+			//boundary_verts_[ConstraintSide::yz_x] = {mesh.yz_x.vector_verts().begin(),
+			//                                         mesh.yz_x.vector_verts().end()};
+			boundary_verts_[ConstraintSide::xy].insert(mesh.xy.vector_verts().begin(),
+				mesh.xy.vector_verts().end());
+			boundary_verts_[ConstraintSide::yz].insert(mesh.yz.vector_verts().begin(),
+				mesh.yz.vector_verts().end());
+			boundary_verts_[ConstraintSide::xz].insert(mesh.xz.vector_verts().begin(),
+				mesh.xz.vector_verts().end());
+			boundary_verts_[ConstraintSide::xy_z].insert(
+				mesh.xy_z.vector_verts().begin(), mesh.xy_z.vector_verts().end());
+			boundary_verts_[ConstraintSide::xz_y].insert(
+				mesh.xz_y.vector_verts().begin(), mesh.xz_y.vector_verts().end());
+			boundary_verts_[ConstraintSide::yz_x].insert(
+				mesh.yz_x.vector_verts().begin(), mesh.yz_x.vector_verts().end());
 
 			ret.push_back(mesh.total_mesh);
 		}
