@@ -78,15 +78,16 @@ template <class DrawableMesh>
 void MeshGenerator::show_debug_mesh(DrawableMesh& mesh) {
 	using namespace cinolib;
 	GLcanvas gui(1920, 980);
+	int scale_factor = 1000;
 	mesh.updateGL();
-	DrawableArrow x(vec3d(-10, 0, 0), vec3d(10, 0, 0));
+	DrawableArrow x(vec3d(-10 * scale_factor, 0, 0), vec3d(10 * scale_factor, 0, 0));
 	x.color = Color::GREEN();
-	x.size = 0.1;
-	DrawableArrow y(vec3d(0, -10, 0), vec3d(0, 10, 0));
+	x.size = 0.1 * scale_factor;
+	DrawableArrow y(vec3d(0, -10 * scale_factor, 0), vec3d(0, 10 * scale_factor, 0));
 	y.color = Color::BLUE();
-	y.size = 0.1;
-	DrawableArrow z(vec3d(0, 0, -10), vec3d(0, 0, 10));
-	z.size = 0.1;
+	y.size = 0.1 * scale_factor;
+	DrawableArrow z(vec3d(0, 0, -10 * scale_factor), vec3d(0, 0, 10 * scale_factor));
+	z.size = 0.1 * scale_factor;
 
 	// for cutting geometry and look inside
 	// MeshSlicer slicer;

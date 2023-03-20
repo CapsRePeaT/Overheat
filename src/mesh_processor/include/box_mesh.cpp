@@ -107,7 +107,7 @@ void BoxMesh::translate_to_origin() {
 void scale_verts(DrawableTrimesh<>& mesh) {
 	auto& vector_verts = mesh.vector_verts();
 	for (auto& vert : vector_verts) {
-		vert = vec3d{vert.x() / 1000, vert.y() / 1000, vert.z() / 1000};
+		//vert = vec3d{vert.x() / 1000, vert.y() / 1000, vert.z() / 1000};
 	}
 }
 
