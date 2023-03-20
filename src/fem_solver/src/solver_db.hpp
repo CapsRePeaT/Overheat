@@ -69,7 +69,7 @@ using SparceMatrix = boost::numeric::ublas::compressed_matrix<ValType>;
 class SolverHeatmap {
 public:
 	using Temperature = ValType;
-	using Temperatures = std::deque<Temperature>;
+	using Temperatures = std::vector<Temperature>;
 
 	SolverHeatmap() = default;
 	SolverHeatmap(const SparceMatrix& matrix) {
@@ -84,11 +84,11 @@ public:
 	const Temperatures& temperatures() const { 
 		return temperatures_;
 	}
+	Temperatures& data() { return temperatures_; }
 
  private:
 	// element index equal to position index
 	Temperatures temperatures_;
-
 };
 
 

@@ -11,6 +11,6 @@
 class FemSolver : public IFemSolver {
  public:
 	FemSolver() = default;
-	virtual void Solve(FileRepresentation& file_rep) final;
+	virtual void Solve(FileRepresentation& file_rep, bool test_flow = false) final;
 	virtual ~FemSolver() = default;
 };

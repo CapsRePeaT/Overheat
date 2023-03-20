@@ -13,7 +13,24 @@ void FsDatapack::AddElement(SolverShape* element) {
 }
 
 void SolverHeatmap::Print() const {
+	double min_temp = std::numeric_limits<double>::max();
+	double max_temp = std::numeric_limits<double>::min();
+	for (size_t i = 0; i < temperatures_.size(); ++i) {
+		if (temperatures_[i] < min_temp)
+			min_temp = temperatures_[i];
+		if (temperatures_[i] > max_temp)
+			max_temp = temperatures_[i];
+	}
 	std::cout << "Heatmap temps:" << std::endl;
-	for (size_t i = 0; i < temperatures_.size(); ++i)
+	std::cout << "-> contains " << temperatures_.size() 
+		      << " points" << std::endl;
+	std::cout << "-> min temp: " << min_temp << std::endl;
+	std::cout << "-> max temp: " << max_temp << std::endl;
+	std::cout << "-> first 30 temps:" << std::endl;
+	for (size_t i = 0; i < 30; ++i) {
+		if (i >= temperatures_.size())
+			break;
 		std::cout << i << ":\t" << temperatures_[i] << std::endl;
+	}
+		
 }

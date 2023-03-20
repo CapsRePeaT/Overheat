@@ -7,7 +7,7 @@ class IFemSolver {
  public:
 	IFemSolver()  = default;
 	// main event loop
-	virtual void Solve(FileRepresentation& file_rep) = 0;
+	virtual void Solve(FileRepresentation& file_rep, bool test_flow = false) = 0;
 
 	virtual ~IFemSolver() = default;
 };
