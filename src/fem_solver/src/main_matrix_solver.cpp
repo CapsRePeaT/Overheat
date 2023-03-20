@@ -2,6 +2,9 @@
 
 #include <iostream>
 #include <iomanip>
+#include <chrono>
+
+#include <boost/numeric/ublas/matrix_proxy.hpp>
 
 #include "_hypre_IJ_mv.h"
 #include "HYPRE_parcsr_ls.h" // ILU, MGR
@@ -18,9 +21,15 @@ void CustomPrintMatrix(const SparceMatrix& matrix, const std::string& matrix_nam
 	std::cout << "===END OF MATRIX==========" << std::endl;
 }
 
+namespace bnu = boost::numeric::ublas;
+
 void MatrixEquation::ApplyKnownTemps() {
+	auto timer_start = std::chrono::high_resolution_clock::now();
 	assert(known_temp_and_indexes_.size() 
 		   && "if we don't know any temps, sistem has infinite number of solutions");
+	Matrix horisontal_zeros(1, coeficients_.size2(), 0);
+	Matrix vertical_zeros(coeficients_.size1(), 1, 0);
+	int counter = 0;
 	for (const auto& temp_and_index : known_temp_and_indexes_) {
 		const auto index = temp_and_index.second;
 		const auto temperature = temp_and_index.first;
@@ -31,13 +40,20 @@ void MatrixEquation::ApplyKnownTemps() {
 				- coeficients_(i, index) * temperature;
 			result_(i, 0) = new_result;
 		}
-		for (size_t i = 0; i < coeficients_.size1(); ++i) {
-			coeficients_(i, index) = 0;
-			coeficients_(index, i) = 0;
-		}
+		bnu::subrange(coeficients_, 0, coeficients_.size1(), index, index + 1) = bnu::subrange(vertical_zeros, 0, coeficients_.size1(), 0, 1);
+		bnu::subrange(coeficients_, index, index + 1, 0, coeficients_.size2()) = bnu::subrange(horisontal_zeros, 0, 1, 0, coeficients_.size1());
+		//for (size_t i = 0; i < coeficients_.size1(); ++i) {
+		//	coeficients_(i, index) = 0;
+		//	coeficients_(index, i) = 0;
+		//}
 		coeficients_(index, index) = 1;
 		result_(index, 0) = temperature;
+		++counter;
 	}
+	auto timer_end = std::chrono::high_resolution_clock::now();
+	std::cout << "ApplyKnownTemps fineshed, it took "
+		<< std::chrono::duration_cast<std::chrono::seconds>(timer_end - timer_start)
+		<< " seconds." << std::endl;
 }
 
 const SolverHeatmap& MatrixEquation::SolveBoostLuFactorisation() {
@@ -145,14 +161,20 @@ const SolverHeatmap& MatrixEquation::SolveHYPRE() {
 	HYPRE_ParCSRHybridSolve(solver, hypre_par_matrix, hypre_par_vector_b, hypre_par_vector_x);
 	// geting data
 	int nvalues = result_.size1();
-	std::vector<int> indices(nvalues);
-	std::vector<double> values(nvalues, 0);
+	std::vector<int> indices;
+	indices.reserve(nvalues);
 	for (int i = 0; i < ncols; ++i) {
-		indices[i] = i;
+		indices.push_back(i);
 	}
+	std::vector<double> values(nvalues, 0);
 	hypre_ParVectorGetValues(hypre_par_vector_x, nvalues, indices.data(), values.data());
 	HYPRE_ParVectorPrint(hypre_par_vector_x, "result_real_hybrid.txt");
 	HYPRE_ParCSRHybridDestroy(solver);
+	auto& raw_heatmap = heatmap_.data();
+	assert(raw_heatmap.size() == 0);
+	for (int i = 0; i < ncols; ++i) {
+		raw_heatmap.push_back(values[i]);
+	}
 	return heatmap_;
 }
 
