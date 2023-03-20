@@ -51,7 +51,7 @@ void FemSolver::Solve(FileRepresentation& file_rep, bool test_flow) {
 			return volume_step;
 		};
 		GeometryCutter cutter(corner_points_step, area_constraint, volume_constraint);
-		auto geom_db = cutter.PrepareGeometry(file_rep, false /* show debug view*/);
+		auto geom_db = cutter.PrepareGeometry(file_rep, true /* show debug view*/);
 		auto timer_cutter_fin = std::chrono::high_resolution_clock::now();
 		std::cout << "Geometry cutting and element contribution computation fineshed, it took " 
 						<< std::chrono::duration_cast<std::chrono::seconds>(timer_cutter_fin - timer_start)
@@ -71,7 +71,7 @@ void FemSolver::Solve(FileRepresentation& file_rep, bool test_flow) {
 		std::cout << "Adding element contribution to main matrix fineshed, it took "
 			<< std::chrono::duration_cast<std::chrono::seconds>(timer_matrix_filling_fin - timer_cutter_fin)
 			<< " seconds." << std::endl;
-		const auto heatmap = main_matrix.SolveHYPRE();
+		const auto heatmap = main_matrix.SolveBoostLuFactorisation();//SolveHYPRE();
 		auto timer_matrix_fin = std::chrono::high_resolution_clock::now();
 		std::cout << "Main matrix soliving fineshed, it took "
 			<< std::chrono::duration_cast<std::chrono::seconds>(timer_matrix_fin - timer_matrix_filling_fin)
