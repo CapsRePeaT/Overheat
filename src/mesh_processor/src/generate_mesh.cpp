@@ -68,30 +68,8 @@ TetmeshVec MeshGenerator::generate_tetmesh_from_trimeshes(TrimeshVec& meshes,
 		for (const auto& mesh : meshes) {
 			temp_meshes += mesh;
 		}
-		using namespace cinolib;
-		GLcanvas gui(1920, 980);
-		temp_meshes.updateGL();
-		DrawableArrow x(vec3d(-35000, 0, 0), vec3d(35000, 0, 0));
-		x.color = Color::GREEN();
-		x.size  = 30;
-		DrawableArrow y(vec3d(0, -35000, 0), vec3d(0, 35000, 0));
-		y.color = Color::BLUE();
-		y.size  = 30;
-		DrawableArrow z(vec3d(0, 0, -35000), vec3d(0, 0, 35000));
-		z.size = 30;
-
-		// for cutting geometry and look inside
-		// MeshSlicer slicer;
-		// slicer.X_thresh = 0.6f; // in percents
-		// slicer.slice(mesh);
-		// mesh.updateGL();
-		gui.push(&temp_meshes);
-		gui.push(&x);
-		gui.push(&y);
-		gui.push(&z);
-		gui.launch();
+		show_debug_mesh(temp_meshes);
 	}
-
 	TetmeshVec ret;
 	ret.reserve(meshes.size());
 
@@ -125,21 +103,6 @@ TrimeshVec MeshGenerator::generate_trimesh_from_layers(LayersMehses& layers) {
 	calculate_mesh_and_translate_to_origin_pos(layers);
 
 	TrimeshVec ret;
-	for (auto& layer : layers)
-		for (auto& mesh : layer) {
-			boundary_verts_[ConstraintSide::xy].insert(mesh.xy.vector_verts().begin(),
-			                                           mesh.xy.vector_verts().end());
-			boundary_verts_[ConstraintSide::yz].insert(mesh.yz.vector_verts().begin(),
-			                                           mesh.yz.vector_verts().end());
-			boundary_verts_[ConstraintSide::xz].insert(mesh.xz.vector_verts().begin(),
-			                                           mesh.xz.vector_verts().end());
-			boundary_verts_[ConstraintSide::xy_z].insert(
-					mesh.xy_z.vector_verts().begin(), mesh.xy_z.vector_verts().end());
-			boundary_verts_[ConstraintSide::xz_y].insert(
-					mesh.xz_y.vector_verts().begin(), mesh.xz_y.vector_verts().end());
-			boundary_verts_[ConstraintSide::yz_x].insert(
-					mesh.yz_x.vector_verts().begin(), mesh.yz_x.vector_verts().end());
-		}
 
 	for (auto& layer : layers) {
 		for (auto& mesh : layer) {
@@ -156,7 +119,21 @@ TrimeshVec MeshGenerator::generate_trimesh_from_layers(LayersMehses& layers) {
 				for (auto vert : lower_mesh.xy_z.vector_verts())
 					boundary_verts_[ConstraintSide::xy_z].erase(vert);
 			}
+
 			mesh.merge_meshes();
+
+			boundary_verts_[ConstraintSide::xy].insert(mesh.xy.vector_verts().begin(),
+			                                           mesh.xy.vector_verts().end());
+			boundary_verts_[ConstraintSide::yz].insert(mesh.yz.vector_verts().begin(),
+			                                           mesh.yz.vector_verts().end());
+			boundary_verts_[ConstraintSide::xz].insert(mesh.xz.vector_verts().begin(),
+			                                           mesh.xz.vector_verts().end());
+			boundary_verts_[ConstraintSide::xy_z].insert(
+					mesh.xy_z.vector_verts().begin(), mesh.xy_z.vector_verts().end());
+			boundary_verts_[ConstraintSide::xz_y].insert(
+					mesh.xz_y.vector_verts().begin(), mesh.xz_y.vector_verts().end());
+			boundary_verts_[ConstraintSide::yz_x].insert(
+					mesh.yz_x.vector_verts().begin(), mesh.yz_x.vector_verts().end());
 
 			ret.push_back(mesh.total_mesh);
 		}

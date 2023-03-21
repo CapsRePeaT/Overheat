@@ -12,33 +12,8 @@
 #include "variance_solver.hpp"
 
 namespace {
-void show_debug_mesh(MeshProcessor::CustomTetmesh& mesh) {
-	using namespace cinolib;
-	GLcanvas gui(1920, 980);
-	mesh.updateGL();
-	DrawableArrow x(vec3d(-35000, 0, 0), vec3d(35000, 0, 0));
-	x.color = Color::GREEN();
-	x.size  = 10;
-	DrawableArrow y(vec3d(0, -35000, 0), vec3d(0, 35000, 0));
-	y.color = Color::BLUE();
-	y.size  = 10;
-	DrawableArrow z(vec3d(0, 0, -35000), vec3d(0, 0, 35000));
-	z.size = 10;
-
-	// for cutting geometry and look inside
-	// MeshSlicer slicer;
-	// slicer.X_thresh = 0.6f; // in percents
-	// slicer.slice(mesh);
-	// mesh.updateGL();
-
-	gui.push(&mesh);
-	gui.push(&x);
-	gui.push(&y);
-	gui.push(&z);
-	gui.launch();
-}
 bool is_boundary_face(std::set<cinolib::vec3d>& boundary,
-                      std::array<cinolib::vec3d,3>& face_coords) {
+                      std::array<cinolib::vec3d, 3>& face_coords) {
 	return std::all_of(
 			face_coords.begin(), face_coords.end(),
 			[&boundary](const auto vert) { return boundary.contains(vert); });
@@ -47,22 +22,28 @@ bool is_boundary_face(std::set<cinolib::vec3d>& boundary,
 std::optional<CornerCondition> get_boundary_conds(
 		MeshProcessor::Polyhedron_attributes& p_data,
 		SideBoundaryConditionsMap& boundary,
-		std::array<cinolib::vec3d,3>& face_coords,
-		std::array<cinolib::vec3d,4>& poly_coords) {
+		std::array<cinolib::vec3d, 3>& face_coords,
+		std::array<cinolib::vec3d, 4>& poly_coords) {
 	double min_x = std::min_element(poly_coords.begin(), poly_coords.end(),
-	                               [](auto f, auto s) { return f.x() < s.x(); })->x();
+	                                [](auto f, auto s) { return f.x() < s.x(); })
+	                   ->x();
 	double max_x = std::max_element(poly_coords.begin(), poly_coords.end(),
-	                               [](auto f, auto s) { return f.x() < s.x(); })->x();
+	                                [](auto f, auto s) { return f.x() < s.x(); })
+	                   ->x();
 
 	double min_y = std::min_element(poly_coords.begin(), poly_coords.end(),
-	                               [](auto f, auto s) { return f.y() < s.y(); })->y();
+	                                [](auto f, auto s) { return f.y() < s.y(); })
+	                   ->y();
 	double max_y = std::max_element(poly_coords.begin(), poly_coords.end(),
-	                               [](auto f, auto s) { return f.y() < s.y(); })->y();
+	                                [](auto f, auto s) { return f.y() < s.y(); })
+	                   ->y();
 
 	double min_z = std::min_element(poly_coords.begin(), poly_coords.end(),
-	                               [](auto f, auto s) { return f.z() < s.z(); })->z();
+	                                [](auto f, auto s) { return f.z() < s.z(); })
+	                   ->z();
 	double max_z = std::max_element(poly_coords.begin(), poly_coords.end(),
-	                               [](auto f, auto s) { return f.z() < s.z(); })->z();
+	                                [](auto f, auto s) { return f.z() < s.z(); })
+	                   ->z();
 
 	for (auto& b : boundary)
 		if (is_boundary_face(b.second, face_coords)) {
@@ -125,9 +106,6 @@ FsDatapack GeometryCutter::PrepareGeometry(FileRepresentation& file_rep,
 						<< std::chrono::duration_cast<std::chrono::seconds>(
 									 timer_get_tetmesh_finish - timer_start)
 						<< " seconds." << std::endl;
-	// for debug
-	// if (show_mesh)
-	// show_debug_mesh(total_tetmesh);
 
 	auto ambient_temperature = file_rep.ambient_temperature();
 
@@ -152,7 +130,7 @@ FsDatapack GeometryCutter::PrepareGeometry(FileRepresentation& file_rep,
 		for (auto i = 0; i < polys[pid].size(); ++i) {
 			auto v        = poly_verts[i];
 			auto glob_ind = GetVerticeIndexes().AddVertice(
-					{{v.x(), v.y(), v.z()}});  //  для него пробросить темпу
+					{v.x() / 1000, v.y() / 1000, v.z() / 1000});  //  scale verts
 			indexes[i]     = glob_ind;
 			poly_coords[i] = v;
 		}
@@ -160,8 +138,8 @@ FsDatapack GeometryCutter::PrepareGeometry(FileRepresentation& file_rep,
 		std::array<double, 4> convective_presense_per_side = {0, 0, 0, 0};
 		std::array<double, 4> heat_flow_presense_per_side  = {0, 0, 0, 0};
 		for (auto face_ind = 0; face_ind < faces_indexes.size(); ++face_ind) {
-			auto faces_verts_indexes               = faces_indexes[face_ind];
-			std::array<cinolib::vec3d,3> face_coords = {
+			auto faces_verts_indexes                  = faces_indexes[face_ind];
+			std::array<cinolib::vec3d, 3> face_coords = {
 					poly_coords[faces_verts_indexes[0]],
 					poly_coords[faces_verts_indexes[1]],
 					poly_coords[faces_verts_indexes[2]]};
@@ -175,7 +153,8 @@ FsDatapack GeometryCutter::PrepareGeometry(FileRepresentation& file_rep,
 				if (boundary_conds->temperature > 0)
 					for (auto coord : face_coords) {
 						points_temps_.insert({boundary_conds->temperature,
-						                      Point3D{coord.x(), coord.y(), coord.z()}});
+						                      Point3D{coord.x() / 1000, coord.y() / 1000,
+						                              coord.z() / 1000}});
 					}
 			}
 		}
