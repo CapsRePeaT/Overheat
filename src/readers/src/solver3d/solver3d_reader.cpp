@@ -95,8 +95,8 @@ Solver3d_TRM read_geometry(const std::string& full_content) {
 	const auto groups =
 			split(content, boost::regex{"^([A-Za-z]\\n[^#]*(?=\\n#))$"});
 
-	if (groups.size() < 2)
-		throw std::runtime_error("File has wrong format.");
+	//if (groups.size() < 2)
+	//	throw std::runtime_error("File has wrong format.");
 
 	Solver3d_TRM data;
 	read_general_info(content, data);

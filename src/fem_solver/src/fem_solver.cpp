@@ -37,7 +37,8 @@ void FemSolver::Solve(FileRepresentation& file_rep, bool test_flow) {
 		std::cout << "starting heat solving..." << std::endl;
 		std::cout << "Geometry cutting and element contribution started." << std::endl;
 		// was 500
-		auto corner_points_step = 2.0;
+		auto corner_points_step = 0.5;
+		//auto corner_points_step = 2.0;
 		// FIXME scale factor should be removed
 		corner_points_step *= 1000;
 		// was std::pow(corner_points_step, 2) * 2.5
@@ -53,7 +54,7 @@ void FemSolver::Solve(FileRepresentation& file_rep, bool test_flow) {
 			return volume_step;
 		};
 		GeometryCutter cutter(corner_points_step, area_constraint, volume_constraint);
-		auto geom_db = cutter.PrepareGeometry(file_rep, false /* show debug view*/);
+		auto geom_db = cutter.PrepareGeometry(file_rep, true /* show debug view*/);
 		auto timer_cutter_fin = std::chrono::high_resolution_clock::now();
 		std::cout << "Geometry cutting and element contribution computation fineshed, it took " 
 						<< std::chrono::duration_cast<std::chrono::seconds>(timer_cutter_fin - timer_start)
@@ -73,7 +74,8 @@ void FemSolver::Solve(FileRepresentation& file_rep, bool test_flow) {
 		std::cout << "Adding element contribution to main matrix fineshed, it took "
 			<< std::chrono::duration_cast<std::chrono::seconds>(timer_matrix_filling_fin - timer_cutter_fin)
 			<< " seconds." << std::endl;
-		const auto heatmap = main_matrix.SolveBoostLuFactorisation();//SolveHYPRE();
+		//const auto heatmap = main_matrix.SolveBoostLuFactorisation();
+		const auto heatmap = main_matrix.SolveHYPRE();
 		auto timer_matrix_fin = std::chrono::high_resolution_clock::now();
 		std::cout << "Main matrix soliving fineshed, it took "
 			<< std::chrono::duration_cast<std::chrono::seconds>(timer_matrix_fin - timer_matrix_filling_fin)
