@@ -104,20 +104,7 @@ void BoxMesh::translate_to_origin() {
 	yz_x.translate(min_point);
 }
 
-void scale_verts(DrawableTrimesh<>& mesh) {
-	auto& vector_verts = mesh.vector_verts();
-	for (auto& vert : vector_verts) {
-		vert = vec3d{vert.x() / 1000, vert.y() / 1000, vert.z() / 1000};
-	}
-}
-
 void BoxMesh::merge_meshes() {
-	scale_verts(xy_z);
-	scale_verts(xy);
-	scale_verts(xz);
-	scale_verts(xz_y);
-	scale_verts(yz);
-	scale_verts(yz_x);
 	for (auto& mesh : {xy_z, xy, xz, xz_y, yz, yz_x}) total_mesh += mesh;
 }
 }  // namespace MeshProcessor
