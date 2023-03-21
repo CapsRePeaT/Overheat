@@ -104,6 +104,7 @@ void BoxMesh::translate_to_origin() {
 	yz_x.translate(min_point);
 }
 
+
 void BoxMesh::merge_meshes() {
 	for (auto& mesh : {xy_z, xy, xz, xz_y, yz, yz_x}) total_mesh += mesh;
 }
