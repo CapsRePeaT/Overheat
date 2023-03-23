@@ -196,11 +196,19 @@ void GeometryCutter::ShowHeatmap(const SolverHeatmap& hm) {
 	gui.push(&z);
 
 	std::vector<double> heat(trimesh_.vector_verts().size());
-	for (auto vert : trimesh_.vector_verts()) {
-		auto vid  = trimesh_.pick_vert(vert);
+
+	// Anatolii
+	//for (auto vert : trimesh_.vector_verts()) {
+	//	auto vid  = trimesh_.pick_vert(vert);
+	//	heat[vid] = hm.temperatures().at(index_to_coord_map_.AddVertice(
+	//			Point3D{vert.x() / 1000, vert.y() / 1000, vert.z() / 1000}));
+	//}
+	for (auto vid = 0; vid < heat.size(); ++ vid) {
+		auto vert = trimesh_.vector_verts()[vid];
 		heat[vid] = hm.temperatures().at(index_to_coord_map_.AddVertice(
-				Point3D{vert.x() / 1000, vert.y() / 1000, vert.z() / 1000}));
+			Point3D{ vert.x() / 1000, vert.y() / 1000, vert.z() / 1000 }));
 	}
+
 	auto* ctx = ImGui::CreateContext();
 	ImGui::SetCurrentContext(ctx);
 	ScalarField sf(heat);

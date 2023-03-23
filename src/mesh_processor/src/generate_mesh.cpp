@@ -29,8 +29,10 @@ CustomTetmesh MeshGenerator::get_tetmesh(bool show_mesh) {
 		for (auto pid = 0; pid < polys.size(); ++pid) {
 			auto& p_data                = tet_mesh.poly_data(pid);
 			p_data.thermal_conductivity = shape_heat_data.thermal_conductivity;
-			p_data.intensity_of_heat_source =
-					shape_heat_data.power * tet_mesh.poly_volume(pid) / mesh_volume;
+			// TODO investigate, do we need to get heatsource portionaly
+			//p_data.intensity_of_heat_source =
+			//		shape_heat_data.power * tet_mesh.poly_volume(pid) / mesh_volume;
+			p_data.intensity_of_heat_source = shape_heat_data.power;
 			p_data.corner_conditions = shape_heat_data.corner_conditions;
 		}
 		total_tetmesh += tet_mesh;

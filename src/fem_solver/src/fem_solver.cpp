@@ -37,8 +37,8 @@ void FemSolver::Solve(FileRepresentation& file_rep, bool test_flow) {
 		std::cout << "starting heat solving..." << std::endl;
 		std::cout << "Geometry cutting and element contribution started." << std::endl;
 		// was 500
-		auto corner_points_step = 0.5;
-		//auto corner_points_step = 2.0;
+		//auto corner_points_step = 0.5;
+		auto corner_points_step = 2.0;
 		// FIXME scale factor should be removed
 		corner_points_step *= 1000;
 		// was std::pow(corner_points_step, 2) * 2.5
