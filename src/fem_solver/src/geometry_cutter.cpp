@@ -12,6 +12,7 @@
 #include "variance_solver.hpp"
 
 namespace {
+using namespace cinolib;
 bool is_boundary_face(std::set<cinolib::vec3d>& boundary,
                       std::array<cinolib::vec3d, 3>& face_coords) {
 	return std::all_of(
@@ -96,10 +97,12 @@ std::optional<CornerCondition> get_boundary_conds(
 FsDatapack GeometryCutter::PrepareGeometry(FileRepresentation& file_rep,
                                            bool show_mesh) {
 	using namespace MeshProcessor;
+	using namespace cinolib;
 	auto timer_start = std::chrono::high_resolution_clock::now();
 	auto generator = MeshGenerator(file_rep, area_constraint_, volume_constraint_,
 	                               corner_points_step_);
 	auto total_tetmesh            = generator.get_tetmesh(show_mesh);
+	trimesh_                      = generator.get_trimesh();
 	auto boundary                 = generator.get_boundary_verts();
 	auto timer_get_tetmesh_finish = std::chrono::high_resolution_clock::now();
 	std::cout << "Tet gen fineshed, it took "
@@ -123,7 +126,7 @@ FsDatapack GeometryCutter::PrepareGeometry(FileRepresentation& file_rep,
 		auto& p_data = total_tetmesh.poly_data(pid);
 
 		std::array<VerticeIndexes::VerticeIndex, 4> indexes;
-		std::array<cinolib::vec3d, 4> poly_coords;
+		std::array<vec3d, 4> poly_coords;
 
 		auto poly_verts = total_tetmesh.poly_verts(pid);
 		assert(polys[pid].size() == 4);
@@ -138,11 +141,10 @@ FsDatapack GeometryCutter::PrepareGeometry(FileRepresentation& file_rep,
 		std::array<double, 4> convective_presense_per_side = {0, 0, 0, 0};
 		std::array<double, 4> heat_flow_presense_per_side  = {0, 0, 0, 0};
 		for (auto face_ind = 0; face_ind < faces_indexes.size(); ++face_ind) {
-			auto faces_verts_indexes                  = faces_indexes[face_ind];
-			std::array<cinolib::vec3d, 3> face_coords = {
-					poly_coords[faces_verts_indexes[0]],
-					poly_coords[faces_verts_indexes[1]],
-					poly_coords[faces_verts_indexes[2]]};
+			auto faces_verts_indexes         = faces_indexes[face_ind];
+			std::array<vec3d, 3> face_coords = {poly_coords[faces_verts_indexes[0]],
+			                                    poly_coords[faces_verts_indexes[1]],
+			                                    poly_coords[faces_verts_indexes[2]]};
 
 			auto boundary_conds =
 					get_boundary_conds(p_data, boundary, face_coords, poly_coords);
@@ -172,6 +174,42 @@ FsDatapack GeometryCutter::PrepareGeometry(FileRepresentation& file_rep,
 	return result;
 }
 
+void GeometryCutter::ShowHeatmap(const SolverHeatmap& hm) {
+	using namespace cinolib;
+	GLcanvas gui(1920, 980);
+	int scale_factor = 1000;
+	DrawableArrow x(vec3d(-10 * scale_factor, 0, 0),
+	                vec3d(10 * scale_factor, 0, 0));
+	x.color = Color::GREEN();
+	x.size  = 0.1 * scale_factor;
+	DrawableArrow y(vec3d(0, -10 * scale_factor, 0),
+	                vec3d(0, 10 * scale_factor, 0));
+	y.color = Color::BLUE();
+	y.size  = 0.1 * scale_factor;
+	DrawableArrow z(vec3d(0, 0, -10 * scale_factor),
+	                vec3d(0, 0, 10 * scale_factor));
+	z.size = 0.1 * scale_factor;
+
+	gui.push(&trimesh_);
+	gui.push(&x);
+	gui.push(&y);
+	gui.push(&z);
+
+	std::vector<double> heat(trimesh_.vector_verts().size());
+	for (auto vert : trimesh_.vector_verts()) {
+		auto vid  = trimesh_.pick_vert(vert);
+		heat[vid] = hm.temperatures().at(index_to_coord_map_.AddVertice(
+				Point3D{vert.x() / 1000, vert.y() / 1000, vert.z() / 1000}));
+	}
+	auto* ctx = ImGui::CreateContext();
+	ImGui::SetCurrentContext(ctx);
+	ScalarField sf(heat);
+	sf.copy_to_mesh(trimesh_);
+	trimesh_.show_texture1D(TEXTURE_1D_HSV_W_ISOLINES);
+
+	gui.launch();
+}
+
 FsDatapack GeometryCutter::PrepareTestGeometry() {
 	std::cout << "triangulating geometry..." << std::endl;
 	std::cout << "converting geometry to db..." << std::endl;
@@ -180,45 +218,45 @@ FsDatapack GeometryCutter::PrepareTestGeometry() {
 	std::vector<VerticeIndexes::VerticeIndex> indexes_global;
 	if (num_of_shapes >= 1) {
 		Point3D point_0;
-		point_0.coords[X] = 0;
-		point_0.coords[Y] = 0;
-		point_0.coords[Z] = 0;
+		point_0.coords[Axis::X] = 0;
+		point_0.coords[Axis::Y] = 0;
+		point_0.coords[Axis::Z] = 0;
 		indexes_global.push_back(GetVerticeIndexes().AddVertice(point_0));
 		Point3D point_1;
-		point_1.coords[X] = 1;
-		point_1.coords[Y] = 0;
-		point_1.coords[Z] = 0;
+		point_1.coords[Axis::X] = 1;
+		point_1.coords[Axis::Y] = 0;
+		point_1.coords[Axis::Z] = 0;
 		indexes_global.push_back(GetVerticeIndexes().AddVertice(point_1));
 		Point3D point_2;
-		point_2.coords[X] = 0;
-		point_2.coords[Y] = 1;
-		point_2.coords[Z] = 0;
+		point_2.coords[Axis::X] = 0;
+		point_2.coords[Axis::Y] = 1;
+		point_2.coords[Axis::Z] = 0;
 		indexes_global.push_back(GetVerticeIndexes().AddVertice(point_2));
 		Point3D point_3;
-		point_3.coords[X] = 1;
-		point_3.coords[Y] = 0;
-		point_3.coords[Z] = 1;
+		point_3.coords[Axis::X] = 1;
+		point_3.coords[Axis::Y] = 0;
+		point_3.coords[Axis::Z] = 1;
 		indexes_global.push_back(GetVerticeIndexes().AddVertice(point_3));
 	}
 	if (num_of_shapes >= 2) {
 		Point3D point_4;
-		point_4.coords[X] = 1;
-		point_4.coords[Y] = 1;
-		point_4.coords[Z] = 0;
+		point_4.coords[Axis::X] = 1;
+		point_4.coords[Axis::Y] = 1;
+		point_4.coords[Axis::Z] = 0;
 		indexes_global.push_back(GetVerticeIndexes().AddVertice(point_4));
 	}
 	if (num_of_shapes >= 3) {
 		Point3D point_5;
-		point_5.coords[X] = 1;
-		point_5.coords[Y] = 1;
-		point_5.coords[Z] = 1;
+		point_5.coords[Axis::X] = 1;
+		point_5.coords[Axis::Y] = 1;
+		point_5.coords[Axis::Z] = 1;
 		indexes_global.push_back(GetVerticeIndexes().AddVertice(point_5));
 	}
 	if (num_of_shapes >= 4) {
 		Point3D point_6;
-		point_6.coords[X] = 0;
-		point_6.coords[Y] = 2;
-		point_6.coords[Z] = 0;
+		point_6.coords[Axis::X] = 0;
+		point_6.coords[Axis::Y] = 2;
+		point_6.coords[Axis::Z] = 0;
 		indexes_global.push_back(GetVerticeIndexes().AddVertice(point_6));
 	}
 	const double ambient_temperature      = 20;

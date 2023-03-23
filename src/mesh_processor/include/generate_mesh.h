@@ -1,14 +1,15 @@
 #define pragma once
 
 #include <cinolib/color.h>
-#include <cinolib/meshes/drawable_tetmesh.h>
-#include <cinolib/meshes/mesh_attributes.h>
 #include <cinolib/gl/glcanvas.h>
 #include <cinolib/gl/volume_mesh_controls.h>
+#include <cinolib/meshes/drawable_tetmesh.h>
+#include <cinolib/meshes/mesh_attributes.h>
 
 #include "../../core/include/databases.h"
 #include "../../fem_solver/src/geometry_cutter.hpp"
 #include "box_mesh.h"
+#include "cinolib/gl/surface_mesh_controls.h"
 
 enum ConstraintSide { xy, xy_z, xz, xz_y, yz, yz_x };
 using LayerMehses  = std::vector<MeshProcessor::BoxMesh>;
@@ -55,9 +56,11 @@ class MeshGenerator {
 				corner_points_step_(corner_points_step) {}
 
 	CustomTetmesh get_tetmesh(bool show_mesh = true);
+	DrawableTrimesh<> get_trimesh(){return trimesh_;};
 	SideBoundaryConditionsMap get_boundary_verts() { return boundary_verts_; };
 	template <class DrawableMesh>
 	static void show_debug_mesh(DrawableMesh& mesh);
+
  private:
 	TetmeshVec generate_layers_meshes(const LayersShapes& layers, bool show_mesh);
 	TetmeshVec generate_tetmesh_from_trimeshes(TrimeshVec& meshes,
@@ -72,33 +75,11 @@ class MeshGenerator {
 	MeshConstraintFunction volume_constraint_;
 	std::optional<double> corner_points_step_;
 	SideBoundaryConditionsMap boundary_verts_;
+	DrawableTrimesh<> trimesh_;
 };
 
 template <class DrawableMesh>
 void MeshGenerator::show_debug_mesh(DrawableMesh& mesh) {
-	using namespace cinolib;
-	GLcanvas gui(1920, 980);
-	int scale_factor = 1000;
-	mesh.updateGL();
-	DrawableArrow x(vec3d(-10 * scale_factor, 0, 0), vec3d(10 * scale_factor, 0, 0));
-	x.color = Color::GREEN();
-	x.size = 0.1 * scale_factor;
-	DrawableArrow y(vec3d(0, -10 * scale_factor, 0), vec3d(0, 10 * scale_factor, 0));
-	y.color = Color::BLUE();
-	y.size = 0.1 * scale_factor;
-	DrawableArrow z(vec3d(0, 0, -10 * scale_factor), vec3d(0, 0, 10 * scale_factor));
-	z.size = 0.1 * scale_factor;
 
-	// for cutting geometry and look inside
-	// MeshSlicer slicer;
-	// slicer.X_thresh = 0.6f; // in percents
-	// slicer.slice(mesh);
-	// mesh.updateGL();
-
-	gui.push(&mesh);
-	gui.push(&x);
-	gui.push(&y);
-	gui.push(&z);
-	gui.launch();
 }
 }  // namespace MeshProcessor

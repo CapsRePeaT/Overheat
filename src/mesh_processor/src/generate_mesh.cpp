@@ -66,9 +66,9 @@ TetmeshVec MeshGenerator::generate_tetmesh_from_trimeshes(TrimeshVec& meshes,
 	if (show_mesh) {
 		cinolib::DrawableTrimesh<> temp_meshes;
 		for (const auto& mesh : meshes) {
-			temp_meshes += mesh;
+			trimesh_ += mesh;
 		}
-		show_debug_mesh(temp_meshes);
+		show_debug_mesh(trimesh_);
 	}
 	TetmeshVec ret;
 	ret.reserve(meshes.size());

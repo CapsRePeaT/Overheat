@@ -80,6 +80,7 @@ void FemSolver::Solve(FileRepresentation& file_rep, bool test_flow) {
 		std::cout << "Main matrix soliving fineshed, it took "
 			<< std::chrono::duration_cast<std::chrono::seconds>(timer_matrix_fin - timer_matrix_filling_fin)
 			<< " seconds." << std::endl;
+		cutter.ShowHeatmap(heatmap);
 		heatmap.Print();
 		HeatmapConverter converter;
 		converter.ConvertHeatmap(file_rep, heatmap);

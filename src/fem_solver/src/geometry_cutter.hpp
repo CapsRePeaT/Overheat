@@ -1,5 +1,7 @@
 #pragma once
 
+#include <cinolib/meshes/drawable_trimesh.h>
+
 #include <optional>
 
 #include "../../core/include/databases.h"
@@ -17,6 +19,7 @@ class GeometryCutter {
 	GeometryCutter(MeshConstraintFunction area_constraint,
 	               MeshConstraintFunction volume_constraint);
 	~GeometryCutter() = default;
+	cinolib::DrawableTrimesh<> get_trimesh(){return trimesh_;};
 	// if show_mesh == true, it blocks main thread
 	// until you close visualization window
 	FsDatapack PrepareGeometry(FileRepresentation& file_rep,
@@ -40,12 +43,15 @@ class GeometryCutter {
 	VerticeIndexes& GetVerticeIndexes();
 	const VerticeIndexes& GetVerticeIndexes() const;
 
+	void ShowHeatmap(const SolverHeatmap& hm);
+
  private:
 	std::optional<double> corner_points_step_;
 	MeshConstraintFunction area_constraint_;
 	MeshConstraintFunction volume_constraint_;
 	VerticeIndexes index_to_coord_map_;
 	std::set<std::pair<double, Point3D>> points_temps_;
+	cinolib::DrawableTrimesh<> trimesh_;
 };
 
 
