@@ -3,6 +3,8 @@
 #include <array>
 #include <filesystem>
 #include <fstream>
+#include <locale>
+#include <codecvt>
 
 #include "config.h"
 #include "constants.h"
@@ -122,9 +124,17 @@ std::shared_ptr<Text2D> Font::CreateText(std::u32string text,
 	}
 	text2d->EndPlacing();
 	// TODO: Make LRU cache
-	text_cache_.insert_or_assign(std::move(text), text2d);
+	// text_cache_.insert_or_assign(std::move(text), text2d);
 	return text2d;
 }
+
+std::shared_ptr<Text2D> Font::CreateText(float number, glm::vec2 position,
+                                         bool align_to_pixels) {
+		std::wstring_convert< std::codecvt_utf8<char32_t>, char32_t > conv;
+		std::string s = std::to_string(number);
+		std::u32string u32s = conv.from_bytes(std::move(s));
+		return CreateText(u32s, position, align_to_pixels);
+	}
 
 bool Font::InitPackedAtlas() {
 	data_->stb_packed_chars_.resize(consts::ascii_num + consts::cyrillic_num);

@@ -10,7 +10,7 @@ void Text2D::BeginPlacing(std::u32string text, glm::vec2 position,
 	text_ = std::move(text);
 	position_ = position;
 	align_to_pixels_ = align_to_pixels;
-	character_indeces_.clear();
+	character_indices_.clear();
 	characters_vertices_.clear();
 	vao_.reset();
 }
@@ -28,8 +28,8 @@ void Text2D::AddChar(CharacterVertex top_left, CharacterVertex bottom_right) {
 	// 3----2
 	glm::u32vec3 triangle1 = character_index_buffer_base1 + shift;
 	glm::u32vec3 triangle2 = character_index_buffer_base2 + shift;
-	character_indeces_.push_back(triangle1);
-	character_indeces_.push_back(triangle2);
+	character_indices_.push_back(triangle1);
+	character_indices_.push_back(triangle2);
 	characters_vertices_.push_back(
 			{{top_left, top_right, bottom_right, bottom_left}});
 }
@@ -43,8 +43,8 @@ void Text2D::EndPlacing() {
       characters_vertices_.data(),
       characters_vertices_.size() * sizeof(CharacterVertexBuffer),
       std::move(layout));
-	auto&& ibo = factory.NewIndexBuffer(&character_indeces_.data()->x,
-	                                    character_indeces_.size() * 3);
+	auto&& ibo = factory.NewIndexBuffer(&character_indices_.data()->x,
+	                                    character_indices_.size() * 3);
 	vao_       = factory.NewVertexArray(std::move(vbo), std::move(ibo));
 }
 

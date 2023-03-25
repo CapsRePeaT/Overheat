@@ -4,17 +4,20 @@
 
 #include "constants.h"
 #include "renderer/vertexbuffer.h"
+#include "log.h"
 
 namespace renderer::gl {
 
 VertexArray::VertexArray(std::unique_ptr<VertexBuffer>&& vb,
                          std::unique_ptr<IndexBuffer>&& ib) {
 	glGenVertexArrays(consts::vertex_array_count_one, &id_);
+	// LOG_TRACE("VAO id={} created", id_);
 	SetBuffer(std::move(vb));
 	SetIndexBuffer(std::move(ib));
 }
 
 VertexArray::~VertexArray() {
+	// LOG_TRACE("VAO id={} deleted", id_);
 	glDeleteVertexArrays(consts::vertex_array_count_one, &id_);
 }
 
@@ -26,7 +29,9 @@ VertexArray& VertexArray::operator=(VertexArray&& other) noexcept {
 	if (this == &other)
 		return *this;
 	// Delete owned array
+	// LOG_TRACE("VAO id={} delete", id_);
 	glDeleteVertexArrays(consts::vertex_array_count_one, &id_);
+	// LOG_TRACE("VAO id={} deleted", id_);
 	// Assign moving array data
 	id_ = other.id_;
 	SetBuffer(std::move(other.vbo_));
@@ -38,6 +43,7 @@ VertexArray& VertexArray::operator=(VertexArray&& other) noexcept {
 
 void VertexArray::SetBuffer(std::unique_ptr<VertexBuffer>&& vb) {
 	Bind();
+	assert(vb != nullptr);
 	vb->Bind();
 	const auto& layout = vb->layout();
 	char* offset = nullptr;  // char* is compromise between conversion to void*
@@ -62,8 +68,14 @@ void VertexArray::SetIndexBuffer(std::unique_ptr<IndexBuffer>&& ib) {
 	ibo_ = std::move(ib);
 }
 
-void VertexArray::Bind() const { glBindVertexArray(id_); }
+void VertexArray::Bind() const { 
+	// LOG_TRACE("VAO id={} binded", id_);
+	glBindVertexArray(id_); 
+}
 
-void VertexArray::Unbind() const { glBindVertexArray(0); }
+void VertexArray::Unbind() const { 
+	// LOG_TRACE("VAO id={} unbinded", id_);
+	glBindVertexArray(0); 
+}
 
 }  // namespace renderer::gl

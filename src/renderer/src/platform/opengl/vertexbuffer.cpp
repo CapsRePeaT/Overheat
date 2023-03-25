@@ -7,6 +7,7 @@
 
 #include "constants.h"
 #include "renderer/vertexbufferlayout.h"
+#include "log.h"
 
 namespace renderer::gl {
 
@@ -17,6 +18,7 @@ uint32_t InitBuffer(const size_t size, const void* data, const int draw_type) {
 		spdlog::warn("Creating empty static vertex buffer");
 	uint32_t id;
 	glGenBuffers(consts::buffer_count_one, &id);
+	// LOG_TRACE("VB id={} created", id);
 	glBindBuffer(GL_ARRAY_BUFFER, id);
 	glBufferData(GL_ARRAY_BUFFER, size, data, draw_type);
 	return id;
@@ -32,6 +34,7 @@ VertexBuffer::VertexBuffer(const void* data, const size_t size,
 		: id_(InitBuffer(size, data, GL_STATIC_DRAW)), layout_(std::move(layout)) {}
 
 VertexBuffer::~VertexBuffer() {
+	// LOG_TRACE("VB id={} deleted", id_);
 	glDeleteBuffers(consts::buffer_count_one, &id_);
 }
 
@@ -43,7 +46,9 @@ VertexBuffer& VertexBuffer::operator=(VertexBuffer&& other) noexcept {
 	if (this == &other)
 		return *this;
 	// Delete owned buffer
+	// LOG_TRACE("VB id={} delete", id_);
 	glDeleteBuffers(consts::buffer_count_one, &id_);
+	// LOG_TRACE("VB id={} deleted", id_);
 	// Assign moving buffer data
 	id_     = other.id_;
 	layout_ = std::move(other.layout_);
@@ -53,9 +58,15 @@ VertexBuffer& VertexBuffer::operator=(VertexBuffer&& other) noexcept {
 	return *this;
 }
 
-void VertexBuffer::Bind() const { glBindBuffer(GL_ARRAY_BUFFER, id_); }
+void VertexBuffer::Bind() const { 
+	// LOG_TRACE("VB id={} binded", id_);
+	glBindBuffer(GL_ARRAY_BUFFER, id_); 
+}
 
-void VertexBuffer::Unbind() const { glBindBuffer(GL_ARRAY_BUFFER, 0); }
+void VertexBuffer::Unbind() const {
+	// LOG_TRACE("VB id={} unbinded", id_);
+	glBindBuffer(GL_ARRAY_BUFFER, 0); 
+}
 
 void VertexBuffer::SetData(const void* data, const size_t size,
                            std::unique_ptr<VertexBufferLayout>&& layout) {

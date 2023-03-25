@@ -42,7 +42,7 @@ class Text2D {
 	static constexpr glm::u32vec3 character_index_buffer_base1 = {0u, 1u, 3u};
 	static constexpr glm::u32vec3 character_index_buffer_base2 = {1u, 2u, 3u};
 	std::vector<CharacterVertexBuffer> characters_vertices_;
-	std::vector<glm::u32vec3> character_indeces_;
+	std::vector<glm::u32vec3> character_indices_;
 	std::unique_ptr<VertexArray> vao_;
 	std::u32string text_;
 	glm::vec2 position_;

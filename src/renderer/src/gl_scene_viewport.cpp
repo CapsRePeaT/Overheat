@@ -46,11 +46,12 @@ GLSceneViewport::GLSceneViewport(std::shared_ptr<Scene> scene)
 GLSceneViewport::~GLSceneViewport() { ClearResourcesImpl(); }
 
 void GLSceneViewport::Initialize(const int w, const int h) {
+	view_size_ = {w, h};
 	OpenGlInit(w, h);
 	ApplicationInit(w, h);
-	//#ifndef NDEBUG
-	// DebugInit(w, h);
-	//#endif
+	// #ifndef NDEBUG
+	//  DebugInit(w, h);
+	// #endif
 	is_initialized_ = true;
 }
 
@@ -76,11 +77,9 @@ void GLSceneViewport::ApplicationInit(const int w, const int h) {
 	camera_controller_ = std::make_unique<SphericalCameraController>(
 			std::move(camera), /*radius=*/100.0f, /*phi=*/glm::pi<float>() * 3 / 2,
 			/*theta*/ glm::pi<float>() * 0.5f);
-	temperature_bar_ = std::make_unique<TemperatureBar>(20.0f, h-50.0f, glm::vec2{10.0f, 25.0f});
-	font_ = std::make_unique<Font>(Font::default_font_name);
+	font_ = std::make_unique<Font>(Font::default_font_name, 16);
 	if (!font_->Init())
 		LOG_CRITICAL("Font has not been initialized");
-	texts_.push_back(font_->CreateText(U"Test", {40.0f, 50.0f}));
 }
 
 void GLSceneViewport::DebugInit(const int /*w*/, const int /*h*/) {
@@ -93,6 +92,14 @@ void GLSceneViewport::DebugInit(const int /*w*/, const int /*h*/) {
 	scene_->AddShapes(shapes);
 	constexpr glm::vec3 offset = {0.1, 0.1, 0.1};
 	scene_->shapes()[0]->Translate(offset);
+}
+
+void GLSceneViewport::InitTemperatureBar(const float min_temp, const float max_temp) {
+	glm::vec2 temperature_bar_size = {tbar_thickness_,
+	                                  static_cast<float>(view_size_.y) - 2 * tbar_screen_margins_.y};
+
+	temperature_bar_ = std::make_unique<TemperatureBar>(
+			temperature_bar_size, tbar_screen_margins_, font_, min_temp, max_temp);
 }
 
 void GLSceneViewport::ClearResources() { ClearResourcesImpl(); }
@@ -154,13 +161,16 @@ void GLSceneViewport::RenderFrame() {
 		temperature_bar_material_ = std::make_unique<TemperatureBarMaterial>();
 	temperature_bar_material_->Use(camera.uiViewMatrix());
 	// data_->debug_heatmap_material->Use(glm::mat4(1), camera.uiViewMatrix());
+	if (!temperature_bar_)
+		InitTemperatureBar();
 	api.DrawIndexed(temperature_bar_->vertex_array());
 	// data_->debug_heatmap_material->Unuse();
-	temperature_bar_material_->Unuse(); 
+	temperature_bar_material_->Unuse();
 
-	if (!texts_.empty()) {
+	auto& labels = temperature_bar_->labels();
+	if (!labels.empty()) {
 		font_->material().Use(camera.uiViewMatrix());
-		for (const auto& text : texts_) {
+		for (const auto& text : labels) {
 			api.DrawIndexed(text->vertex_array());
 		}
 		font_->material().Unuse();
@@ -221,17 +231,21 @@ void GLSceneViewport::InitHeatmapMaterials() {
 
 void GLSceneViewport::Resize(const int w, const int h) {
 	RendererAPI::instance().SetViewPort(0, 0, w, h);
+	view_size_ = {w, h};
 	camera_controller_->SetCameraAspectRatio(static_cast<float>(w) /
 	                                         static_cast<float>(h));
 	camera_controller_->SetCameraScreenBounds(w, h);
-	temperature_bar_ = std::make_unique<TemperatureBar>(20, h-50, glm::vec2{10.0f, 25.0f});
-} 
+	// TODO: make transformt matrix for this objects
+	InitTemperatureBar();
+}
 
 void GLSceneViewport::SetTemperatureRange(const float min, const float max) {
 	if (heatmap_materials_)
 		std::ranges::for_each(*heatmap_materials_, [&min, &max](auto& material) {
 			material.SetTemperatureRange(min, max);
 		});
+	InitTemperatureBar(min, max);
+	// temperature_bar_->SetTemperatureRange(min, max);
 }
 
 void GLSceneViewport::SetColorRange(const ISceneViewport::Color min,
