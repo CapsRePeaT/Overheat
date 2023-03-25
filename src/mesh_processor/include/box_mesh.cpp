@@ -31,7 +31,8 @@ void round_boundary(DrawableTrimesh<>& mesh) {
 BoxMesh::BoxMesh(const std::pair<float, float>& x1_x2_points,
                  const std::pair<float, float>& y1_y2_points,
                  const std::pair<float, float>& z1_z2_points,
-                 const size_t i_layer, MeshConstraintFunction area_constraint,
+                 const size_t i_layer, GlobalId i_shape_id, 
+	               MeshConstraintFunction area_constraint,
                  const std::optional<double> step) {
 	min_point =
 			vec3d{round_float(x1_x2_points.first), round_float(y1_y2_points.first),
@@ -42,6 +43,7 @@ BoxMesh::BoxMesh(const std::pair<float, float>& x1_x2_points,
 
 	generator   = BoxBoundaryRingsGenerator(min_point, max_point, step);
 	area_thresh = area_constraint(generator.min_segment());
+	shape_id = i_shape_id;
 	layer       = i_layer;
 }
 

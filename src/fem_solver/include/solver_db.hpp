@@ -14,20 +14,6 @@
 
 #include "../../common/include/common.h"
 
-class SolverShape;
-
-class FsDatapack {
- public:
-  bool NextElement(SolverShape*& element);
-  void AddElement(SolverShape* element);
-	void PrintContent() const {
-		std::cout << "shape count: " << elements_.size() << std::endl;
-	}
-  FsDatapack() = default;
- private:
-  std::deque<SolverShape*> elements_;
-};
-
 class VerticeIndexes {
  public:
   using VerticeIndex = size_t;
@@ -91,6 +77,34 @@ public:
 	Temperatures temperatures_;
 };
 
+class SolverShape;
+
+class FsDatapack {
+public:
+	FsDatapack() = default;
+	~FsDatapack() {
+		for (auto& element : elements())
+			delete element;
+	}
+	//bool NextElement(SolverShape*& element);
+	void AddElement(SolverShape* element);
+	void PrintContent() const {
+		std::cout << "shape count: " << elements_.size() << std::endl;
+	}
+	void SetHeatmap(const SolverHeatmap& heatmap) {
+		heatmap_ = heatmap;
+	}
+	void SetVerticeIndexes(const VerticeIndexes& indeces) {
+		indeces_ = indeces;
+	}
+	const std::deque<SolverShape*>& elements() const { return elements_; }
+	const SolverHeatmap& heatmap() const { return heatmap_; }
+	const VerticeIndexes& indeces() const { return indeces_; }
+private:
+	std::deque<SolverShape*> elements_;
+	SolverHeatmap heatmap_;
+	VerticeIndexes indeces_;
+};
 
 
 

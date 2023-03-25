@@ -159,6 +159,7 @@ FsDatapack GeometryCutter::PrepareGeometry(FileRepresentation& file_rep,
 			}
 		}
 		result.AddElement(new VarianceTetraeder(
+				p_data.shape_id,
 				p_data.thermal_conductivity, ambient_temperature,
 				p_data.intensity_of_heat_source, indexes, convective_presense_per_side,
 				heat_flow_presense_per_side, GetVerticeIndexes()));
@@ -226,6 +227,7 @@ FsDatapack GeometryCutter::PrepareTestGeometry() {
 	const double heat_flow                = 0.1;
 	const double convective_heat          = 0.1;  // FIXME crash if 0
 	const double intensity_of_heat_source = 0;
+	GlobalId shape_id;
 	if (num_of_shapes >= 1) {
 		std::array<VerticeIndexes::VerticeIndex, 4> indexes = {0, 1, 2, 3};
 		// inner sides indexes: 3
@@ -233,6 +235,7 @@ FsDatapack GeometryCutter::PrepareTestGeometry() {
 				convective_heat, convective_heat, convective_heat, 0};
 		std::array<double, 4> heat_flow_presense_per_side = {0, 0, 0, 0};
 		result.AddElement(new VarianceTetraeder(
+				shape_id,
 				thermal_conductivity,  // thermal_conductivity
 				ambient_temperature,   // ambient_temperature
 				5,  // intensity_of_heat_source, set 20 to middle element
@@ -247,6 +250,7 @@ FsDatapack GeometryCutter::PrepareTestGeometry() {
 		                                                      0};
 		std::array<double, 4> heat_flow_presense_per_side  = {0, 0, heat_flow, 0};
 		result.AddElement(new VarianceTetraeder(
+				shape_id,
 				thermal_conductivity,      // thermal_conductivity
 				ambient_temperature,       // ambient_temperature
 				intensity_of_heat_source,  // intensity_of_heat_source, set 20 to middle
@@ -261,6 +265,7 @@ FsDatapack GeometryCutter::PrepareTestGeometry() {
 		                                                      0};
 		std::array<double, 4> heat_flow_presense_per_side  = {0, 0, 0, heat_flow};
 		result.AddElement(new VarianceTetraeder(
+				shape_id,
 				thermal_conductivity,      // thermal_conductivity
 				ambient_temperature,       // ambient_temperature
 				intensity_of_heat_source,  // intensity_of_heat_source, set 20 to middle
@@ -274,6 +279,7 @@ FsDatapack GeometryCutter::PrepareTestGeometry() {
 				0, convective_heat, convective_heat, convective_heat};
 		std::array<double, 4> heat_flow_presense_per_side = {0, 0, 0, 0};
 		result.AddElement(new VarianceTetraeder(
+				shape_id,
 				thermal_conductivity,      // thermal_conductivity
 				ambient_temperature,       // ambient_temperature
 				intensity_of_heat_source,  // intensity_of_heat_source, set 20 to middle

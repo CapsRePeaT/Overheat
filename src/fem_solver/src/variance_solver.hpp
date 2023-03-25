@@ -6,14 +6,14 @@ class VarianceTetraeder : public SolverTetraeder {
  public:
 	//FIXME, should be 4x4
 	using CoficientMatrix = SparceMatrix;
-	VarianceTetraeder(double thermal_conductivity,
+	VarianceTetraeder(
+		GlobalId origin_shape_id,
+		double thermal_conductivity,
 		double ambient_temperature, // 16.	Граничные условия: TC   температура окружающей среды
 	    double intensity_of_heat_source,
-	    //double heat_flow, // TODO: delete it
-		//double convective_heat_coef, // TODO: delete it
 		Indexes inp_indexes,
 		std::array<double, 4> convective_presense_per_side,
-	                  // zero equals to absense of boundary condition
+	    // zero equals to absense of boundary condition
 		std::array<double, 4> heat_flow_presense_per_side,
 		const VerticeIndexes& index_to_coord_map
 	);

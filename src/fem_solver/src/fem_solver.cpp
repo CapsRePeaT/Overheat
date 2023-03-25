@@ -20,12 +20,14 @@ void FemSolver::Solve(FileRepresentation& file_rep, bool test_flow) {
 		SolverShape* element = nullptr;
 		MatrixEquation main_matrix(index_2_coord_map.MaxIndex() + 1);
 		main_matrix.set_known_temp_and_indexes(cutter.TestTempAndIndexes());
-		while (geom_db.NextElement(element)) {
-			assert(element);
+		//while (geom_db.NextElement(element)) {
+		//	assert(element);
+		//	element->AddElementContribution(main_matrix);
+		//	delete element;
+		//	element = nullptr;
+		//}
+		for (const auto& element : geom_db.elements())
 			element->AddElementContribution(main_matrix);
-			delete element;
-			element = nullptr;
-		}
 		const auto heatmap = main_matrix.SolveHYPRE();
 		heatmap.Print();
 		HeatmapConverter converter;
@@ -64,12 +66,14 @@ void FemSolver::Solve(FileRepresentation& file_rep, bool test_flow) {
 		SolverShape* element = nullptr;
 		MatrixEquation main_matrix(index_2_coord_map.MaxIndex() + 1);
 		main_matrix.set_known_temp_and_indexes(cutter.TempAndIndexes());
-		while (geom_db.NextElement(element)) {
-			assert(element);
+		//while (geom_db.NextElement(element)) {
+		//	assert(element);
+		//	element->AddElementContribution(main_matrix);
+		//	delete element;
+		//	element = nullptr;
+		//}
+		for (const auto& element : geom_db.elements())
 			element->AddElementContribution(main_matrix);
-			delete element;
-			element = nullptr;
-		}
 		auto timer_matrix_filling_fin = std::chrono::high_resolution_clock::now();
 		std::cout << "Adding element contribution to main matrix fineshed, it took "
 			<< std::chrono::duration_cast<std::chrono::seconds>(timer_matrix_filling_fin - timer_cutter_fin)
@@ -81,7 +85,12 @@ void FemSolver::Solve(FileRepresentation& file_rep, bool test_flow) {
 			<< std::chrono::duration_cast<std::chrono::seconds>(timer_matrix_fin - timer_matrix_filling_fin)
 			<< " seconds." << std::endl;
 		heatmap.Print();
-		HeatmapConverter converter;
-		converter.ConvertHeatmap(file_rep, heatmap);
+		geom_db.SetHeatmap(heatmap);
+		geom_db.SetVerticeIndexes(cutter.GetVerticeIndexes());
+		file_rep.set_fs_datapack(geom_db);
+		//HeatmapConverter converter;
+		//converter.ConvertHeatmap(file_rep, heatmap);
+
+		
 	}
 };

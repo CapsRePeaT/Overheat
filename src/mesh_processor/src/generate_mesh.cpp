@@ -21,16 +21,19 @@ CustomTetmesh MeshGenerator::get_tetmesh(bool show_mesh) {
 	assert(heat_data.size() == tet_meshes.size() &&
 	       "Heat data and shapes mismatch");
 	CustomTetmesh total_tetmesh;
-	for (auto i = 0; i < tet_meshes.size(); ++i) {
+	for (size_t i = 0; i < tet_meshes.size(); ++i) {
 		const auto shape_heat_data = heat_data.at(i);
 		auto& tet_mesh             = tet_meshes.at(i);
 		auto mesh_volume           = tet_mesh.mesh_volume();
 		auto& polys                = tet_mesh.vector_polys();
 		for (auto pid = 0; pid < polys.size(); ++pid) {
 			auto& p_data                = tet_mesh.poly_data(pid);
+			p_data.shape_id = GlobalId(InstanceType::Shape, i, representation_.id().representation_id());
 			p_data.thermal_conductivity = shape_heat_data.thermal_conductivity;
-			p_data.intensity_of_heat_source =
-					shape_heat_data.power * tet_mesh.poly_volume(pid) / mesh_volume;
+			// TODO decide which aproach more correct
+			//p_data.intensity_of_heat_source =
+			//		shape_heat_data.power * tet_mesh.poly_volume(pid) / mesh_volume;
+			p_data.intensity_of_heat_source = shape_heat_data.power;
 			p_data.corner_conditions = shape_heat_data.corner_conditions;
 		}
 		total_tetmesh += tet_mesh;
@@ -48,7 +51,8 @@ TetmeshVec MeshGenerator::generate_layers_meshes(const LayersShapes& layers,
 		layer_meshes.reserve(layer.size());
 		for (const auto& box : layer) {
 			const auto& coords = box.bbox().coordinates();
-			BoxMesh box_mesh(coords[0], coords[1], coords[2], box.layer_id(),
+			BoxMesh box_mesh(coords[0], coords[1], coords[2], 
+				               box.layer_id(), box.id(),
 			                 area_constraint_, corner_points_step_);
 			layer_meshes.push_back(box_mesh);
 		}

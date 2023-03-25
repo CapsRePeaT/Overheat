@@ -7,6 +7,7 @@
 #include "heatmap.h"
 #include "metadata_storage.h"
 #include "shapes.h"
+#include "solver_db.hpp"
 
 using LayersShapes = std::vector<std::vector<BasicShape>>;
 
@@ -162,7 +163,8 @@ class FileRepresentation {
 	InstanceList GetInstanceList() const;
 	// should be deleted when proper layer reading will be provided
 	[[deprecated]] void InitLayers();
-
+	void set_fs_datapack(const FsDatapack& fs_datapack) { fs_datapack_ = fs_datapack; }
+	const FsDatapack& fs_datapack() const { return fs_datapack_; }
  private:
 	// for side widgets
 	[[nodiscard]] GlobalIds GetAllLayerIds() const;
@@ -172,7 +174,6 @@ class FileRepresentation {
 	}
 
 	inline static RepresentationId id_counter = 0;
-
 	const GlobalId id_;
 	// we assume that shape id equal to place of shape in the array.
 	GeomStorage<BasicShape> geom_storage_;
@@ -180,6 +181,8 @@ class FileRepresentation {
 	Layers layers_;
 	// we assume that heatmap id equal to place of shape in the array.
 	HeatmapStorage heatmaps_;
+	// data from solver run
+	FsDatapack fs_datapack_;
 	DefaultMetadataStorage metadata_storage_;
 	LayersShapes layers_shapes_{};
 	ShapesHeatData shapes_metadata_{};

@@ -7,10 +7,13 @@
 
 class SolverShape {
  public:
-	SolverShape() = default;
+	SolverShape(GlobalId origin_shape_id) 
+		: origin_shape_id_(origin_shape_id) {
+	}
 	virtual ~SolverShape() = default;
 	virtual void AddElementContribution(MatrixEquation& matrix) const = 0;
  private:
+	GlobalId origin_shape_id_;
 };
 
 // legend:
@@ -41,10 +44,12 @@ class SolverTetraeder : public SolverShape {
 	 using VerticeIndexAndCoord 
 		 = std::pair<VerticeIndexes::VerticeIndex, Point3D>;
 	 using Indexes = std::array<VerticeIndexes::VerticeIndex, 4>;
-	 SolverTetraeder(double thermal_conductivity,
+	 SolverTetraeder(
+		 GlobalId origin_shape_id,
+		 double thermal_conductivity,
 		 double ambient_temperature,
 		 double intensity_of_heat_source,
-		 Indexes inp_indexes) : SolverShape(),
+		 Indexes inp_indexes) : SolverShape(origin_shape_id),
 		 thermal_conductivity_(thermal_conductivity),
 		 ambient_temperature_(ambient_temperature),
 		 intensity_of_heat_source_(intensity_of_heat_source),
