@@ -39,14 +39,16 @@ void FemSolver::Solve(FileRepresentation& file_rep, bool test_flow) {
 		std::cout << "starting heat solving..." << std::endl;
 		std::cout << "Geometry cutting and element contribution started." << std::endl;
 		// was 500
-		auto corner_points_step = 0.5;
+		auto corner_points_step = 1.0;
 		//auto corner_points_step = 2.0;
 		// FIXME scale factor should be removed
 		corner_points_step *= 1000;
-		// was std::pow(corner_points_step, 2) * 2.5
-		const double area_step = std::pow(corner_points_step, 2) * 2.5;
-		const double volume_by_formula = std::pow(area_step, 3) * std::sqrt(2.0);
-		// was volume_by_formula
+		// was:
+		//const double area_step = std::pow(corner_points_step, 2) * 2.5;
+		//const double volume_by_formula = std::pow(area_step, 3) * std::sqrt(2.0);
+		const double area_step = std::pow(corner_points_step, 2) / 2;
+		const double volume_by_formula = (1.0 / 12) * std::pow(area_step, 3) * std::sqrt(2.0);
+
 		const double volume_step = volume_by_formula +volume_by_formula / 10;
 		auto area_constraint = [&area_step](const double step) -> double {
 			return area_step;
