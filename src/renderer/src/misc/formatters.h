@@ -1,3 +1,5 @@
+#include <thread>
+
 #include <fmt/format.h>
 #include <glm/detail/qualifier.hpp>
 
@@ -11,7 +13,7 @@ struct fmt::formatter<glm::vec<L, T, Q>> {
 	auto format(const glm::vec<L, T, Q>& v, FormatContext& ctx)
 			-> decltype(ctx.out()) {
 		constexpr std::array<const char*, 4> vars = {"x", "y", "z", "w"};
-		auto out = format_to(ctx.out(), "vec{{");
+		auto out                                  = format_to(ctx.out(), "vec{{");
 		for (glm::length_t i = 0; i < L; ++i) {
 			if (i != 0)
 				out = format_to(out, ", ");
@@ -20,3 +22,18 @@ struct fmt::formatter<glm::vec<L, T, Q>> {
 		return format_to(out, "}}");
 	}
 };
+
+// template <>
+// struct fmt::formatter<std::thread::id> {
+// 	static constexpr auto parse(format_parse_context& ctx)
+// 			-> decltype(ctx.begin()) {
+// 		return ctx.end();
+// 	}
+// 	template <typename FormatContext>
+// 	auto format(std::thread::id id, FormatContext& ctx)
+// 			-> decltype(ctx.out()) {
+// 		std::stringstream ss;
+// 		ss << id;
+// 		return format_to(out, "{}", ss.str());
+// 	}
+// }

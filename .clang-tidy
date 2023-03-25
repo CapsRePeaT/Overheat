@@ -9,6 +9,7 @@ Checks: '-*,
     readability-*,
     -readability-uppercase-literal-suffix,
     -readability-implicit-bool-conversion,
+    -readability-identifier-length,
     
     performance-*,
     

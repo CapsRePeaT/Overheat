@@ -40,7 +40,7 @@ class IRendererFactory {
 	}
 	virtual std::unique_ptr<Texture2D> NewTexture2D(
 			int width, int height, const void* data, int channels = 4,
-			FilterMode filter    = FilterMode::LINEAR,
+			Format format = Format::FLOAT, FilterMode filter = FilterMode::LINEAR,
 			WrapMode wrap_mode   = WrapMode::CLAMP_TO_EDGE,
 			bool generate_bitmap = false) = 0;
 };

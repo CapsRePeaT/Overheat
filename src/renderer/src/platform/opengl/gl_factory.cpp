@@ -66,11 +66,13 @@ std::unique_ptr<renderer::VertexBuffer> Factory::NewVertexBuffer(
 
 std::unique_ptr<renderer::Texture2D> Factory::NewTexture2D(
 		const int width, const int height, const void* data, const int channels,
-		FilterMode filter, WrapMode wrap_mode, const bool generate_bitmap) {
+		const Format format, FilterMode filter, WrapMode wrap_mode,
+		const bool generate_bitmap) {
 	GLenum gl_filter    = ToGlFilterMode(filter);
 	GLenum gl_wrap_mode = ToGlWrapMode(wrap_mode);
-	return std::make_unique<gl::Texture2D>(
-			width, height, data, channels, gl_filter, gl_wrap_mode, generate_bitmap);
+	return std::make_unique<gl::Texture2D>(width, height, data, channels, format,
+	                                       gl_filter, gl_wrap_mode,
+	                                       generate_bitmap);
 }
 
 }  // namespace renderer::gl

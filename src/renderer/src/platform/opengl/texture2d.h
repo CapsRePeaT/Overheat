@@ -11,6 +11,7 @@ namespace renderer::gl {
 class Texture2D : public renderer::Texture2D {
  public:
 	Texture2D(int width, int height, const void* data, int channels = 4,
+	                Format format = Format::FLOAT,
 	                int32_t filter       = GL_LINEAR,
 	                int32_t wrap_mode    = GL_CLAMP_TO_EDGE,
 	                bool generate_bitmap = false);
@@ -23,6 +24,7 @@ class Texture2D : public renderer::Texture2D {
 	Texture2D& operator=(const Texture2D&) = delete;
 
 	void Bind(int unit = -1) const override;
+	void Unbind(int unit) const override;
 
  private:
 	uint32_t id_;

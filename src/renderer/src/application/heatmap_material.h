@@ -7,8 +7,10 @@
 #include <cassert>
 #include <memory>
 
+#include "constants.h"
 #include "renderer/shaderprogram.h"
 #include "renderer/texture2d.h"
+
 
 namespace renderer {
 
@@ -56,6 +58,12 @@ class HeatmapMaterial {
 		shader_->SetBool(is_transparent_heatmap_var, is_transparent_heatmap);
 	}
 
+	void Unuse() { 
+		shader_->Unuse(); 
+		bot_heatmap_texture_->Unbind(0);
+		top_heatmap_texture_->Unbind(1);
+	}
+
  private:
 	std::shared_ptr<ShaderProgram> shader_;
 	glm::vec2 temperature_range_ = {0.0f, 100.0f};
@@ -65,7 +73,7 @@ class HeatmapMaterial {
 	std::unique_ptr<Texture2D> bot_heatmap_texture_;
 	std::unique_ptr<Texture2D> top_heatmap_texture_;
 	glm::mat2 bounds_;
-	float stratified_step_ = 5.0f;
+	float stratified_step_ = consts::init::default_stratified_step;
 	bool is_stratified_    = false;
 
 	// TODO: move to templated base class

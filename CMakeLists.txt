@@ -36,6 +36,8 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 #-Dcinolib_DIR="C:\Users\asavinov\source\repos\cinolib"
 # Enable link libraries in folders where they are not building
 cmake_policy(SET CMP0079 NEW)
+# Make timestamps from FetchContent to represent time when archive was extracted
+cmake_policy(SET CMP0135 NEW)
 
 include(FetchContent)
 FetchContent_Declare(

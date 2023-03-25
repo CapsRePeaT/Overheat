@@ -81,4 +81,8 @@ void OrthographicCamera::SetAspectRatio(const float ratio) {
 	RecalculateProjectionMatrix();
 }
 
+void OrthographicCamera::SetScreenBounds(const int width, const int height) {
+	ui_view_matrix_ = glm::ortho(0.0f, static_cast<float>(width), static_cast<float>(height), 0.0f, -10.0f, 10.0f);
+}
+
 }  // namespace renderer

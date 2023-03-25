@@ -26,6 +26,8 @@ class ICamera : public SceneObject {
 	[[nodiscard]] virtual const glm::mat4& viewMatrix() const = 0;
 	[[nodiscard]] virtual const glm::mat4& projectionMatrix() const = 0;
 	[[nodiscard]] virtual const glm::mat4& viewProjectionMatrix() const = 0;
+	[[nodiscard]] virtual const glm::mat4& uiViewMatrix() const = 0;
+	virtual void SetScreenBounds(int width, int height) = 0;
 };
 
 }  // namespace renderer

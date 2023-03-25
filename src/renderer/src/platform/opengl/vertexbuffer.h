@@ -21,6 +21,7 @@ class VertexBuffer : public renderer::VertexBuffer {
 		layout_ = std::move(layout);
 	}
 	[[nodiscard]] const VertexBufferLayout& layout() const final {
+		assert(layout_ != nullptr);
 		return *layout_;
 	}
 	void Bind() const final;
