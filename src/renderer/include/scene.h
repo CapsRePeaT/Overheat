@@ -20,6 +20,7 @@ class Scene {
 	Scene& operator=(Scene&) = delete;
 	// Removes objects from scene
 	void Clear();
+	void AddFileRepresentation(FileRepresentation& file_representation);
 	void AddShapes(const Core::Shapes& shapes) {
 		for (const auto& shape : shapes) AddShape(shape);
 	}

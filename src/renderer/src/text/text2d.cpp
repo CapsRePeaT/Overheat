@@ -39,13 +39,15 @@ void Text2D::EndPlacing() {
 	layout->Push<float>(2);
 	layout->Push<float>(2);
 	auto& factory = RendererAPI::factory();
+	std::vector<std::unique_ptr<VertexBuffer>> vbos;
 	auto&& vbo    = factory.NewVertexBuffer(
       characters_vertices_.data(),
       characters_vertices_.size() * sizeof(CharacterVertexBuffer),
       std::move(layout));
+	vbos.emplace_back(std::move(vbo));
 	auto&& ibo = factory.NewIndexBuffer(&character_indices_.data()->x,
 	                                    character_indices_.size() * 3);
-	vao_       = factory.NewVertexArray(std::move(vbo), std::move(ibo));
+	vao_       = factory.NewVertexArray(std::move(vbos), std::move(ibo));
 }
 
 void Text2D::Reinit() {

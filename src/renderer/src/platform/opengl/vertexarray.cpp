@@ -8,11 +8,11 @@
 
 namespace renderer::gl {
 
-VertexArray::VertexArray(std::unique_ptr<VertexBuffer>&& vb,
+VertexArray::VertexArray(std::vector<std::unique_ptr<VertexBuffer>>&& vb,
                          std::unique_ptr<IndexBuffer>&& ib) {
 	glGenVertexArrays(consts::vertex_array_count_one, &id_);
 	// LOG_TRACE("VAO id={} created", id_);
-	SetBuffer(std::move(vb));
+	SetBuffers(std::move(vb));
 	SetIndexBuffer(std::move(ib));
 }
 
@@ -34,30 +34,33 @@ VertexArray& VertexArray::operator=(VertexArray&& other) noexcept {
 	// LOG_TRACE("VAO id={} deleted", id_);
 	// Assign moving array data
 	id_ = other.id_;
-	SetBuffer(std::move(other.vbo_));
+	SetBuffers(std::move(other.vbos_));
 	SetIndexBuffer(std::move(other.ibo_));
 	// Invalidate moving array
 	other.id_ = 0;
 	return *this;
 }
 
-void VertexArray::SetBuffer(std::unique_ptr<VertexBuffer>&& vb) {
+void VertexArray::SetBuffers(std::vector<std::unique_ptr<VertexBuffer>>&& vbs) {
 	Bind();
-	assert(vb != nullptr);
-	vb->Bind();
-	const auto& layout = vb->layout();
-	char* offset = nullptr;  // char* is compromise between conversion to void*
-	                         // and pointer arithmetic
-	const auto& elements = layout.elements();
-	for (const auto& element : elements) {
-		glEnableVertexAttribArray(element.location);
-		glVertexAttribPointer(element.location, element.count, element.type,
-		                      element.normalized, layout.stride(), offset);
-		offset += element.count * element.size();
+
+	for (auto vb_it = vbs.begin(); vb_it != vbs.end(); ++vb_it) {
+		VertexBuffer& vb = **vb_it;
+		vb.Bind();
+		const auto& layout = vb.layout();
+		char* offset = nullptr;  // char* is compromise between conversion to void*
+														// and pointer arithmetic
+		const auto& elements = layout.elements();
+		for (const auto& element : elements) {
+			glEnableVertexAttribArray(element.location);
+			glVertexAttribPointer(element.location, element.count, element.type,
+														element.normalized, layout.stride(), offset);
+			offset += element.count * element.size();
+		}
+		vb.Unbind();
 	}
 	Unbind();
-	vb->Unbind();
-	vbo_ = std::move(vb);
+	vbos_ = std::move(vbs);
 }
 
 void VertexArray::SetIndexBuffer(std::unique_ptr<IndexBuffer>&& ib) {

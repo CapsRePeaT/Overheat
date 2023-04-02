@@ -12,7 +12,7 @@ class Factory : public IRendererFactory {
 
 	std::unique_ptr<VertexArray> NewVertexArray() final;
 	std::unique_ptr<VertexArray> NewVertexArray(
-			std::unique_ptr<VertexBuffer>&& vb,
+			std::vector<std::unique_ptr<VertexBuffer>>&& vbs,
 			std::unique_ptr<IndexBuffer>&& ib) final;
 	// Initialization of dynamic buffer
 

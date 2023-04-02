@@ -40,9 +40,11 @@ std::unique_ptr<VertexArray> TemperatureBar::InitVao() {
 	layout->Push<float>(2);
 	layout->Push<float>(2);
 	auto& factory = RendererAPI::factory();
+	std::vector<std::unique_ptr<VertexBuffer>> vbos;
 	auto&& vbo    = factory.NewVertexBuffer(vertices, std::move(layout));
+	vbos.emplace_back(std::move(vbo));
 	auto&& ibo    = factory.NewIndexBuffer(raw_ibo);
-	return factory.NewVertexArray(std::move(vbo), std::move(ibo));
+	return factory.NewVertexArray(std::move(vbos), std::move(ibo));
 }
 
 TemperatureBar::Labels TemperatureBar::InitLabels() {

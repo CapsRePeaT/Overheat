@@ -80,6 +80,7 @@ void GLSceneViewport::ApplicationInit(const int w, const int h) {
 	font_ = std::make_unique<Font>(Font::default_font_name, 16);
 	if (!font_->Init())
 		LOG_CRITICAL("Font has not been initialized");
+	InitTemperatureBar();
 }
 
 void GLSceneViewport::DebugInit(const int /*w*/, const int /*h*/) {
@@ -236,7 +237,8 @@ void GLSceneViewport::Resize(const int w, const int h) {
 	                                         static_cast<float>(h));
 	camera_controller_->SetCameraScreenBounds(w, h);
 	// TODO: make transformt matrix for this objects
-	InitTemperatureBar();
+	auto [min_temp, max_temp] = temperature_bar_->temperature_range();
+	InitTemperatureBar(min_temp, max_temp);
 }
 
 void GLSceneViewport::SetTemperatureRange(const float min, const float max) {

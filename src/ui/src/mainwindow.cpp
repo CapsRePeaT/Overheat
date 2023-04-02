@@ -67,8 +67,7 @@ void MainWindow::VisualizeRepresentation(GlobalId rep_id) {
 		// FIXME: Adding shapes shouldn't need to make API context current
 		render_widget_->makeCurrent();
 		scene_->Clear();
-		scene_->AddShapes(loaded_shapes);
-		scene_->AddHeatmaps(loaded_heatmaps);
+		scene_->AddFileRepresentation(representation);
 		render_widget_->doneCurrent();
 		visualization_options_->SetMinMaxTemp(loaded_heatmaps.min_temp(),
 			loaded_heatmaps.max_temp());
