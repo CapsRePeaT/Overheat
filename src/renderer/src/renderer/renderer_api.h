@@ -29,6 +29,7 @@ class RendererAPI {
 
 	virtual void SetViewPort(uint32_t x, uint32_t y, uint32_t w, uint32_t h) = 0;
 	virtual void SetClearColor(glm::vec4 color) = 0;
+	virtual void EnableDepthBuffer(bool value) = 0;
 	virtual void Clear() = 0;
 
 	inline void DrawIndexed(

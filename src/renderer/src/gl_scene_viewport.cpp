@@ -132,7 +132,7 @@ void GLSceneViewport::RenderFrame() {
 	if (count++ < 2) return;
 	auto& api = RendererAPI::instance();
 	api.Clear();
-
+	api.EnableDepthBuffer(true);
 	const ICamera& camera = camera_controller_->camera();
 
 	if (!heatmap_materials_ && !scene_->heatmaps().empty()) {
@@ -158,6 +158,7 @@ void GLSceneViewport::RenderFrame() {
 		}
 	}
 
+	api.EnableDepthBuffer(false);
 	if (!temperature_bar_material_)
 		temperature_bar_material_ = std::make_unique<TemperatureBarMaterial>();
 	temperature_bar_material_->Use(camera.uiViewMatrix());
