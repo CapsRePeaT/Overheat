@@ -17,6 +17,12 @@ struct CornerCondition {
 	float temperature     = 0;
 };
 
+struct SolverSetup {
+	double corner_points_step = 0.5;
+	bool show_triangulation = true;
+	bool calculate_test_geometry = false;
+};
+
 struct CornerConditions {
 	CornerCondition xy;
 	CornerCondition xy_z;

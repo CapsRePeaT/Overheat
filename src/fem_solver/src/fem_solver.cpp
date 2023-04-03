@@ -7,9 +7,8 @@
 #include "matrix_agregator.hpp"
 #include "main_matrix_solver.hpp"
 
-void FemSolver::Solve(FileRepresentation& file_rep, bool test_flow) {
-	test_flow = false;
-	if (test_flow) {
+void FemSolver::Solve(FileRepresentation& file_rep, SolverSetup setup) {
+	if (setup.calculate_test_geometry) {
 		double dummy = 10;
 		auto dummy_f = [](const double step) -> double {
 			return step;
@@ -32,14 +31,13 @@ void FemSolver::Solve(FileRepresentation& file_rep, bool test_flow) {
 		heatmap.Print();
 		HeatmapConverter converter;
 		converter.ConvertHeatmap(file_rep, heatmap);
-	}
-	else {
+	} else {
 		// cutting
 		auto timer_start = std::chrono::high_resolution_clock::now();
 		std::cout << "starting heat solving..." << std::endl;
 		std::cout << "Geometry cutting and element contribution started." << std::endl;
 		// was 500
-		auto corner_points_step = 1.0;
+		auto corner_points_step = setup.corner_points_step;
 		//auto corner_points_step = 2.0;
 		// FIXME scale factor should be removed
 		corner_points_step *= 1000;
@@ -48,7 +46,6 @@ void FemSolver::Solve(FileRepresentation& file_rep, bool test_flow) {
 		//const double volume_by_formula = std::pow(area_step, 3) * std::sqrt(2.0);
 		const double area_step = std::pow(corner_points_step, 2) / 2;
 		const double volume_by_formula = (1.0 / 12) * std::pow(area_step, 3) * std::sqrt(2.0);
-
 		const double volume_step = volume_by_formula +volume_by_formula / 10;
 		auto area_constraint = [&area_step](const double step) -> double {
 			return area_step;
@@ -58,7 +55,7 @@ void FemSolver::Solve(FileRepresentation& file_rep, bool test_flow) {
 			return volume_step;
 		};
 		GeometryCutter cutter(corner_points_step, area_constraint, volume_constraint);
-		auto geom_db = cutter.PrepareGeometry(file_rep, true /* show debug view*/);
+		auto geom_db = cutter.PrepareGeometry(file_rep, setup.show_triangulation /* show debug view*/);
 		auto timer_cutter_fin = std::chrono::high_resolution_clock::now();
 		std::cout << "Geometry cutting and element contribution computation fineshed, it took " 
 						<< std::chrono::duration_cast<std::chrono::seconds>(timer_cutter_fin - timer_start)

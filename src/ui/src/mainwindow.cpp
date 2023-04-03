@@ -111,7 +111,8 @@ void MainWindow::LoadGeometryAndRunComputation() {
 	if (geom_file.isEmpty())
 		return;
 	auto rep_id = core().LoadRepresentation(geom_file.toStdString());
-	core().CalculateHeat(core().GetRepresentation(rep_id));
+	SolverSetup setup;
+	core().CalculateHeat(core().GetRepresentation(rep_id), setup);
 	VisualizeRepresentation(rep_id);
 }
 
