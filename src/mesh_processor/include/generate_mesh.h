@@ -28,6 +28,7 @@ struct Polyhedron_attributes {
 	double thermal_conductivity = 0;
 	double intensity_of_heat_source = 0;  // мощность пропорциональна обьему
 	                                      // power* total_colume/n_tethra
+	GlobalId shape_id;
 	CornerConditions corner_conditions;
 };
 

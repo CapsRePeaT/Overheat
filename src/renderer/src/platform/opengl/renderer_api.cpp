@@ -82,6 +82,15 @@ void RendererAPI::SetClearColor(const glm::vec4 color) {
 	glClearColor(color.r, color.g, color.b, color.a);
 }
 
+void RendererAPI::EnableDepthBuffer(bool value) {
+	if (value) {
+		glEnable(GL_DEPTH_TEST);
+	}
+	else {
+		glDisable(GL_DEPTH_TEST);
+	}
+}
+
 void RendererAPI::Clear() {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 }

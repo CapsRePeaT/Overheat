@@ -42,8 +42,8 @@ endif()
 target_link_libraries(readers PRIVATE reader-interface common core Boost::boost )
 target_link_libraries(reader-test readers gtest_main reader-interface common core )
 
-target_link_libraries(core PRIVATE readers common fem_solver mesh_processor)
-target_link_libraries(core PUBLIC reader-interface cinolib)
+target_link_libraries(core PRIVATE readers common mesh_processor)
+target_link_libraries(core PUBLIC fem_solver reader-interface cinolib)
 
 target_link_libraries(renderer PRIVATE core common glm::glm glad::glad)
 target_link_libraries(renderer-test gtest_main core common glm::glm glad::glad renderer)
@@ -55,4 +55,4 @@ target_link_libraries(reader-interface INTERFACE common)
 
 target_link_libraries(fem_solver PUBLIC cinolib)
 
-target_link_libraries(mesh_processor PUBLIC Boost::boost cinolib readers)
+target_link_libraries(mesh_processor PUBLIC fem_solver Boost::boost cinolib readers)

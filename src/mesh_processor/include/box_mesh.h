@@ -13,7 +13,8 @@ using namespace cinolib;
 struct BoxMesh {
 	BoxMesh(const std::pair<float, float>& x1_x2_points,
 	        const std::pair<float, float>& y1_y2_points,
-	        const std::pair<float, float>& z1_z2_points, size_t i_layer,
+	        const std::pair<float, float>& z1_z2_points, 
+		    size_t i_layer, GlobalId i_shape_id,
 	        MeshConstraintFunction area_constraint,
 	        const std::optional<double> step);
 
@@ -21,6 +22,7 @@ struct BoxMesh {
 	void translate_to_origin();
 	void merge_meshes();
 
+	GlobalId shape_id;
 	int layer;
 	std::vector<size_t> boxes_upper{};
 	std::vector<size_t> boxes_lower{};

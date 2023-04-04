@@ -46,9 +46,9 @@ std::unique_ptr<renderer::VertexArray> Factory::NewVertexArray() {
 }
 
 std::unique_ptr<renderer::VertexArray> Factory::NewVertexArray(
-		std::unique_ptr<renderer::VertexBuffer>&& vb,
+		std::vector<std::unique_ptr<renderer::VertexBuffer>>&& vbs,
 		std::unique_ptr<renderer::IndexBuffer>&& ib) {
-	return std::make_unique<gl::VertexArray>(std::move(vb), std::move(ib));
+	return std::make_unique<gl::VertexArray>(std::move(vbs), std::move(ib));
 }
 
 // Initialization of dynamic buffer

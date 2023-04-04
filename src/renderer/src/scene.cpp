@@ -74,6 +74,12 @@ void Scene::Clear() {
 	impl_->indexed_shapes.clear();
 }
 
+void Scene::AddFileRepresentation(
+		FileRepresentation& file_representation) {
+	AddShapes(file_representation.GetShapes());
+	AddHeatmaps(file_representation.heatmaps());
+}
+
 const std::shared_ptr<SceneShape>& Scene::shape_by_id(GlobalId id) const {
 	return impl_->indexed_shapes.at(id);
 }

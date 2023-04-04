@@ -88,7 +88,9 @@ const std::array<Matrix, 4>& VarianceTetraeder::matrixes_by_side() {
 	return matrixes_by_side;
 }
 
-VarianceTetraeder::VarianceTetraeder(double thermal_conductivity,
+VarianceTetraeder::VarianceTetraeder(
+	GlobalId origin_shape_id,
+	double thermal_conductivity,
 	double ambient_temperature,
 	//double heat_flow,
 	double intensity_of_heat_source,
@@ -98,8 +100,8 @@ VarianceTetraeder::VarianceTetraeder(double thermal_conductivity,
 	std::array<double, 4> heat_flow_presense_per_side,
 	const VerticeIndexes& index_to_coord_map
 ) :
-	SolverTetraeder(thermal_conductivity, ambient_temperature,
-		intensity_of_heat_source, inp_indexes)
+	SolverTetraeder(origin_shape_id, thermal_conductivity, 
+		            ambient_temperature, intensity_of_heat_source, inp_indexes)
 	, index_to_coord_map_(index_to_coord_map) {
 	Matrix coordinates_and_coef(4,4);
 	for (size_t i = 0; i < 4; ++i) {

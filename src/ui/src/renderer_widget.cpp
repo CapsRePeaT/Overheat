@@ -75,6 +75,7 @@ void RendererWidget::UpdateVisualizationOptions(
 		const VisualizationOptions& visualization_options) {
 	const auto min_color = visualization_options.min_temp_color;
 	const auto max_color = visualization_options.max_temp_color;
+	makeCurrent();
 	viewport_->SetColorRange(   
 			std::array<float, 3>{min_color.redF(), min_color.greenF(),
 	                         min_color.blueF()},
@@ -84,7 +85,7 @@ void RendererWidget::UpdateVisualizationOptions(
 	                               visualization_options.max_temp);
 	viewport_->SetDrawMode(visualization_options.draw_mode);
 	viewport_->SetStratifiedStep(visualization_options.stratified_step_);
-
+	doneCurrent();
 };
 
 // TODO: maybe need to delegate tweaks to renderer

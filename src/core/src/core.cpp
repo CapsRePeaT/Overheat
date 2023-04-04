@@ -49,7 +49,7 @@ GlobalId Core::LoadRepresentation(const std::string& trm_file_path_mv) {
 	return representations_.back().id();
 }
 
-void Core::CalculateHeat(FileRepresentation& file_rep) {
+void Core::CalculateHeat(FileRepresentation& file_rep, SolverSetup setup) {
 	FemSolver solver;
-	solver.Solve(file_rep);
+	solver.Solve(file_rep, setup);
 }
