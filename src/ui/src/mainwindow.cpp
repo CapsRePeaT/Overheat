@@ -110,14 +110,34 @@ void MainWindow::LoadGeometryWithHeatmap(const GeometryType type) {
 }
 
 void MainWindow::LoadGeometryAndRunComputation() {
+	ResetVisualisation();
+	core().DeleteAllRepresentations();
 	const QString geom_file = QFileDialog::getOpenFileName(
 		this, tr("Open trm File"), QDir::currentPath(),
 		tr("geom (*.txt *.TRM);; ALL (*.*)"));
 	if (geom_file.isEmpty())
 		return;
-	auto rep_id = core().LoadRepresentation(geom_file.toStdString());
-	core().CalculateHeat(core().GetRepresentation(rep_id), solver_options_->GetSolverSetup());
-	VisualizeRepresentation(rep_id);
+	GlobalId rep_id;;
+	try {
+		rep_id = core().LoadRepresentation(geom_file.toStdString());
+	}
+	catch (...) {
+		QMessageBox::critical(this, "Error!", "Error while file loading");
+	}
+	try {
+		core().CalculateHeat(core().GetRepresentation(rep_id), solver_options_->GetSolverSetup());
+		VisualizeRepresentation(rep_id);
+	}
+	catch (...) {
+		QMessageBox::critical(this, "Error!", "Error while heat computation");
+		core().DeleteRepresentation(rep_id);
+	}
+}
+
+void MainWindow::ResetVisualisation() {
+	metadata_widget_->ClearMetadata();
+	shape_list_widget_->ClearAll();
+	scene_->Clear();
 }
 
 void MainWindow::OnShapesSelected(const GlobalShapeIds& shape_ids) {

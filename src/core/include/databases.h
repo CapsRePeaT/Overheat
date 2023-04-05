@@ -148,7 +148,7 @@ class FileRepresentation {
 				geom_storage_(std::move(geom_storage_mv)) {}
 	FileRepresentation(FileRepresentation&&)                 = default;
 	~FileRepresentation()                                    = default;
-	FileRepresentation(const FileRepresentation&)            = delete;
+	FileRepresentation(const FileRepresentation&)            = default;
 	FileRepresentation& operator=(const FileRepresentation&) = delete;
 	FileRepresentation& operator=(FileRepresentation&&) = delete;  // id_ is const
 
@@ -169,7 +169,7 @@ class FileRepresentation {
 	InstanceList GetInstanceList() const;
 	// should be deleted when proper layer reading will be provided
 	[[deprecated]] void InitLayers();
-	void set_fs_datapack(const FsDatapack& fs_datapack) { fs_datapack_ = fs_datapack; }
+	void set_fs_datapack(FsDatapack fs_datapack) { fs_datapack_ = std::move(fs_datapack); }
 	const FsDatapack& fs_datapack() const { return fs_datapack_; }
  private:
 	// for side widgets

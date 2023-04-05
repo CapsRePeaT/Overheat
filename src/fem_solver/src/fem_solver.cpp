@@ -62,7 +62,7 @@ void FemSolver::Solve(FileRepresentation& file_rep, SolverSetup setup) {
 						<< " seconds." << std::endl;
 		geom_db.PrintContent();
 		const auto index_2_coord_map = cutter.GetVerticeIndexes();
-		SolverShape* element = nullptr;
+		//SolverShape* element = nullptr;
 		MatrixEquation main_matrix(index_2_coord_map.MaxIndex() + 1);
 		main_matrix.set_known_temp_and_indexes(cutter.TempAndIndexes());
 		//while (geom_db.NextElement(element)) {
@@ -86,7 +86,7 @@ void FemSolver::Solve(FileRepresentation& file_rep, SolverSetup setup) {
 		heatmap.Print();
 		geom_db.SetHeatmap(heatmap);
 		geom_db.SetVerticeIndexes(cutter.GetVerticeIndexes());
-		file_rep.set_fs_datapack(geom_db);
+		file_rep.set_fs_datapack(std::move(geom_db));
 		//HeatmapConverter converter;
 		//converter.ConvertHeatmap(file_rep, heatmap);
 

@@ -12,6 +12,9 @@ class MetadataWidget : public QTableWidget {
  public:
 	explicit MetadataWidget(QWidget* parent = nullptr);
 	void Test();
+	void ClearMetadata() {
+		clear();
+	}
  public slots:
 	void ShowMetadata(const MetadataPack& pack);
  private:
