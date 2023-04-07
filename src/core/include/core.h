@@ -35,7 +35,7 @@ class Core {
 	InstanceList GetRepresentationData(const size_t representation_id) const {
 		return GetRepresentation(representation_id).GetInstanceList();
 	}
-	void CalculateHeat(FileRepresentation& file_rep);
+	void CalculateHeat(FileRepresentation& file_rep, SolverSetup setup);
 
  private:
 	Core() {};

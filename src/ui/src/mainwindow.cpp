@@ -12,6 +12,7 @@ MainWindow::MainWindow(QWidget* parent)
 			scene_(std::make_shared<renderer::Scene>()),
 			render_widget_(new RendererWidget(this, scene_)),
 			visualization_options_(new VisualizationOptionsWidget(this)),
+			solver_options_(new SolverOptionsWidget(this)),
 			metadata_widget_(new MetadataWidget(this)),
 			shape_list_widget_(new ShapeListWidget(this)),
 			ui_(new Ui::MainWindow) {
@@ -35,7 +36,11 @@ MainWindow::MainWindow(QWidget* parent)
 	addDockWidget(Qt::LeftDockWidgetArea, metadata_dock);
 	// options widget
 	addDockWidget(Qt::LeftDockWidgetArea, visualization_options_);
-	visualization_options_->setWindowTitle(tr("Options"));
+	visualization_options_->setWindowTitle(tr("Visualisation Options"));
+	// solver options widget 
+	auto* solver_options_dock = new QDockWidget(tr("Solver Options"), this);
+	solver_options_dock->setWidget(solver_options_);
+	addDockWidget(Qt::LeftDockWidgetArea, solver_options_dock);
 	// signals and slots connection
 	connect(ui_->load_file_3d_btn, &QAction::triggered, this,
 	        &MainWindow::OnLoadFile3DBtnPressed);
@@ -111,7 +116,7 @@ void MainWindow::LoadGeometryAndRunComputation() {
 	if (geom_file.isEmpty())
 		return;
 	auto rep_id = core().LoadRepresentation(geom_file.toStdString());
-	core().CalculateHeat(core().GetRepresentation(rep_id));
+	core().CalculateHeat(core().GetRepresentation(rep_id), solver_options_->GetSolverSetup());
 	VisualizeRepresentation(rep_id);
 }
 

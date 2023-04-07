@@ -24,7 +24,7 @@ TEST(Solver3d, read_heat_test) {
 	auto id    = core.LoadRepresentationWithHeatmap(trm.string(), t2d.string(),
 	                                                GeometryType::D3);
 	auto& rep  = core.GetRepresentation(id);
-	core.CalculateHeat(rep);
+	core.CalculateHeat(rep, SolverSetup());
 
 	EXPECT_TRUE(true);
 }
