@@ -3,15 +3,17 @@
 #include <memory>
 
 #include "common.h"
+#include "heatmap_material.h"
+#include "renderer/drawable.h"
 #include "renderer/scene_object.h"
 #include "renderer/vertexarray.h"
 #include "shapes.h"
 
 namespace renderer {
 
-class SceneShape : public SceneObject {
+class BoxShape : public SceneObject, public Drawable {
  public:
-	explicit SceneShape(const BasicShape& shape);
+	explicit BoxShape(const BasicShape& shape);
 	[[nodiscard]] inline const BasicShape& core_shape() const {
 		return core_shape_;
 	}
@@ -26,12 +28,16 @@ class SceneShape : public SceneObject {
 	[[nodiscard]] inline HighlightType highlight_type() const {
 		return highlight_type_;
 	}
+	bool SetContextForDraw(RendererContext& ctx) override;
+	// Must be called only from scene
+	void SetMaterial(HeatmapMaterial& material) { material_ = &material; }
 
  private:
 	const BasicShape& core_shape_;
 	std::unique_ptr<VertexArray> vao_;
-	bool is_visible_              = true;
 	HighlightType highlight_type_ = HighlightType::None;
+	bool is_visible_              = true;
+	HeatmapMaterial* material_;
 };
 
 }  // namespace renderer

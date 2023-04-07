@@ -6,13 +6,14 @@ namespace renderer {
 
 // TODO: write straight to opengl buffer
 void Text2D::BeginPlacing(std::u32string text, glm::vec2 position,
-                                         const bool align_to_pixels) {
-	text_ = std::move(text);
-	position_ = position;
+                          FontMaterial& material, const bool align_to_pixels) {
+	text_            = std::move(text);
+	position_        = position;
 	align_to_pixels_ = align_to_pixels;
 	character_indices_.clear();
 	characters_vertices_.clear();
 	vao_.reset();
+	material_ = &material;
 }
 
 void Text2D::AddChar(CharacterVertex top_left, CharacterVertex bottom_right) {
@@ -40,18 +41,24 @@ void Text2D::EndPlacing() {
 	layout->Push<float>(2);
 	auto& factory = RendererAPI::factory();
 	std::vector<std::unique_ptr<VertexBuffer>> vbos;
-	auto&& vbo    = factory.NewVertexBuffer(
-      characters_vertices_.data(),
-      characters_vertices_.size() * sizeof(CharacterVertexBuffer),
-      std::move(layout));
+	auto&& vbo = factory.NewVertexBuffer(
+			characters_vertices_.data(),
+			characters_vertices_.size() * sizeof(CharacterVertexBuffer),
+			std::move(layout));
 	vbos.emplace_back(std::move(vbo));
 	auto&& ibo = factory.NewIndexBuffer(&character_indices_.data()->x,
 	                                    character_indices_.size() * 3);
 	vao_       = factory.NewVertexArray(std::move(vbos), std::move(ibo));
 }
 
-void Text2D::Reinit() {
-	EndPlacing();
+void Text2D::Reinit() { EndPlacing(); }
+
+bool Text2D::SetContextForDraw(RendererContext& ctx) {
+	ctx.SetVao(vertex_array());
+	ctx.SetMaterialCallbacks(
+			[material = material_, &ctx]() { material->Use(ctx.camera().uiViewMatrix()); },
+			[material = material_]() { material->Unuse(); });
+	return true;
 }
 
 }  // namespace renderer

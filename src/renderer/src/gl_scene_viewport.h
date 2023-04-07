@@ -12,6 +12,7 @@
 #include "renderer/debug/debug_heatmap_material.h"
 #include "text/font.h"
 #include "text/text2d.h"
+#include "renderer/drawable.h"
 
 
 namespace renderer {
@@ -36,7 +37,6 @@ class GLSceneViewport final : public ISceneViewport {
 	void SetSelection(const GlobalIds& to_change, HighlightType type) override;
 
  private:
-	void InitHeatmapMaterials();
 	// ClearResources must be invoked in dtor, but it's virtual. In this
 	// particular case we can safely do it, but for consistency and future safety
 	// I suggest to not to call virtual methods from dtors.
@@ -47,12 +47,11 @@ class GLSceneViewport final : public ISceneViewport {
 	void ApplicationInit(int w, int h);
 	void DebugInit(int w, int h);
 	void InitTemperatureBar(float min_temp = 0, float max_temp = 0);
+	void Draw(RendererContext& ctx, Drawable& drawable);
 
 	glm::ivec2 view_size_ = {0, 0};
-	std::optional<std::vector<HeatmapMaterial>> heatmap_materials_;
 	std::unique_ptr<SphericalCameraController> camera_controller_;
 	std::shared_ptr<Scene> scene_;
-	std::unique_ptr<TemperatureBarMaterial> temperature_bar_material_;
 	std::unique_ptr<TemperatureBar> temperature_bar_;
 	float tbar_thickness_ = 25.0f;
 	glm::vec2 tbar_screen_margins_ = {20.0f, 50.0f};

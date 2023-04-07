@@ -111,7 +111,7 @@ std::shared_ptr<Text2D> Font::CreateText(std::u32string text,
 		return (*it).second;
 
 	auto text2d = std::make_shared<Text2D>();
-	text2d->BeginPlacing(std::move(text), position, align_to_pixels);
+	text2d->BeginPlacing(std::move(text), position, *material_, align_to_pixels);
 	for (const auto c : text2d->text()) {
 		const auto i = GetIndexByCharCode(c);
 		if (i < 0)
