@@ -89,10 +89,11 @@ const std::vector<Drawable*>& Scene::shapes() const {
 std::pair<float, float> Scene::bounds() const { return impl_->bounds; }
 
 void Scene::Clear() {
-	impl_->scene_shapes.clear();
-	impl_->indexed_shapes.clear();
-	impl_->heatmaps.clear();
-	impl_->heatmap_materials.reset();
+	impl_ = std::make_unique<SceneImpl>();
+	// impl_->scene_shapes.clear();
+	// impl_->indexed_shapes.clear();
+	// impl_->heatmaps.clear();
+	// impl_->heatmap_materials.reset();
 }
 
 void Scene::AddFileRepresentation(FileRepresentation& file_representation,
