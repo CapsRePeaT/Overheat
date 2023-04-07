@@ -9,6 +9,7 @@
 //}
 
 void FsDatapack::AddElement(SolverShape* element) {
+	// TODO switch to unique_ptr
 	elements_.emplace_back(std::shared_ptr<SolverShape>(element));
 }
 
