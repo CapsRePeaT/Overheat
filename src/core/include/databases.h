@@ -27,6 +27,7 @@ enum class MainMatrixType {
 	lu,
 	ilu,
 	hybrid,
+	test,
 	undefined,
 	count = undefined
 };

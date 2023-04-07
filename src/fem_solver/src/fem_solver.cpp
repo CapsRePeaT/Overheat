@@ -27,7 +27,7 @@ void FemSolver::Solve(FileRepresentation& file_rep, SolverSetup setup) {
 		//}
 		for (const auto& element : geom_db.elements())
 			element->AddElementContribution(main_matrix);
-		const auto heatmap = main_matrix.SolveHYPRE();
+		const auto heatmap = main_matrix.Solve(setup.matrix_solver_type);
 		heatmap.Print();
 		HeatmapConverter converter;
 		converter.ConvertHeatmap(file_rep, heatmap);
@@ -78,7 +78,7 @@ void FemSolver::Solve(FileRepresentation& file_rep, SolverSetup setup) {
 			<< std::chrono::duration_cast<std::chrono::seconds>(timer_matrix_filling_fin - timer_cutter_fin)
 			<< " seconds." << std::endl;
 		//const auto heatmap = main_matrix.SolveBoostLuFactorisation();
-		const auto heatmap = main_matrix.SolveHYPRE();
+		const auto heatmap = main_matrix.Solve(setup.matrix_solver_type);
 		auto timer_matrix_fin = std::chrono::high_resolution_clock::now();
 		std::cout << "Main matrix soliving fineshed, it took "
 			<< std::chrono::duration_cast<std::chrono::seconds>(timer_matrix_fin - timer_matrix_filling_fin)
