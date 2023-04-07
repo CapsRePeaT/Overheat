@@ -19,7 +19,7 @@ SolverOptionsWidget::SolverOptionsWidget(QWidget* parent)
 	persision_->setSingleStep(0.25);
 	persision_->setMinimum(0.1);
 	layout->addWidget(persision_);
-	show_net_->setChecked(true);
+	//show_net_->setChecked(true);
 	layout->addWidget(show_net_);
 	layout->addWidget(test_geom_chk_);
 	// Matrix solver

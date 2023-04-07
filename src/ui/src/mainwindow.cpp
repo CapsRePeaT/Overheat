@@ -67,7 +67,15 @@ MainWindow::~MainWindow() = default;
 void MainWindow::VisualizeRepresentation(GlobalId rep_id, bool use_layered_heatmaps) {
 	auto& representation = core().GetRepresentation(rep_id);
 	const auto loaded_shapes = representation.GetShapes();
-	const auto loaded_heatmaps = representation.heatmaps();
+	std::pair<double, double> min_max_temp;
+	if (representation.fs_datapack().heatmap().temperatures().size()) {
+		min_max_temp.first = representation.fs_datapack().heatmap().min_temp();
+		min_max_temp.second = representation.fs_datapack().heatmap().max_temp();
+	}
+	else {
+		min_max_temp.first = representation.heatmaps().min_temp();
+		min_max_temp.second = representation.heatmaps().max_temp();
+	}
 	shape_list_widget_->AddData(core().GetRepresentationData(rep_id.representation_id()));
 	// Do we really need this assert?
 	// assert(!loaded_shapes.empty() && "no shapes received");
@@ -78,8 +86,7 @@ void MainWindow::VisualizeRepresentation(GlobalId rep_id, bool use_layered_heatm
 		scene_->Clear();
 		scene_->AddFileRepresentation(representation, use_layered_heatmaps);
 		// FIXME: Use fs_datapack heatmap when loaded with it
-		visualization_options_->SetMinMaxTemp(loaded_heatmaps.min_temp(),
-			loaded_heatmaps.max_temp());
+		visualization_options_->SetMinMaxTemp(min_max_temp.first, min_max_temp.second);
 		render_widget_->doneCurrent();
 	}
 }

@@ -106,6 +106,7 @@ const SolverHeatmap& MatrixEquation::SolveBoostLuFactorisation() {
 	boost::numeric::ublas::lu_substitute(Afactorized, pm, result);
 	//CustomPrintMatrix(result, "heatmap");
 	heatmap_ = SolverHeatmap(result);
+	heatmap_.ComputeMinMax();
 	return heatmap_;
 }
 
@@ -202,6 +203,7 @@ const SolverHeatmap& MatrixEquation::SolveHypreHybrid() {
 	for (int i = 0; i < ncols; ++i) {
 		raw_heatmap.push_back(values[i]);
 	}
+	heatmap_.ComputeMinMax();
 	return heatmap_;
 }
 
@@ -297,6 +299,7 @@ const SolverHeatmap& MatrixEquation::SolveHypreILU() {
 	for (int i = 0; i < ncols; ++i) {
 		raw_heatmap.push_back(values[i]);
 	}
+	heatmap_.ComputeMinMax();
 	return heatmap_;
 }
 
@@ -407,5 +410,6 @@ const SolverHeatmap& MatrixEquation::SolveHYPRETest() {
 	}
 	// FSAI, based on Cholesky 
 	// needed version HYPRE version 2.25.0, as for 13/3/2023 vcpkg supports only 2.23.0
+	heatmap_.ComputeMinMax();
 	return heatmap_;
 }

@@ -76,7 +76,7 @@ void GLSceneViewport::ApplicationInit(const int w, const int h) {
 			aspect_ratio, 1.f/*consts::init::zoom*/, consts::init::near_far_bounds);
 	camera->SetScreenBounds(w, h);
 	camera_controller_ = std::make_unique<SphericalCameraController>(
-			std::move(camera), /*radius=*/15.0f, /*phi=*/glm::pi<float>() * 3 / 2,
+			std::move(camera), /*radius=*/100.0f, /*phi=*/glm::pi<float>() * 3 / 2,
 			/*theta*/ glm::pi<float>() * 0.5f);
 	font_ = std::make_unique<Font>(Font::default_font_name, 16);
 	if (!font_->Init())

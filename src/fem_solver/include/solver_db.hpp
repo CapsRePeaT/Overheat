@@ -62,20 +62,22 @@ public:
 	SolverHeatmap(const SparceMatrix& matrix) {
 		FillData(matrix);
 	}
-	void FillData(const SparceMatrix& matrix) {
-		assert(temperatures_.empty() && "Heatmap not adapted for rewriting");
-		for (unsigned i = 0; i < matrix.size1(); ++i)
-			temperatures_.push_back(matrix(i, 0));
-	}
+	void FillData(const SparceMatrix& matrix);
+	void ComputeMinMax();
 	void Print(bool detailed_print = false) const;
 	const Temperatures& temperatures() const { 
 		return temperatures_;
 	}
 	Temperatures& data() { return temperatures_; }
-
+	double min_temp() const { return min_temp_; }
+	double max_temp() const { return max_temp_; }
+	double avg_temp() const { return avg_temp_; }
  private:
 	// element index equal to position index
 	Temperatures temperatures_;
+	double min_temp_ = std::numeric_limits<double>::max();
+	double max_temp_ = std::numeric_limits<double>::min();
+	double avg_temp_ = NAN;
 };
 
 class SolverShape;
