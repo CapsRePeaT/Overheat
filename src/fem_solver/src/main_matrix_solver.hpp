@@ -1,6 +1,7 @@
 #pragma once
 
 #include "solver_db.hpp"
+#include "../../core/include/databases.h"
 
 void CustomPrintMatrix(const SparceMatrix& matrix, const std::string& matrix_name);
 
@@ -38,13 +39,17 @@ class MatrixEquation {
 		const std::vector<TempAndIndex>& known_temp_and_indexes) {
 		known_temp_and_indexes_ = known_temp_and_indexes;
 	}
+	const SolverHeatmap& Solve(MainMatrixType type);
+ private:
   // solvers
   const SolverHeatmap& SolveBoostLuFactorisation();
-  const SolverHeatmap& SolveHYPRE();
+  const SolverHeatmap& SolveHypreHybrid();
+	// TODO copy-paste, refactor
+	const SolverHeatmap& SolveHypreILU();
   // runs many solvers in a row, may not work
   const SolverHeatmap& SolveHYPRETest();
- private:
   void ApplyKnownTemps();
+	void InitHypre();
   size_t size_ = DefaultMatrixSize;
   Coeficients coeficients_;
   SolverHeatmap heatmap_;

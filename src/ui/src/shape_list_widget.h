@@ -19,19 +19,17 @@ class ShapeListWidget : public QDockWidget {
 
  public:
 	explicit ShapeListWidget(QWidget* parent = nullptr);
-	void AddData(const InstanceList& data) { 
-		AddData(nullptr, data);
-	}
+	void AddData(const InstanceList& data);
 	void ClearData(const GlobalId& id);
 	void ClearAll();
  signals:
 	void ShowMetadata(GlobalId id);
 	void ChangeVisibility(GlobalIds shape_ids, bool is_visivle);
 	void ShapesSelected(GlobalIds shape_ids);
-
  private slots:
 	void onItemClicked(const QModelIndex& index);
  private:
+	void SetupHeader();
 	void AddData(QStandardItem* parent, const InstanceList& data);
 	void ProcessChildren(const QModelIndex& parent_index, int clicked_column,
 	                     Qt::CheckState state, GlobalIds& shape_ids);

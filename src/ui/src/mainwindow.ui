@@ -30,6 +30,7 @@
     <addaction name="load_file_3d_btn"/>
     <addaction name="load_file_2d_btn"/>
     <addaction name="run_computation_btn"/>
+	<addaction name="rerun_computation_btn"/>
    </widget>
    <addaction name="menuMenu"/>
   </widget>
@@ -47,6 +48,11 @@
   <action name="run_computation_btn">
    <property name="text">
 	<string>Run Computation...</string>
+   </property>
+  </action>
+  <action name="rerun_computation_btn">
+   <property name="text">
+	<string>Rerun Computation</string>
    </property>
   </action>
  </widget>

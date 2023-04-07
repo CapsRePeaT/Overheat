@@ -66,7 +66,7 @@ public:
 		for (unsigned i = 0; i < matrix.size1(); ++i)
 			temperatures_.push_back(matrix(i, 0));
 	}
-	void Print() const;
+	void Print(bool detailed_print = false) const;
 	const Temperatures& temperatures() const { 
 		return temperatures_;
 	}

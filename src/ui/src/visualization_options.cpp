@@ -107,6 +107,7 @@ VisualizationOptionsWidget::VisualizationOptionsWidget(QWidget* parent)
 	// reset
 	connect(ui_->reset, &QAbstractButton::clicked, 
 	      	this,  &VisualizationOptionsWidget::Reset);
+	setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Maximum);
 }
 
 VisualizationOptionsWidget::~VisualizationOptionsWidget() = default;
