@@ -75,9 +75,18 @@ void Scene::Clear() {
 }
 
 void Scene::AddFileRepresentation(
-		FileRepresentation& file_representation) {
-	AddShapes(file_representation.GetShapes());
-	AddHeatmaps(file_representation.heatmaps());
+		FileRepresentation& file_representation, bool use_layered_heatmaps) {
+	use_layered_heatmaps_ = use_layered_heatmaps;
+	if (use_layered_heatmaps_) {
+		AddShapes(file_representation.GetShapes());
+		AddHeatmaps(file_representation.heatmaps());
+	}
+	else {
+		const auto& fs = file_representation.fs_datapack();
+
+		// auto factory = RendererAPI
+		// auto coords_vbo = 
+	}
 }
 
 const std::shared_ptr<SceneShape>& Scene::shape_by_id(GlobalId id) const {

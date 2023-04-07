@@ -20,7 +20,7 @@ class Scene {
 	Scene& operator=(Scene&) = delete;
 	// Removes objects from scene
 	void Clear();
-	void AddFileRepresentation(FileRepresentation& file_representation);
+	void AddFileRepresentation(FileRepresentation& file_representation, bool use_layered_heatmaps);
 	void AddShapes(const Core::Shapes& shapes) {
 		for (const auto& shape : shapes) AddShape(shape);
 	}
@@ -39,6 +39,7 @@ class Scene {
 
 	// Idk why, but unique_ptr is not working
 	std::unique_ptr<SceneImpl> impl_;
+	bool use_layered_heatmaps_ = true;
 };
 
 }  // namespace renderer

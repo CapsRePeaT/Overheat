@@ -60,7 +60,7 @@ MainWindow::MainWindow(QWidget* parent)
 
 MainWindow::~MainWindow() = default;
 
-void MainWindow::VisualizeRepresentation(GlobalId rep_id) {
+void MainWindow::VisualizeRepresentation(GlobalId rep_id, bool use_layered_heatmaps) {
 	auto& representation = core().GetRepresentation(rep_id);
 	const auto loaded_shapes = representation.GetShapes();
 	const auto loaded_heatmaps = representation.heatmaps();
@@ -72,7 +72,7 @@ void MainWindow::VisualizeRepresentation(GlobalId rep_id) {
 		// FIXME: Adding shapes shouldn't need to make API context current
 		render_widget_->makeCurrent();
 		scene_->Clear();
-		scene_->AddFileRepresentation(representation);
+		scene_->AddFileRepresentation(representation, use_layered_heatmaps);
 		render_widget_->doneCurrent();
 		visualization_options_->SetMinMaxTemp(loaded_heatmaps.min_temp(),
 			loaded_heatmaps.max_temp());
@@ -105,7 +105,7 @@ void MainWindow::LoadGeometryWithHeatmap(const GeometryType type) {
 	if (trm_file_path.length() && t2d_file_path.length()) {
 		const auto rep_id = core().LoadRepresentationWithHeatmap(trm_file_path.toStdString(), 
 			                                                     t2d_file_path.toStdString(), type);
-		VisualizeRepresentation(rep_id);
+		VisualizeRepresentation(rep_id, true);
 	}
 }
 
@@ -117,7 +117,7 @@ void MainWindow::LoadGeometryAndRunComputation() {
 		return;
 	auto rep_id = core().LoadRepresentation(geom_file.toStdString());
 	core().CalculateHeat(core().GetRepresentation(rep_id), solver_options_->GetSolverSetup());
-	VisualizeRepresentation(rep_id);
+	VisualizeRepresentation(rep_id, false);
 }
 
 void MainWindow::OnShapesSelected(const GlobalShapeIds& shape_ids) {
