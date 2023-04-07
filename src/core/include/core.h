@@ -15,35 +15,20 @@ class Core {
  public:
 	using Shapes = FileRepresentation::Shapes;
 
-	static Core& instance() {
-		static Core instance;
-		return instance;
-	}
+	static Core& instance();
 	GlobalId LoadRepresentationWithHeatmap(std::string trm_file_path_mv,
 	                                       std::string t2d_file_path_mv,
 	                                       GeometryType type);
 	GlobalId LoadRepresentation(const std::string& trm_file_path_mv);
-	FileRepresentation& GetRepresentation(const GlobalId id) {
-		const auto rep_id = id.representation_id();
-		assert(representations_.size() > rep_id && "Invalid Id");
-		return representations_[rep_id];
-	}
-	[[nodiscard]] MetadataPack GetMetadata(const GlobalId id) const {
-		return GetRepresentation(id.representation_id()).GetMetadata(id);
-	}
-	/// For filling side widgets
-	InstanceList GetRepresentationData(const size_t representation_id) const {
-		return GetRepresentation(representation_id).GetInstanceList();
-	}
 	void CalculateHeat(FileRepresentation& file_rep, SolverSetup setup);
-
+	FileRepresentation& GetRepresentation(const GlobalId id);
+	void DeleteAllRepresentations();
+	void DeleteRepresentation(const GlobalId id);
+	[[nodiscard]] MetadataPack GetMetadata(const GlobalId id) const;
+	/// For filling side widgets
+	InstanceList GetRepresentationData(const RepresentationId representation_id) const;
  private:
 	Core() {};
-	[[nodiscard]] const FileRepresentation& GetRepresentation(
-			const RepresentationId id) const {
-		// in the future there might be another connection with id and container
-		return representations_.at(id);
-	}
-	std::vector<FileRepresentation> representations_;
-
+	[[nodiscard]] const FileRepresentation& GetRepresentation(const RepresentationId id) const;
+	std::map<RepresentationId, FileRepresentation> representations_;
 };

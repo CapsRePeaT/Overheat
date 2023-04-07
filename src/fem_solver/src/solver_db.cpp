@@ -9,7 +9,8 @@
 //}
 
 void FsDatapack::AddElement(SolverShape* element) {
-	elements_.push_back(element);
+	// TODO switch to unique_ptr
+	elements_.emplace_back(std::shared_ptr<SolverShape>(element));
 }
 
 void SolverHeatmap::Print() const {

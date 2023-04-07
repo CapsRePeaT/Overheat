@@ -95,7 +95,6 @@ void MeshGenerator::show_debug_mesh(DrawableMesh& mesh) {
 	// slicer.X_thresh = 0.6f; // in percents
 	// slicer.slice(mesh);
 	// mesh.updateGL();
-
 	gui.push(&mesh);
 	gui.push(&x);
 	gui.push(&y);

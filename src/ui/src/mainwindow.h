@@ -30,6 +30,7 @@ class MainWindow final : public QMainWindow {
  private:
 	void LoadGeometryWithHeatmap(GeometryType type);
 	void LoadGeometryAndRunComputation();
+	void ResetVisualisation();
 	void VisualizeRepresentation(GlobalId rep_id);
 	Core& core() { return Core::instance(); }
 	std::shared_ptr<renderer::Scene> scene_;

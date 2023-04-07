@@ -83,8 +83,6 @@ class FsDatapack {
 public:
 	FsDatapack() = default;
 	~FsDatapack() {
-		for (auto& element : elements())
-			delete element;
 	}
 	//bool NextElement(SolverShape*& element);
 	void AddElement(SolverShape* element);
@@ -97,11 +95,11 @@ public:
 	void SetVerticeIndexes(const VerticeIndexes& indeces) {
 		indeces_ = indeces;
 	}
-	const std::deque<SolverShape*>& elements() const { return elements_; }
+	const std::vector<std::shared_ptr<SolverShape>>& elements() const { return elements_; }
 	const SolverHeatmap& heatmap() const { return heatmap_; }
 	const VerticeIndexes& indeces() const { return indeces_; }
 private:
-	std::deque<SolverShape*> elements_;
+	std::vector<std::shared_ptr<SolverShape>> elements_;
 	SolverHeatmap heatmap_;
 	VerticeIndexes indeces_;
 };
