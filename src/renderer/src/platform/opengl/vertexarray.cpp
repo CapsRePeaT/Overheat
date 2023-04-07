@@ -8,7 +8,7 @@
 
 namespace renderer::gl {
 
-VertexArray::VertexArray(std::vector<std::unique_ptr<VertexBuffer>>&& vb,
+VertexArray::VertexArray(std::vector<std::shared_ptr<VertexBuffer>>&& vb,
                          std::unique_ptr<IndexBuffer>&& ib) {
 	glGenVertexArrays(consts::vertex_array_count_one, &id_);
 	// LOG_TRACE("VAO id={} created", id_);
@@ -41,9 +41,10 @@ VertexArray& VertexArray::operator=(VertexArray&& other) noexcept {
 	return *this;
 }
 
-void VertexArray::SetBuffers(std::vector<std::unique_ptr<VertexBuffer>>&& vbs) {
+void VertexArray::SetBuffers(std::vector<std::shared_ptr<VertexBuffer>>&& vbs) {
 	Bind();
 
+	uint32_t location_offset = 0;
 	for (auto vb_it = vbs.begin(); vb_it != vbs.end(); ++vb_it) {
 		VertexBuffer& vb = **vb_it;
 		vb.Bind();
@@ -52,12 +53,13 @@ void VertexArray::SetBuffers(std::vector<std::unique_ptr<VertexBuffer>>&& vbs) {
 														// and pointer arithmetic
 		const auto& elements = layout.elements();
 		for (const auto& element : elements) {
-			glEnableVertexAttribArray(element.location);
-			glVertexAttribPointer(element.location, element.count, element.type,
+			glEnableVertexAttribArray(element.location + location_offset);
+			glVertexAttribPointer(element.location + location_offset, element.count, element.type,
 														element.normalized, layout.stride(), offset);
 			offset += element.count * element.size();
 		}
 		vb.Unbind();
+		location_offset += elements.size();
 	}
 	Unbind();
 	vbos_ = std::move(vbs);

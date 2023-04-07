@@ -73,9 +73,10 @@ void MainWindow::VisualizeRepresentation(GlobalId rep_id, bool use_layered_heatm
 		render_widget_->makeCurrent();
 		scene_->Clear();
 		scene_->AddFileRepresentation(representation, use_layered_heatmaps);
-		render_widget_->doneCurrent();
+		// FIXME: Use fs_datapack heatmap when loaded with it
 		visualization_options_->SetMinMaxTemp(loaded_heatmaps.min_temp(),
 			loaded_heatmaps.max_temp());
+		render_widget_->doneCurrent();
 	}
 }
 

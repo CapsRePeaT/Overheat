@@ -8,7 +8,7 @@ namespace renderer::gl {
 
 class VertexArray final : public renderer::VertexArray {
  public:
-	VertexArray(std::vector<std::unique_ptr<renderer::VertexBuffer>>&& vb,
+	VertexArray(std::vector<std::shared_ptr<renderer::VertexBuffer>>&& vb,
 	            std::unique_ptr<renderer::IndexBuffer>&& ib);
 	VertexArray() : VertexArray({}, nullptr) {}
 	VertexArray(VertexArray&& other) noexcept;
@@ -16,7 +16,7 @@ class VertexArray final : public renderer::VertexArray {
 	~VertexArray() override;
 	VertexArray(const VertexArray&) = delete;
 	VertexArray& operator=(const VertexArray&) = delete;
-	void SetBuffers(std::vector<std::unique_ptr<renderer::VertexBuffer>>&& vbs) final;
+	void SetBuffers(std::vector<std::shared_ptr<renderer::VertexBuffer>>&& vbs) final;
 	void SetIndexBuffer(std::unique_ptr<renderer::IndexBuffer>&& ib) final;
 	[[nodiscard]] const renderer::IndexBuffer& indexBuffer() const final {
 		return *ibo_;
@@ -26,7 +26,7 @@ class VertexArray final : public renderer::VertexArray {
 
  private:
 	uint32_t id_;
-	std::vector<std::unique_ptr<renderer::VertexBuffer>> vbos_;
+	std::vector<std::shared_ptr<renderer::VertexBuffer>> vbos_;
 	std::unique_ptr<renderer::IndexBuffer> ibo_;
 };
 

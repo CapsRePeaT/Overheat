@@ -12,6 +12,7 @@ class SolverShape {
 	}
 	virtual ~SolverShape() = default;
 	virtual void AddElementContribution(MatrixEquation& matrix) const = 0;
+	GlobalId id() { return origin_shape_id_; }
  private:
 	GlobalId origin_shape_id_;
 };

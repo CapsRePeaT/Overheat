@@ -40,7 +40,7 @@ void Text2D::EndPlacing() {
 	layout->Push<float>(2);
 	layout->Push<float>(2);
 	auto& factory = RendererAPI::factory();
-	std::vector<std::unique_ptr<VertexBuffer>> vbos;
+	std::vector<std::shared_ptr<VertexBuffer>> vbos;
 	auto&& vbo = factory.NewVertexBuffer(
 			characters_vertices_.data(),
 			characters_vertices_.size() * sizeof(CharacterVertexBuffer),

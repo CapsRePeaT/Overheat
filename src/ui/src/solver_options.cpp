@@ -12,7 +12,7 @@ SolverOptionsWidget::SolverOptionsWidget(QWidget* parent)
 	persision_->setValue(0.5);
 	persision_->setSingleStep(0.25);
 	persision_->setMinimum(0.1);
-	show_net_->setChecked(true);
+	show_net_->setChecked(false);
 	auto layout = new QVBoxLayout(this);
 	layout->addWidget(new QLabel("persision"));
 	layout->addWidget(persision_);

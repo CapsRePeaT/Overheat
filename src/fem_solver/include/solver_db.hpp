@@ -30,10 +30,11 @@ class VerticeIndexes {
 	Point3D GetCoords(VerticeIndex index) const {
 		return coords_[index];
 	}
+	const std::vector<Point3D>& coords() const { return coords_; }
   // needed for heatmap interpolation
   std::array<VerticeIndex, 4> GetConvexHull(Point3D point);
   size_t MaxIndex() const {
-	return coords_.size() - 1;
+		return coords_.size() - 1;
   }
  private:
   std::map<Point3D, VerticeIndex> coords_map_;

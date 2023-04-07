@@ -62,7 +62,7 @@ std::unique_ptr<VertexArray> TemperatureBar::InitVao() {
 	layout->Push<float>(2);
 	layout->Push<float>(2);
 	auto& factory = RendererAPI::factory();
-	std::vector<std::unique_ptr<VertexBuffer>> vbos;
+	std::vector<std::shared_ptr<VertexBuffer>> vbos;
 	auto&& vbo = factory.NewVertexBuffer(vertices, std::move(layout));
 	vbos.emplace_back(std::move(vbo));
 	auto&& ibo = factory.NewIndexBuffer(raw_ibo);
@@ -74,10 +74,10 @@ TemperatureBar::Labels TemperatureBar::InitLabels() {
 	labels_.reserve(2);
 	constexpr float y_text_shift = 4.0f;
 	labels_.emplace_back(font_->CreateText(
-			temperature_range_.first,
+			temperature_range_.second,
 			position_ + glm::vec2{size_.x + 5.0f, y_text_shift}, true));
 	labels_.emplace_back(font_->CreateText(
-			temperature_range_.second,
+			temperature_range_.first,
 			position_ + glm::vec2{size_.x + 5.0f, size_.y + y_text_shift}, true));
 	return labels_;
 }

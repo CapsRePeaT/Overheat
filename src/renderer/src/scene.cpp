@@ -7,6 +7,7 @@
 #include <vector>
 
 #include "application/box_shape.h"
+#include "application/tetrahedron_shape.h"
 #include "heatmap_normalizer.h"
 #include "log.h"
 #include "renderer/orthographic_camera.h"
@@ -22,6 +23,16 @@ struct Scene::SceneImpl {
 	// move to resource manager?
 	std::optional<std::vector<HeatmapMaterial>> heatmap_materials;
 	std::pair<float, float> bounds;
+
+	std::vector<float> tetrahedron_points_array;
+	std::shared_ptr<VertexBuffer> tetrahedron_points;
+	std::shared_ptr<VertexBuffer> tetrahedron_temps;
+	std::vector<std::shared_ptr<TetrahedronShape>> tetrahedrons;
+	std::multimap<GlobalId, std::shared_ptr<TetrahedronShape>>
+			indexed_tetrahedrons;
+	std::unique_ptr<TetrahedronMaterial> tetrahedron_material;
+
+	std::vector<Drawable*> all_shapes;
 };
 
 Scene::Scene() : impl_(std::make_unique<SceneImpl>()) {}
@@ -37,6 +48,7 @@ void Scene::AddShape(const std::shared_ptr<BasicShape>& shape) {
 	auto new_scene_shape = std::make_shared<BoxShape>(*shape);
 	impl_->scene_shapes.emplace_back(new_scene_shape);
 	impl_->indexed_shapes[shape->id()] = new_scene_shape;
+	impl_->all_shapes.emplace_back(new_scene_shape.get());
 }
 
 void Scene::AddHeatmaps(const HeatmapStorage& heatmaps_storage) {
@@ -70,14 +82,9 @@ bool Scene::UpdateForRenderer() {
 	return false;
 }
 
-const std::vector<std::shared_ptr<BoxShape>>& Scene::shapes() const {
-	return impl_->scene_shapes;
+const std::vector<Drawable*>& Scene::shapes() const {
+	return impl_->all_shapes;
 }
-[[nodiscard]] std::vector<std::shared_ptr<BoxShape>>& Scene::shapes() {
-	return impl_->scene_shapes;
-}
-
-const Heatmaps& Scene::heatmaps() const { return impl_->heatmaps; }
 
 std::pair<float, float> Scene::bounds() const { return impl_->bounds; }
 
@@ -96,9 +103,26 @@ void Scene::AddFileRepresentation(FileRepresentation& file_representation,
 		AddHeatmaps(file_representation.heatmaps());
 	} else {
 		const auto& fs = file_representation.fs_datapack();
+		const auto& coords = fs.indeces().coords();
+		// impl_->tetrahedron_points_array.reserve(coords.size());
+		// for (double d_coord : coords) {
+		// 	impl_->tetrahedron_points_array.push_back(static_cast<float>(d_coord));
+		// }
 
-		// auto factory = RendererAPI
-		// auto coords_vbo =
+		auto& factory = RendererAPI::factory();
+		auto layout   = std::make_unique<VertexBufferLayout>();
+		layout->Push<double>(3);
+		impl_->tetrahedron_points = factory.NewVertexBuffer(
+				coords.data(), coords.size() * sizeof(Point3D), std::move(layout));
+
+		layout = std::make_unique<VertexBufferLayout>();
+		layout->Push<float>(1);
+		const auto& temps = fs.heatmap().temperatures();
+		impl_->tetrahedron_temps =
+				factory.NewVertexBuffer(temps.data(), temps.size() * sizeof(float), std::move(layout));
+		impl_->tetrahedron_material = std::make_unique<TetrahedronMaterial>();
+
+		AddTetrahedrons(fs.elements());
 	}
 }
 
@@ -111,27 +135,29 @@ std::shared_ptr<BoxShape>& Scene::shape_by_id(GlobalId id) {
 }
 
 void Scene::SetTemperatureRange(const float min, const float max) {
-	if (!impl_->heatmap_materials)
-		return;
-
-	auto& materials = *impl_->heatmap_materials;
-	for (auto& material : materials) material.SetTemperatureRange(min, max);
+	if (impl_->heatmap_materials) {
+		auto& materials = *impl_->heatmap_materials;
+		for (auto& material : materials) material.SetTemperatureRange(min, max);
+	}
+	if (impl_->tetrahedron_material) {
+		impl_->tetrahedron_material->SetTemperatureRange(min, max);
+	}
 }
 
 void Scene::SetColorRange(const std::array<float, 3> min,
                           const std::array<float, 3> max) {
-	if (!impl_->heatmap_materials)
-		return;
+	if (impl_->heatmap_materials) {
 
-	auto& materials = *impl_->heatmap_materials;
-	for (auto& material : materials)
-		material.SetColorRange({min[0], min[1], min[2]}, {max[0], max[1], max[2]});
+		auto& materials = *impl_->heatmap_materials;
+		for (auto& material : materials)
+			material.SetColorRange({min[0], min[1], min[2]}, {max[0], max[1], max[2]});
+	}
+	if (impl_->tetrahedron_material) {
+		impl_->tetrahedron_material->SetColorRange({min[0], min[1], min[2]}, {max[0], max[1], max[2]});
+	}
 }
 
 void Scene::SetDrawMode(const DrawMode mode) {
-	if (!impl_->heatmap_materials)
-		return;
-
 	bool is_stratified = false;
 	switch (mode) {
 		case DrawMode::Gradient:
@@ -141,16 +167,37 @@ void Scene::SetDrawMode(const DrawMode mode) {
 			is_stratified = true;
 			break;
 	}
-	auto& materials = *impl_->heatmap_materials;
-	for (auto& material : materials) material.SetIsStratified(is_stratified);
+	if (impl_->heatmap_materials) {
+		auto& materials = *impl_->heatmap_materials;
+		for (auto& material : materials) material.SetIsStratified(is_stratified);
+	}
+	if (impl_->tetrahedron_material) {
+		impl_->tetrahedron_material->SetIsStratified(is_stratified);
+	}
 }
 
 void Scene::SetStratifiedStep(float step) {
-	if (!impl_->heatmap_materials)
-		return;
+	if (impl_->heatmap_materials) {
+		auto& materials = *impl_->heatmap_materials;
+		for (auto& material : materials) material.SetStratifiedStep(step);
+	}
+	if (impl_->tetrahedron_material) {
+		impl_->tetrahedron_material->SetStratifiedStep(step);
+	}
+}
 
-	auto& materials = *impl_->heatmap_materials;
-	for (auto& material : materials) material.SetStratifiedStep(step);
+void Scene::SetVisibility(const GlobalIds& to_change, bool is_visible) {
+	for (auto id : to_change) {
+		auto shape_it = impl_->indexed_shapes.find(id);
+		if (shape_it != impl_->indexed_shapes.end())
+			impl_->indexed_shapes.at(id)->SetIsVisible(is_visible);
+
+		auto[begin, end] = impl_->indexed_tetrahedrons.equal_range(id);
+		for (auto it = begin; it != end; ++it) {
+			auto& shape = *it->second;
+			shape.SetIsVisible(is_visible);
+		}
+	}
 }
 
 HeatmapMaterial CreateMaterial(const Heatmap& bot_heatmap,
@@ -174,7 +221,7 @@ HeatmapMaterial CreateMaterial(const Heatmap& bot_heatmap,
 }
 
 void Scene::InitHeatmapMaterials() {
-	auto& heatmaps_ = heatmaps();
+	auto& heatmaps_ = impl_->heatmaps;
 	assert(heatmaps_.size());
 	impl_->heatmap_materials = std::vector<HeatmapMaterial>();
 	auto& heatmap_materials  = *impl_->heatmap_materials;
@@ -190,8 +237,16 @@ void Scene::InitHeatmapMaterials() {
 				CreateMaterial(bot_heatmap, top_heatmap, bounds()));
 	}
 
-	for (auto& shape : shapes()) {
+	for (auto& shape : impl_->scene_shapes) {
 		shape->SetMaterial(heatmap_materials[shape->layer_id()]);
 	}
+}
+void Scene::AddTetrahedron(std::shared_ptr<SolverTetraeder> shape) {
+	auto new_shape = std::make_shared<TetrahedronShape>(
+			shape, impl_->tetrahedron_points, impl_->tetrahedron_temps,
+			*impl_->tetrahedron_material);
+	impl_->tetrahedrons.emplace_back(new_shape);
+	impl_->indexed_tetrahedrons.emplace(shape->id(), new_shape);
+	impl_->all_shapes.emplace_back(new_shape.get());
 }
 }  // namespace renderer

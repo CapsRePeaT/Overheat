@@ -73,10 +73,10 @@ void GLSceneViewport::ApplicationInit(const int w, const int h) {
 	          w, h, aspect_ratio, consts::init::zoom);
 
 	auto camera = std::make_unique<OrthographicCamera>(
-			aspect_ratio, consts::init::zoom, consts::init::near_far_bounds);
+			aspect_ratio, 1.f/*consts::init::zoom*/, consts::init::near_far_bounds);
 	camera->SetScreenBounds(w, h);
 	camera_controller_ = std::make_unique<SphericalCameraController>(
-			std::move(camera), /*radius=*/100.0f, /*phi=*/glm::pi<float>() * 3 / 2,
+			std::move(camera), /*radius=*/15.0f, /*phi=*/glm::pi<float>() * 3 / 2,
 			/*theta*/ glm::pi<float>() * 0.5f);
 	font_ = std::make_unique<Font>(Font::default_font_name, 16);
 	if (!font_->Init())
@@ -93,7 +93,8 @@ void GLSceneViewport::DebugInit(const int /*w*/, const int /*h*/) {
 			Box3D({{0.0f, 1.0f}, {0.0f, 2.0f}, {0.0f, 3.0f}}))};
 	scene_->AddShapes(shapes);
 	constexpr glm::vec3 offset = {0.1, 0.1, 0.1};
-	scene_->shapes()[0]->Translate(offset);
+	auto shape = scene_->shapes()[0];
+	dynamic_cast<BoxShape*>(shape)->Translate(offset);
 }
 
 void GLSceneViewport::InitTemperatureBar(const float min_temp,
@@ -157,7 +158,7 @@ void GLSceneViewport::RenderFrame() {
 		}
 	}
 
-	// care about this not enough to include it to Drawable family
+	// do not care about this enough to include it to Drawable family
 	if (data_) {
 		const auto& axes = data_->axes;
 		data_->debug_material->Use(axes->transform(), camera.viewProjectionMatrix(),
@@ -235,9 +236,7 @@ void GLSceneViewport::ZoomView(const float delta) {
 
 void GLSceneViewport::SetVisibility(const GlobalIds& to_change,
                                     bool is_visible) {
-	for (auto id : to_change) {
-		scene_->shape_by_id(id)->SetIsVisible(is_visible);
-	}
+	scene_->SetVisibility(to_change, is_visible);
 }
 
 void GLSceneViewport::SetDrawMode(DrawMode mode) {
@@ -249,13 +248,16 @@ void GLSceneViewport::SetStratifiedStep(float step) {
 }
 
 void GLSceneViewport::ClearSelection() {
-	std::ranges::for_each(scene_->shapes(), [](auto& shape) {
-		shape->SetHighlightType(HighlightType::None);
-	});
+	for (auto shape : scene_->shapes()) {
+		auto casted_shape = dynamic_cast<BoxShape*>(shape);
+		if (casted_shape)
+			casted_shape->SetHighlightType(HighlightType::None);
+	}
 }
 
 void GLSceneViewport::SetSelection(const GlobalIds& to_change,
                                    HighlightType type) {
+	return;
 	for (auto id : to_change) {
 		scene_->shape_by_id(id)->SetHighlightType(type);
 	}

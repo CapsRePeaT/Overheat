@@ -41,7 +41,7 @@ Axes::Axes() {
 	layout->Push<float>(3);
 	layout->Push<float>(3);
 	auto& factory = RendererAPI::instance().factory();
-	std::vector<std::unique_ptr<VertexBuffer>> vbos;
+	std::vector<std::shared_ptr<VertexBuffer>> vbos;
 	auto&& vbo    = factory.NewVertexBuffer(vertices, std::move(layout));
 	vbos.emplace_back(std::move(vbo));
 	auto&& ibo    = factory.NewIndexBuffer(raw_ibo);

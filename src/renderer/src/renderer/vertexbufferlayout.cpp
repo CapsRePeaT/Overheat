@@ -12,6 +12,8 @@ unsigned int VertexBufferLayout::VertexBufferElement::size() const {
 			return sizeof(uint32_t);
 		case GL_BYTE:
 			return sizeof(int8_t);
+		case GL_DOUBLE:
+			return sizeof(double);
 	}
 	return 0;
 }

@@ -3,12 +3,14 @@
 #include <memory>
 #include <vector>
 
+#include "../../fem_solver/src/solver_shapes.hpp"
 #include "common.h"
 #include "core.h"
 
 namespace renderer {
 
 class BoxShape;
+class Drawable;
 
 class Scene {
  public:
@@ -28,23 +30,31 @@ class Scene {
 	void AddHeatmaps(const HeatmapStorage& heatmaps_storage);
 	bool UpdateForRenderer();
 	// Only for in-module usage (maybe will be removed and by-passed, TBT)
-	[[nodiscard]] const std::vector<std::shared_ptr<BoxShape>>& shapes() const;
-	[[nodiscard]] std::vector<std::shared_ptr<BoxShape>>& shapes();
-	[[nodiscard]] const Heatmaps& heatmaps() const;
+	[[nodiscard]] const std::vector<Drawable*>& shapes() const;
 	[[nodiscard]] std::pair<float, float> bounds() const;
 	[[nodiscard]] const std::shared_ptr<BoxShape>& shape_by_id(GlobalId id) const;
 	[[nodiscard]] std::shared_ptr<BoxShape>& shape_by_id(GlobalId id);
-	
+
 	// only for viewport
 	void SetTemperatureRange(float min, float max);
 	void SetColorRange(std::array<float, 3> min, std::array<float, 3> max);
 	void SetDrawMode(DrawMode mode);
 	void SetStratifiedStep(float step);
+	void SetVisibility(const GlobalIds& to_change, bool is_visible);
 
  private:
 	struct SceneImpl;
 	void AddShape(const std::shared_ptr<BasicShape>& shape);
 	void InitHeatmapMaterials();
+	void AddTetrahedrons(
+			const std::vector<std::shared_ptr<SolverShape>>& core_shapes) {
+		for (const auto& shape : core_shapes) {
+			auto casted_shape = std::dynamic_pointer_cast<SolverTetraeder>(shape);
+			if (casted_shape)
+				AddTetrahedron(casted_shape);
+		}
+	};
+	void AddTetrahedron(std::shared_ptr<SolverTetraeder> shape);
 
 	std::unique_ptr<SceneImpl> impl_;
 	bool use_layered_heatmaps_ = true;
