@@ -1,4 +1,4 @@
-#include "scene_shape.h"
+#include "box_shape.h"
 
 #include <glm/detail/qualifier.hpp>
 #include <glm/detail/type_quat.hpp>
@@ -15,7 +15,7 @@ namespace renderer {
 struct Vertex {
 	glm::vec3 positions;
 	glm::vec2 uv_coordinates;
-	glm::vec2 side_uv_coordinates;
+	glm::vec2 side_uv_coordinates; 
 };
 
 // VertexBufferLayout doesn't support non-contigious vertices now, so we
@@ -28,7 +28,7 @@ static_assert(sizeof(glm::vec3) == sizeof(float) * 3 &&
 static_assert(sizeof(glm::vec2) == sizeof(float) * 2 &&
               "All data in vertex struct must be contigious");
 
-SceneShape::SceneShape(const BasicShape& shape) : core_shape_(shape) {
+BoxShape::BoxShape(const BasicShape& shape) : core_shape_(shape) {
 	// (minX, maxX), (minY, maxY), (minZ, maxZ)
 	const auto bounds = shape.bbox().coordinates();
 
@@ -51,14 +51,14 @@ SceneShape::SceneShape(const BasicShape& shape) : core_shape_(shape) {
 	// 0---------3        o------> x
 	//
 	const std::array<const Vertex, 8> vertices = {
-			Vertex{{min_bounds.x, min_bounds.y, min_bounds.z}, {0.0f, 0.0f}, {0.0f, 0.0f}}, // 0
-			Vertex{{min_bounds.x, max_bounds.y, min_bounds.z}, {0.0f, 1.0f}, {0.0f, 1.0f}}, // 1
-			Vertex{{max_bounds.x, max_bounds.y, min_bounds.z}, {1.0f, 1.0f}, {0.0f, 0.0f}}, // 2
-			Vertex{{max_bounds.x, min_bounds.y, min_bounds.z}, {1.0f, 0.0f}, {0.0f, 1.0f}}, // 3
-			Vertex{{min_bounds.x, min_bounds.y, max_bounds.z}, {0.0f, 0.0f}, {1.0f, 0.0f}}, // 4
-			Vertex{{min_bounds.x, max_bounds.y, max_bounds.z}, {0.0f, 1.0f}, {1.0f, 1.0f}}, // 5
-			Vertex{{max_bounds.x, max_bounds.y, max_bounds.z}, {1.0f, 1.0f}, {1.0f, 0.0f}}, // 6
-			Vertex{{max_bounds.x, min_bounds.y, max_bounds.z}, {1.0f, 0.0f}, {1.0f, 1.0f}}, // 7
+			Vertex{{min_bounds.x, min_bounds.y, min_bounds.z}, {0.0f, 0.0f}, {0.0f, 0.0f}},  // 0
+			Vertex{{min_bounds.x, max_bounds.y, min_bounds.z}, {0.0f, 1.0f}, {0.0f, 1.0f}},  // 1
+			Vertex{{max_bounds.x, max_bounds.y, min_bounds.z}, {1.0f, 1.0f}, {0.0f, 0.0f}},  // 2
+			Vertex{{max_bounds.x, min_bounds.y, min_bounds.z}, {1.0f, 0.0f}, {0.0f, 1.0f}},  // 3
+			Vertex{{min_bounds.x, min_bounds.y, max_bounds.z}, {0.0f, 0.0f}, {1.0f, 0.0f}},  // 4
+			Vertex{{min_bounds.x, max_bounds.y, max_bounds.z}, {0.0f, 1.0f}, {1.0f, 1.0f}},  // 5
+			Vertex{{max_bounds.x, max_bounds.y, max_bounds.z}, {1.0f, 1.0f}, {1.0f, 0.0f}},  // 6
+			Vertex{{max_bounds.x, min_bounds.y, max_bounds.z}, {1.0f, 0.0f}, {1.0f, 1.0f}},  // 7
 	};
 
 	// 3 indices for a triangle, 2 triangles for a face, 6 faces
@@ -76,11 +76,38 @@ SceneShape::SceneShape(const BasicShape& shape) : core_shape_(shape) {
 	layout->Push<float>(2);
 	layout->Push<float>(2);
 	auto& factory = RendererAPI::factory();
-	std::vector<std::unique_ptr<VertexBuffer>> vbos;
-	auto&& vbo    = factory.NewVertexBuffer(vertices, std::move(layout));
+	std::vector<std::shared_ptr<VertexBuffer>> vbos;
+	auto&& vbo = factory.NewVertexBuffer(vertices, std::move(layout));
 	vbos.emplace_back(std::move(vbo));
-	auto&& ibo    = factory.NewIndexBuffer(raw_ibo);
-	vao_          = factory.NewVertexArray(std::move(vbos), std::move(ibo));
+	auto&& ibo = factory.NewIndexBuffer(raw_ibo);
+	vao_       = factory.NewVertexArray(std::move(vbos), std::move(ibo));
+}
+
+glm::vec3 HighlightTypeToColor(HighlightType highlight_type) {
+	switch (highlight_type) {
+		case HighlightType::None:
+			return consts::color_not_selected;
+		case HighlightType::Selected:
+			return consts::color_selected;
+		case HighlightType::ActiveSelected:
+			return consts::color_active_selected;
+		default:
+			assert(false && "Unkown highlight type!");
+			return consts::vec3_0;
+	}
+}
+
+bool BoxShape::SetContextForDraw(RendererContext& ctx) {
+	if (!is_visible() && highlight_type() == HighlightType::None)
+		return false;
+	ctx.SetVao(vertex_array());
+	ctx.SetMaterialCallbacks(
+			[this, &material = *material_, &ctx]() {
+				material.Use(transform(), ctx.camera().viewProjectionMatrix(),
+		                 HighlightTypeToColor(highlight_type()), !is_visible());
+			},
+			[&material = *material_]() { material.Unuse(); });
+	return true;
 }
 
 }  // namespace renderer

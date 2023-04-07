@@ -31,10 +31,10 @@ class MainWindow final : public QMainWindow {
  private:
 	void LoadGeometryWithHeatmap(GeometryType type);
 	void LoadGeometryAndRunComputation();
+	void VisualizeRepresentation(GlobalId rep_id, bool use_layered_heatmaps);
 	void RerunComputation();
 	void RunComputation(const std::string& file);
 	void ResetVisualisation();
-	void VisualizeRepresentation(GlobalId rep_id);
 	Core& core() { return Core::instance(); }
 	std::shared_ptr<renderer::Scene> scene_;
 	RendererWidget* render_widget_ = nullptr;

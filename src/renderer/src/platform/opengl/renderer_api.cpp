@@ -67,6 +67,7 @@ void RendererAPI::InitImpl() {
 	                      GL_DEBUG_SEVERITY_NOTIFICATION, /*ids count=*/0,
 	                      /*ids=*/nullptr, /*enabled=*/GL_FALSE);
 #endif
+	// FIXME: seems like it's does not work
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 

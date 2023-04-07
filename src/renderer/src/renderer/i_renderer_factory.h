@@ -22,7 +22,7 @@ class IRendererFactory {
 
 	virtual std::unique_ptr<VertexArray> NewVertexArray() = 0;
 	virtual std::unique_ptr<VertexArray> NewVertexArray(
-			std::vector<std::unique_ptr<VertexBuffer>>&& vbs,
+			std::vector<std::shared_ptr<VertexBuffer>>&& vbs,
 			std::unique_ptr<IndexBuffer>&& ib) = 0;
 
 	// Initialization of dynamic buffer

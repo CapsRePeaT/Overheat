@@ -8,7 +8,8 @@
 #include <string>
 
 #include "renderer/vertexarray.h"
-
+#include "renderer/drawable.h"
+#include "font_material.h"
 
 namespace renderer {
 
@@ -24,14 +25,16 @@ struct CharacterVertexBuffer {
 static_assert(sizeof(CharacterVertex) == sizeof(glm::vec2) * 2);
 static_assert(sizeof(CharacterVertexBuffer) == sizeof(CharacterVertex) * 4);
 
-class Text2D {
+class Text2D : public Drawable {
  public:
-	void BeginPlacing(std::u32string text, glm::vec2 position,
+	void BeginPlacing(std::u32string text, glm::vec2 position, FontMaterial& material,
                                          const bool align_to_pixels);
 	void AddChar(CharacterVertex top_left, CharacterVertex bottom_right);
 	void EndPlacing();
 
 	void Reinit();
+
+	bool SetContextForDraw(RendererContext& ctx);
 
 	[[nodiscard]] const VertexArray& vertex_array() const { return *vao_; }
 	[[nodiscard]] const std::u32string& text() const { return text_; }
@@ -46,6 +49,7 @@ class Text2D {
 	std::unique_ptr<VertexArray> vao_;
 	std::u32string text_;
 	glm::vec2 position_;
+	FontMaterial* material_ = nullptr;
 	bool align_to_pixels_;
 };
 

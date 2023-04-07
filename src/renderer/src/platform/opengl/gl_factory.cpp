@@ -46,7 +46,7 @@ std::unique_ptr<renderer::VertexArray> Factory::NewVertexArray() {
 }
 
 std::unique_ptr<renderer::VertexArray> Factory::NewVertexArray(
-		std::vector<std::unique_ptr<renderer::VertexBuffer>>&& vbs,
+		std::vector<std::shared_ptr<renderer::VertexBuffer>>&& vbs,
 		std::unique_ptr<renderer::IndexBuffer>&& ib) {
 	return std::make_unique<gl::VertexArray>(std::move(vbs), std::move(ib));
 }
