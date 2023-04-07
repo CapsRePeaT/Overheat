@@ -88,8 +88,15 @@ const SolverHeatmap& MatrixEquation::SolveHYPRE() {
 	const int nrows = coeficients_.size1();
 	const int ncols = coeficients_.size2();
 	const int num_of_elements = ncols * nrows;
-	MPI_Init(NULL, NULL);
-	HYPRE_Init();
+
+	static bool init_needed = true;
+	if (init_needed) {
+		MPI_Init(NULL, NULL);
+		HYPRE_Init();
+		init_needed = false;
+	}
+	
+
 	HYPRE_IJMatrix ij_matrix; //matrix
 	{
 		std::vector<int> ncols_vec(nrows, ncols);

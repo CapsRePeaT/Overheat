@@ -31,7 +31,8 @@ void ShapeListWidget::ClearData(const GlobalId& id) {
 }
 
 void ShapeListWidget::ClearAll() { 
-	assert(false && "not implemented");
+	model_->clear();
+	selected_shapes_.clear();
 }
 
 void ShapeListWidget::onItemClicked(const QModelIndex& index) { 
