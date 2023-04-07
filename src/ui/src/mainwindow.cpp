@@ -34,6 +34,7 @@ MainWindow::MainWindow(QWidget* parent)
 	auto* metadata_dock = new QDockWidget(tr("Metadata"), this);
 	metadata_dock->setWidget(metadata_widget_);
 	addDockWidget(Qt::LeftDockWidgetArea, metadata_dock);
+
 	// options widget
 	addDockWidget(Qt::LeftDockWidgetArea, visualization_options_);
 	visualization_options_->setWindowTitle(tr("Visualisation Options"));
@@ -41,6 +42,7 @@ MainWindow::MainWindow(QWidget* parent)
 	auto* solver_options_dock = new QDockWidget(tr("Solver Options"), this);
 	solver_options_dock->setWidget(solver_options_);
 	addDockWidget(Qt::LeftDockWidgetArea, solver_options_dock);
+	tabifyDockWidget(visualization_options_, solver_options_dock);
 	// signals and slots connection
 	connect(ui_->load_file_3d_btn, &QAction::triggered, this,
 	        &MainWindow::OnLoadFile3DBtnPressed);

@@ -25,6 +25,7 @@ class MainWindow final : public QMainWindow {
 	void OnLoadFile3DBtnPressed();
 	void OnLoadFile2DBtnPressed();
 	void OnRunComputationBtnPressed();
+	//void OnRerunComputationBtnPressed();
 	void OnShapesSelected(const GlobalShapeIds& shape_ids);
 	void OnShowMetadata(GlobalId id);
  private:

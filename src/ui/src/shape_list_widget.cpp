@@ -15,15 +15,23 @@ ShapeListWidget::ShapeListWidget(QWidget* parent)
 	// example with checkboxes
 	// https://stackoverflow.com/questions/14158191/qt-qtreeview-and-custom-model-with-checkbox-columns
 	view_->setModel(model_);
-	view_->setWindowTitle(QObject::tr("Simple Tree Model"));
+	//view_->setWindowTitle(QObject::tr("Simple Tree Model"));
+	SetupHeader();
+	setWidget(view_);
+	connect(view_, &QTreeView::clicked, this, &ShapeListWidget::onItemClicked);
+	//Test();
+}
+
+void ShapeListWidget::AddData(const InstanceList& data) {
+	AddData(nullptr, data);
+	SetupHeader();
+}
+
+void ShapeListWidget::SetupHeader() {
+	assert(model_);
 	model_->setHorizontalHeaderItem(0, new QStandardItem("Shapes"));
 	model_->setHorizontalHeaderItem(1, new QStandardItem("Visible"));
 	model_->setHorizontalHeaderItem(2, new QStandardItem("Selected"));
-	setWidget(view_);
-
-	connect(view_, &QTreeView::clicked, this, &ShapeListWidget::onItemClicked);
-
-	//Test();
 }
 
 void ShapeListWidget::ClearData(const GlobalId& id) {

@@ -43,7 +43,9 @@ SolverOptionsWidget::SolverOptionsWidget(QWidget* parent)
 	QVariant fs_0;
 	ms_2.setValue(FemSolverType::variance);
 	fem_solver_->addItem("Variance");
+	layout->addStretch();
 	setLayout(layout);
+	setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Maximum);
 }
 
 SolverSetup SolverOptionsWidget::GetSolverSetup() const {
