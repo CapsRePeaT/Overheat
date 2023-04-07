@@ -50,6 +50,8 @@ MainWindow::MainWindow(QWidget* parent)
 	        &MainWindow::OnLoadFile2DBtnPressed);
 	connect(ui_->run_computation_btn, &QAction::triggered, this,
 		    &MainWindow::OnRunComputationBtnPressed);
+	connect(ui_->rerun_computation_btn, &QAction::triggered, this,
+		&MainWindow::OnRerunComputationBtnPressed);
 	connect(visualization_options_, &VisualizationOptionsWidget::VisualizationOptionsChanged,
 	        render_widget_, &RendererWidget::onVisualizationOptionsChanged);
 	connect(shape_list_widget_, &ShapeListWidget::ChangeVisibility,
@@ -93,6 +95,12 @@ void MainWindow::OnRunComputationBtnPressed() {
 	LoadGeometryAndRunComputation();
 }
 
+void MainWindow::OnRerunComputationBtnPressed() {
+	ResetVisualisation();
+	core().DeleteAllRepresentations();
+	RerunComputation();
+}
+
 void MainWindow::LoadGeometryWithHeatmap(const GeometryType type) {
 	const QString trm_file_path = QFileDialog::getOpenFileName(
 			this, tr("Open trm File"), QDir::currentPath(),
@@ -119,9 +127,23 @@ void MainWindow::LoadGeometryAndRunComputation() {
 		tr("geom (*.txt *.TRM);; ALL (*.*)"));
 	if (geom_file.isEmpty())
 		return;
+	prev_run_file_ = geom_file;
+	RunComputation(geom_file.toStdString());
+}
+
+void MainWindow::RerunComputation()
+{
+	if (!prev_run_file_.size()) {
+		QMessageBox::critical(this, "Error!", "No previous runs found");
+		return;
+	}
+	RunComputation(prev_run_file_.toStdString());
+}
+
+void MainWindow::RunComputation(const std::string& geom_file) {
 	GlobalId rep_id;;
 	try {
-		rep_id = core().LoadRepresentation(geom_file.toStdString());
+		rep_id = core().LoadRepresentation(geom_file);
 	}
 	catch (...) {
 		QMessageBox::critical(this, "Error!", "Error while file loading");

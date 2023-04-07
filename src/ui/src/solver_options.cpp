@@ -8,12 +8,12 @@
 SolverOptionsWidget::SolverOptionsWidget(QWidget* parent)
 		: QWidget(parent)
 	  , persision_(new QDoubleSpinBox(this))
-	  , show_net_(new QCheckBox("Show triangels", this))
+	  , show_net_(new QCheckBox("Show triangles", this))
     , test_geom_chk_(new QCheckBox("Test Geom", this))
 		, matrix_solver_(new QComboBox(this)) 
 	  , fem_solver_(new QComboBox(this)) {
 	auto layout = new QVBoxLayout(this);
-	layout->addWidget(new QLabel("persision"));
+	layout->addWidget(new QLabel("Mesh step"));
 	// persision_
 	persision_->setValue(0.5);
 	persision_->setSingleStep(0.25);
@@ -38,7 +38,7 @@ SolverOptionsWidget::SolverOptionsWidget(QWidget* parent)
 	ms_3.setValue(MainMatrixType::test);
 	matrix_solver_->addItem("Test", ms_3);
 	// Fem solver
-	layout->addWidget(new QLabel("Fem solver"));
+	layout->addWidget(new QLabel("FEM solver"));
 	layout->addWidget(fem_solver_);
 	QVariant fs_0;
 	ms_2.setValue(FemSolverType::variance);
