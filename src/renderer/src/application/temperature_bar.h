@@ -19,7 +19,7 @@ class TemperatureBar : public Drawable {
 	~TemperatureBar();
 
 	void SetTemperatureRange(float min, float max);
-	void SetColorRange(glm::vec3 min, glm::vec3 max);
+	void SetColors(glm::vec3 min, glm::vec3 max);
 
 	[[nodiscard]] const VertexArray& vertex_array() const { return *vao_; }
 	[[nodiscard]] Labels& labels() { return labels_; }

@@ -103,7 +103,7 @@ void Scene::AddFileRepresentation(FileRepresentation& file_representation,
 		AddShapes(file_representation.GetShapes());
 		AddHeatmaps(file_representation.heatmaps());
 	} else {
-		const auto& fs = file_representation.fs_datapack();
+		const auto& fs     = file_representation.fs_datapack();
 		const auto& coords = fs.indeces().coords();
 		// impl_->tetrahedron_points_array.reserve(coords.size());
 		// for (double d_coord : coords) {
@@ -118,9 +118,9 @@ void Scene::AddFileRepresentation(FileRepresentation& file_representation,
 
 		layout = std::make_unique<VertexBufferLayout>();
 		layout->Push<float>(1);
-		const auto& temps = fs.heatmap().temperatures();
-		impl_->tetrahedron_temps =
-				factory.NewVertexBuffer(temps.data(), temps.size() * sizeof(float), std::move(layout));
+		const auto& temps        = fs.heatmap().temperatures();
+		impl_->tetrahedron_temps = factory.NewVertexBuffer(
+				temps.data(), temps.size() * sizeof(float), std::move(layout));
 		impl_->tetrahedron_material = std::make_unique<TetrahedronMaterial>();
 
 		AddTetrahedrons(fs.elements());
@@ -145,16 +145,14 @@ void Scene::SetTemperatureRange(const float min, const float max) {
 	}
 }
 
-void Scene::SetColorRange(const std::array<float, 3> min,
-                          const std::array<float, 3> max) {
+void Scene::SetColors(const std::array<glm::vec3, 5>& colors) {
 	if (impl_->heatmap_materials) {
-
 		auto& materials = *impl_->heatmap_materials;
 		for (auto& material : materials)
-			material.SetColorRange({min[0], min[1], min[2]}, {max[0], max[1], max[2]});
+			material.SetColors(colors);
 	}
 	if (impl_->tetrahedron_material) {
-		impl_->tetrahedron_material->SetColorRange({min[0], min[1], min[2]}, {max[0], max[1], max[2]});
+		impl_->tetrahedron_material->SetColors(colors[0], colors[4]);
 	}
 }
 
@@ -193,7 +191,7 @@ void Scene::SetVisibility(const GlobalIds& to_change, bool is_visible) {
 		if (shape_it != impl_->indexed_shapes.end())
 			impl_->indexed_shapes.at(id)->SetIsVisible(is_visible);
 
-		auto[begin, end] = impl_->indexed_tetrahedrons.equal_range(id);
+		auto [begin, end] = impl_->indexed_tetrahedrons.equal_range(id);
 		for (auto it = begin; it != end; ++it) {
 			auto& shape = *it->second;
 			shape.SetIsVisible(is_visible);

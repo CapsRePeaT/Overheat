@@ -27,8 +27,10 @@ class ShaderProgram {
 	void SetInt(const char* name, int32_t value) const;
 	void SetBool(const char* name, bool value) const;
 	void SetFloat(const char* name, float value) const;
+	void SetFloats(const char* name, const float* values, int count) const;
 	void SetVec2(const char* name, glm::vec2 value) const;
 	void SetVec3(const char* name, glm::vec3 value) const;
+	void SetVec3v(const char* name, const glm::vec3* values, int count) const;
 	void SetMat4(const char* name, const glm::mat4& value) const;
 	void SetMat2x3(const char* name, glm::mat2x3 value) const;
 	void SetMat2(const char* name, glm::mat2 value) const;

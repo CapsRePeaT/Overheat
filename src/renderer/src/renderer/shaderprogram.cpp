@@ -39,10 +39,10 @@ ShaderProgram& ShaderProgram::operator=(ShaderProgram&& other) noexcept {
 	// Delete owned shader
 	glDeleteProgram(id_);
 	// Assign moving shader data
-	id_ = other.id_;
+	id_          = other.id_;
 	is_compiled_ = other.is_compiled_;
 	// Invalidate moving shader
-	other.id_ = 0;
+	other.id_          = 0;
 	other.is_compiled_ = false;
 	return *this;
 }
@@ -121,7 +121,7 @@ bool CreateShader(const ShaderProgram::Path& file_path,
 	}
 	std::stringstream buff;
 	buff << file_stream.rdbuf();
-	const auto code_string = buff.str();
+	const auto code_string                        = buff.str();
 	const std::array<const char*, 1> source_codes = {code_string.c_str()};
 	// Compile read code
 	shader_id = glCreateShader(shader_type);
@@ -143,17 +143,25 @@ int32_t ShaderProgram::getUniformLocation(const char* name) const {
 void ShaderProgram::SetInt(const char* name, const int32_t value) const {
 	glUniform1i(getUniformLocation(name), value);
 }
-void ShaderProgram::SetBool(const char *name, const bool value) const {
+void ShaderProgram::SetBool(const char* name, const bool value) const {
 	glUniform1i(getUniformLocation(name), static_cast<GLint>(value));
 }
 void ShaderProgram::SetFloat(const char* name, const float value) const {
 	glUniform1f(getUniformLocation(name), value);
+}
+void ShaderProgram::SetFloats(const char* name, const float* values,
+                              const int count) const {
+	glUniform1fv(getUniformLocation(name), count, values);
 }
 void ShaderProgram::SetVec2(const char* name, const glm::vec2 value) const {
 	glUniform2f(getUniformLocation(name), value.x, value.y);
 }
 void ShaderProgram::SetVec3(const char* name, const glm::vec3 value) const {
 	glUniform3f(getUniformLocation(name), value.x, value.y, value.z);
+}
+void ShaderProgram::SetVec3v(const char* name, const glm::vec3* values,
+                             const int count) const {
+	glUniform3fv(getUniformLocation(name), count, (float*) values);
 }
 void ShaderProgram::SetMat4(const char* name, const glm::mat4& value) const {
 	glUniformMatrix4fv(getUniformLocation(name), 1, GL_FALSE,

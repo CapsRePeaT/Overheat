@@ -10,7 +10,7 @@ class TemperatureBarMaterial {
  public:
 	TemperatureBarMaterial();
 
-	void SetColorRange(glm::vec3 min, glm::vec3 max) {
+	void SetColors(glm::vec3 min, glm::vec3 max) {
 		color_range_[0] = min;
 		color_range_[1] = max;
 	}

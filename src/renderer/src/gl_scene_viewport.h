@@ -22,7 +22,7 @@ class GLSceneViewport final : public ISceneViewport {
 	explicit GLSceneViewport(std::shared_ptr<Scene> scene);
 	~GLSceneViewport() override;
 	void Initialize(int w, int h) override;
-	void SetColorRange(Color min, Color max) override;
+	void SetColors(const Colors& colors) override;
 	void SetTemperatureRange(float min, float max) override;
 	void RenderFrame() override;
 	void ClearResources() override;
