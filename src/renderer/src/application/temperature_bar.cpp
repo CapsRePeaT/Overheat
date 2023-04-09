@@ -70,15 +70,25 @@ std::unique_ptr<VertexArray> TemperatureBar::InitVao() {
 }
 
 TemperatureBar::Labels TemperatureBar::InitLabels() {
+	constexpr size_t labels_count = 5;
 	labels_.clear();
-	labels_.reserve(2);
+	labels_.reserve(labels_count);
+	// magics
 	constexpr float y_text_shift = 4.0f;
-	labels_.emplace_back(font_->CreateText(
-			temperature_range_.second,
-			position_ + glm::vec2{size_.x + 5.0f, y_text_shift}, true));
-	labels_.emplace_back(font_->CreateText(
-			temperature_range_.first,
-			position_ + glm::vec2{size_.x + 5.0f, size_.y + y_text_shift}, true));
+	const float x_local_position = size_.x + 5.0f;
+
+	constexpr std::array<float, labels_count> ts = {0.0f, 0.25f, 0.5f, 0.75f,
+	                                                1.0f};
+	for (auto t : ts) {
+		const auto temp =
+				std::lerp(temperature_range_.first, temperature_range_.second, t);
+		const glm::vec2 local_position = {
+				x_local_position, std::lerp(size_.y, 0.0f, t) + y_text_shift};
+
+		labels_.emplace_back(
+				font_->CreateText(temp, position_ + local_position, true));
+	}
+
 	return labels_;
 }
 
