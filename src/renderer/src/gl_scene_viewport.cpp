@@ -193,7 +193,7 @@ void GLSceneViewport::SetColors(const Colors& colors) {
 	}
 
 	scene_->SetColors(glm_colors);
-	temperature_bar_->SetColors(glm_colors[0], glm_colors[4]);
+	temperature_bar_->SetColors(glm_colors);
 }
 
 void GLSceneViewport::MoveCamera(const Vec2D /*screenPoint*/,

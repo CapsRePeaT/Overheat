@@ -40,9 +40,9 @@ void TemperatureBar::SetTemperatureRange(float min, float max) {
 	InitLabels();
 }
 
-void TemperatureBar::SetColors(glm::vec3 min, glm::vec3 max) {
+void TemperatureBar::SetColors(const std::array<glm::vec3, 5>& colors) {
 	InitMaterial();
-	impl_->material->SetColors(min, max);
+	impl_->material->SetColors(colors);
 }
 
 std::unique_ptr<VertexArray> TemperatureBar::InitVao() {
