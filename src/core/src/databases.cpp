@@ -4,6 +4,7 @@
 #include <iterator>
 #include <numeric>
 #include <ranges>
+#include <chrono>
 
 #include "common.h"
 #include "heatmap.h"
@@ -23,19 +24,27 @@ MetadataPack FileRepresentation::GetMetadata(const GlobalId id) const {
 			break;
 		}
 		case InstanceType::Layer: {
-			const auto& layer = layers_[id.id()];
-			const auto& lower_heatmap = heatmaps_[layer.bottom_heatmap_id()];
-			std::string bottom = std::to_string(lower_heatmap.min_temp()) + " " +
-			                     std::to_string(lower_heatmap.max_temp());
-			result.emplace_back("bottom temp range", bottom);
-			const auto& upper_heatmap = heatmaps_[layer.top_heatmap_id()];
-			std::string top = std::to_string(upper_heatmap.min_temp()) + " " +
-			                  std::to_string(upper_heatmap.max_temp());
-			result.emplace_back("top temp range", top);
+			if (heatmaps_.heatmaps().size()) {
+				const auto& layer = layers_[id.id()];
+				const auto& lower_heatmap = heatmaps_[layer.bottom_heatmap_id()];
+				std::string bottom = std::to_string(lower_heatmap.min_temp()) + " " +
+														 std::to_string(lower_heatmap.max_temp());
+				result.emplace_back("bottom temp range", bottom);
+				const auto& upper_heatmap = heatmaps_[layer.top_heatmap_id()];
+				std::string top = std::to_string(upper_heatmap.min_temp()) + " " +
+										      std::to_string(upper_heatmap.max_temp());
+				result.emplace_back("top temp range", top);
+			}
 			break;
 		}
 		case InstanceType::Representation: {
-
+			if (heatmaps_.heatmaps().size() == 0) {
+				result.emplace_back("Solver shapes", std::to_string(fs_datapack().elements().size()));
+				result.emplace_back("Indexes", std::to_string(fs_datapack().indeces().MaxIndex()));
+				result.emplace_back("Min temp", std::to_string(fs_datapack().heatmap().min_temp()));
+				result.emplace_back("Max temp", std::to_string(fs_datapack().heatmap().max_temp()));
+				result.emplace_back("Runtime (sec)", std::to_string(fs_datapack().solver_runtime_sec().count() / 1000.0));
+			}
 			break;
 		}
 		default:

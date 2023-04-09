@@ -67,6 +67,7 @@ MainWindow::~MainWindow() = default;
 void MainWindow::VisualizeRepresentation(GlobalId rep_id, bool use_layered_heatmaps) {
 	auto& representation = core().GetRepresentation(rep_id);
 	const auto loaded_shapes = representation.GetShapes();
+	OnShowMetadata(representation.id());
 	std::pair<double, double> min_max_temp;
 	if (representation.fs_datapack().heatmap().temperatures().size()) {
 		min_max_temp.first = representation.fs_datapack().heatmap().min_temp();
@@ -175,7 +176,7 @@ void MainWindow::ResetVisualisation() {
 }
 
 void MainWindow::OnShapesSelected(const GlobalShapeIds& shape_ids) {
-	// TODO: Needed to rework algorithm because it obviously is not optimal
+	// TODO: Needed to rework algorithm because it obviously is not optimal.
 	if (!shape_ids.size()) {
 		render_widget_->OnClearSelection();
 		return;

@@ -3,6 +3,7 @@
 #include <vector>
 #include <deque>
 #include <iostream>
+#include <chrono>
 
 // span needed because of the issues with _ITERATOR_DEBUG_LEVEL
 // see https://github.com/boostorg/ublas/issues/77
@@ -101,7 +102,12 @@ public:
 	const std::vector<std::shared_ptr<SolverShape>>& elements() const { return elements_; }
 	const SolverHeatmap& heatmap() const { return heatmap_; }
 	const VerticeIndexes& indeces() const { return indeces_; }
+	void set_solver_runtime_sec(std::chrono::milliseconds new_solver_runtime_sec) {
+		solver_runtime_sec_ = new_solver_runtime_sec; 
+	}
+	std::chrono::milliseconds solver_runtime_sec() const { return  solver_runtime_sec_; }
 private:
+	std::chrono::milliseconds solver_runtime_sec_;
 	std::vector<std::shared_ptr<SolverShape>> elements_;
 	SolverHeatmap heatmap_;
 	VerticeIndexes indeces_;

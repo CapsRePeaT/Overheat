@@ -26,11 +26,11 @@ SolverOptionsWidget::SolverOptionsWidget(QWidget* parent)
 	layout->addWidget(new QLabel("Matrix solver"));
 	layout->addWidget(matrix_solver_);
 	QVariant ms_0;
-	ms_0.setValue(MainMatrixType::hybrid);
-	matrix_solver_->addItem("Hybrid", ms_0);
+	ms_0.setValue(MainMatrixType::ilu);
+	matrix_solver_->addItem("ILU", ms_0);
 	QVariant ms_1;
-	ms_1.setValue(MainMatrixType::ilu);
-	matrix_solver_->addItem("ILU", ms_1);
+	ms_1.setValue(MainMatrixType::hybrid);
+	matrix_solver_->addItem("Hybrid", ms_1);
 	QVariant ms_2;
 	ms_2.setValue(MainMatrixType::lu);
 	matrix_solver_->addItem("LU", ms_2);
