@@ -29,10 +29,9 @@ void Solver3dDataProvider::load_geometry(const Solver3d_TRM& data) {
 			std::vector<BasicShape> layer_shapes;
 			const auto shapes_data = layer->shape_data();
 			for (const auto& [heat_data, shape] : shapes_data) {
-				box_counter_++;
 				auto box = liftBox(shape.bbox(), offset);
 
-				const auto global_id = GlobalId(InstanceType::Shape, box_counter_, 0);
+				const auto global_id = GlobalId(InstanceType::Shape, box_counter_++, 0);
 				geometry_.AddShape(
 						std::make_unique<BasicShape>(global_id, layer_counter_, box));
 				layer_shapes.emplace_back(global_id, layer_counter_, box);
