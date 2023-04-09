@@ -105,8 +105,7 @@ void MainWindow::OnRunComputationBtnPressed() {
 }
 
 void MainWindow::OnRerunComputationBtnPressed() {
-	ResetVisualisation();
-	core().DeleteAllRepresentations();
+	ResetAll();
 	RerunComputation();
 }
 
@@ -122,6 +121,7 @@ void MainWindow::LoadGeometryWithHeatmap(const GeometryType type) {
 			this, tr("Open T2D File"), absolute_trm_dir,
 		    tr("geom (*.txt *.T2D);; ALL (*.*)"));
 	if (trm_file_path.length() && t2d_file_path.length()) {
+		ResetAll();
 		const auto rep_id = core().LoadRepresentationWithHeatmap(trm_file_path.toStdString(), 
 			                                                     t2d_file_path.toStdString(), type);
 		VisualizeRepresentation(rep_id, true);
@@ -129,13 +129,12 @@ void MainWindow::LoadGeometryWithHeatmap(const GeometryType type) {
 }
 
 void MainWindow::LoadGeometryAndRunComputation() {
-	ResetVisualisation();
-	core().DeleteAllRepresentations();
 	const QString geom_file = QFileDialog::getOpenFileName(
 		this, tr("Open trm File"), QDir::currentPath(),
 		tr("geom (*.txt *.TRM);; ALL (*.*)"));
 	if (geom_file.isEmpty())
 		return;
+	ResetAll();
 	prev_run_file_ = geom_file;
 	RunComputation(geom_file.toStdString());
 }
@@ -167,6 +166,11 @@ void MainWindow::RunComputation(const std::string& geom_file) {
 		QMessageBox::critical(this, "Error!", "Error while heat computation");
 		core().DeleteRepresentation(rep_id);
 	}
+}
+
+void MainWindow::ResetAll() {
+	ResetVisualisation();
+	core().DeleteAllRepresentations();
 }
 
 void MainWindow::ResetVisualisation() {
