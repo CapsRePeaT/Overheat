@@ -35,6 +35,7 @@ class MainWindow final : public QMainWindow {
 	void RerunComputation();
 	void RunComputation(const std::string& file);
 	void ResetVisualisation();
+	void ResetAll();
 	Core& core() { return Core::instance(); }
 	std::shared_ptr<renderer::Scene> scene_;
 	RendererWidget* render_widget_ = nullptr;
