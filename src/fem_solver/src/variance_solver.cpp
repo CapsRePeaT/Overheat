@@ -7,7 +7,7 @@ namespace bnu = boost::numeric::ublas;
 
 void VarianceTetraeder::AddElementContribution(MatrixEquation& matrix) const {
 	// flux это F, вписываем в основное уравнение (переходим из локальных индексов в глобальные)
-    // thermal_conductivity_matrix это К, вписываем в основное уравнение (переходим из локальных индексов в глобальные)
+  // thermal_conductivity_matrix это К, вписываем в основное уравнение (переходим из локальных индексов в глобальные)
 	for (size_t i = 0; i < 4; ++i) {
 		for (size_t j = 0; j < 4; ++j)
 			matrix.AddCoeficient(indexes()[i], indexes()[j], thermal_conductivity_matrix_(i, j));

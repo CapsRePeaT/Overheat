@@ -155,6 +155,8 @@ void MainWindow::RunComputation(const std::string& geom_file) {
 	}
 	catch (...) {
 		QMessageBox::critical(this, "Error!", "Error while file loading");
+		core().DeleteRepresentation(rep_id);
+		return;
 	}
 	try {
 		core().CalculateHeat(core().GetRepresentation(rep_id), solver_options_->GetSolverSetup());
