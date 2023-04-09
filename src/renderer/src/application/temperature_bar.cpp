@@ -77,13 +77,15 @@ TemperatureBar::Labels TemperatureBar::InitLabels() {
 	constexpr float y_text_shift = 4.0f;
 	const float x_local_position = size_.x + 5.0f;
 
-	constexpr std::array<float, labels_count> ts = {0.0f, 0.25f, 0.5f, 0.75f,
-	                                                1.0f};
-	for (auto t : ts) {
+	constexpr std::array<float, labels_count> position_ts = {0.0f, 0.25f, 0.5f,
+	                                                         0.75f, 1.0f};
+	constexpr std::array<float, labels_count> value_ts    = {0.0f, 0.25f, 0.5f,
+	                                                         0.75f, 1.0f};
+	for (size_t i = 0; i < labels_count; ++i) {
 		const auto temp =
-				std::lerp(temperature_range_.first, temperature_range_.second, t);
+				std::lerp(temperature_range_.first, temperature_range_.second, value_ts[i]);
 		const glm::vec2 local_position = {
-				x_local_position, std::lerp(size_.y, 0.0f, t) + y_text_shift};
+				x_local_position, std::lerp(size_.y, 0.0f, position_ts[i]) + y_text_shift};
 
 		labels_.emplace_back(
 				font_->CreateText(temp, position_ + local_position, true));

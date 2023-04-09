@@ -8,7 +8,7 @@ uniform vec3 u_Colors[5];
 
 void main() {
     float factor = smoothstep(0.0f, 1.0f, frag_UVCoordinates[1]);
-	float factors[5]         = float[](0.0, 0.25, 0.5, 0.75, 1.0);
+	float factors[5]         = float[](0.0, 0.15, 0.5, 0.85, 1.0);
 	int workingFactorsIds[2] = int[](3, 4);
 	int workingColorsIds[2]  = int[](3, 4);
 	if (factor < factors[1]) {

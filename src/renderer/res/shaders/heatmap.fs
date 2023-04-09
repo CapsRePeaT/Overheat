@@ -55,7 +55,7 @@ vec4 GetColorByTemp(float temp) {
 	// if (u_IsStratified)
 	// 	return GetStratifiedColor(temp);
 
-	float factors[5]         = float[](0.0, 0.25, 0.5, 0.75, 1.0);
+	float factors[5]         = float[](0.0, 0.15, 0.5, 0.85, 1.0);
 	int workingFactorsIds[2] = int[](3, 4);
 	int workingColorsIds[2]  = int[](3, 4);
 	if (factor < factors[1]) {
