@@ -185,11 +185,15 @@ void GLSceneViewport::SetTemperatureRange(const float min, const float max) {
 	// temperature_bar_->SetTemperatureRange(min, max);
 }
 
-void GLSceneViewport::SetColorRange(const ISceneViewport::Color min,
-                                    const ISceneViewport::Color max) {
-	scene_->SetColorRange(min, max);
-	temperature_bar_->SetColorRange({min[0], min[1], min[2]},
-	                                {max[0], max[1], max[2]});
+void GLSceneViewport::SetColors(const Colors& colors) {
+	std::array<glm::vec3, 5> glm_colors;
+	for (size_t i = 0; i < colors.size(); ++i) {
+		const auto& color = colors[i];
+		glm_colors[i]     = {color[0], color[1], color[2]};
+	}
+
+	scene_->SetColors(glm_colors);
+	temperature_bar_->SetColors(glm_colors);
 }
 
 void GLSceneViewport::MoveCamera(const Vec2D /*screenPoint*/,

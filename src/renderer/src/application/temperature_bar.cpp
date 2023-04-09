@@ -40,9 +40,9 @@ void TemperatureBar::SetTemperatureRange(float min, float max) {
 	InitLabels();
 }
 
-void TemperatureBar::SetColorRange(glm::vec3 min, glm::vec3 max) {
+void TemperatureBar::SetColors(const std::array<glm::vec3, 5>& colors) {
 	InitMaterial();
-	impl_->material->SetColorRange(min, max);
+	impl_->material->SetColors(colors);
 }
 
 std::unique_ptr<VertexArray> TemperatureBar::InitVao() {
@@ -70,15 +70,27 @@ std::unique_ptr<VertexArray> TemperatureBar::InitVao() {
 }
 
 TemperatureBar::Labels TemperatureBar::InitLabels() {
+	constexpr size_t labels_count = 5;
 	labels_.clear();
-	labels_.reserve(2);
+	labels_.reserve(labels_count);
+	// magics
 	constexpr float y_text_shift = 4.0f;
-	labels_.emplace_back(font_->CreateText(
-			temperature_range_.second,
-			position_ + glm::vec2{size_.x + 5.0f, y_text_shift}, true));
-	labels_.emplace_back(font_->CreateText(
-			temperature_range_.first,
-			position_ + glm::vec2{size_.x + 5.0f, size_.y + y_text_shift}, true));
+	const float x_local_position = size_.x + 5.0f;
+
+	constexpr std::array<float, labels_count> position_ts = {0.0f, 0.25f, 0.5f,
+	                                                         0.75f, 1.0f};
+	constexpr std::array<float, labels_count> value_ts    = {0.0f, 0.25f, 0.5f,
+	                                                         0.75f, 1.0f};
+	for (size_t i = 0; i < labels_count; ++i) {
+		const auto temp =
+				std::lerp(temperature_range_.first, temperature_range_.second, value_ts[i]);
+		const glm::vec2 local_position = {
+				x_local_position, std::lerp(size_.y, 0.0f, position_ts[i]) + y_text_shift};
+
+		labels_.emplace_back(
+				font_->CreateText(temp, position_ + local_position, true));
+	}
+
 	return labels_;
 }
 

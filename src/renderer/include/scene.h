@@ -3,6 +3,8 @@
 #include <memory>
 #include <vector>
 
+#include "glm/glm.hpp"
+
 #include "../../fem_solver/src/solver_shapes.hpp"
 #include "common.h"
 #include "core.h"
@@ -37,7 +39,7 @@ class Scene {
 
 	// only for viewport
 	void SetTemperatureRange(float min, float max);
-	void SetColorRange(std::array<float, 3> min, std::array<float, 3> max);
+	void SetColors(const std::array<glm::vec3, 5>& colors);
 	void SetDrawMode(DrawMode mode);
 	void SetStratifiedStep(float step);
 	void SetVisibility(const GlobalIds& to_change, bool is_visible);

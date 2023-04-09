@@ -21,6 +21,7 @@ class ISceneViewport {
 	using TemperatureRange = std::pair<float, float>;
 	using Color = std::array<float, 3>;
 	using ColorRange = std::pair<Color, Color>;
+	using Colors = std::array<Color, 5>;
 	virtual ~ISceneViewport() = default;
 	static std::unique_ptr<ISceneViewport> Create(API api,
 	                                              std::shared_ptr<Scene> scene);
@@ -49,14 +50,11 @@ class ISceneViewport {
 	inline void SetTemperatureRange(TemperatureRange temps) {
 		SetTemperatureRange(temps.first, temps.second);
 	}
-	virtual void SetColorRange(Color min, Color max) = 0;
-	inline void SetColorRange(ColorRange colors) {
-		SetColorRange(colors.first, colors.second);
-	}
+	virtual inline void SetColors(const Colors& colors) = 0;
 	inline void SetMinMaxTemperatureAndColorRanges(TemperatureRange temperatures,
-	                                               ColorRange colors) {
+	                                               const Colors& colors) {
 		SetTemperatureRange(temperatures);
-		SetColorRange(colors);
+		SetColors(colors);
 	}
 	virtual void SetDrawMode(DrawMode mode) = 0;
 	virtual void SetStratifiedStep(float step) = 0;

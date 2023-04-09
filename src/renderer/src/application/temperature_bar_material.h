@@ -1,5 +1,6 @@
 #pragma once
 
+#include <array>
 #include <memory>
 
 #include "renderer/shaderprogram.h"
@@ -10,14 +11,11 @@ class TemperatureBarMaterial {
  public:
 	TemperatureBarMaterial();
 
-	void SetColorRange(glm::vec3 min, glm::vec3 max) {
-		color_range_[0] = min;
-		color_range_[1] = max;
-	}
+	void SetColors(const std::array<glm::vec3, 5>& colors) { colors_ = colors; }
 
 	void Use(const glm::mat4& view) {
 		shader_->Use();
-		shader_->SetMat2x3(color_range_shader_var_, color_range_);
+		shader_->SetVec3v(color_shader_var_, colors_.data(), colors_.size());
 		shader_->SetMat4(view_shader_var_, view);
 	}
 
@@ -25,10 +23,15 @@ class TemperatureBarMaterial {
 
  private:
 	std::shared_ptr<ShaderProgram> shader_;
-	glm::mat2x3 color_range_ = {{0.0f, 0.0f, 1.0f}, {1.0f, 0.0f, 0.0f}};
+	std::array<glm::vec3, 5> colors_ =
+			std::to_array<glm::vec3, 5>({{0.0f, 0.0f, 1.0f},
+	                                 {0.0f, 1.0f, 1.0f},
+	                                 {0.0f, 1.0f, 0.0f},
+	                                 {1.0f, 1.0f, 0.0f},
+	                                 {1.0f, 0.0f, 0.0f}});
 
-	const char* view_shader_var_        = "u_View";
-	const char* color_range_shader_var_ = "u_ColorRange";
+	const char* view_shader_var_  = "u_View";
+	const char* color_shader_var_ = "u_Colors";
 };
 
 }  // namespace renderer
