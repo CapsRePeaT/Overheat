@@ -152,7 +152,7 @@ void Scene::SetColors(const std::array<glm::vec3, 5>& colors) {
 			material.SetColors(colors);
 	}
 	if (impl_->tetrahedron_material) {
-		impl_->tetrahedron_material->SetColors(colors[0], colors[4]);
+		impl_->tetrahedron_material->SetColors(colors);
 	}
 }
 
