@@ -1,8 +1,11 @@
 #include "metadata_widget.h"
 
+#include <QHeaderView>
+
 MetadataWidget::MetadataWidget(QWidget* parent)
 		: QTableWidget(parent) {
-	
+	horizontalHeader()->setStretchLastSection(true);
+	horizontalHeader()->hide();
 	setColumnCount(2);
 	setHorizontalHeaderLabels(lables_);
 	// Test();

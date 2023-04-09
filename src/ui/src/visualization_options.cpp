@@ -50,33 +50,42 @@ VisualizationOptionsWidget::VisualizationOptionsWidget(QWidget* parent)
 						emit VisualizationOptionsChanged(visualization_options_);
 					});
 	ui_->stratified_step->setValue(1);
-	// coloring
-	auto init_color_btn = [this](QAbstractButton* btn, const QColor default_color,
-	                             QColor VisualizationOptions::*color_field) {
-		connect(btn, &QAbstractButton::clicked, this,
-		        [this, &default_color, btn, color_field]() {
-							QColor color = QColorDialog::getColor(default_color, this);
-							if (color.isValid()) {  // Drop if close window without selection
-								QString qss = QString("background-color: %1").arg(color.name());
-								btn->setStyleSheet(qss);
-								visualization_options_.*color_field = color;
-								emit VisualizationOptionsChanged(visualization_options_);
-							}
-						});
-		visualization_options_.*color_field = default_color;
-		QString qss = QString("background-color: %1").arg(default_color.name());
-		btn->setStyleSheet(qss);
-	};
-	init_color_btn(ui_->cold_btn, QColor("blue"),
-	               &VisualizationOptions::min_temp_color);
-	init_color_btn(ui_->hot_btn, QColor("red"),
-	               &VisualizationOptions::max_temp_color);
+	// coloring setub desabled
+	{
+		// coloring
+		auto init_color_btn = [this](QAbstractButton* btn, const QColor default_color,
+																 QColor VisualizationOptions::*color_field) {
+			connect(btn, &QAbstractButton::clicked, this,
+							[this, &default_color, btn, color_field]() {
+								QColor color = QColorDialog::getColor(default_color, this);
+								if (color.isValid()) {  // Drop if close window without selection
+									QString qss = QString("background-color: %1").arg(color.name());
+									btn->setStyleSheet(qss);
+									visualization_options_.*color_field = color;
+									emit VisualizationOptionsChanged(visualization_options_);
+								}
+							});
+			visualization_options_.*color_field = default_color;
+			QString qss = QString("background-color: %1").arg(default_color.name());
+			btn->setStyleSheet(qss);
+		};
+		init_color_btn(ui_->cold_btn, QColor("blue"),
+									 &VisualizationOptions::min_temp_color);
+		init_color_btn(ui_->hot_btn, QColor("red"),
+									 &VisualizationOptions::max_temp_color);
+		ui_->cold_btn->hide();
+		ui_->hot_btn->hide();
+		ui_->label_2->hide();
+		ui_->label_3->hide();
+	}
+
 
 	// min/max temp range
 	connect(ui_->min_temp, &QDoubleSpinBox::valueChanged, this,
 	        &VisualizationOptionsWidget::MinTempChanged);
 	connect(ui_->max_temp, &QDoubleSpinBox::valueChanged, this,
 	        &VisualizationOptionsWidget::MaxTempChanged);
+
 	// strict mode
 	connect(ui_->strict_temp_slider, &QSlider::valueChanged, this,
 	        [this](int temperature) {

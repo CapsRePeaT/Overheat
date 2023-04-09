@@ -37,22 +37,22 @@
   <widget class="QStatusBar" name="statusbar"/>
   <action name="load_file_3d_btn">
    <property name="text">
-    <string>Load 3D...</string>
+    <string>Load 3D heatmap</string>
    </property>
   </action>
   <action name="load_file_2d_btn">
    <property name="text">
-    <string>Load 2D...</string>
+    <string>Load 2D heatmap</string>
    </property>
   </action>
   <action name="run_computation_btn">
    <property name="text">
-	<string>Run Computation...</string>
+	<string>Run FEM solver</string>
    </property>
   </action>
   <action name="rerun_computation_btn">
    <property name="text">
-	<string>Rerun Computation</string>
+	<string>Rerun FEM solver</string>
    </property>
   </action>
  </widget>

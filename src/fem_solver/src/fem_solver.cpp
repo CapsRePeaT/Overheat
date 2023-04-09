@@ -66,10 +66,12 @@ void FemSolver::Solve(FileRepresentation& file_rep, SolverSetup setup) {
 		heatmap.Print();
 		geom_db.SetHeatmap(heatmap);
 		geom_db.SetVerticeIndexes(cutter.GetVerticeIndexes());
-		file_rep.set_fs_datapack(std::move(geom_db));
 		auto timer_fin = std::chrono::high_resolution_clock::now();
+		geom_db.set_solver_runtime_sec(std::chrono::duration_cast<std::chrono::milliseconds>(timer_fin - timer_start));
+		file_rep.set_fs_datapack(std::move(geom_db));
 		std::cout << "Whole loading and computation took "
-			<< std::chrono::duration_cast<std::chrono::seconds>(timer_fin - timer_start)
+			<< geom_db.solver_runtime_sec().count() / 1000.0
 			<< " seconds." << std::endl;
+		file_rep.set_fs_datapack(std::move(geom_db));
 	}
 };
