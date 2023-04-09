@@ -79,6 +79,8 @@ template <class DrawableMesh>
 void MeshGenerator::show_debug_mesh(DrawableMesh& mesh) {
 	using namespace cinolib;
 	GLcanvas gui(1920, 980);
+	auto* ctx = ImGui::CreateContext();
+	ImGui::SetCurrentContext(ctx);
 	int scale_factor = 1000;
 	mesh.updateGL();
 	DrawableArrow x(vec3d(-10 * scale_factor, 0, 0), vec3d(10 * scale_factor, 0, 0));
