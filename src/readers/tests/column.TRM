@@ -1,24 +1,24 @@
 VIRTEX
 2. 2.
 H
-xy   0 0 20
+xy   0 0 20 //heat flow, conv heat, temp
 xy_z 0 0 0
 xz   0 0 0
 xz_y 0 0 0
 yz   0 0 0
 yz_x 0 0 0
-9. 1.E-3 0.
+9. 1.E-3 0. //hight, heat_trans, ??
 0. 2. 0. 2.
 D
 1.
-0.15 1
+0.15 1 //heat cond, element count
 xy   0 0 0
 xy_z 0 0 0
 xz   0 0 0
 xz_y 0 0 0
 yz   0 0 0
 yz_x 0 0 0
- 'GTZ1' 0.1 1
+ 'GTZ1' 0.1 1 //power, magic number
  0. 2. 0. 2.
 #
 #
