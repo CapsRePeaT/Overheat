@@ -116,20 +116,22 @@ const SolverHeatmap& MatrixEquation::SolveHypreHybrid() {
 	// setup matrix
 	const int nrows = coeficients_.size1();
 	const int ncols = coeficients_.size2();
-	const int num_of_elements = ncols * nrows;
 	InitHypre();
 	HYPRE_IJMatrix ij_matrix; //matrix
 	{
-		std::vector<int> ncols_vec(nrows, ncols);
+		std::vector<int> ncols_vec(nrows, 0);
 		std::vector<int> rows(nrows);
-		std::vector<int> cols(num_of_elements);
-		std::vector<double> values(num_of_elements);
+		std::vector<int> cols;
+		std::vector<double> values;
 		for (int i = 0; i < nrows; ++i) {
 			rows[i] = i;
 			for (int j = 0; j < ncols; ++j) {
-				const int index = i * ncols + j;
-				cols[index] = j;
-				values[index] = coeficients_(i, j);
+				const auto value = coeficients_(i, j);
+				if (value == 0)
+					continue;
+				ncols_vec[i] += 1;
+				cols.push_back(j);
+				values.push_back(value);
 			}
 		}
 		HYPRE_IJMatrixCreate(MPI_COMM_WORLD,
