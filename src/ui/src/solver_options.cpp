@@ -17,7 +17,7 @@ SolverOptionsWidget::SolverOptionsWidget(QWidget* parent)
 	// persision_
 	persision_->setValue(0.5);
 	persision_->setSingleStep(0.25);
-	persision_->setMinimum(0.1);
+	persision_->setMinimum(0.01);
 	layout->addWidget(persision_);
 	//show_net_->setChecked(true);
 	layout->addWidget(show_net_);
