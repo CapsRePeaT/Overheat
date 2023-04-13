@@ -13,7 +13,7 @@ SolverOptionsWidget::SolverOptionsWidget(QWidget* parent)
 		, matrix_solver_(new QComboBox(this)) 
 	  , fem_solver_(new QComboBox(this)) {
 	auto layout = new QVBoxLayout(this);
-	layout->addWidget(new QLabel("Mesh step"));
+	layout->addWidget(new QLabel("Mesh step (mm)"));
 	// persision_
 	persision_->setValue(0.5);
 	persision_->setSingleStep(0.25);
@@ -50,7 +50,7 @@ SolverOptionsWidget::SolverOptionsWidget(QWidget* parent)
 
 SolverSetup SolverOptionsWidget::GetSolverSetup() const {
 	SolverSetup result;
-	result.corner_points_step = persision_->value();
+	result.corner_points_step = persision_->value() / 1000;
 	result.show_triangulation = show_net_->isChecked();
 	result.calculate_test_geometry = test_geom_chk_->isChecked();
 	result.fem_solver_type = matrix_solver_->currentData().value<FemSolverType>();

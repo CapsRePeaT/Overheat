@@ -177,7 +177,7 @@ FsDatapack GeometryCutter::PrepareTestGeometry() {
 	std::cout << "triangulating geometry..." << std::endl;
 	std::cout << "converting geometry to db..." << std::endl;
 	FsDatapack result;
-	const int num_of_shapes = 4;  // from 1 to 4
+	const int num_of_shapes = 3;  // from 1 to 4
 	std::vector<VerticeIndexes::VerticeIndex> indexes_global;
 	if (num_of_shapes >= 1) {
 		Point3D point_0;
