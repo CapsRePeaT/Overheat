@@ -1,12 +1,6 @@
 #include "solver_db.hpp"
 
-//bool FsDatapack::NextElement(SolverShape*& element) {
-//	if (elements_.empty())
-//		return false;
-//	element = elements_.back();
-//	elements_.pop_back();
-//	return true;
-//}
+#include <algorithm>
 
 void FsDatapack::AddElement(SolverShape* element) {
 	// TODO switch to unique_ptr
@@ -48,5 +42,22 @@ void SolverHeatmap::Print(bool detailed_print) const {
 			std::cout << i << ":\t" << temperatures_[i] << std::endl;
 		}
 	}
+}
+
+void FsDatapack::PrintCoordsByZ(const double x, const double y) const {
+	using CoordAndTemp = std::pair<double, double>;
+	std::vector<CoordAndTemp> result;
+	for (size_t i = 0; i < heatmap().temperatures().size(); ++i) {
+		const auto point = indeces().GetCoords(i);
+		if (point.coords[X] == x && point.coords[Y] == y)
+			result.emplace_back(point.coords[Z], heatmap().temperatures().at(i));
+	}
+	std::sort(result.begin(), result.end(), [](const CoordAndTemp& a, 
+		                                         const CoordAndTemp& b) {
+																							 return a.first > b.first;
+																				  });
+	std::cout << "Print temps by Z coord, x = " << x << " y = " << y << std::endl;
+	for (const auto res : result)
+		std::cout << "Z = " << res.first << "\t temp = " << res.second << std::endl;
 }
 

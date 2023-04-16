@@ -39,7 +39,6 @@ class GeometryCutter {
 	// store std::pair<double, Point3d>
 	VerticeIndexes& GetVerticeIndexes();
 	const VerticeIndexes& GetVerticeIndexes() const;
-
  private:
 	std::optional<double> corner_points_step_;
 	MeshConstraintFunction area_constraint_;
