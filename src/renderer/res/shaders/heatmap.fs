@@ -77,6 +77,7 @@ bool CheckSingleCoordForEdge(float coord, float delta) {
 }
 
 bool CheckForEdge(vec2 squarePosition) {
+	return false;
 	const float delta = 0.01;
 	return CheckSingleCoordForEdge(squarePosition.x, delta) ||
 	       CheckSingleCoordForEdge(squarePosition.y, delta);

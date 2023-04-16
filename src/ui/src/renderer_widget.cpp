@@ -95,7 +95,7 @@ QSurfaceFormat surface_format(const QSurfaceFormat::FormatOptions options) {
 	surface_format.setProfile(QSurfaceFormat::CoreProfile);
 	surface_format.setRenderableType(QSurfaceFormat::OpenGL);
 	surface_format.setSwapBehavior(QSurfaceFormat::TripleBuffer);
-	//surface_format.setSamples(16);
+	surface_format.setSamples(16);
 	// One swap per screen update (classic vsync)
 	surface_format.setSwapInterval(1);
 	// Sizes in bits

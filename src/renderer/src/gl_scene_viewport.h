@@ -4,6 +4,7 @@
 #include <optional>
 
 #include "application/heatmap_material.h"
+#include "application/wireframe_material.h"
 #include "application/temperature_bar.h"
 #include "application/temperature_bar_material.h"
 #include "camera_controller.h"
@@ -56,6 +57,7 @@ class GLSceneViewport final : public ISceneViewport {
 	float tbar_thickness_ = 25.0f;
 	glm::vec2 tbar_screen_margins_ = {20.0f, 50.0f};
 	std::shared_ptr<Font> font_;
+	std::unique_ptr<WireframeMaterial> wireframe_material_;
 
 	struct Impl;
 	std::unique_ptr<Impl> data_;

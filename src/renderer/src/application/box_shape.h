@@ -8,6 +8,7 @@
 #include "renderer/scene_object.h"
 #include "renderer/vertexarray.h"
 #include "shapes.h"
+#include "wireframe_material.h"
 
 namespace renderer {
 
@@ -27,6 +28,7 @@ class BoxShape : public SceneObject, public Drawable {
 		return highlight_type_;
 	}
 	bool SetContextForDraw(RendererContext& ctx) override;
+	bool SetContextForDrawWireframe(RendererContext& ctx) override;
 	// Must be called only from scene
 	void SetMaterial(HeatmapMaterial& material) { material_ = &material; }
 
@@ -35,6 +37,7 @@ class BoxShape : public SceneObject, public Drawable {
 	std::unique_ptr<VertexArray> vao_;
 	HighlightType highlight_type_ = HighlightType::None;
 	HeatmapMaterial* material_;
+	std::unique_ptr<VertexArray> wireframe_vao_;
 };
 
 }  // namespace renderer

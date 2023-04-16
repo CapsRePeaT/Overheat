@@ -148,8 +148,7 @@ void Scene::SetTemperatureRange(const float min, const float max) {
 void Scene::SetColors(const std::array<glm::vec3, 5>& colors) {
 	if (impl_->heatmap_materials) {
 		auto& materials = *impl_->heatmap_materials;
-		for (auto& material : materials)
-			material.SetColors(colors);
+		for (auto& material : materials) material.SetColors(colors);
 	}
 	if (impl_->tetrahedron_material) {
 		impl_->tetrahedron_material->SetColors(colors);

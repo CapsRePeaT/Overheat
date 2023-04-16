@@ -7,6 +7,7 @@ namespace renderer {
 class Drawable {
  public:
 	virtual bool SetContextForDraw(RendererContext& ctx) = 0;
+	virtual bool SetContextForDrawWireframe(RendererContext& ctx) { return false; };
 
 	inline void SetIsVisible(bool is_visible) { is_visible_ = is_visible; }
 	[[nodiscard]] inline bool is_visible() const { return is_visible_; }

@@ -15,7 +15,11 @@ namespace renderer {
 struct Vertex {
 	glm::vec3 positions;
 	glm::vec2 uv_coordinates;
-	glm::vec2 side_uv_coordinates; 
+	glm::vec2 side_uv_coordinates;
+};
+
+struct WireframeVertex {
+	glm::vec3 positions;
 };
 
 // VertexBufferLayout doesn't support non-contigious vertices now, so we
@@ -51,14 +55,30 @@ BoxShape::BoxShape(const BasicShape& shape) : core_shape_(shape) {
 	// 0---------3        o------> x
 	//
 	const std::array<const Vertex, 8> vertices = {
-			Vertex{{min_bounds.x, min_bounds.y, min_bounds.z}, {0.0f, 0.0f}, {0.0f, 0.0f}},  // 0
-			Vertex{{min_bounds.x, max_bounds.y, min_bounds.z}, {0.0f, 1.0f}, {0.0f, 1.0f}},  // 1
-			Vertex{{max_bounds.x, max_bounds.y, min_bounds.z}, {1.0f, 1.0f}, {0.0f, 0.0f}},  // 2
-			Vertex{{max_bounds.x, min_bounds.y, min_bounds.z}, {1.0f, 0.0f}, {0.0f, 1.0f}},  // 3
-			Vertex{{min_bounds.x, min_bounds.y, max_bounds.z}, {0.0f, 0.0f}, {1.0f, 0.0f}},  // 4
-			Vertex{{min_bounds.x, max_bounds.y, max_bounds.z}, {0.0f, 1.0f}, {1.0f, 1.0f}},  // 5
-			Vertex{{max_bounds.x, max_bounds.y, max_bounds.z}, {1.0f, 1.0f}, {1.0f, 0.0f}},  // 6
-			Vertex{{max_bounds.x, min_bounds.y, max_bounds.z}, {1.0f, 0.0f}, {1.0f, 1.0f}},  // 7
+			Vertex{{min_bounds.x, min_bounds.y, min_bounds.z},
+	           {0.0f, 0.0f},
+	           {0.0f, 0.0f}},  // 0
+			Vertex{{min_bounds.x, max_bounds.y, min_bounds.z},
+	           {0.0f, 1.0f},
+	           {0.0f, 1.0f}},  // 1
+			Vertex{{max_bounds.x, max_bounds.y, min_bounds.z},
+	           {1.0f, 1.0f},
+	           {0.0f, 0.0f}},  // 2
+			Vertex{{max_bounds.x, min_bounds.y, min_bounds.z},
+	           {1.0f, 0.0f},
+	           {0.0f, 1.0f}},  // 3
+			Vertex{{min_bounds.x, min_bounds.y, max_bounds.z},
+	           {0.0f, 0.0f},
+	           {1.0f, 0.0f}},  // 4
+			Vertex{{min_bounds.x, max_bounds.y, max_bounds.z},
+	           {0.0f, 1.0f},
+	           {1.0f, 1.0f}},  // 5
+			Vertex{{max_bounds.x, max_bounds.y, max_bounds.z},
+	           {1.0f, 1.0f},
+	           {1.0f, 0.0f}},  // 6
+			Vertex{{max_bounds.x, min_bounds.y, max_bounds.z},
+	           {1.0f, 0.0f},
+	           {1.0f, 1.0f}},  // 7
 	};
 
 	// 3 indices for a triangle, 2 triangles for a face, 6 faces
@@ -81,6 +101,28 @@ BoxShape::BoxShape(const BasicShape& shape) : core_shape_(shape) {
 	vbos.emplace_back(std::move(vbo));
 	auto&& ibo = factory.NewIndexBuffer(raw_ibo);
 	vao_       = factory.NewVertexArray(std::move(vbos), std::move(ibo));
+
+	std::array<WireframeVertex, 8> wf_vertices;
+	for (size_t i = 0; i < wf_vertices.size(); ++i) {
+		wf_vertices[i].positions = vertices[i].positions;
+	};
+	constexpr std::array<uint32_t, 8 + 1 + 3 + 1 + 3 + 1 + 2> wf_raw_ibo = {
+			0, 4, 7, 3, 0, 1, 5, 4, 
+			std::numeric_limits<uint32_t>::max(),
+			5, 6, 7,
+			std::numeric_limits<uint32_t>::max(),
+			1, 2, 3,
+			std::numeric_limits<uint32_t>::max(),
+			6, 2
+	};
+	auto&& wf_layout = std::make_unique<VertexBufferLayout>();
+	wf_layout->Push<float>(3);
+	std::vector<std::shared_ptr<VertexBuffer>> wf_vbos;
+	auto&& wf_vbo = factory.NewVertexBuffer(wf_vertices, std::move(wf_layout));
+	wf_vbos.emplace_back(std::move(wf_vbo));
+	auto&& wf_ibo = factory.NewIndexBuffer(wf_raw_ibo);
+	wireframe_vao_ =
+			factory.NewVertexArray(std::move(wf_vbos), std::move(wf_ibo));
 }
 
 glm::vec3 HighlightTypeToColor(HighlightType highlight_type) {
@@ -107,6 +149,20 @@ bool BoxShape::SetContextForDraw(RendererContext& ctx) {
 		                 HighlightTypeToColor(highlight_type()), !is_visible());
 			},
 			[&material = *material_]() { material.Unuse(); });
+	return true;
+}
+
+bool BoxShape::SetContextForDrawWireframe(RendererContext& ctx) {
+	if (!is_visible() && highlight_type() == HighlightType::None)
+		return false;
+	ctx.SetVao(*wireframe_vao_);
+	ctx.SetMaterialCallbacks(
+			[this, &ctx]() {
+				ctx.wireframe_material().Use(
+						transform(), ctx.camera().viewProjectionMatrix(),
+						HighlightTypeToColor(highlight_type()));
+			},
+			[&ctx]() { ctx.wireframe_material().Unuse(); });
 	return true;
 }
 
