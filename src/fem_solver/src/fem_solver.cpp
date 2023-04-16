@@ -72,6 +72,7 @@ void FemSolver::Solve(FileRepresentation& file_rep, SolverSetup setup) {
 		std::cout << "Whole loading and computation took "
 			<< geom_db.solver_runtime_sec().count() / 1000.0
 			<< " seconds." << std::endl;
+		//geom_db.PrintCoordsByZ();
 		file_rep.set_fs_datapack(std::move(geom_db));
 	}
 };
