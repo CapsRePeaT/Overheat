@@ -105,16 +105,19 @@ void Scene::AddFileRepresentation(FileRepresentation& file_representation,
 	} else {
 		const auto& fs     = file_representation.fs_datapack();
 		const auto& coords = fs.indeces().coords();
-		// impl_->tetrahedron_points_array.reserve(coords.size());
-		// for (double d_coord : coords) {
-		// 	impl_->tetrahedron_points_array.push_back(static_cast<float>(d_coord));
-		// }
+		auto& float_coords = impl_->tetrahedron_points_array;
+		impl_->tetrahedron_points_array.reserve(coords.size());
+		for (auto d_coord : coords) {
+			float_coords.push_back(static_cast<float>(d_coord.coords[0]));
+			float_coords.push_back(static_cast<float>(d_coord.coords[1]));
+			float_coords.push_back(static_cast<float>(d_coord.coords[2]));
+		}
 
 		auto& factory = RendererAPI::factory();
 		auto layout   = std::make_unique<VertexBufferLayout>();
-		layout->Push<double>(3);
+		layout->Push<float>(3);
 		impl_->tetrahedron_points = factory.NewVertexBuffer(
-				coords.data(), coords.size() * sizeof(Point3D), std::move(layout));
+				float_coords.data(), float_coords.size() * sizeof(float), std::move(layout));
 
 		layout = std::make_unique<VertexBufferLayout>();
 		layout->Push<float>(1);
