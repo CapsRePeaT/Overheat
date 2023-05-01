@@ -24,12 +24,13 @@ struct Scene::SceneImpl {
 	std::optional<std::vector<HeatmapMaterial>> heatmap_materials;
 	std::pair<float, float> bounds;
 
-	std::vector<float> tetrahedron_points_array;
+	std::vector<glm::vec3> tetrahedron_points_array;
 	std::shared_ptr<VertexBuffer> tetrahedron_points;
 	std::shared_ptr<VertexBuffer> tetrahedron_temps;
-	std::vector<std::shared_ptr<TetrahedronShape>> tetrahedrons;
-	std::multimap<GlobalId, std::shared_ptr<TetrahedronShape>>
+	std::map<GlobalId, std::vector<std::shared_ptr<SolverTetraeder>>>
 			indexed_tetrahedrons;
+	std::map<GlobalId, std::shared_ptr<TetrahedronShape>>
+			indexed_tetrahedron_shapes;
 	std::unique_ptr<TetrahedronMaterial> tetrahedron_material;
 
 	std::vector<Drawable*> all_shapes;
@@ -105,16 +106,18 @@ void Scene::AddFileRepresentation(FileRepresentation& file_representation,
 	} else {
 		const auto& fs     = file_representation.fs_datapack();
 		const auto& coords = fs.indeces().coords();
-		// impl_->tetrahedron_points_array.reserve(coords.size());
-		// for (double d_coord : coords) {
-		// 	impl_->tetrahedron_points_array.push_back(static_cast<float>(d_coord));
-		// }
+		auto& float_coords = impl_->tetrahedron_points_array;
+		float_coords.reserve(coords.size());
+		for (auto d_coord : coords) {
+			float_coords.push_back(glm::vec3(d_coord.coords[0], d_coord.coords[1], d_coord.coords[2]));
+		}
 
 		auto& factory = RendererAPI::factory();
 		auto layout   = std::make_unique<VertexBufferLayout>();
-		layout->Push<double>(3);
+		layout->Push<float>(3);
 		impl_->tetrahedron_points = factory.NewVertexBuffer(
-				coords.data(), coords.size() * sizeof(Point3D), std::move(layout));
+				float_coords.data(), float_coords.size() * sizeof(glm::vec3),
+				std::move(layout));
 
 		layout = std::make_unique<VertexBufferLayout>();
 		layout->Push<float>(1);
@@ -124,6 +127,7 @@ void Scene::AddFileRepresentation(FileRepresentation& file_representation,
 		impl_->tetrahedron_material = std::make_unique<TetrahedronMaterial>();
 
 		AddTetrahedrons(fs.elements());
+		BuildTetrahedronShapes();
 	}
 }
 
@@ -148,8 +152,7 @@ void Scene::SetTemperatureRange(const float min, const float max) {
 void Scene::SetColors(const std::array<glm::vec3, 5>& colors) {
 	if (impl_->heatmap_materials) {
 		auto& materials = *impl_->heatmap_materials;
-		for (auto& material : materials)
-			material.SetColors(colors);
+		for (auto& material : materials) material.SetColors(colors);
 	}
 	if (impl_->tetrahedron_material) {
 		impl_->tetrahedron_material->SetColors(colors);
@@ -189,13 +192,11 @@ void Scene::SetVisibility(const GlobalIds& to_change, bool is_visible) {
 	for (auto id : to_change) {
 		auto shape_it = impl_->indexed_shapes.find(id);
 		if (shape_it != impl_->indexed_shapes.end())
-			impl_->indexed_shapes.at(id)->SetIsVisible(is_visible);
+			shape_it->second->SetIsVisible(is_visible);
 
-		auto [begin, end] = impl_->indexed_tetrahedrons.equal_range(id);
-		for (auto it = begin; it != end; ++it) {
-			auto& shape = *it->second;
-			shape.SetIsVisible(is_visible);
-		}
+		auto tetra_it = impl_->indexed_tetrahedron_shapes.find(id);
+		if (tetra_it != impl_->indexed_tetrahedron_shapes.end())
+			tetra_it->second->SetIsVisible(is_visible);
 	}
 }
 
@@ -240,12 +241,20 @@ void Scene::InitHeatmapMaterials() {
 		shape->SetMaterial(heatmap_materials[shape->layer_id()]);
 	}
 }
+
+void Scene::BuildTetrahedronShapes() {
+	for (auto& [id, tetrahedrons] : impl_->indexed_tetrahedrons) {
+		auto new_shape = std::make_shared<TetrahedronShape>(
+				tetrahedrons, impl_->tetrahedron_points, impl_->tetrahedron_temps,
+				*impl_->tetrahedron_material, impl_->tetrahedron_points_array);
+		impl_->indexed_tetrahedron_shapes.emplace(id, new_shape);
+		impl_->all_shapes.emplace_back(new_shape.get());
+	}
+	impl_->indexed_tetrahedrons.clear();
+}
+
 void Scene::AddTetrahedron(std::shared_ptr<SolverTetraeder> shape) {
-	auto new_shape = std::make_shared<TetrahedronShape>(
-			shape, impl_->tetrahedron_points, impl_->tetrahedron_temps,
-			*impl_->tetrahedron_material);
-	impl_->tetrahedrons.emplace_back(new_shape);
-	impl_->indexed_tetrahedrons.emplace(shape->id(), new_shape);
-	impl_->all_shapes.emplace_back(new_shape.get());
+	auto& tetra_vec = impl_->indexed_tetrahedrons[shape->id()];
+	tetra_vec.emplace_back(std::move(shape));
 }
 }  // namespace renderer

@@ -64,6 +64,7 @@ void GLSceneViewport::OpenGlInit(const int w, const int h) {
 	auto& api = RendererAPI::Init(API::OpenGL);
 	api.SetClearColor(consts::init::clear_color);
 	api.SetViewPort(0, 0, w, h);
+	wireframe_material_ = std::make_unique<WireframeMaterial>();
 }
 
 void GLSceneViewport::ApplicationInit(const int w, const int h) {
@@ -116,10 +117,17 @@ void GLSceneViewport::ClearResourcesImpl() {
 }
 
 void GLSceneViewport::Draw(RendererContext& ctx, Drawable& drawable) {
+	auto& api = RendererAPI::instance();
+	glPolygonOffset(0.0f, 1.0f);
 	if (drawable.SetContextForDraw(ctx)) {
-		auto& api = RendererAPI::instance();
 		ctx.UseMaterial();
 		api.DrawIndexed(ctx.vao());
+		ctx.UnuseMaterial();
+	}
+	glPolygonOffset(0.0f, 0.0f);
+	if (drawable.SetContextForDrawWireframe(ctx)) {
+		ctx.UseMaterial();
+		api.DrawIndexed(ctx.vao(), PrimitiveType::LINE_STRIP);
 		ctx.UnuseMaterial();
 	}
 }
@@ -132,7 +140,7 @@ void GLSceneViewport::RenderFrame() {
 	api.Clear();
 	api.EnableDepthBuffer(true);
 	const ICamera& camera = camera_controller_->camera();
-	RendererContext ctx(camera);
+	RendererContext ctx(camera, *wireframe_material_);
 
 	if (scene_->UpdateForRenderer()) {
 		glm::vec3 center_of_bounds = {scene_->bounds().first,
@@ -261,7 +269,6 @@ void GLSceneViewport::ClearSelection() {
 
 void GLSceneViewport::SetSelection(const GlobalIds& to_change,
                                    HighlightType type) {
-	return;
 	for (auto id : to_change) {
 		scene_->shape_by_id(id)->SetHighlightType(type);
 	}
