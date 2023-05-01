@@ -85,10 +85,8 @@ class SolverShape;
 
 class FsDatapack {
 public:
-	//FsDatapack() = default;
-	//~FsDatapack() {
-	//}
-	//bool NextElement(SolverShape*& element);
+	FsDatapack() = default;
+	~FsDatapack() { }
 	void AddElement(SolverShape* element);
 	void PrintContent() const {
 		std::cout << "shape count: " << elements_.size() << std::endl;

@@ -35,8 +35,8 @@ SolverOptionsWidget::SolverOptionsWidget(QWidget* parent)
 	ms_2.setValue(MainMatrixType::lu);
 	matrix_solver_->addItem("LU", ms_2);
 	QVariant ms_3;
-	ms_3.setValue(MainMatrixType::test);
-	matrix_solver_->addItem("Test", ms_3);
+	ms_3.setValue(MainMatrixType::amg);
+	matrix_solver_->addItem("AMG", ms_3);
 	// Fem solver
 	layout->addWidget(new QLabel("FEM solver"));
 	layout->addWidget(fem_solver_);

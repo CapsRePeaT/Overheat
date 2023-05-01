@@ -31,7 +31,7 @@ class GeometryCutter {
 	std::vector<std::pair<double, size_t>> TempAndIndexes() {
 		//TODO: just return points_temps_ after matrix refactoring;
 		std::vector<std::pair<double, size_t>> result;
-		for (const auto& temp_and_point : points_temps_)
+		for (const auto temp_and_point : points_temps_)
 			result.push_back(std::make_pair(temp_and_point.first,
 				index_to_coord_map_.AddVertice(temp_and_point.second)));
 		return result;

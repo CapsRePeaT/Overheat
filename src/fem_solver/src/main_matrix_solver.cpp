@@ -35,8 +35,8 @@ const SolverHeatmap& MatrixEquation::Solve(MainMatrixType type) {
 	case MainMatrixType::hybrid:
 		return SolveHypreHybrid();
 		break;
-	case MainMatrixType::test:
-		return SolveHYPRETest();
+	case MainMatrixType::amg:
+		return SolveHypreBoomerAMG();
 		break;
 	case MainMatrixType::undefined:
 	default:
@@ -305,7 +305,7 @@ const SolverHeatmap& MatrixEquation::SolveHypreILU() {
 	return heatmap_;
 }
 
-const SolverHeatmap& MatrixEquation::SolveHYPRETest() {
+const SolverHeatmap& MatrixEquation::SolveHypreBoomerAMG() {
 	ApplyKnownTemps();
 	already_solved_ = true;
 	// setup matrix

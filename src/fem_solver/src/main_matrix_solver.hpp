@@ -46,8 +46,7 @@ class MatrixEquation {
   const SolverHeatmap& SolveHypreHybrid();
 	// TODO copy-paste, refactor
 	const SolverHeatmap& SolveHypreILU();
-  // runs many solvers in a row, may not work
-  const SolverHeatmap& SolveHYPRETest();
+  const SolverHeatmap& SolveHypreBoomerAMG();
   void ApplyKnownTemps();
 	void InitHypre();
   size_t size_ = DefaultMatrixSize;
