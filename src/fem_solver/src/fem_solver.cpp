@@ -3,8 +3,6 @@
 #include <chrono>
 
 #include "variance_solver.hpp"
-#include "heatmap_converter.hpp"
-#include "matrix_agregator.hpp"
 #include "main_matrix_solver.hpp"
 
 void FemSolver::Solve(FileRepresentation& file_rep, SolverSetup setup) {

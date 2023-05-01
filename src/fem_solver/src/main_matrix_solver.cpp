@@ -306,112 +306,100 @@ const SolverHeatmap& MatrixEquation::SolveHypreILU() {
 }
 
 const SolverHeatmap& MatrixEquation::SolveHYPRETest() {
-	/* Initialize MPI */
-	int myid, num_procs;
-	MPI_Init(NULL, NULL);
-	MPI_Comm_rank(MPI_COMM_WORLD, &myid);
-	MPI_Comm_size(MPI_COMM_WORLD, &num_procs);
-
-	HYPRE_Init();
+	ApplyKnownTemps();
+	already_solved_ = true;
+	// setup matrix
+	const int nrows = coeficients_.size1();
+	const int ncols = coeficients_.size2();
+	InitHypre();
 	HYPRE_IJMatrix ij_matrix; //matrix
 	{
-		int  nrows = 3;
-		int  ncols[3] = {3, 3, 3};
-		int  rows[3] = {0, 1, 2};
-		int  cols[9] = {0, 1, 2, 
-			            0, 1, 2, 
-			            0, 1, 2};
-		double values[9] = {2, 1, 1, 
-			                1, -1, 0, 
-			                3, -1, 2};
+		std::vector<int> ncols_vec(nrows, 0);
+		std::vector<int> rows(nrows);
+		std::vector<int> cols;
+		std::vector<double> values;
+		for (int i = 0; i < nrows; ++i) {
+			rows[i] = i;
+			for (int j = 0; j < ncols; ++j) {
+				const auto value = coeficients_(i, j);
+				if (value == 0)
+					continue;
+				ncols_vec[i] += 1;
+				cols.push_back(j);
+				values.push_back(value);
+			}
+		}
 		HYPRE_IJMatrixCreate(MPI_COMM_WORLD,
-			0 /*ilower*/, 3 /*iupper*/,
-			0 /*jlower*/, 3 /*jupper*/, &ij_matrix);
+			0 /*ilower*/, nrows /*iupper*/,
+			0 /*jlower*/, ncols /*jupper*/, &ij_matrix);
 		HYPRE_IJMatrixSetObjectType(ij_matrix, HYPRE_PARCSR);
 		HYPRE_IJMatrixInitialize(ij_matrix);
-		HYPRE_IJMatrixSetValues(ij_matrix, nrows, ncols, rows, cols, values);
+		HYPRE_IJMatrixSetValues(ij_matrix, nrows,
+			ncols_vec.data(), rows.data(),
+			cols.data(), values.data());
 		HYPRE_IJMatrixAssemble(ij_matrix);
-		HYPRE_IJMatrixPrint(ij_matrix, "Matrix_debug.txt");
+		//HYPRE_IJMatrixPrint(ij_matrix, "Matrix_debug.txt");
 	}
 	HYPRE_IJVector ij_vector_b; // right hand side
 	{
-		int nvalues = 3;
-		int indices[3] = {0, 1, 2};
-		double values[3] = {2, -2, 2};
-		HYPRE_IJVectorCreate(MPI_COMM_WORLD, 0, 2, &ij_vector_b);
+		int nvalues = result_.size1();
+		std::vector<int> indices(nvalues);
+		std::vector<double> values(nvalues);
+		for (int i = 0; i < ncols; ++i) {
+			indices[i] = i;
+			values[i] = result_(i, 0);
+		}
+		HYPRE_IJVectorCreate(MPI_COMM_WORLD, 0, result_.size1() - 1, &ij_vector_b);
 		HYPRE_IJVectorSetObjectType(ij_vector_b, HYPRE_PARCSR);
 		HYPRE_IJVectorInitialize(ij_vector_b);
-		HYPRE_IJVectorSetValues(ij_vector_b, nvalues, indices, values);
+		HYPRE_IJVectorSetValues(ij_vector_b, nvalues, indices.data(), values.data());
 		HYPRE_IJVectorAssemble(ij_vector_b);
-		HYPRE_IJVectorPrint(ij_vector_b, "Vector_debug_b.txt");
-
+		//HYPRE_IJVectorPrint(ij_vector_b, "Vector_debug_b.txt");
 	}
 	HYPRE_IJVector ij_vector_x; // solution
 	{
-		int nvalues = 3;
-		int indices[3] = { 0, 1, 2 };
-		double values[3] = { 0, 0, 0 };
-		HYPRE_IJVectorCreate(MPI_COMM_WORLD, 0, 2, &ij_vector_x);
+		int nvalues = result_.size1();
+		std::vector<int> indices(nvalues);
+		std::vector<double> values(nvalues, 0);
+		for (int i = 0; i < ncols; ++i) {
+			indices[i] = i;
+		}
+		HYPRE_IJVectorCreate(MPI_COMM_WORLD, 0, result_.size1() - 1, &ij_vector_x);
 		HYPRE_IJVectorSetObjectType(ij_vector_x, HYPRE_PARCSR);
 		HYPRE_IJVectorInitialize(ij_vector_x);
-		HYPRE_IJVectorSetValues(ij_vector_x, nvalues, indices, values);
+		HYPRE_IJVectorSetValues(ij_vector_x, nvalues, indices.data(), values.data());
 		HYPRE_IJVectorAssemble(ij_vector_x);
-		HYPRE_IJVectorPrint(ij_vector_x, "Vector_debug_x.txt");
-
+		//HYPRE_IJVectorPrint(ij_vector_x, "Vector_debug_x.txt");
 	}
-	// hybrid(krylov)
-	{
-		HYPRE_Solver solver;
-		HYPRE_ParCSRHybridCreate(&solver);
-		//HYPRE_MGRSetCpointsByBlock(solver); // we use default
-			//https://oomph-lib.github.io/oomph-lib/doc/the_data_structure/html/hypre__solver_8cc_source.html
-		HYPRE_ParCSRMatrix hypre_par_matrix;
-		HYPRE_IJMatrixGetObject(ij_matrix, (void**)&hypre_par_matrix);
-		HYPRE_ParVector hypre_par_vector_b;
-		HYPRE_IJVectorGetObject(ij_vector_b, (void**)&hypre_par_vector_b);
-		HYPRE_ParVector hypre_par_vector_x;
-		HYPRE_IJVectorGetObject(ij_vector_x, (void**)&hypre_par_vector_x);
-		HYPRE_ParCSRHybridSetup(solver, hypre_par_matrix, hypre_par_vector_b, hypre_par_vector_x);
-		HYPRE_ParCSRHybridSolve(solver, hypre_par_matrix, hypre_par_vector_b, hypre_par_vector_x);
-		HYPRE_ParVectorPrint(hypre_par_vector_x, "result_par_vec_hybrid.txt");
-		HYPRE_ParCSRHybridDestroy(solver);
+	std::cout << "solver preparations finished" << std::endl;
+	HYPRE_Solver solver;
+	HYPRE_BoomerAMGCreate(&solver);
+	//https://oomph-lib.github.io/oomph-lib/doc/the_data_structure/html/hypre__solver_8cc_source.html
+	HYPRE_ParCSRMatrix hypre_par_matrix;
+	//HYPRE_ParCSRMatrixCreate()
+	HYPRE_IJMatrixGetObject(ij_matrix, (void**)&hypre_par_matrix); // durty hack
+	HYPRE_ParVector hypre_par_vector_b;
+	HYPRE_IJVectorGetObject(ij_vector_b, (void**)&hypre_par_vector_b);
+	HYPRE_ParVector hypre_par_vector_x;
+	HYPRE_IJVectorGetObject(ij_vector_x, (void**)&hypre_par_vector_x);
+	HYPRE_BoomerAMGSetup(solver, hypre_par_matrix, hypre_par_vector_b, hypre_par_vector_x);
+	HYPRE_BoomerAMGSolve(solver, hypre_par_matrix, hypre_par_vector_b, hypre_par_vector_x);
+	// geting data
+	int nvalues = result_.size1();
+	std::vector<int> indices;
+	indices.reserve(nvalues);
+	for (int i = 0; i < ncols; ++i) {
+		indices.push_back(i);
 	}
-	// ILU
-	{
-		HYPRE_Solver solver;
-		HYPRE_ILUCreate(&solver);
-		HYPRE_ILUSetType(solver, 0); //https://hypre.readthedocs.io/en/latest/api-sol-parcsr.html#_CPPv416HYPRE_ILUSetType12HYPRE_Solver9HYPRE_Int
-		//https://oomph-lib.github.io/oomph-lib/doc/the_data_structure/html/hypre__solver_8cc_source.html
-		HYPRE_ParCSRMatrix hypre_par_matrix;
-		HYPRE_IJMatrixGetObject(ij_matrix, (void**)&hypre_par_matrix);
-		HYPRE_ParVector hypre_par_vector_b;
-		HYPRE_IJVectorGetObject(ij_vector_b, (void**)&hypre_par_vector_b);
-		HYPRE_ParVector hypre_par_vector_x;
-		HYPRE_IJVectorGetObject(ij_vector_x, (void**)&hypre_par_vector_x);
-		HYPRE_ILUSetup(solver, hypre_par_matrix, hypre_par_vector_b, hypre_par_vector_x);
-		HYPRE_ILUSolve(solver, hypre_par_matrix, hypre_par_vector_b, hypre_par_vector_x);
-		HYPRE_ParVectorPrint(hypre_par_vector_x, "result_par_vec_ilu.txt");
-		HYPRE_ILUDestroy(solver);
+	std::vector<double> values(nvalues, 0);
+	hypre_ParVectorGetValues(hypre_par_vector_x, nvalues, indices.data(), values.data());
+	HYPRE_ParVectorPrint(hypre_par_vector_x, "result_real_hybrid.txt");
+	HYPRE_BoomerAMGDestroy(solver);
+	auto& raw_heatmap = heatmap_.data();
+	assert(raw_heatmap.size() == 0);
+	for (int i = 0; i < ncols; ++i) {
+		raw_heatmap.push_back(values[i]);
 	}
-	// MGR
-	{
-		HYPRE_Solver solver;
-		HYPRE_MGRCreate(&solver);
-		//HYPRE_MGRSetCpointsByBlock(solver); // we use default
-	    //https://oomph-lib.github.io/oomph-lib/doc/the_data_structure/html/hypre__solver_8cc_source.html
-		HYPRE_ParCSRMatrix hypre_par_matrix;
-		HYPRE_IJMatrixGetObject(ij_matrix, (void**)&hypre_par_matrix);
-		HYPRE_ParVector hypre_par_vector_b;
-		HYPRE_IJVectorGetObject(ij_vector_b, (void**)&hypre_par_vector_b);
-		HYPRE_ParVector hypre_par_vector_x;
-		HYPRE_IJVectorGetObject(ij_vector_x, (void**)&hypre_par_vector_x);
-		HYPRE_MGRSetup(solver, hypre_par_matrix, hypre_par_vector_b, hypre_par_vector_x);
-		HYPRE_MGRSolve(solver, hypre_par_matrix, hypre_par_vector_b, hypre_par_vector_x);
-		HYPRE_ParVectorPrint(hypre_par_vector_x, "result_par_vec_mgr.txt");
-		HYPRE_MGRDestroy(solver);
-	}
-	// FSAI, based on Cholesky 
-	// needed version HYPRE version 2.25.0, as for 13/3/2023 vcpkg supports only 2.23.0
 	heatmap_.ComputeMinMax();
 	return heatmap_;
 }

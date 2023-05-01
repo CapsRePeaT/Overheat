@@ -17,7 +17,7 @@ MainWindow::MainWindow(QWidget* parent)
 			shape_list_widget_(new ShapeListWidget(this)),
 			ui_(new Ui::MainWindow) {
 	ui_->setupUi(this);
-	setWindowTitle(tr("OVERHEAT application"));
+	setWindowTitle(tr("ThermalsimIC"));
 	// renderer widget
 	setCentralWidget(render_widget_);
 	render_widget_->showMaximized();

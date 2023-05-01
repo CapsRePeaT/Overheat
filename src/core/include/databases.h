@@ -121,7 +121,10 @@ class HeatmapStorage {
 	[[nodiscard]] float y_size() const {
 		return representation_borders_.coordinates()[1].second;
 	}
-	[[nodiscard]] float MinStep() const { return min_step_; }
+	[[nodiscard]] float MinStep() const { 
+		assert(min_step_ != std::numeric_limits<float>::max());
+		return min_step_; 
+	}
 	[[nodiscard]] float max_temp() const;
 	[[nodiscard]] float min_temp() const;
 	[[nodiscard]] const Heatmaps& heatmaps() const { return heatmaps_; }
@@ -131,7 +134,7 @@ class HeatmapStorage {
  private:
 	size_t layers_count_ = 0;  // IST in T2D file
 	float env_temp_      = 0.0f;
-	float min_step_;
+	float min_step_ = std::numeric_limits<float>::max();
 	Floats x_coords_;
 	Floats y_coords_;
 	Box3D representation_borders_;

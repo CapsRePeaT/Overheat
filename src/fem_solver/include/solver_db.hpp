@@ -85,9 +85,9 @@ class SolverShape;
 
 class FsDatapack {
 public:
-	FsDatapack() = default;
-	~FsDatapack() {
-	}
+	//FsDatapack() = default;
+	//~FsDatapack() {
+	//}
 	//bool NextElement(SolverShape*& element);
 	void AddElement(SolverShape* element);
 	void PrintContent() const {
