@@ -73,12 +73,14 @@ void RendererAPI::InitImpl() {
 
 	glEnable(GL_DEPTH_TEST);
 	glEnable(GL_PRIMITIVE_RESTART_FIXED_INDEX);
+	glEnable(GL_POLYGON_OFFSET_LINE);
+	glEnable(GL_POLYGON_OFFSET_FILL);
 	glEnable(GL_LINE_SMOOTH);
 	// glLineWidth(2.0f);
 	float lineWidth[2];
 	glGetFloatv(GL_LINE_WIDTH_RANGE, lineWidth);
 	LOG_TRACE("Line width range from {} to {}", lineWidth[0], lineWidth[1]);
-	// glEnable(GL_MULTISAMPLE);
+	glEnable(GL_MULTISAMPLE);
 }
 
 void RendererAPI::SetViewPort(const uint32_t x, const uint32_t y,

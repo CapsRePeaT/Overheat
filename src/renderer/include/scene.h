@@ -57,6 +57,7 @@ class Scene {
 		}
 	};
 	void AddTetrahedron(std::shared_ptr<SolverTetraeder> shape);
+	void BuildTetrahedronShapes();
 
 	std::unique_ptr<SceneImpl> impl_;
 	bool use_layered_heatmaps_ = true;

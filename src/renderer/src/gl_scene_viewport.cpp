@@ -118,19 +118,18 @@ void GLSceneViewport::ClearResourcesImpl() {
 
 void GLSceneViewport::Draw(RendererContext& ctx, Drawable& drawable) {
 	auto& api = RendererAPI::instance();
-	glPolygonOffset(1.0f, 5.0f);
+	glPolygonOffset(0.0f, 1.0f);
 	if (drawable.SetContextForDraw(ctx)) {
 		ctx.UseMaterial();
 		api.DrawIndexed(ctx.vao());
 		ctx.UnuseMaterial();
 	}
-	glPolygonOffset(-1.0f, -5.0f);
+	glPolygonOffset(0.0f, 0.0f);
 	if (drawable.SetContextForDrawWireframe(ctx)) {
 		ctx.UseMaterial();
 		api.DrawIndexed(ctx.vao(), PrimitiveType::LINE_STRIP);
 		ctx.UnuseMaterial();
 	}
-	glPolygonOffset(0.0f, 0.0f);
 }
 
 void GLSceneViewport::RenderFrame() {

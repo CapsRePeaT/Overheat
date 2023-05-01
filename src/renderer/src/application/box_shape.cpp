@@ -125,20 +125,6 @@ BoxShape::BoxShape(const BasicShape& shape) : core_shape_(shape) {
 			factory.NewVertexArray(std::move(wf_vbos), std::move(wf_ibo));
 }
 
-glm::vec3 HighlightTypeToColor(HighlightType highlight_type) {
-	switch (highlight_type) {
-		case HighlightType::None:
-			return consts::color_not_selected;
-		case HighlightType::Selected:
-			return consts::color_selected;
-		case HighlightType::ActiveSelected:
-			return consts::color_active_selected;
-		default:
-			assert(false && "Unkown highlight type!");
-			return consts::vec3_0;
-	}
-}
-
 bool BoxShape::SetContextForDraw(RendererContext& ctx) {
 	if (!is_visible() && highlight_type() == HighlightType::None)
 		return false;
