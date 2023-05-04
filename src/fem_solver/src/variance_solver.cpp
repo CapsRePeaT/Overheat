@@ -189,7 +189,7 @@ Matrix VarianceTetraeder::ComputeCoFactor(const Matrix& coordinates_and_coef) {
 			if (i < size_1 - 1 && j > 0)
 				bnu::subrange(minor_matrix, i, 3, 0, j) = bnu::subrange(coordinates_and_coef, i + 1, size_1, 0, j);
 			// bot right from x (8 in example)
-			if (i < size_1 - 1 > 0 && j < size_2 - 1)
+			if ((i < size_1 - 1 > 0) && j < size_2 - 1)
 				bnu::subrange(minor_matrix, i, 3, j, 3) = bnu::subrange(coordinates_and_coef, i + 1, size_1, j + 1, size_2);
 			// https://en.wikipedia.org/wiki/Minor_(linear_algebra)
 			const auto minor = CalcDeterminant3x3(minor_matrix);

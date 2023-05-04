@@ -106,7 +106,7 @@ public:
 	std::chrono::milliseconds solver_runtime_sec() const { return  solver_runtime_sec_; }
 	void PrintCoordsByZ(double x = 0, double y = 0) const;
 private:
-	std::chrono::milliseconds solver_runtime_sec_;
+	std::chrono::milliseconds solver_runtime_sec_ = std::chrono::milliseconds(0);
 	std::vector<std::shared_ptr<SolverShape>> elements_;
 	SolverHeatmap heatmap_;
 	VerticeIndexes indeces_;
