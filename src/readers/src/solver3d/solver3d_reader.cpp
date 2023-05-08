@@ -88,6 +88,14 @@ Solver3d_TRM Solver3dReader::load_geometry() {
 
 // Function which reads files similar to doc/virtex.txt
 Solver3d_TRM read_geometry(const std::string& full_content) {
+	//static bool inited = false;
+	//static size_t rep_counter;
+	//if (!inited) {
+	//	rep_counter = 0;
+	//	inited = true;
+	//}
+	getNewShapeId(true /*reset*/, 0);
+	//++rep_counter;
 	// splits layers for groups (inside/outside box)
 	const boost::regex pattern(R"((\/\/[^\n]*\n))");
 	auto content = boost::regex_replace(full_content, pattern, "");

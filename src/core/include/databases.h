@@ -198,14 +198,14 @@ class FileRepresentation {
 	                   LayersShapes layers_shapes_mv,
 	                   ShapesHeatData shapes_metadata_mv,
 	                   float ambient_temperature)
-			: id_(InstanceType::Representation, 0 /*Instance id*/, id_counter++),
+			: id_(InstanceType::Representation, 0 /*Instance id*/, NewRepId()),
 				geom_storage_(std::move(geom_storage_mv)),
 				heatmaps_(std::move(heatmap_storage_mv)),
 				layers_shapes_(std::move(layers_shapes_mv)),
 				shapes_metadata_(std::move(shapes_metadata_mv)),
 				ambient_temperature_(ambient_temperature){}
 	FileRepresentation(GeomStorage<BasicShape> geom_storage_mv)
-			: id_(InstanceType::Representation, 0 /*Instance id*/, id_counter++),
+			: id_(InstanceType::Representation, 0 /*Instance id*/, NewRepId()),
 				geom_storage_(std::move(geom_storage_mv)) {}
 	FileRepresentation(FileRepresentation&&)                 = default;
 	~FileRepresentation()                                    = default;
@@ -238,6 +238,10 @@ class FileRepresentation {
 	[[nodiscard]] GlobalIds GetAllShapeIdsOfLayer(GlobalId layer_id) const;
 	std::string GetName(GlobalId id) const {
 		return metadata_storage_.GetInstanceName(id);
+	}
+	RepresentationId NewRepId() {
+		//return id_counter++;
+		return id_counter;
 	}
 	inline static RepresentationId id_counter = 0;
 	const GlobalId id_;
