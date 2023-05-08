@@ -11,18 +11,18 @@
 
 using LayersShapes = std::vector<std::vector<BasicShape>>;
 
-struct CornerCondition {
-	float heat_flow       = 0;
-	float convective_heat = 0;
-	float temperature     = 0;
-};
-
+/// <summary>
+/// Type of finete element solver
+/// </summary>
 enum class FemSolverType {
 	variance,
 	undefined,
 	count = undefined
 };
 
+/// <summary>
+/// Describes type of solver of system of linear equations
+/// </summary>
 enum class MainMatrixType {
 	lu,
 	ilu,
@@ -32,6 +32,9 @@ enum class MainMatrixType {
 	count = undefined
 };
 
+/// <summary>
+/// Stores set of options for FEM solver
+/// </summary>
 struct SolverSetup {
 	double corner_points_step = 0.5;
 	bool show_triangulation = true;
@@ -40,6 +43,32 @@ struct SolverSetup {
 	MainMatrixType matrix_solver_type = MainMatrixType::undefined;
 };
 
+/// <summary>
+/// Stores corner comditions of shapes, needed for FEM solver
+/// </summary>
+struct CornerCondition {
+	float heat_flow = 0;
+	float convective_heat = 0;
+	float temperature = 0;
+};
+
+/// <summary>
+/// coordinates with _X has higher value
+///    Y        +---------+
+///    ^       /  xz_y   /|
+///    |      /         / |
+///    |     +---------+  |
+///    |     |         |  |  yz_x
+///    |  yz |         |  +
+///    |     |  xy_z   | /
+///    |     |         |/
+///    |     +---------+
+///    |     xz (bottom)
+///  0 +------------------------> X
+///   /
+///  /
+/// Z
+/// </summary>
 struct CornerConditions {
 	CornerCondition xy;
 	CornerCondition xy_z;
@@ -49,6 +78,10 @@ struct CornerConditions {
 	CornerCondition yz_x;
 };
 
+/// <summary>
+/// sufficient solving heat thransfer problem set 
+/// of corner conditios and fisical parameter of the element
+/// </summary>
 struct ShapeHeatData {
 	double thermal_conductivity        = 0;
 	double ambient_temperature         = 0;
@@ -58,6 +91,10 @@ struct ShapeHeatData {
 
 using ShapesHeatData = std::vector<ShapeHeatData>;
 
+/// <summary>
+/// Stores geometrical data from input file
+/// </summary>
+/// <typeparam name="Shape"></typeparam>
 template <class Shape>
 class GeomStorage {
  public:
@@ -78,6 +115,10 @@ class GeomStorage {
 	Shapes shapes_;
 };
 
+/// <summary>
+/// Used for mapping heatmaps to shapes
+/// (assumed that sll shapes on the layer has same height)
+/// </summary>
 class Layer {
  public:
 	Layer() = default;
@@ -92,15 +133,14 @@ class Layer {
 	HeatmapId bottom_heatmap_id() const { return bottom_heatmap_id_; }
 
  private:
-	// TODO implement me
-	const float bottom_ = std::numeric_limits<float>::max();
-	const float width_  = std::numeric_limits<float>::max();
 	GlobalId id_;
 	HeatmapId top_heatmap_id_;
 	HeatmapId bottom_heatmap_id_;
 };
 
-// class with net and temperatures
+/// <summary>
+/// class uses for storing heatmaps from output files of programs overheat and package 1
+/// </summary>
 class HeatmapStorage {
  public:
 	HeatmapStorage() = default;
@@ -141,13 +181,14 @@ class HeatmapStorage {
 	// we duplicate borders here to make manipulation
 	// with heatmap handier, borders needed for proper heatmap interpolation
 	Heatmaps heatmaps_;
-
 	mutable float min_temp_cache_ = std::numeric_limits<float>::quiet_NaN();
 	mutable float max_temp_cache_ = std::numeric_limits<float>::quiet_NaN();
-
 	void SetMinMaxTempCaches() const;
 };
 
+/// <summary>
+/// Main storage of the programm, stores all related to analysed figure data
+/// </summary>
 class FileRepresentation {
  public:
 	using Layers = std::vector<Layer>;
@@ -157,14 +198,14 @@ class FileRepresentation {
 	                   LayersShapes layers_shapes_mv,
 	                   ShapesHeatData shapes_metadata_mv,
 	                   float ambient_temperature)
-			: id_(InstanceType::Representation, 0 /*Instance id*/, id_counter++),
+			: id_(InstanceType::Representation, 0 /*Instance id*/, NewRepId()),
 				geom_storage_(std::move(geom_storage_mv)),
 				heatmaps_(std::move(heatmap_storage_mv)),
 				layers_shapes_(std::move(layers_shapes_mv)),
 				shapes_metadata_(std::move(shapes_metadata_mv)),
 				ambient_temperature_(ambient_temperature){}
 	FileRepresentation(GeomStorage<BasicShape> geom_storage_mv)
-			: id_(InstanceType::Representation, 0 /*Instance id*/, id_counter++),
+			: id_(InstanceType::Representation, 0 /*Instance id*/, NewRepId()),
 				geom_storage_(std::move(geom_storage_mv)) {}
 	FileRepresentation(FileRepresentation&&)                 = default;
 	~FileRepresentation()                                    = default;
@@ -198,16 +239,20 @@ class FileRepresentation {
 	std::string GetName(GlobalId id) const {
 		return metadata_storage_.GetInstanceName(id);
 	}
-
+	RepresentationId NewRepId() {
+		// FIXME indexation con properly supported from reades side
+		//return id_counter++;
+		return id_counter;
+	}
 	inline static RepresentationId id_counter = 0;
 	const GlobalId id_;
-	// we assume that shape id equal to place of shape in the array.
+	/// assumed that shape id equal to place of shape in the array.
 	GeomStorage<BasicShape> geom_storage_;
-	// we assume that layer id equal to place of shape in the array.
+	/// assumed that layer id equal to place of shape in the array.
 	Layers layers_;
-	// we assume that heatmap id equal to place of shape in the array.
+	/// assumed that heatmap id equal to place of shape in the array.
 	HeatmapStorage heatmaps_;
-	// data from solver run
+	/// data from solver run
 	FsDatapack fs_datapack_;
 	DefaultMetadataStorage metadata_storage_;
 	LayersShapes layers_shapes_{};

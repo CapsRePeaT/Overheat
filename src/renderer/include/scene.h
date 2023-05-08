@@ -34,8 +34,7 @@ class Scene {
 	// Only for in-module usage (maybe will be removed and by-passed, TBT)
 	[[nodiscard]] const std::vector<Drawable*>& shapes() const;
 	[[nodiscard]] std::pair<float, float> bounds() const;
-	[[nodiscard]] const std::shared_ptr<BoxShape>& shape_by_id(GlobalId id) const;
-	[[nodiscard]] std::shared_ptr<BoxShape>& shape_by_id(GlobalId id);
+	[[nodiscard]] std::shared_ptr<Drawable> shape_by_id(GlobalId id) const;
 
 	// only for viewport
 	void SetTemperatureRange(float min, float max);

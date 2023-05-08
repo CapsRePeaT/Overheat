@@ -7,15 +7,6 @@
 #include <cmath>
 #include <ranges>
 
-namespace {
-GlobalId getNewShapeId() {
-	static size_t id = 0;
-	++id;
-	// TODO: pass disign_id
-	return {InstanceType::Shape, 0, id};
-}
-}  // namespace
-
 namespace Readers::Solver3d {
 
 std::istream& HU::read(std::istream& in) {

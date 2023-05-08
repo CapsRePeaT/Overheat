@@ -6,9 +6,10 @@
 
 #include <boost/numeric/ublas/matrix_proxy.hpp>
 
-#include "_hypre_IJ_mv.h"
-#include "HYPRE_parcsr_ls.h" // ILU, MGR
-#include "HYPRE_parcsr_mv.h"
+#include <HYPRE.h>
+#include <HYPRE_IJ_mv.h>
+#include <HYPRE_parcsr_ls.h> // ILU, MGR
+#include <HYPRE_parcsr_mv.h>
 
 namespace bnu = boost::numeric::ublas;
 
@@ -41,6 +42,7 @@ const SolverHeatmap& MatrixEquation::Solve(MainMatrixType type) {
 	case MainMatrixType::undefined:
 	default:
 		assert(false && "unsupported solver");
+		return heatmap_;
 		break;
 	}
 }
@@ -197,7 +199,7 @@ const SolverHeatmap& MatrixEquation::SolveHypreHybrid() {
 		indices.push_back(i);
 	}
 	std::vector<double> values(nvalues, 0);
-	hypre_ParVectorGetValues(hypre_par_vector_x, nvalues, indices.data(), values.data());
+	HYPRE_ParVectorGetValues(hypre_par_vector_x, nvalues, indices.data(), values.data());
 	HYPRE_ParVectorPrint(hypre_par_vector_x, "result_real_hybrid.txt");
 	HYPRE_ParCSRHybridDestroy(solver);
 	auto& raw_heatmap = heatmap_.data();
@@ -294,7 +296,7 @@ const SolverHeatmap& MatrixEquation::SolveHypreILU() {
 		indices.push_back(i);
 	}
 	std::vector<double> values(nvalues, 0);
-	hypre_ParVectorGetValues(hypre_par_vector_x, nvalues, indices.data(), values.data());
+	HYPRE_ParVectorGetValues(hypre_par_vector_x, nvalues, indices.data(), values.data());
 	HYPRE_ILUDestroy(solver);
 	auto& raw_heatmap = heatmap_.data();
 	assert(raw_heatmap.size() == 0);
@@ -392,7 +394,7 @@ const SolverHeatmap& MatrixEquation::SolveHypreBoomerAMG() {
 		indices.push_back(i);
 	}
 	std::vector<double> values(nvalues, 0);
-	hypre_ParVectorGetValues(hypre_par_vector_x, nvalues, indices.data(), values.data());
+	HYPRE_ParVectorGetValues(hypre_par_vector_x, nvalues, indices.data(), values.data());
 	HYPRE_ParVectorPrint(hypre_par_vector_x, "result_real_hybrid.txt");
 	HYPRE_BoomerAMGDestroy(solver);
 	auto& raw_heatmap = heatmap_.data();

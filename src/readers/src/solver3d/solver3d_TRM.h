@@ -34,6 +34,17 @@ inline bool isBS(LayerType type) {
 	return type == LayerType::B || type == LayerType::S;
 }
 
+inline GlobalId getNewShapeId(bool reset = false, size_t new_rep_id = 0) {
+	static size_t id = 0;
+	static size_t rep_id = 0;
+	++id;
+	if (reset)
+		id = 0;
+	if (new_rep_id != 0)
+		rep_id = new_rep_id;
+	// TODO: pass disign_id
+	return { InstanceType::Shape, 0, id };
+}
 
 using ShapeHeatDataVec = std::vector<std::pair<ShapeHeatData, BasicShape>>;
 class BaseLayer {
