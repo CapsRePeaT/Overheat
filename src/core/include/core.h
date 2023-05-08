@@ -14,7 +14,7 @@ using NameAndIds = std::vector<NameAndId>;
 class Core {
  public:
 	using Shapes = FileRepresentation::Shapes;
-
+	/// getter since core is singletone
 	static Core& instance();
 	GlobalId LoadRepresentationWithHeatmap(std::string trm_file_path_mv,
 	                                       std::string t2d_file_path_mv,

@@ -14,27 +14,29 @@ class MatrixEquation {
 		: size_(size), coeficients_(size, size),
 		result_(size, 1) {};
   void AddResult(const size_t index, const ValType value) {
-	assert(index < size_);
-	result_(index, 0) = value; //treat matrix as vector
+		assert(index < size_);
+		result_(index, 0) = value; //treat matrix as vector
   }
   void AddCoeficient(const size_t index_1, const size_t index_2, const ValType value) {
-	assert(index_1 < size_&& index_2 < size_);
-	coeficients_(index_1, index_2) += value;
+		assert(index_1 < size_&& index_2 < size_);
+		coeficients_(index_1, index_2) += value;
   }
   void SetHeatmap(const SolverHeatmap& heatmap) {
-	heatmap_ = heatmap;
+		heatmap_ = heatmap;
   }
   void SetMaxSize(const size_t size) {
-	coeficients_.resize(size, size);
-	result_.resize(size, 1);
+		coeficients_.resize(size, size);
+		result_.resize(size, 1);
   }
 	const SolverHeatmap& heatmap() const {
 		assert(already_solved_);
 		return heatmap_;
 	}
+	/// Append new record to known temps by element
 	void AddKnownTempAndIndex(const TempAndIndex& temp_and_index) {
 		known_temp_and_indexes_.emplace_back(temp_and_index);
 	}
+	/// Replace known_temp_and_indexes_ wtih input
 	void set_known_temp_and_indexes(
 		const std::vector<TempAndIndex>& known_temp_and_indexes) {
 		known_temp_and_indexes_ = known_temp_and_indexes;
