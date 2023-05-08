@@ -18,12 +18,6 @@ class TetrahedronShape : public SceneObject, public Drawable {
 			std::shared_ptr<VertexBuffer> points, std::shared_ptr<VertexBuffer> temps,
 			TetrahedronMaterial& material, const std::vector<glm::vec3>& coords);
 	[[nodiscard]] const VertexArray& vertex_array() const { return *vao_; }
-	inline void SetHighlightType(HighlightType highlight_type) {
-		shape_for_wireframe_->SetHighlightType(highlight_type);
-	}
-	[[nodiscard]] inline HighlightType highlight_type() const {
-		return shape_for_wireframe_->highlight_type();
-	}
 	bool SetContextForDraw(RendererContext& ctx) override;
 	bool SetContextForDrawWireframe(RendererContext& ctx) override;
 

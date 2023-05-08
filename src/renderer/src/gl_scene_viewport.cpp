@@ -261,9 +261,7 @@ void GLSceneViewport::SetStratifiedStep(float step) {
 
 void GLSceneViewport::ClearSelection() {
 	for (auto shape : scene_->shapes()) {
-		auto casted_shape = dynamic_cast<BoxShape*>(shape);
-		if (casted_shape)
-			casted_shape->SetHighlightType(HighlightType::None);
+		shape->SetHighlightType(HighlightType::None);
 	}
 }
 
