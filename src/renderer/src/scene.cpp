@@ -131,7 +131,7 @@ void Scene::AddFileRepresentation(FileRepresentation& file_representation,
 	}
 }
 
-const std::shared_ptr<Drawable>& Scene::shape_by_id(GlobalId id) const {
+std::shared_ptr<Drawable> Scene::shape_by_id(GlobalId id) const {
 	auto box_shape_it = impl_->indexed_shapes.find(id);
 	if (box_shape_it != impl_->indexed_shapes.end())
 		return box_shape_it->second;
@@ -141,10 +141,6 @@ const std::shared_ptr<Drawable>& Scene::shape_by_id(GlobalId id) const {
 		return tetra_shape_it->second;
 	
 	return nullptr;
-}
-std::shared_ptr<Drawable>& Scene::shape_by_id(GlobalId id) {
-	return const_cast<std::shared_ptr<Drawable>&>(
-			const_cast<const Scene*>(this)->shape_by_id(id));
 }
 
 void Scene::SetTemperatureRange(const float min, const float max) {
