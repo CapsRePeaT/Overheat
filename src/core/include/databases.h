@@ -240,6 +240,7 @@ class FileRepresentation {
 		return metadata_storage_.GetInstanceName(id);
 	}
 	RepresentationId NewRepId() {
+		// FIXME indexation con properly supported from reades side
 		//return id_counter++;
 		return id_counter;
 	}
